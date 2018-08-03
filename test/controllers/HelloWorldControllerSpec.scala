@@ -27,8 +27,8 @@ import config.AppConfig
 class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication {
   val fakeRequest = FakeRequest("GET", "/")
 
-  val env = Environment.simple()
-  val configuration = Configuration.load(env)
+  val env: Environment = Environment.simple()
+  val configuration: Configuration = Configuration.load(env)
 
   val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   val appConfig = new AppConfig(configuration, env)
@@ -46,6 +46,5 @@ class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication {
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
-
   }
 }
