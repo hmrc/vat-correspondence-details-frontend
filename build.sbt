@@ -53,7 +53,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   "uk.gov.hmrc" %% "govuk-template" % "5.22.0",
-  "uk.gov.hmrc" %% "play-ui" % "7.18.0",
+  "uk.gov.hmrc" %% "play-ui" % "7.19.0",
   ws,
   "uk.gov.hmrc" %% "bootstrap-play-25" % "1.7.0"
 )
