@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package config
 
-import javax.inject.{Inject, Singleton}
+import com.google.inject.AbstractModule
+import services.{MetricsService, MetricsServiceImpl}
 
-import play.api.mvc._
-
-import scala.concurrent.Future
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import config.AppConfig
-
-@Singleton
-class HelloWorld @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
-
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.hello_world()))
+class DIModule extends AbstractModule {
+  def configure(): Unit = {
+    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
+    bindServices()
   }
 
+  private def bindServices() : Unit = {
+    bind(classOf[MetricsService]) to classOf[MetricsServiceImpl]
+  }
 }
