@@ -24,16 +24,12 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import config.AppConfig
 
-class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication {
-  val fakeRequest = FakeRequest("GET", "/")
+class HelloWorldControllerSpec extends ControllerBaseSpec {
 
   val env: Environment = Environment.simple()
   val configuration: Configuration = Configuration.load(env)
 
-  val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  val appConfig = new AppConfig(configuration, env)
-
-  val controller = new HelloWorld(messageApi, appConfig)
+  val controller = new HelloWorldController(messages, mockAppConfig)
 
   "GET /" should {
     "return 200" in {

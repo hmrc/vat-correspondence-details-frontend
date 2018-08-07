@@ -46,7 +46,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
     ScoverageKeys.coverageMinimum := 95,
-    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
 }
@@ -55,12 +55,15 @@ val compile = Seq(
   "uk.gov.hmrc" %% "govuk-template" % "5.22.0",
   "uk.gov.hmrc" %% "play-ui" % "7.19.0",
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % "1.7.0"
+  "uk.gov.hmrc" %% "bootstrap-play-25" % "1.7.0",
+  "uk.gov.hmrc" %% "play-language" % "3.4.0"
 )
 
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % scope,
   "org.scalatest" %% "scalatest" % "3.0.4" % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope,
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
   "org.jsoup" % "jsoup" % "1.10.2" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
