@@ -21,6 +21,22 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
 
+val bootstrapPlayVersion       = "1.7.0"
+val govTemplateVersion         = "5.14.0"
+val playPartialsVersion        = "6.1.0"
+val authClientVersion          = "2.6.0"
+val playUiVersion              = "7.17.0"
+val playLanguageVersion        = "3.4.0"
+val playWhiteListFilterVersion = "2.0.0"
+val scalaTestPlusVersion       = "2.0.0"
+val hmrcTestVersion            = "3.0.0"
+val scalatestVersion           = "3.0.0"
+val pegdownVersion             = "1.6.0"
+val jsoupVersion               = "1.10.2"
+val mockitoVersion             = "2.7.17"
+val scalaMockVersion           = "3.5.0"
+val wiremockVersion            = "2.5.1"
+
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
@@ -52,9 +68,10 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 }
 
 val compile = Seq(
-  "uk.gov.hmrc" %% "govuk-template" % "5.22.0",
-  "uk.gov.hmrc" %% "play-ui" % "7.19.0",
+  "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
+  "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   ws,
+
   "uk.gov.hmrc" %% "bootstrap-play-25" % "1.7.0",
   "uk.gov.hmrc" %% "play-language" % "3.4.0"
 )
@@ -67,6 +84,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
   "org.jsoup" % "jsoup" % "1.10.2" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
+
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {

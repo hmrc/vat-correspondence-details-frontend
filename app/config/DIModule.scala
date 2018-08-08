@@ -17,7 +17,9 @@
 package config
 
 import com.google.inject.AbstractModule
-import services.{MetricsService, MetricsServiceImpl}
+
+import services.{EnrolmentsAuthService, MetricsService, MetricsServiceImpl}
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 class DIModule extends AbstractModule {
   def configure(): Unit = {
@@ -26,6 +28,8 @@ class DIModule extends AbstractModule {
   }
 
   private def bindServices() : Unit = {
+
+    bind(classOf[AuthorisedFunctions]).to(classOf[EnrolmentsAuthService])
     bind(classOf[MetricsService]) to classOf[MetricsServiceImpl]
   }
 }

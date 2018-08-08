@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package config
+package services
 
-object ConfigKeys {
-  val assetsUrl: String = "assets.url"
-  val assetsVersion: String = "assets.version"
+import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 
-  val googleAnalyticsToken: String = "google-analytics.token"
-  val googleAnalyticsHost: String = "google-analytics.host"
-
-  val contactFrontendHost: String = "contact-frontend.host"
-
-  val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
-
-  val governmentGatewayHost: String = "government-gateway.host"
-
-  val signInContinueBaseUrl: String = "signIn.continueBaseUrl"
-
-}
+@Singleton
+class EnrolmentsAuthService @Inject()(val authConnector: AuthConnector) extends AuthorisedFunctions

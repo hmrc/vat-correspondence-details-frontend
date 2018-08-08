@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-object ConfigKeys {
-  val assetsUrl: String = "assets.url"
-  val assetsVersion: String = "assets.version"
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, InternalError}
 
-  val googleAnalyticsToken: String = "google-analytics.token"
-  val googleAnalyticsHost: String = "google-analytics.host"
+case class Agent(arn: String)
 
-  val contactFrontendHost: String = "contact-frontend.host"
-
-  val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
-
-  val governmentGatewayHost: String = "government-gateway.host"
-
-  val signInContinueBaseUrl: String = "signIn.continueBaseUrl"
-
+object Agent {
+  def apply[A](enrolments: Enrolments): Agent =
+    enrolments.enrolments.collectFirst {
+      case Enrolment("HMRC-AS-AGENT", EnrolmentIdentifier(_, arn) :: _, _, _) => Agent(arn)
+    }.getOrElse(throw InternalError("Agent Service Enrolment Missing"))
 }
