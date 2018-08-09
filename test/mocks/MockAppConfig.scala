@@ -39,4 +39,9 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
     "cymraeg" -> Lang("cy")
   )
 
+  override val whitelistEnabled: Boolean = false
+  override val whitelistedIps: Seq[String] = Seq("")
+  override val whitelistExcludedPaths: Seq[Call] = Nil
+  override val shutterPage: String = "https://www.tax.service.gov.uk/shutter/vat-through-software"
+
 }
