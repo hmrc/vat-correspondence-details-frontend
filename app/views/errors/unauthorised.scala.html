@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package config
+@()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-object ConfigKeys {
-  val assetsUrl: String = "assets.url"
-  val assetsVersion: String = "assets.version"
+@views.html.main_template(title = messages("unauthorised.title"), bodyClasses = None) {
 
-  val googleAnalyticsToken: String = "google-analytics.token"
-  val googleAnalyticsHost: String = "google-analytics.host"
-
-  val contactFrontendHost: String = "contact-frontend.host"
-
-  val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
-
-  val governmentGatewayHost: String = "government-gateway.host"
-
-  val signInContinueBaseUrl: String = "signIn.continueBaseUrl"
-
+  <h1>@messages("unauthorised.title")</h1>
+  <p>
+    @messages("unauthorised.useThisService")
+    <a href="@appConfig.agentServicesGovUkGuidance">@messages("unauthorised.setUpAccount")</a>.
+  </p>
+  <a class="button" href="@controllers.routes.SignOutController.signOut">
+    @messages("base.signOut")
+  </a>
 }

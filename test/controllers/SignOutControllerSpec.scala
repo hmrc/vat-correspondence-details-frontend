@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package config
+package controllers
 
-object ConfigKeys {
-  val assetsUrl: String = "assets.url"
-  val assetsVersion: String = "assets.version"
+import play.api.http.Status
+import play.api.test.Helpers._
 
-  val googleAnalyticsToken: String = "google-analytics.token"
-  val googleAnalyticsHost: String = "google-analytics.host"
 
-  val contactFrontendHost: String = "contact-frontend.host"
+class SignOutControllerSpec extends ControllerBaseSpec {
 
-  val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
+  val controller = new SignOutController(messages, mockAppConfig)
 
-  val governmentGatewayHost: String = "government-gateway.host"
+  "Navigating to the sign out page" should {
 
-  val signInContinueBaseUrl: String = "signIn.continueBaseUrl"
+    "return 303" in {
+      val result = controller.signOut(fakeRequest)
+      status(result) shouldBe Status.SEE_OTHER
+    }
 
+    "redirect to the correct location" in {
+      val result = controller.signOut(fakeRequest)
+      redirectLocation(result) shouldBe Some(mockAppConfig.unauthorisedSignOutUrl)
+    }
+  }
 }

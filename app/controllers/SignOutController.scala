@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package config
+package controllers
 
-object ConfigKeys {
-  val assetsUrl: String = "assets.url"
-  val assetsVersion: String = "assets.version"
+import com.google.inject.{Inject, Singleton}
+import config.AppConfig
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
-  val googleAnalyticsToken: String = "google-analytics.token"
-  val googleAnalyticsHost: String = "google-analytics.host"
+import scala.concurrent.Future
 
-  val contactFrontendHost: String = "contact-frontend.host"
+@Singleton
+class SignOutController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig)
+  extends BaseController with I18nSupport {
 
-  val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
-
-  val governmentGatewayHost: String = "government-gateway.host"
-
-  val signInContinueBaseUrl: String = "signIn.continueBaseUrl"
-
+  def signOut: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Redirect(appConfig.unauthorisedSignOutUrl))
+  }
 }

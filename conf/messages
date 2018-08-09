@@ -1,0 +1,9 @@
+base.signOut = Sign out
+
+standardError.title = There is a problem with the service - VAT reporting through software - GOV.UK
+standardError.heading = Sorry, there is a problem with the service
+standardError.message = Try again later.
+
+unauthorised.title = You can’t use this service yet
+unauthorised.useThisService = To use this service, you need to
+unauthorised.setUpAccount = set up an agent services account
