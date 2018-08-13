@@ -16,6 +16,8 @@
 
 package config
 
+import java.util.Base64
+
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -34,9 +36,12 @@ trait AppConfig extends ServicesConfig {
   val reportAProblemNonJSUrl: String
   val agentServicesGovUkGuidance: String
   val unauthorisedSignOutUrl: String
-
   def routeToSwitchLanguage: String => Call
   def languageMap: Map[String, Lang]
+  val whitelistEnabled: Boolean
+  val whitelistedIps: Seq[String]
+  val whitelistExcludedPaths: Seq[Call]
+  val shutterPage: String
 }
 
 @Singleton
@@ -67,5 +72,14 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy")
   )
+
+  private def whitelistConfig(key: String): Seq[String] = Some(new String(Base64.getDecoder
+    .decode(getString(key)), "UTF-8"))
+    .map(_.split(",")).getOrElse(Array.empty).toSeq
+
+  override lazy val whitelistEnabled: Boolean = getBoolean(Keys.whitelistEnabled)
+  override lazy val whitelistedIps: Seq[String] = whitelistConfig(Keys.whitelistedIps)
+  override lazy val whitelistExcludedPaths: Seq[Call] = whitelistConfig(Keys.whitelistExcludedPaths).map(path => Call("GET", path))
+  override lazy val shutterPage: String = getString(Keys.whitelistShutterPage)
 
 }

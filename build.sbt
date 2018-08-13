@@ -22,10 +22,10 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 val appName = "vat-correspondence-details-frontend"
 
 val bootstrapPlayVersion       = "1.7.0"
-val govTemplateVersion         = "5.14.0"
+val govTemplateVersion         = "5.22.0"
 val playPartialsVersion        = "6.1.0"
 val authClientVersion          = "2.6.0"
-val playUiVersion              = "7.17.0"
+val playUiVersion              = "7.19.0"
 val playLanguageVersion        = "3.4.0"
 val playWhiteListFilterVersion = "2.0.0"
 val scalaTestPlusVersion       = "2.0.0"
@@ -68,21 +68,23 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 }
 
 val compile = Seq(
+  ws,
+  "uk.gov.hmrc" %% "bootstrap-play-25" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
-  ws,
-
-  "uk.gov.hmrc" %% "bootstrap-play-25" % "1.7.0",
-  "uk.gov.hmrc" %% "play-language" % "3.4.0"
+  "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
+  "uk.gov.hmrc" %% "auth-client" % authClientVersion,
+  "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
+  "uk.gov.hmrc" %% "play-whitelist-filter" % playWhiteListFilterVersion
 )
 
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % scope,
   "org.scalatest" %% "scalatest" % "3.0.4" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope,
-  "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % scope,
-  "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "org.jsoup" % "jsoup" % "1.10.2" % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
+  "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
+  "org.pegdown" % "pegdown" % pegdownVersion % scope,
+  "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
 
 )
