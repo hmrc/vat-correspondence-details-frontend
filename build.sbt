@@ -22,10 +22,10 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 val appName = "vat-correspondence-details-frontend"
 
 val bootstrapPlayVersion       = "1.7.0"
-val govTemplateVersion         = "5.14.0"
+val govTemplateVersion         = "5.22.0"
 val playPartialsVersion        = "6.1.0"
 val authClientVersion          = "2.6.0"
-val playUiVersion              = "7.17.0"
+val playUiVersion              = "7.19.0"
 val playLanguageVersion        = "3.4.0"
 val playWhiteListFilterVersion = "2.0.0"
 val scalaTestPlusVersion       = "2.0.0"
