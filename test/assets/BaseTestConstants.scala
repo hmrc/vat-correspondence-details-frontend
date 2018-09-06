@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package controllers
+package assets
 
+import common.EnrolmentKeys
 import play.api.http.Status
-import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.Enrolment
 
+object BaseTestConstants {
 
-class SignOutControllerSpec extends ControllerBaseSpec {
+  val arn = "ABCD12345678901"
+  val vrn: String = "999999999"
+  val testMtdVatEnrolment: Enrolment = Enrolment(EnrolmentKeys.vatEnrolmentId).withIdentifier(EnrolmentKeys.vatIdentifierId, vrn)
+  val formBundle = "XA1234567"
 
-  val controller = new SignOutController(messagesApi, mockConfig)
-
-  "Navigating to the sign out page" should {
-
-    "return 303" in {
-      val result = controller.signOut(request)
-      status(result) shouldBe Status.SEE_OTHER
-    }
-
-    "redirect to the correct location" in {
-      val result = controller.signOut(request)
-      redirectLocation(result) shouldBe Some(mockConfig.unauthorisedSignOutUrl)
-    }
-  }
 }

@@ -17,20 +17,22 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.mvc._
 
 import scala.concurrent.Future
 import play.api.i18n.{I18nSupport, MessagesApi}
 import config.AppConfig
+import controllers.predicates.AuthPredicate
 import services.EnrolmentsAuthService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 @Singleton
-class HelloWorldController @Inject()(val enrolmentsAuthService: EnrolmentsAuthService, val messagesApi: MessagesApi,
-                                     implicit val appConfig: AppConfig) extends AuthorisedController with I18nSupport {
+class HelloWorldController @Inject()(val enrolmentsAuthService: EnrolmentsAuthService,
+                                     val authenticate: AuthPredicate,
+                                     val messagesApi: MessagesApi,
+                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  val helloWorld: Action[AnyContent] = authorisedAction { implicit request =>
-    _ => Future.successful(Ok(views.html.hello_world()))
-
+  def helloWorld: Action[AnyContent] = authenticate.async { implicit user =>
+    Future.successful(Ok(views.html.hello_world()))
   }
 }

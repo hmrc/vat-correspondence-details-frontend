@@ -84,7 +84,8 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
+  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+  "org.mockito" % "mockito-core" % mockitoVersion % scope
 
 )
 

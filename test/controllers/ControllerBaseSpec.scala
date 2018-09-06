@@ -16,50 +16,23 @@
 
 package controllers
 
-import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, Materializer}
-import config.AppConfig
-import mocks.MockAppConfig
-import org.scalamock.scalatest.MockFactory
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.MessagesApi
-import play.api.inject.Injector
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
-import play.api.test.FakeRequest
-import play.filters.csrf.CSRF.Token
-import play.filters.csrf.{CSRFConfigProvider, CSRFFilter}
-import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.play.test.UnitSpec
+import mocks.{MockAuth, MockHttp}
+import play.api.http.Status
+import play.api.mvc.{Action, AnyContent}
+import utils.MaterializerSupport
 
-class ControllerBaseSpec extends UnitSpec with MockFactory with GuiceOneAppPerSuite {
+trait ControllerBaseSpec extends MockAuth with MockHttp with MaterializerSupport{
 
-  lazy val injector: Injector = app.injector
-  lazy val messages: MessagesApi = injector.instanceOf[MessagesApi]
-  implicit val mockAppConfig: AppConfig = new MockAppConfig(app.configuration)
+  def unauthenticatedCheck(controllerAction: Action[AnyContent]): Unit = {
 
-  implicit val system: ActorSystem = ActorSystem()
-  implicit val materializer: Materializer = ActorMaterializer()
+    "the user is not authenticated" should {
 
-  implicit lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-  lazy val fakeRequestWithSession: FakeRequest[AnyContentAsEmpty.type] = fakeRequest.withSession(
-    SessionKeys.lastRequestTimestamp -> "1498236506662", SessionKeys.authToken -> "Bearer Token")
-
-  def fakeRequestToPOSTWithSession(input: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] =
-    fakeRequestWithSession.withFormUrlEncodedBody(input: _*)
-
-  implicit class CSRFTokenAdder[T](req: FakeRequest[T]) {
-
-    def addToken(): FakeRequest[T] = {
-
-      val csrfConfig = app.injector.instanceOf[CSRFConfigProvider].get
-      val csrfFilter = app.injector.instanceOf[CSRFFilter]
-      val token = csrfFilter.tokenProvider.generateToken
-
-      req.copyFakeRequest(tags = req.tags ++ Map(
-        Token.NameRequestTag -> csrfConfig.tokenName,
-        Token.RequestTag -> token
-      )).withHeaders(csrfConfig.headerName -> token)
+      "return 401 (Unauthorised)" in {
+        mockMissingBearerToken()
+        val result = controllerAction(request)
+        status(result) shouldBe Status.UNAUTHORIZED
+      }
     }
   }
 }
+
