@@ -37,35 +37,36 @@ class HelloWorldControllerSpec extends ControllerBaseSpec {
       lazy val document = Jsoup.parse(bodyOf(result))
 
       "return 200" in {
-        mockAgentAuthorised()
-        await(result) shouldBe Status.OK
+        mockIndividualAuthorised()
+        status(result) shouldBe Status.OK
       }
-
       "return HTML" in {
-        mockAgentAuthorised()
+        mockIndividualAuthorised()
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
       }
 
       "render the Hello world page" in {
-        mockAgentAuthorised()
-        document.select("h1") shouldBe "Hello world"
+        mockIndividualAuthorised()
+        document.select("h1").text() shouldBe "Hello from vat-correspondence-details-frontend!"
       }
     }
 
     "a user is not enrolled with a valid Agent enrolment" should {
 
-      lazy val result = TestHelloWorldController.helloWorld(request)
+      lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithVrnAndRedirectUrl)
 
       "return 401" in {
-        mockAgentWithoutEnrolment()
-        await(result) shouldBe Status.UNAUTHORIZED
+        mockMissingBearerToken()
+        status(result) shouldBe Status.UNAUTHORIZED
       }
 
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
-      }
+
+      //TODO: Re-add when the unauth view has been added
+      //"return HTML" in {
+      //contentType(result) shouldBe Some("text/html")
+      //charset(result) shouldBe Some("utf-8")
+    //}
     }
   }
 }

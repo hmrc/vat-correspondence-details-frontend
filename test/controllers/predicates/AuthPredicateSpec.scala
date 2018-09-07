@@ -17,14 +17,14 @@
 package controllers.predicates
 
 import mocks.MockAuth
-import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
+import utils.MaterializerSupport
 
 import scala.concurrent.Future
 
-class AuthPredicateSpec extends MockAuth {
+class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
   def target: Action[AnyContent] = mockAuthPredicate.async {
     implicit request => Future.successful(Ok("test"))
@@ -79,9 +79,10 @@ class AuthPredicateSpec extends MockAuth {
             status(result) shouldBe Status.FORBIDDEN
           }
 
-          "render the Unauthorised Agent page" in {
-            Jsoup.parse(bodyOf(result)).title shouldBe AgentUnauthorisedPageMessages.title
-          }
+          //TODO: re-add this test when the unauth page has been created
+//          "render the Unauthorised Agent page" in {
+//            Jsoup.parse(bodyOf(result)).title shouldBe AgentUnauthorisedPageMessages.title
+//          }
         }
       }
 
@@ -105,9 +106,11 @@ class AuthPredicateSpec extends MockAuth {
             status(result) shouldBe Status.FORBIDDEN
           }
 
-          "render the Not Signed Up page" in {
-            Jsoup.parse(bodyOf(result)).title shouldBe NotSignedUpPageMessages.title
-          }
+          //TODO: readd this test when the unauth page has been created
+
+          //"render the Not Signed Up page" in {
+          //Jsoup.parse(bodyOf(result)).title shouldBe NotSignedUpPageMessages.title
+        //}
         }
       }
     }

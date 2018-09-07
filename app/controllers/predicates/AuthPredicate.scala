@@ -40,7 +40,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
 
   override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
 
-    implicit val req = request
+    implicit val req: Request[A] = request
     enrolmentsAuthService.authorised().retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
       case Some(affinityGroup) ~ allEnrolments =>
         (isAgent(affinityGroup), allEnrolments) match {
@@ -53,12 +53,12 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
         Logger.warn("[AuthPredicate][invokeBlock] - Missing affinity group")
         //TODO: Add service error handler and show internal server error
         //Future.successful(serviceErrorHandler.showInternalServerError)
-        Future.successful(Ok)
+        Future.successful(InternalServerError)
     } recover {
       case _: NoActiveSession =>
         Logger.debug("[AuthPredicate][invokeBlock] - No active session, rendering Session Timeout view")
         //Unauthorized(views.html.errors.sessionTimeout())
-        //TODO Add unauthorised with sessiontimeout view
+        //TODO Add unauthorised with session-timeout view
         Unauthorized
       case _: AuthorisationException =>
         Logger.warn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering Unauthorised view")
@@ -79,7 +79,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
       Logger.debug(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment. Enrolments: $enrolments")
       Logger.warn(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment.")
       //TODO: Add forbidden with unauthorised view
-      //      Future.successful(Forbidden(views.html.errors.agent.unauthorised()))
+      //Future.successful(Forbidden(views.html.errors.agent.unauthorised()))
       Future.successful(Forbidden)
     }
 
@@ -91,7 +91,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
     else {
       Logger.debug(s"[AuthPredicate][checkVatEnrolment] - Individual without HMRC-MTD-VAT enrolment. $enrolments")
       //TODO: Point to not signed up view
-//      Future.successful(Forbidden(views.html.errors.not_signed_up()))
+      //Future.successful(Forbidden(views.html.errors.not_signed_up()))
       Future.successful(Forbidden)
     }
 }
