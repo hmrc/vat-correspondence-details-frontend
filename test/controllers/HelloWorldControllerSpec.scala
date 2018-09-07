@@ -31,7 +31,7 @@ class HelloWorldControllerSpec extends ControllerBaseSpec {
 
   "Calling the helloWorld action" when {
 
-    "a user is enrolled with a valid Agent enrolment" should {
+    "a user is enrolled with a valid enrolment" should {
 
       lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithVrnAndRedirectUrl)
       lazy val document = Jsoup.parse(bodyOf(result))
@@ -52,21 +52,19 @@ class HelloWorldControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "a user is not enrolled with a valid Agent enrolment" should {
+    "a user is does not have a valid enrolment" should {
 
       lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithVrnAndRedirectUrl)
 
-      "return 401" in {
-        mockMissingBearerToken()
-        status(result) shouldBe Status.UNAUTHORIZED
+      "return 403" in {
+        mockAgentWithoutEnrolment()
+        status(result) shouldBe Status.FORBIDDEN
       }
 
-
-      //TODO: Re-add when the unauth view has been added
-      //"return HTML" in {
-      //contentType(result) shouldBe Some("text/html")
-      //charset(result) shouldBe Some("utf-8")
-    //}
+//      "return HTML" in {
+//        contentType(result) shouldBe Some("text/html")
+//        charset(result) shouldBe Some("utf-8")
+//      }
     }
   }
 }

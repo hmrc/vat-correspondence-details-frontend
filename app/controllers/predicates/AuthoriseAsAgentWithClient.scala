@@ -59,16 +59,19 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
         } recover {
           case _: NoActiveSession =>
             Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, rendering Session Timeout")
-            // TODO Add unauthorised view
+            // TODO Add session time out  view
+            // Unauthorized(views.html.errors.sessionTimeout())
             Unauthorized("Unauthorised")
           case _: AuthorisationException =>
             Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have delegated authority for Client")
             // TODO Redirect to VACLUF service
+            // Redirect(controllers.agent.routes.AgentUnauthorisedForClientController.show())
             Redirect(controllers.routes.HelloWorldController.helloWorld())
         }
       case _ =>
         Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - No Client VRN in session, redirecting to Select Client page")
         // TODO Redirect to VACLUF service
+        // Redirect(controllers.agent.routes.AgentUnauthorisedForClientController.show())
         Future.successful(Redirect(controllers.routes.HelloWorldController.helloWorld()))
     }
   }
