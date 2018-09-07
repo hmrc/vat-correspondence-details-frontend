@@ -54,17 +54,17 @@ class AuthoriseAsAgentOnly @Inject()(enrolmentsAuthService: EnrolmentsAuthServic
       case _ =>
         Logger.warn("[AuthoriseAsAgentOnly][invokeBlock] - Missing affinity group")
         // TODO Add error service handler
-        Future.successful(Ok)
+        //Future.successful(errorHandler.showInternalServerError)
+        Future.successful(InternalServerError)
+    } recover {
       case _: NoActiveSession =>
         Logger.debug("[AuthoriseAsAgentOnly][invokeBlock] - No Active Session, rendering Session Timeout view")
-        //Unauthorized(views.html.errors.sessionTimeout())
         // TODO Add Unauthorised and session timeout view
-        Future.successful(Ok)
+        //Unauthorized(views.html.errors.sessionTimeout())
+        Unauthorized
       case _: AuthorisationException =>
         Logger.warn("[AuthoriseAsAgentOnly][invokeBlock] - Authorisation Exception, rendering Unauthorised view")
-//        Forbidden(views.html.errors.unauthorised())
-        // TODO Add Forbidden and unauthorised view
-        Future.successful(Ok)
+        Forbidden(views.html.errors.unauthorised())
     }
   }
 
@@ -76,9 +76,9 @@ class AuthoriseAsAgentOnly @Inject()(enrolmentsAuthService: EnrolmentsAuthServic
     else {
       Logger.debug(s"[AuthoriseAsAgentOnly][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment. Enrolments: $enrolments")
       Logger.warn(s"[AuthoriseAsAgentOnly][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment")
-//      Future.successful(Forbidden(views.html.errors.agent.unauthorisedNoEnrolment()))
       // TODO: Add Forbidden and show unauthorisedNoEnrolment view
-      Future.successful(Ok)
+      // Future.successful(Forbidden(views.html.errors.agent.unauthorisedNoEnrolment()))
+      Future.successful(Forbidden)
     }
 
 }

@@ -74,6 +74,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
         status(result) shouldBe Status.SEE_OTHER
       }
 
+      //TODO re-add when redirect to VACLUF is added
 //      s"redirect location to ${controllers.agent.routes.AgentUnauthorisedForClientController.show().url}" in {
 //        redirectLocation(result) shouldBe Some(controllers.agent.routes.AgentUnauthorisedForClientController.show().url)
 //      }

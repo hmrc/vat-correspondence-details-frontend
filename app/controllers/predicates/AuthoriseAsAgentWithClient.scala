@@ -64,12 +64,12 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
           case _: AuthorisationException =>
             Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have delegated authority for Client")
             // TODO Redirect to VACLUF service
-            Unauthorized("Unauthorised")
+            Redirect(controllers.routes.HelloWorldController.helloWorld())
         }
       case _ =>
         Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - No Client VRN in session, redirecting to Select Client page")
         // TODO Redirect to VACLUF service
-        Future.successful(Ok)
+        Future.successful(Redirect(controllers.routes.HelloWorldController.helloWorld()))
     }
   }
 }
