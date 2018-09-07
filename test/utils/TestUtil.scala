@@ -21,6 +21,7 @@ import common.SessionKeys
 import config.ErrorHandler
 import mocks.MockAppConfig
 import models.User
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.Injector
@@ -33,7 +34,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext
 
-trait TestUtil extends UnitSpec with GuiceOneAppPerSuite {
+trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MaterializerSupport{
 
   lazy val injector: Injector = app.injector
   lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
@@ -56,10 +57,12 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite {
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)
   lazy val agent: User[AnyContentAsEmpty.type] =
     User[AnyContentAsEmpty.type](vrn, active = true, Some(arn))(fakeRequestWithVrnAndRedirectUrl)
+
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
   implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
   implicit class CSRFTokenAdder[T](req: FakeRequest[T]) {
+
     def addToken(): FakeRequest[T] = {
       val csrfConfig = app.injector.instanceOf[CSRFConfigProvider].get
       val csrfFilter = app.injector.instanceOf[CSRFFilter]
@@ -72,3 +75,4 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite {
     }
   }
 }
+

@@ -60,11 +60,10 @@ class HelloWorldControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.FORBIDDEN
       }
 
-      //TODO: Add in when the unauth view is added
-//      "return HTML" in {
-//        contentType(result) shouldBe Some("text/html")
-//        charset(result) shouldBe Some("utf-8")
-//      }
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
     }
   }
 }

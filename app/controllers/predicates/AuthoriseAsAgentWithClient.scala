@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 @Singleton
 class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
-                                           val serviceErrorHandler: ErrorHandler,
+                                           val errorHandler: ErrorHandler,
                                            implicit val messagesApi: MessagesApi,
                                            implicit val appConfig: AppConfig)
   extends FrontendController with AuthBasePredicate with I18nSupport with ActionBuilder[User] with ActionFunction[Request, User] {
@@ -50,8 +50,7 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
         Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
         enrolmentsAuthService.authorised(delegatedAuthRule(vrn)).retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
           case None ~ _ =>
-            // TODO Add error service handler
-            Future.successful(InternalServerError)
+            Future.successful(errorHandler.showInternalServerError)
           case _ ~ allEnrolments =>
             val agent = Agent(allEnrolments)
             val user = User(vrn, active = true, Some(agent.arn))
@@ -59,20 +58,17 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
         } recover {
           case _: NoActiveSession =>
             Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, rendering Session Timeout")
-            // TODO Add session time out  view
-            // Unauthorized(views.html.errors.sessionTimeout())
-            Unauthorized("Unauthorised")
+            Unauthorized(views.html.errors.sessionTimeout())
+
           case _: AuthorisationException =>
             Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have delegated authority for Client")
-            // TODO Redirect to VACLUF service
-            // Redirect(controllers.agent.routes.AgentUnauthorisedForClientController.show())
-            Redirect(controllers.routes.HelloWorldController.helloWorld())
+            Ok(views.html.errors.agent.notAuthorisedForClient(vrn))
+
         }
       case _ =>
         Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - No Client VRN in session, redirecting to Select Client page")
-        // TODO Redirect to VACLUF service
-        // Redirect(controllers.agent.routes.AgentUnauthorisedForClientController.show())
-        Future.successful(Redirect(controllers.routes.HelloWorldController.helloWorld()))
+        // TODO Add redirect to VACLUF
+        Future.successful(Redirect(controllers.routes.HelloWorldController.helloWorld().url))
     }
   }
 }

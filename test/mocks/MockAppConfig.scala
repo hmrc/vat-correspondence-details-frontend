@@ -31,6 +31,10 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val reportAProblemNonJSUrl = ""
   override val agentServicesGovUkGuidance = "/setup-agent-services-account"
   override val unauthorisedSignOutUrl = "/sign-out"
+  override val signInContinueUrl = ""
+  override val agentInvitationsFastTrack: String = "/agent-invitations-frontend"
+  override val host = ""
+  override val govUkCommercialSoftware = ""
 
   override def routeToSwitchLanguage: String => Call =
     (lang: String) => controllers.routes.LanguageController.switchToLanguage(lang)

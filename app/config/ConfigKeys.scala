@@ -26,6 +26,7 @@ object ConfigKeys {
   val contactFrontendHost: String = "contact-frontend.host"
 
   val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
+  val govUkCommercialSoftware: String = "govuk.software.commercialSoftware.url"
 
   val governmentGatewayHost: String = "government-gateway.host"
 
@@ -35,5 +36,8 @@ object ConfigKeys {
   val whitelistedIps: String = "whitelist.allowedIps"
   val whitelistExcludedPaths: String = "whitelist.excludedPaths"
   val whitelistShutterPage: String = "whitelist.shutter-page-url"
+  val agentInvitationsFastTrack: String = "agent-invitations-fast-track.url"
+
+  val host: String = "host"
 
 }
