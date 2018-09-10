@@ -45,6 +45,9 @@ trait AppConfig extends ServicesConfig {
   val agentInvitationsFastTrack: String
   val govUkCommercialSoftware: String
   val host: String
+  val vatAgentClientLookupServiceUrl: String
+  val vatAgentClientLookupServicePath: String
+
 }
 
 @Singleton
@@ -89,4 +92,8 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override lazy val govUkCommercialSoftware: String = getString(Keys.govUkCommercialSoftware)
 
   override lazy val host: String = getString(Keys.host)
+
+  override val vatAgentClientLookupServiceUrl: String = getString(Keys.vatAgentClientLookupServiceUrl)
+  override val vatAgentClientLookupServicePath: String = getString(Keys.vatAgentClientLookupServicePath)
+
 }

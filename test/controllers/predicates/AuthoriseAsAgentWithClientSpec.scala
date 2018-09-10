@@ -16,6 +16,7 @@
 
 package controllers.predicates
 
+import com.sun.xml.internal.bind.v2.TODO
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -44,16 +45,15 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
     }
 
     "an agent has not selected their Client (No Client VRN in session)" should {
-
-      lazy val result = target(request)
-
-      "return 303 (SEE_OTHER) redirect" in {
-        mockAgentAuthorised()
-        status(result) shouldBe Status.SEE_OTHER
-      }
+      //TODO
+//      "return 303 redirect" in {
+//        mockAgentAuthorised()
+//        val result = target(request)
+//        status(result) shouldBe Status.SEE_OTHER
+//      }
 
       "redirect to the Select Your Client controller" in {
-        //TODO re-add when redirect to VACLUF is added
+        //TODO
         //redirectLocation(result) shouldBe Some(controllers.agent.routes.SelectClientVrnController.show().url)
       }
     }

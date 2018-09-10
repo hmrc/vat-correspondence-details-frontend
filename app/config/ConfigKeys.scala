@@ -37,6 +37,8 @@ object ConfigKeys {
   val whitelistExcludedPaths: String = "whitelist.excludedPaths"
   val whitelistShutterPage: String = "whitelist.shutter-page-url"
   val agentInvitationsFastTrack: String = "agent-invitations-fast-track.url"
+  val vatAgentClientLookupServiceUrl: String = "vat-agent-client-lookup-frontend.url"
+  val vatAgentClientLookupServicePath: String = "vat-agent-client-lookup-frontend.path"
 
   val host: String = "host"
 

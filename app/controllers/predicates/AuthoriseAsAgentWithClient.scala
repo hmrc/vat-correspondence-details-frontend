@@ -27,6 +27,7 @@ import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.errors.standardError
 
 import scala.concurrent.Future
 
@@ -34,41 +35,47 @@ import scala.concurrent.Future
 class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
                                            val errorHandler: ErrorHandler,
                                            implicit val messagesApi: MessagesApi,
-                                           implicit val appConfig: AppConfig)
-  extends FrontendController with AuthBasePredicate with I18nSupport with ActionBuilder[User] with ActionFunction[Request, User] {
+                                           implicit val appConfig: AppConfig
+                                           )
+  extends FrontendController with AuthBasePredicate with I18nSupport with ActionBuilder[User]
+    with ActionFunction[Request, User] {
 
   private def delegatedAuthRule(vrn: String): Enrolment =
     Enrolment(EnrolmentKeys.vatEnrolmentId)
       .withIdentifier(EnrolmentKeys.vatIdentifierId, vrn)
       .withDelegatedAuthRule(EnrolmentKeys.mtdVatDelegatedAuthRule)
 
-  override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
-    implicit val req: Request[A] = request
+    override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
+      implicit val req: Request[A] = request
 
-    request.session.get(SessionKeys.clientVrn) match {
-      case Some(vrn) =>
-        Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
-        enrolmentsAuthService.authorised(delegatedAuthRule(vrn)).retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
-          case None ~ _ =>
-            Future.successful(errorHandler.showInternalServerError)
-          case _ ~ allEnrolments =>
-            val agent = Agent(allEnrolments)
-            val user = User(vrn, active = true, Some(agent.arn))
-            block(user)
-        } recover {
-          case _: NoActiveSession =>
-            Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, rendering Session Timeout")
-            Unauthorized(views.html.errors.sessionTimeout())
+      request.session.get(SessionKeys.clientVrn) match {
+        case Some(vrn) =>
+          Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
+          enrolmentsAuthService.authorised(delegatedAuthRule(vrn)).retrieve(Retrievals.affinityGroup
+            and Retrievals.allEnrolments) {
+            case None ~ _ =>
+              Future.successful(errorHandler.showInternalServerError)
+            case _ ~ allEnrolments =>
+              val agent = Agent(allEnrolments)
+              val user = User(vrn, active = true, Some(agent.arn))
+              block(user)
+          } recover {
+            case _: NoActiveSession =>
+              Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
+                s"rendering Session Timeout")
+              Unauthorized(views.html.errors.sessionTimeout())
 
-          case _: AuthorisationException =>
-            Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have delegated authority for Client")
-            Ok(views.html.errors.agent.notAuthorisedForClient(vrn))
+            case _: AuthorisationException =>
+              Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
+                s"delegated authority for Client")
+              Ok(views.html.errors.agent.notAuthorisedForClient(vrn))
 
+          }
+        case _ => {
+          //TODO redirect to VALCUFE with query string for redirectURL
+          Future.successful(Ok(views.html.errors.standardError(messagesApi.apply("standardError.title"),
+            messagesApi.apply("standardError.heading"), messagesApi.apply("standardError.message"))))
         }
-      case _ =>
-        Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - No Client VRN in session, redirecting to Select Client page")
-        // TODO Add redirect to VACLUF
-        Future.successful(Redirect(controllers.routes.HelloWorldController.helloWorld().url))
+      }
     }
   }
-}
