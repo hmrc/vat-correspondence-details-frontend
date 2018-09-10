@@ -23,7 +23,6 @@ import play.api.test.Helpers._
 class HelloWorldControllerSpec extends ControllerBaseSpec {
 
   object TestHelloWorldController extends HelloWorldController(
-    mockEnrolmentsAuthService,
     mockAuthPredicate,
     messagesApi,
     mockConfig
@@ -61,6 +60,7 @@ class HelloWorldControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.FORBIDDEN
       }
 
+      //TODO: Add in when the unauth view is added
 //      "return HTML" in {
 //        contentType(result) shouldBe Some("text/html")
 //        charset(result) shouldBe Some("utf-8")

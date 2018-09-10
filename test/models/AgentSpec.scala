@@ -48,11 +48,7 @@ class AgentSpec extends TestUtil {
       Enrolment("HMRC-MTD-VAT", Seq(EnrolmentIdentifier("VRN", "123456789")), "")
     ))
 
-    "throw an InternalError exception" in {
-      intercept[AuthorisationException](Agent(enrolments)(request))
-    }
-
-    "have the correct message in the exception" in {
+    "throw an internal server error with the correct message in the exception" in {
       intercept[AuthorisationException](Agent(enrolments)(request)).reason shouldBe "Agent Service Enrolment Missing"
     }
   }

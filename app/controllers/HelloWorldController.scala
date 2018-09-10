@@ -23,12 +23,10 @@ import scala.concurrent.Future
 import play.api.i18n.{I18nSupport, MessagesApi}
 import config.AppConfig
 import controllers.predicates.AuthPredicate
-import services.EnrolmentsAuthService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 @Singleton
-class HelloWorldController @Inject()(val enrolmentsAuthService: EnrolmentsAuthService,
-                                     val authenticate: AuthPredicate,
+class HelloWorldController @Inject()(val authenticate: AuthPredicate,
                                      val messagesApi: MessagesApi,
                                      implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 

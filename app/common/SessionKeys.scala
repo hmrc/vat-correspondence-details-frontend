@@ -17,6 +17,6 @@
 package common
 
 object SessionKeys {
-  val clientVRN: String = "CLIENT_VRN"
+  val clientVrn: String = "CLIENT_VRN"
   val redirectUrl: String = "redirectUrl"
 }

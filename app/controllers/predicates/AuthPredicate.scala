@@ -47,7 +47,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
           case (true, enrolments) => {
             checkAgentEnrolment(enrolments, block)
             }
-          case (_, enrolments) => checkVatEnrolment(enrolments, block)
+          case (false, enrolments) => checkVatEnrolment(enrolments, block)
         }
       case _ =>
         Logger.warn("[AuthPredicate][invokeBlock] - Missing affinity group")
@@ -62,10 +62,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
         Unauthorized
       case _: AuthorisationException =>
         Logger.warn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering Unauthorised view")
-        //Forbidden(views.html.errors.unauthorised())
-        //TODO: Add forbidden with unauthorised view
-        Forbidden
-
+        Forbidden(views.html.errors.unauthorised())
     }
   }
 
