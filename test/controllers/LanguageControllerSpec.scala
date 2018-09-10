@@ -25,34 +25,34 @@ import play.api.mvc.Cookie
 class LanguageControllerSpec extends ControllerBaseSpec {
 
 
-  val controller = new LanguageController(mockAppConfig, messages)
+  val controller = new LanguageController(mockConfig, messagesApi)
 
   "Calling the .switchToLanguage function" when {
 
     "providing the parameter 'english'" should {
 
-      val result = controller.switchToLanguage("english")(fakeRequest)
+      val result = controller.switchToLanguage("english")(request)
 
       "return a Redirect status (303)" in {
         status(result) shouldBe Status.SEE_OTHER
       }
 
       "use the English language" in {
-        cookies(result).get(Play.langCookieName(messages)) shouldBe
+        cookies(result).get(Play.langCookieName(messagesApi)) shouldBe
           Some(Cookie("PLAY_LANG", "en", None, "/", None, secure = false, httpOnly = false))
       }
     }
 
     "providing the parameter 'cymraeg'" should {
 
-      val result = controller.switchToLanguage("cymraeg")(fakeRequest)
+      val result = controller.switchToLanguage("cymraeg")(request)
 
       "return a Redirect status (303)" in {
         status(result) shouldBe Status.SEE_OTHER
       }
 
       "use the Welsh language" in {
-        cookies(result).get(Play.langCookieName(messages)) shouldBe
+        cookies(result).get(Play.langCookieName(messagesApi)) shouldBe
           Some(Cookie("PLAY_LANG", "cy", None, "/", None, secure = false, httpOnly = false))
       }
     }
@@ -60,14 +60,14 @@ class LanguageControllerSpec extends ControllerBaseSpec {
     "providing an unsupported language parameter" should {
 
       controller.switchToLanguage("english")(FakeRequest())
-      lazy val result = controller.switchToLanguage("orcish")(fakeRequest)
+      lazy val result = controller.switchToLanguage("orcish")(request)
 
       "return a Redirect status (303)" in {
         status(result) shouldBe Status.SEE_OTHER
       }
 
       "keep the current language" in {
-        cookies(result).get(Play.langCookieName(messages)) shouldBe
+        cookies(result).get(Play.langCookieName(messagesApi)) shouldBe
           Some(Cookie("PLAY_LANG", "en", None, "/", None, secure = false, httpOnly = false))
       }
     }

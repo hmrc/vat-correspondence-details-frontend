@@ -14,26 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package common
 
-import play.api.http.Status
-import play.api.test.Helpers._
-
-
-class SignOutControllerSpec extends ControllerBaseSpec {
-
-  val controller = new SignOutController(messagesApi, mockConfig)
-
-  "Navigating to the sign out page" should {
-
-    "return 303" in {
-      val result = controller.signOut(request)
-      status(result) shouldBe Status.SEE_OTHER
-    }
-
-    "redirect to the correct location" in {
-      val result = controller.signOut(request)
-      redirectLocation(result) shouldBe Some(mockConfig.unauthorisedSignOutUrl)
-    }
-  }
+object SessionKeys {
+  val clientVrn: String = "CLIENT_VRN"
+  val redirectUrl: String = "redirectUrl"
 }

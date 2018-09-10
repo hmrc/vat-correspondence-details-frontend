@@ -16,60 +16,55 @@
 
 package controllers
 
+import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.EnrolmentsAuthService
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier, Enrolments}
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.{ExecutionContext, Future}
 
 class HelloWorldControllerSpec extends ControllerBaseSpec {
 
-  private trait Test {
-    val mockAuthConnector: AuthConnector = mock[AuthConnector]
-    val mockEnrolmentsAuthService: EnrolmentsAuthService = new EnrolmentsAuthService(mockAuthConnector)
-    val enrolment = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", "ABCD12345678901")), "")
-    val authResult: Future[_] = Future.successful(Enrolments(Set(enrolment)))
-
-    (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .stubs(*, *, *, *)
-      .returns(authResult)
-
-    val controller = new HelloWorldController(mockEnrolmentsAuthService, messages, mockAppConfig)
-  }
+  object TestHelloWorldController extends HelloWorldController(
+    mockAuthPredicate,
+    messagesApi,
+    mockConfig
+  )
 
   "Calling the helloWorld action" when {
 
-    "a user is enrolled with a valid Agent enrolment" should {
+    "a user is enrolled with a valid enrolment" should {
 
-      "return 200" in new Test {
-        val result = controller.helloWorld(fakeRequest)
+      lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithVrnAndRedirectUrl)
+      lazy val document = Jsoup.parse(bodyOf(result))
+
+      "return 200" in {
+        mockIndividualAuthorised()
         status(result) shouldBe Status.OK
       }
-
-      "return HTML" in new Test {
-        val result = controller.helloWorld(fakeRequest)
+      "return HTML" in {
+        mockIndividualAuthorised()
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
+      }
+
+      "render the Hello world page" in {
+        mockIndividualAuthorised()
+        document.select("h1").text() shouldBe "Hello from vat-correspondence-details-frontend!"
       }
     }
 
-    "a user is not enrolled with a valid Agent enrolment" should {
+    "a user is does not have a valid enrolment" should {
 
-      "return 401" in new Test {
-        override val enrolment = Enrolment("HMRC-MTD-VAT", Seq(EnrolmentIdentifier("VRN", "123456789")), "")
-        val result = controller.helloWorld(fakeRequest)
-        status(result) shouldBe Status.UNAUTHORIZED
+      lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithVrnAndRedirectUrl)
+
+      "return 403" in {
+        mockAgentWithoutEnrolment()
+        status(result) shouldBe Status.FORBIDDEN
       }
 
-      "return HTML" in new Test {
-        override val enrolment = Enrolment("HMRC-MTD-VAT", Seq(EnrolmentIdentifier("VRN", "123456789")), "")
-        val result = controller.helloWorld(fakeRequest)
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
-      }
+      //TODO: Add in when the unauth view is added
+//      "return HTML" in {
+//        contentType(result) shouldBe Some("text/html")
+//        charset(result) shouldBe Some("utf-8")
+//      }
     }
   }
 }

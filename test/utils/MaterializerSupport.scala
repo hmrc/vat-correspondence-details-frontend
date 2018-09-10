@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package utils
 
-import play.api.http.Status
-import play.api.test.Helpers._
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 
-
-class SignOutControllerSpec extends ControllerBaseSpec {
-
-  val controller = new SignOutController(messagesApi, mockConfig)
-
-  "Navigating to the sign out page" should {
-
-    "return 303" in {
-      val result = controller.signOut(request)
-      status(result) shouldBe Status.SEE_OTHER
-    }
-
-    "redirect to the correct location" in {
-      val result = controller.signOut(request)
-      redirectLocation(result) shouldBe Some(mockConfig.unauthorisedSignOutUrl)
-    }
-  }
+trait MaterializerSupport {
+  implicit val system: ActorSystem = ActorSystem("Sys")
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
 }

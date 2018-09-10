@@ -20,11 +20,13 @@ import common.EnrolmentKeys
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, InternalError}
 
-case class Agent[A](arn: String)(implicit request: Request[A]) extends WrappedRequest[A](request)
+case class User[A](vrn: String, active: Boolean = true, arn: Option[String] = None) (implicit request: Request[A]) extends WrappedRequest[A](request) {
+  val isAgent: Boolean = arn.isDefined
+}
 
-object Agent {
-  def apply[A](enrolments: Enrolments)(implicit request: Request[A]): Agent[A] =
+object User {
+  def apply[A](enrolments: Enrolments)(implicit request: Request[A]): User[A] =
     enrolments.enrolments.collectFirst {
-      case Enrolment(EnrolmentKeys.agentEnrolmentId, EnrolmentIdentifier(_, arn) :: _, _, _) => Agent(arn)
-    }.getOrElse(throw InternalError("Agent Service Enrolment Missing"))
+      case Enrolment(EnrolmentKeys.vatEnrolmentId, EnrolmentIdentifier(_, vatId) :: _, _, _) => User(vatId)
+    }.getOrElse(throw InternalError("VRN Missing"))
 }
