@@ -16,9 +16,7 @@
 
 package config
 
-import java.net.URLEncoder
 import java.util.Base64
-
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.Call

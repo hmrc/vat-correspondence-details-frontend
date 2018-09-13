@@ -94,7 +94,7 @@ class NotAuthorisedForClientViewSpec extends ViewBaseSpec {
 
       "has a link which submits the form" in {
         val input = element(Selectors.instructionsLink)
-        input.attr("onClick").contains("document.getElementById('agentInviteForm').submit();") shouldBe true
+        input.attr("onClick").contains("document.getElementById('agentInviteForm').submit()") shouldBe true
       }
     }
 
