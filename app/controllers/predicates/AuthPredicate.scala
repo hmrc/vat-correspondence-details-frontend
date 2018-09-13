@@ -17,7 +17,7 @@
 package controllers.predicates
 
 import common.EnrolmentKeys
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.Logger
@@ -34,6 +34,7 @@ import scala.concurrent.Future
 @Singleton
 class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
                               val messagesApi: MessagesApi,
+                              val errorHandler: ErrorHandler,
                               val authenticateAsAgentWithClient: AuthoriseAsAgentWithClient,
                               implicit val appConfig: AppConfig
                              ) extends FrontendController with AuthBasePredicate with I18nSupport with ActionBuilder[User] with ActionFunction[Request, User] {
@@ -51,21 +52,17 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
         }
       case _ =>
         Logger.warn("[AuthPredicate][invokeBlock] - Missing affinity group")
-        //TODO: Add service error handler and show internal server error
-        //Future.successful(serviceErrorHandler.showInternalServerError)
-        Future.successful(InternalServerError)
+        Future.successful(errorHandler.showInternalServerError)
     } recover {
       case _: NoActiveSession =>
         Logger.debug("[AuthPredicate][invokeBlock] - No active session, rendering Session Timeout view")
-        //Unauthorized(views.html.errors.sessionTimeout())
-        //TODO Add unauthorised with session-timeout view
-        Unauthorized
+        Unauthorized(views.html.errors.sessionTimeout())
+
       case _: AuthorisationException =>
         Logger.warn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering Unauthorised view")
-        Forbidden(views.html.errors.unauthorised())
+        errorHandler.showInternalServerError
     }
   }
-
 
   private[AuthPredicate] def checkAgentEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
     if (enrolments.enrolments.exists(_.key == EnrolmentKeys.agentEnrolmentId)) {
@@ -75,9 +72,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
     else {
       Logger.debug(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment. Enrolments: $enrolments")
       Logger.warn(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment.")
-      //TODO: Add forbidden with unauthorised view
-      //Future.successful(Forbidden(views.html.errors.agent.unauthorised()))
-      Future.successful(Forbidden)
+      Future.successful(Forbidden(views.html.errors.agent.unauthorisedAgent()))
     }
 
   private[AuthPredicate] def checkVatEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
@@ -86,10 +81,8 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
       block(User(enrolments))
     }
     else {
-      Logger.debug(s"[AuthPredicate][checkVatEnrolment] - Individual without HMRC-MTD-VAT enrolment. $enrolments")
-      //TODO: Point to not signed up view
-      //Future.successful(Forbidden(views.html.errors.not_signed_up()))
-      Future.successful(Forbidden)
+      Logger.debug(s"[AuthPredicate][checkVatEnrolment] - Non-agent without HMRC-MTD-VAT enrolment. $enrolments")
+      Future.successful(Forbidden(views.html.errors.not_signed_up()))
     }
 }
 

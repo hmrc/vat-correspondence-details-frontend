@@ -17,6 +17,7 @@
 package controllers.predicates
 
 import mocks.MockAuth
+import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
@@ -54,18 +55,31 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
           }
 
+          "a no active session result is returned from Auth" should {
+
+            lazy val result = await(target(fakeRequestWithClientsVRN))
+
+            "return Unauthorised (401)" in {
+              mockMissingBearerToken()
+              status(result) shouldBe Status.UNAUTHORIZED
+            }
+
+            "render the Unauthorised page" in {
+              Jsoup.parse(bodyOf(result)).title shouldBe "Your session has timed out"
+            }
+          }
+
           "an unauthorised result is returned from Auth" should {
 
             lazy val result = await(target(fakeRequestWithClientsVRN))
 
-            "return Forbidden (403)" in {
+            "return Internal Server Error (500)" in {
               mockUnauthorised()
-              status(result) shouldBe Status.FORBIDDEN
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
 
             "render the Unauthorised page" in {
-              //TODO: Readd when Unauthorised page is added
-            //Jsoup.parse(bodyOf(result)).title shouldBe UnauthorisedPageMessages.title
+            Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
             }
           }
         }
@@ -79,10 +93,9 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             status(result) shouldBe Status.FORBIDDEN
           }
 
-          //TODO: re-add this test when the unauth page has been created
-//          "render the Unauthorised Agent page" in {
-//            Jsoup.parse(bodyOf(result)).title shouldBe AgentUnauthorisedPageMessages.title
-//          }
+          "render the Unauthorised Agent page" in {
+            Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+          }
         }
       }
 
@@ -106,11 +119,9 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             status(result) shouldBe Status.FORBIDDEN
           }
 
-          //TODO: readd this test when the unauth page has been created
-
-          //"render the Not Signed Up page" in {
-          //Jsoup.parse(bodyOf(result)).title shouldBe NotSignedUpPageMessages.title
-        //}
+          "render the Not Signed Up page" in {
+          Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+        }
         }
       }
     }

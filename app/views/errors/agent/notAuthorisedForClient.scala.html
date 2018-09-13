@@ -1,0 +1,61 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers._
+@import common.EnrolmentKeys
+@import java.net.URLEncoder
+
+@(vrn: String)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+
+@postToInvitations = @{
+    s"${appConfig.agentInvitationsFastTrack}?continue=${URLEncoder.encode(s"${appConfig.host}${controllers.routes.HelloWorldController.helloWorld().url}", "UTF-8")}"
+}
+
+@views.html.main_template(
+    title = Messages("unauthorised.agentForClient.title"),
+    bodyClasses = None
+) {
+
+    <h1>@messages("unauthorised.agentForClient.title")</h1>
+
+    <form method="POST" action="@postToInvitations" id="agentInviteForm">
+        <input type="hidden" name="service" id="service" value="@{EnrolmentKeys.vatEnrolmentId}">
+        <input type="hidden" name="clientIdentifierType" id="clientIdentifierType" value="@{EnrolmentKeys.vatIdentifierId.toLowerCase}">
+        <input type="hidden" name="clientIdentifier" id="clientIdentifier" value="@vrn">
+
+        <p data-metrics="agent_unauthorised:view:unauthorised-for-client">
+            @messages("unauthorised.agentForClient.useThisService")
+            <a onclick="sendGAEvent('unauthorised','click-authorise-as-agent','unauthorised-for-client', true);
+                        document.getElementById('agentInviteForm').submit();"
+               href="#"
+               type="submit">@messages("unauthorised.agentForClient.authoriseForClient")</a>.
+        </p>
+
+    </form>
+
+    <p>
+        @messages("unauthorised.agentForClient.enterDetails")
+        <a onclick="sendGAEvent('unauthorised','try-again','unauthorised-for-client', true)"
+           href="@controllers.routes.HelloWorldController.helloWorld.url">
+            @messages("unauthorised.agentForClient.tryAgain")</a>.
+    </p>
+
+    <a onclick="sendGAEvent('unauthorised','sign-out','unauthorised-for-client', true)"
+       class="button"
+       href="@controllers.routes.SignOutController.signOut()">
+        @messages("base.signOut")
+    </a>
+}

@@ -4,6 +4,21 @@ standardError.title = There is a problem with the service - VAT reporting throug
 standardError.heading = Sorry, there is a problem with the service
 standardError.message = Try again later.
 
-unauthorised.title = You can’t use this service yet
-unauthorised.useThisService = To use this service, you need to
-unauthorised.setUpAccount = set up an agent services account
+unauthorised.agentForClient.title = You are not authorised for this client
+unauthorised.agentForClient.useThisService = To use this service, your client needs to
+unauthorised.agentForClient.authoriseForClient = authorise you as their agent
+unauthorised.agentForClient.enterDetails = If you think you have entered the wrong details you can
+unauthorised.agentForClient.tryAgain = try again
+
+unauthorised.title = You can not use this service yet
+unauthorised.instructions = You need to
+unauthorised.instructions2 = sign up to use software to submit your VAT Returns
+
+unauthorised.agent.title = You can not use this service yet
+unauthorised.agent.instructions = To use this service, you need to
+unauthorised.agent.instructions2 = set up an agent services account
+
+sessionTimeout.title = Your session has timed out
+sessionTimeout.helpOne = To manage your VAT account, you will have to
+sessionTimeout.helpTwo = sign in
+sessionTimeout.helpThree = using your Government Gateway ID.

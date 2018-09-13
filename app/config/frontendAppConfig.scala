@@ -17,7 +17,6 @@
 package config
 
 import java.util.Base64
-
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -42,6 +41,10 @@ trait AppConfig extends ServicesConfig {
   val whitelistedIps: Seq[String]
   val whitelistExcludedPaths: Seq[Call]
   val shutterPage: String
+  val signInContinueUrl: String
+  val agentInvitationsFastTrack: String
+  val govUkCommercialSoftware: String
+  val host: String
 }
 
 @Singleton
@@ -64,7 +67,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   private lazy val governmentGatewayHost: String = getString(Keys.governmentGatewayHost)
 
   private lazy val signInContinueBaseUrl: String = getString(Keys.signInContinueBaseUrl)
-  private lazy val signInContinueUrl: String = ContinueUrl(signInContinueBaseUrl + controllers.routes.HelloWorldController.helloWorld().url).encodedUrl
+  override lazy val signInContinueUrl: String = ContinueUrl(signInContinueBaseUrl + controllers.routes.HelloWorldController.helloWorld().url).encodedUrl
   override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/gg/sign-out?continue=$signInContinueUrl"
 
   override def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.LanguageController.switchToLanguage(lang)
@@ -82,4 +85,8 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override lazy val whitelistExcludedPaths: Seq[Call] = whitelistConfig(Keys.whitelistExcludedPaths).map(path => Call("GET", path))
   override lazy val shutterPage: String = getString(Keys.whitelistShutterPage)
 
+  override lazy val agentInvitationsFastTrack: String = getString(Keys.agentInvitationsFastTrack)
+  override lazy val govUkCommercialSoftware: String = getString(Keys.govUkCommercialSoftware)
+
+  override lazy val host: String = getString(Keys.host)
 }

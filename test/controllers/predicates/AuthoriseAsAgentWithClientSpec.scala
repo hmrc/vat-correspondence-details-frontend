@@ -17,6 +17,7 @@
 package controllers.predicates
 
 import mocks.MockAuth
+import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
@@ -52,6 +53,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       }
 
       "redirect to the Select Your Client controller" in {
+        //TODO re-add when redirect to VACLUF is added
         //redirectLocation(result) shouldBe Some(controllers.agent.routes.SelectClientVrnController.show().url)
       }
     }
@@ -69,15 +71,29 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
 
       lazy val result = target(fakeRequestWithVrnAndRedirectUrl)
 
-      "return 303 (SEE_OTHER)" in {
+      "return 200" in {
         mockUnauthorised()
-        status(result) shouldBe Status.SEE_OTHER
+        status(result) shouldBe Status.OK
       }
 
-      //TODO re-add when redirect to VACLUF is added
-//      s"redirect location to ${controllers.agent.routes.AgentUnauthorisedForClientController.show().url}" in {
-//        redirectLocation(result) shouldBe Some(controllers.agent.routes.AgentUnauthorisedForClientController.show().url)
-//      }
+      "page title is correct" in {
+        Jsoup.parse(bodyOf(result)).title shouldBe "You are not authorised for this client"
+      }
+
+    }
+
+    "the agent has no enrolments" should {
+
+      lazy val result = await(target(fakeRequestWithClientsVRN))
+
+      "return Internal Server Error (500)" in {
+        mockAgentWithoutAffinity()
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "render the Internal Server Error page" in {
+        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      }
     }
   }
 }
