@@ -73,8 +73,7 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
           }
         case _ => {
           //TODO redirect to VALCUFE with query string for redirectURL
-          Future.successful(Ok(views.html.errors.standardError(messagesApi.apply("standardError.title"),
-            messagesApi.apply("standardError.heading"), messagesApi.apply("standardError.message"))))
+          Future.successful(errorHandler.showInternalServerError)
         }
       }
     }

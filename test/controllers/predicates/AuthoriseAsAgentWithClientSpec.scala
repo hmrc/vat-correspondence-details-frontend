@@ -16,7 +16,6 @@
 
 package controllers.predicates
 
-import com.sun.xml.internal.bind.v2.TODO
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -41,20 +40,6 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
         mockAgentAuthorised()
         val result = target(fakeRequestWithVrnAndRedirectUrl)
         status(result) shouldBe Status.OK
-      }
-    }
-
-    "an agent has not selected their Client (No Client VRN in session)" should {
-      //TODO
-//      "return 303 redirect" in {
-//        mockAgentAuthorised()
-//        val result = target(request)
-//        status(result) shouldBe Status.SEE_OTHER
-//      }
-
-      "redirect to the Select Your Client controller" in {
-        //TODO
-        //redirectLocation(result) shouldBe Some(controllers.agent.routes.SelectClientVrnController.show().url)
       }
     }
 
@@ -92,6 +77,21 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       }
 
       "render the Internal Server Error page" in {
+        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      }
+    }
+
+    //TODO this will be updated when we build in the real no VRN in session journey
+    "there is no client VRN in session" should {
+
+      lazy val result = await(target(request))
+
+      "show a 500 page" in {
+        mockAgentAuthorised()
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "page title is correct" in {
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
