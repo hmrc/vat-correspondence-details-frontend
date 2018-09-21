@@ -43,21 +43,6 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       }
     }
 
-    "an agent has not selected their Client (No Client VRN in session)" should {
-
-      lazy val result = target(request)
-
-      "return 303 (SEE_OTHER) redirect" in {
-        mockAgentAuthorised()
-        status(result) shouldBe Status.SEE_OTHER
-      }
-
-      "redirect to the Select Your Client controller" in {
-        //TODO re-add when redirect to VACLUF is added
-        //redirectLocation(result) shouldBe Some(controllers.agent.routes.SelectClientVrnController.show().url)
-      }
-    }
-
     "the agent is not authenticated" should {
 
       "return 401 (Unauthorised)" in {
@@ -92,6 +77,21 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       }
 
       "render the Internal Server Error page" in {
+        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      }
+    }
+
+    //TODO this will be updated when we build in the real no VRN in session journey
+    "there is no client VRN in session" should {
+
+      lazy val result = await(target(request))
+
+      "show a 500 page" in {
+        mockAgentAuthorised()
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "page title is correct" in {
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
