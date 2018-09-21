@@ -23,6 +23,7 @@ import play.api.i18n.Lang
 import play.api.mvc.Call
 
 class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mode.Test) extends AppConfig {
+  override val signInUrl = ""
   override val contactHost = ""
   override val assetsPrefix = ""
   override val analyticsToken = ""

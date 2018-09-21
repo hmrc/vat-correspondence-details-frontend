@@ -41,6 +41,7 @@ trait AppConfig extends ServicesConfig {
   val whitelistedIps: Seq[String]
   val whitelistExcludedPaths: Seq[Call]
   val shutterPage: String
+  val signInUrl: String
   val signInContinueUrl: String
   val agentInvitationsFastTrack: String
   val govUkCommercialSoftware: String
@@ -69,6 +70,9 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
 
   private lazy val governmentGatewayHost: String = getString(Keys.governmentGatewayHost)
 
+  private lazy val signInBaseUrl: String = getString(Keys.signInBaseUrl)
+  private lazy val signInOrigin = getString("appName")
+  override lazy val signInUrl: String = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
   private lazy val signInContinueBaseUrl: String = getString(Keys.signInContinueBaseUrl)
   override lazy val signInContinueUrl: String = ContinueUrl(signInContinueBaseUrl + controllers.routes.HelloWorldController.helloWorld().url).encodedUrl
   override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/gg/sign-out?continue=$signInContinueUrl"
