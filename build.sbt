@@ -18,10 +18,11 @@ import play.core.PlayVersion
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
+import uk.gov.hmrc.{SbtArtifactory, SbtAutoBuildPlugin}
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "1.7.0"
+val bootstrapPlayVersion       = "3.3.0"
 val govTemplateVersion         = "5.22.0"
 val playPartialsVersion        = "6.1.0"
 val authClientVersion          = "2.6.0"
@@ -29,13 +30,13 @@ val playUiVersion              = "7.19.0"
 val playLanguageVersion        = "3.4.0"
 val playWhiteListFilterVersion = "2.0.0"
 val scalaTestPlusVersion       = "2.0.0"
-val hmrcTestVersion            = "3.0.0"
-val scalatestVersion           = "3.0.0"
+val hmrcTestVersion            = "3.1.0"
+val scalatestVersion           = "3.0.1"
 val pegdownVersion             = "1.6.0"
-val jsoupVersion               = "1.10.2"
+val jsoupVersion               = "1.10.3"
 val mockitoVersion             = "2.7.17"
-val scalaMockVersion           = "3.5.0"
-val wiremockVersion            = "2.5.1"
+val scalaMockVersion           = "3.6.0"
+val wiremockVersion            = "2.6.0"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
@@ -99,10 +100,11 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {
 }
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .settings(PlayKeys.playDefaultPort := 9148)
   .settings(coverageSettings: _*)
   .settings(playSettings: _*)
+  .settings(majorVersion := 0)
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
