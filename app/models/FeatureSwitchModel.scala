@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-package config.features
+package models
 
-import config.ConfigKeys
-import javax.inject.Inject
-import play.api.Configuration
-
-class Features @Inject()(config: Configuration) {
-
-  val agentAccessEnabled = new Feature(ConfigKeys.agentAccessFeature, config)
-
-
-}
+case class FeatureSwitchModel(agentAccess: Boolean)

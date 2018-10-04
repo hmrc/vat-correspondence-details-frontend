@@ -27,18 +27,18 @@ class FeatureSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    features.agentAcess(true)
+    features.agentAccessEnabled(true)
   }
 
   "The User Research Banner Feature" should {
 
     "return its current state" in {
-      features.agentAcess() mustBe true
+      features.agentAccessEnabled() mustBe true
     }
 
     "switch to a new state" in {
-      features.agentAcess(false)
-      features.agentAcess() mustBe false
+      features.agentAccessEnabled(false)
+      features.agentAccessEnabled() mustBe false
     }
   }
 }

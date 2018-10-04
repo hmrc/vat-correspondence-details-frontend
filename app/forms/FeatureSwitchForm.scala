@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package config.features
+package forms
 
 import config.ConfigKeys
-import javax.inject.Inject
-import play.api.Configuration
+import models.FeatureSwitchModel
+import play.api.data.Form
+import play.api.data.Forms._
 
-class Features @Inject()(config: Configuration) {
-
-  val agentAccessEnabled = new Feature(ConfigKeys.agentAccessFeature, config)
-
-
+object FeatureSwitchForm {
+  val form: Form[FeatureSwitchModel] = Form(
+    mapping(
+      ConfigKeys.agentAccessFeature -> boolean
+    )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
+  )
 }

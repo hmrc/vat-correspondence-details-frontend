@@ -17,6 +17,8 @@
 package config
 
 import java.util.Base64
+
+import config.features.Features
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -48,6 +50,7 @@ trait AppConfig extends ServicesConfig {
   val host: String
   val vatAgentClientLookupServiceUrl: String
   val vatAgentClientLookupServicePath: String
+  val features: Features
 
 }
 
@@ -69,6 +72,8 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override lazy val agentServicesGovUkGuidance: String = getString(Keys.govUkSetupAgentServices)
 
   private lazy val governmentGatewayHost: String = getString(Keys.governmentGatewayHost)
+
+  override val features = new Features(runModeConfiguration)
 
   private lazy val signInBaseUrl: String = getString(Keys.signInBaseUrl)
   private lazy val signInOrigin = getString("appName")

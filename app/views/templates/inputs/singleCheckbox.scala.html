@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package config.features
+@(field: Field, label: String)(implicit messages: Messages)
 
-import config.ConfigKeys
-import javax.inject.Inject
-import play.api.Configuration
+@value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
 
-class Features @Inject()(config: Configuration) {
+<div class="multiple-choice">
+    <input id="@{field.name}" name="@{field.name}" type="checkbox" value="true" @if(value == "true"){ checked }>
+    <label for="@{field.name}">@label</label>
+</div>
 
-  val agentAccessEnabled = new Feature(ConfigKeys.agentAccessFeature, config)
-
-
-}
