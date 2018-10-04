@@ -25,7 +25,7 @@
 }
 
 @views.html.main_template(
-    title = Messages("unauthorised.agentForClient.title"),
+    title = messages("unauthorised.agentForClient.title"),
     bodyClasses = None
 ) {
 
@@ -36,10 +36,10 @@
         <input type="hidden" name="clientIdentifierType" id="clientIdentifierType" value="@{EnrolmentKeys.vatIdentifierId.toLowerCase}">
         <input type="hidden" name="clientIdentifier" id="clientIdentifier" value="@vrn">
 
-        <p data-metrics="agent_unauthorised:view:unauthorised-for-client">
+        <p data-journey="agent_unauthorised:view:unauthorised-for-client">
             @messages("unauthorised.agentForClient.useThisService")
-            <a onclick="sendGAEvent('unauthorised','click-authorise-as-agent','unauthorised-for-client', true);
-                        document.getElementById('agentInviteForm').submit();"
+            <a data-journey-click="unauthorised:click-authorise-as-agent:unauthorised-for-client"
+               onclick="document.getElementById('agentInviteForm').submit();"
                href="#"
                type="submit">@messages("unauthorised.agentForClient.authoriseForClient")</a>.
         </p>
@@ -48,12 +48,12 @@
 
     <p>
         @messages("unauthorised.agentForClient.enterDetails")
-        <a onclick="sendGAEvent('unauthorised','try-again','unauthorised-for-client', true)"
+        <a data-journey-click="unauthorised:try-again:unauthorised-for-client"
            href="@controllers.routes.HelloWorldController.helloWorld.url">
             @messages("unauthorised.agentForClient.tryAgain")</a>.
     </p>
 
-    <a onclick="sendGAEvent('unauthorised','sign-out','unauthorised-for-client', true)"
+    <a data-journey-click="unauthorised:sign-out:unauthorised-for-client"
        class="button"
        href="@controllers.routes.SignOutController.signOut()">
         @messages("base.signOut")
