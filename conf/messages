@@ -18,6 +18,10 @@ unauthorised.agent.title = You can not use this service yet
 unauthorised.agent.instructions = To use this service, you need to
 unauthorised.agent.instructions2 = set up an agent services account
 
+agentJourneyDisabled.title = You cannot change your client’s correspondence details yet
+agentJourneyDisabled.summary = Agents cannot change their client’s correspondence details yet.
+agentJourneyDisabled.instructions = If your client needs to change their correspondence details, they need to sign in using their own Government Gateway details.
+
 sessionTimeout.title = Your session has timed out
 sessionTimeout.helpOne = To manage your VAT account, you will have to
 sessionTimeout.helpTwo = sign in
