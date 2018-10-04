@@ -34,65 +34,88 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
 
   "The AuthoriseAsAgentWithClientSpec" when {
 
-    "the agent is authorised with a Client VRN in session" should {
+    "the agent access is enabled" when {
+      "the agent is authorised with a Client VRN in session" should {
 
-      "return 200" in {
-        mockAgentAuthorised()
-        val result = target(fakeRequestWithVrnAndRedirectUrl)
-        status(result) shouldBe Status.OK
+        "return 200" in {
+          mockConfig.features.agentAccessEnabled(true)
+
+          mockAgentAuthorised()
+          val result = target(fakeRequestWithVrnAndRedirectUrl)
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "the agent is not authenticated" should {
+
+        "return 401 (Unauthorised)" in {
+          mockConfig.features.agentAccessEnabled(true)
+
+          mockMissingBearerToken()
+          val result = target(fakeRequestWithVrnAndRedirectUrl)
+          status(result) shouldBe Status.UNAUTHORIZED
+        }
+      }
+
+      "the agent is not authorised" should {
+
+        mockConfig.features.agentAccessEnabled(true)
+        lazy val result = target(fakeRequestWithVrnAndRedirectUrl)
+
+        "return 200" in {
+          mockUnauthorised()
+          status(result) shouldBe Status.OK
+        }
+
+        "page title is correct" in {
+          Jsoup.parse(bodyOf(result)).title shouldBe "You are not authorised for this client"
+        }
+
+      }
+
+      "the agent has no enrolments" should {
+
+        mockConfig.features.agentAccessEnabled(true)
+        lazy val result = await(target(fakeRequestWithClientsVRN))
+
+        "return Internal Server Error (500)" in {
+          mockAgentWithoutAffinity()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "render the Internal Server Error page" in {
+          Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        }
+      }
+
+      //TODO this will be updated when we build in the real no VRN in session journey
+      "there is no client VRN in session" should {
+
+        mockConfig.features.agentAccessEnabled(true)
+        lazy val result = await(target(request))
+
+        "show a 500 page" in {
+          mockAgentAuthorised()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "page title is correct" in {
+          Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        }
       }
     }
 
-    "the agent is not authenticated" should {
+    "agent access is disabled" should {
+      mockConfig.features.agentAccessEnabled(false)
+      mockAgentAuthorised()
+      val result = target(request)
 
-      "return 401 (Unauthorised)" in {
-        mockMissingBearerToken()
-        val result = target(fakeRequestWithVrnAndRedirectUrl)
+      "return unauthorised" in {
         status(result) shouldBe Status.UNAUTHORIZED
       }
-    }
 
-    "the agent is not authorised" should {
-
-      lazy val result = target(fakeRequestWithVrnAndRedirectUrl)
-
-      "return 200" in {
-        mockUnauthorised()
-        status(result) shouldBe Status.OK
-      }
-
-      "page title is correct" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe "You are not authorised for this client"
-      }
-
-    }
-
-    "the agent has no enrolments" should {
-
-      lazy val result = await(target(fakeRequestWithClientsVRN))
-
-      "return Internal Server Error (500)" in {
-        mockAgentWithoutAffinity()
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-      "render the Internal Server Error page" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
-      }
-    }
-
-    //TODO this will be updated when we build in the real no VRN in session journey
-    "there is no client VRN in session" should {
-
-      lazy val result = await(target(request))
-
-      "show a 500 page" in {
-        mockAgentAuthorised()
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-      "page title is correct" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      "show the correct title" in {
+        Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
       }
     }
   }

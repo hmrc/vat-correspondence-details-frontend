@@ -33,23 +33,25 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
   "The AuthPredicateSpec" when {
 
-    "Agent access is enabled" when {
+    "the user does not have affinity group" should {
 
-      "the user does not have affinity group" should {
-
-        "return ISE (500)" in {
-          mockUserWithoutAffinity()
-          status(target(request)) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
+      "return ISE (500)" in {
+        mockConfig.features.agentAccessEnabled(true)
+        mockUserWithoutAffinity()
+        status(target(request)) shouldBe Status.INTERNAL_SERVER_ERROR
       }
+    }
 
-      "the user is an Agent" when {
+    "the user is an Agent" when {
+
+      "agent access is enabled" when {
 
         "the Agent has an Active HMRC-AS-AGENT enrolment" when {
 
           "a successful authorisation result is returned from Auth" should {
 
             "return OK (200)" in {
+              mockConfig.features.agentAccessEnabled(true)
               mockAgentAuthorised()
               status(target(fakeRequestWithClientsVRN)) shouldBe Status.OK
             }
@@ -57,6 +59,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
           "a no active session result is returned from Auth" should {
 
+            mockConfig.features.agentAccessEnabled(true)
             lazy val result = await(target(fakeRequestWithClientsVRN))
 
             "return Unauthorised (401)" in {
@@ -71,6 +74,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
           "an unauthorised result is returned from Auth" should {
 
+            mockConfig.features.agentAccessEnabled(true)
             lazy val result = await(target(fakeRequestWithClientsVRN))
 
             "return Internal Server Error (500)" in {
@@ -79,13 +83,14 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "render the Unauthorised page" in {
-            Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+              Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
             }
           }
         }
 
         "the Agent does NOT have an Active HMRC-AS-AGENT enrolment" should {
 
+          mockConfig.features.agentAccessEnabled(true)
           lazy val result = await(target(fakeRequestWithClientsVRN))
 
           "return Forbidden" in {
@@ -99,30 +104,45 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
       }
 
+      "agent access is disabled" should {
 
-      "the user is an Individual (Principle Entity)" when {
+          mockConfig.features.agentAccessEnabled(false)
+          mockAgentAuthorised()
+          val result = target(request)
 
-        "they have an active HMRC-MTD-VAT enrolment" should {
-
-          "return OK (200)" in {
-            mockIndividualAuthorised()
-            status(target(request)) shouldBe Status.OK
-          }
-        }
-
-        "they do NOT have an active HMRC-MTD-VAT enrolment" should {
-
-          lazy val result = await(target(request))
-
-          "return Forbidden (403)" in {
-            mockIndividualWithoutEnrolment()
-            status(result) shouldBe Status.FORBIDDEN
+          "return unauthorised" in {
+            status(result) shouldBe Status.UNAUTHORIZED
           }
 
-          "render the Not Signed Up page" in {
-          Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+          "show the correct title" in {
+            Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+          }
         }
+      }
+    }
+
+
+    "the user is an Individual (Principle Entity)" when {
+
+      "they have an active HMRC-MTD-VAT enrolment" should {
+
+        "return OK (200)" in {
+          mockIndividualAuthorised()
+          status(target(request)) shouldBe Status.OK
         }
+      }
+
+      "they do NOT have an active HMRC-MTD-VAT enrolment" should {
+
+        lazy val result = await(target(request))
+
+        "return Forbidden (403)" in {
+          mockIndividualWithoutEnrolment()
+          status(result) shouldBe Status.FORBIDDEN
+        }
+
+        "render the Not Signed Up page" in {
+        Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
       }
     }
   }
