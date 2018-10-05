@@ -43,4 +43,6 @@ object ConfigKeys {
 
   val host: String = "host"
 
+  val agentAccessFeature: String = "features.agentAccess.enabled"
+
 }

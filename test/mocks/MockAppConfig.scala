@@ -17,6 +17,7 @@
 package mocks
 
 import config.AppConfig
+import config.features.Features
 import play.api.{Configuration, Mode}
 import play.api.Mode.Mode
 import play.api.i18n.Lang
@@ -38,6 +39,7 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val govUkCommercialSoftware: String = ""
   override val vatAgentClientLookupServicePath: String = ""
   override val vatAgentClientLookupServiceUrl: String = ""
+  override val features: Features = new Features(runModeConfiguration)
 
   override def routeToSwitchLanguage: String => Call =
     (lang: String) => controllers.routes.LanguageController.switchToLanguage(lang)

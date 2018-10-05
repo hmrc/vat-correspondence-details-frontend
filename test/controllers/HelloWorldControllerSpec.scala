@@ -56,7 +56,7 @@ class HelloWorldControllerSpec extends ControllerBaseSpec {
       lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithVrnAndRedirectUrl)
 
       "return 403" in {
-        mockAgentWithoutEnrolment()
+        mockIndividualWithoutEnrolment()
         status(result) shouldBe Status.FORBIDDEN
       }
 

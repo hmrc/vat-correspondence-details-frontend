@@ -46,8 +46,12 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
       case Some(affinityGroup) ~ allEnrolments =>
         (isAgent(affinityGroup), allEnrolments) match {
           case (true, enrolments) => {
-            checkAgentEnrolment(enrolments, block)
+            if (appConfig.features.agentAccessEnabled()) {
+              checkAgentEnrolment(enrolments, block)
+            } else {
+              Future.successful(Unauthorized(views.html.errors.agent.agentJourneyDisabled()))
             }
+          }
           case (false, enrolments) => checkVatEnrolment(enrolments, block)
         }
       case _ =>
