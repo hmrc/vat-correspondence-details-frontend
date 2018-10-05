@@ -78,7 +78,7 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
           }
         }
       } else {
-        Future.successful(Unauthorized(views.html.errors.not_signed_up()))
+        Future.successful(Unauthorized(views.html.errors.agent.agentJourneyDisabled()))
       }
     }
   }

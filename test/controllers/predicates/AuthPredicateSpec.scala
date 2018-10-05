@@ -33,18 +33,19 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
   "The AuthPredicateSpec" when {
 
-    "the user does not have affinity group" should {
+    "agent access is enabled" when {
 
-      "return ISE (500)" in {
-        mockConfig.features.agentAccessEnabled(true)
-        mockUserWithoutAffinity()
-        status(target(request)) shouldBe Status.INTERNAL_SERVER_ERROR
+      "the user does not have affinity group" should {
+
+        "return ISE (500)" in {
+          mockConfig.features.agentAccessEnabled(true)
+          mockUserWithoutAffinity()
+          status(target(request)) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
       }
-    }
 
-    "the user is an Agent" when {
+      "the user is an Agent" when {
 
-      "agent access is enabled" when {
 
         "the Agent has an Active HMRC-AS-AGENT enrolment" when {
 
@@ -104,21 +105,6 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
       }
 
-      "agent access is disabled" should {
-
-          mockConfig.features.agentAccessEnabled(false)
-          mockAgentAuthorised()
-          val result = target(request)
-
-          "return unauthorised" in {
-            status(result) shouldBe Status.UNAUTHORIZED
-          }
-
-          "show the correct title" in {
-            Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
-          }
-        }
-      }
     }
 
 
@@ -142,7 +128,18 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
 
         "render the Not Signed Up page" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+          Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+        }
+      }
+    }
+
+    "agent access is disabled" should {
+      "show agent journey disabled page" in {
+        mockConfig.features.agentAccessEnabled(false)
+        mockAgentAuthorised()
+        val result = target(request)
+        status(result) shouldBe Status.UNAUTHORIZED
+        Jsoup.parse(bodyOf(result)).title shouldBe "You cannot change your client’s correspondence details yet"
       }
     }
   }

@@ -115,7 +115,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       }
 
       "show the correct title" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+        Jsoup.parse(bodyOf(result)).title shouldBe "You cannot change your client’s correspondence details yet"
       }
     }
   }

@@ -49,7 +49,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
             if (appConfig.features.agentAccessEnabled()) {
               checkAgentEnrolment(enrolments, block)
             } else {
-              Future.successful(Unauthorized(views.html.errors.not_signed_up()))
+              Future.successful(Unauthorized(views.html.errors.agent.agentJourneyDisabled()))
             }
           }
           case (false, enrolments) => checkVatEnrolment(enrolments, block)
