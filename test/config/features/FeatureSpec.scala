@@ -30,7 +30,7 @@ class FeatureSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterE
     features.agentAccessEnabled(true)
   }
 
-  "The User Research Banner Feature" should {
+  "The Agent Access Feature" should {
 
     "return its current state" in {
       features.agentAccessEnabled() mustBe true
