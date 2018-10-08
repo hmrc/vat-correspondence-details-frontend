@@ -15,6 +15,9 @@
  *@
 
 @import config.AppConfig
+@import views.utils.ServiceNameUtil
+
+
 @(appConfig: AppConfig,
   title: String,
   mainClass: Option[String] = None,
@@ -24,7 +27,10 @@
   contentHeader: Option[Html] = None,
   mainContent: Html = HtmlFormat.empty,
   serviceInfoContent: Html = HtmlFormat.empty,
-  scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+  scriptElem: Option[Html] = None,
+  serviceName: Option[String] = None,
+  showSignOut: Boolean = true
+)(implicit request: Request[_], messages: Messages)
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
@@ -37,11 +43,27 @@
     <meta name="format-detection" content="telephone=no" />
 }
 
-@headerNavLinks = {}
+@headerNavLinks = {
+    @if(showSignOut) {
+        <li>
+            <a id="sign-out" href="@routes.SignOutController.signOut()">
+            @messages("base.signOut")
+            </a>
+        </li>
+    }
+}
+
+@navTitle = @{
+    serviceName.fold{
+        ServiceNameUtil.generateHeader
+    }{
+        name => name
+    }
+}
 
 @insideHeader = {
     @uiLayouts.header_nav(
-      navTitle = Some("vat-correspondence-details-frontend"),
+      navTitle = Some(navTitle),
       navTitleLink = None,
       showBetaLink = false,
       navLinks = Some(headerNavLinks))
