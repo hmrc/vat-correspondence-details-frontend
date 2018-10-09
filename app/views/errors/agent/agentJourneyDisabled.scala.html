@@ -16,7 +16,11 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@views.html.main_template(title = messages("agentJourneyDisabled.title"), bodyClasses = None) {
+@views.html.main_template(
+    title = messages("agentJourneyDisabled.title"),
+    bodyClasses = None,
+    serviceName = Some(messages("common.agentService"))) {
+
   <h1>@messages("agentJourneyDisabled.title")</h1>
   <p>@messages("agentJourneyDisabled.summary")</p>
   <p>@messages("agentJourneyDisabled.instructions")</p>
