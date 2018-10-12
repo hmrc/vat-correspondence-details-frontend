@@ -1,4 +1,5 @@
 base.signOut = Sign out
+base.confirmAndContinue = Confirm and continue
 
 common.clientService = Business tax account
 common.agentService = Update your client’s VAT details
@@ -29,3 +30,8 @@ sessionTimeout.title = Your session has timed out
 sessionTimeout.helpOne = To manage your VAT account, you will have to
 sessionTimeout.helpTwo = sign in
 sessionTimeout.helpThree = using your Government Gateway ID.
+
+confirm_email.title = Check your email address
+confirm_email.heading = Confirm the new email address
+confirm_email.link = Change email address
+confirm_email.body = By confirming this change, you agree that the information you have given is complete and correct.
