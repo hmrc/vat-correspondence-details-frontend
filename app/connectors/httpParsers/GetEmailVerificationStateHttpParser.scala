@@ -21,6 +21,7 @@ import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object GetEmailVerificationStateHttpParser {
+
   type GetEmailVerificationStateResponse = Either[GetEmailVerificationStateErrorResponse, EmailVerificationState]
 
   implicit object GetEmailVerificationStateHttpReads extends HttpReads[GetEmailVerificationStateResponse] {
@@ -28,11 +29,12 @@ object GetEmailVerificationStateHttpParser {
       response.status match {
         case OK => Right(EmailVerified)
         case NOT_FOUND => Right(EmailNotVerified)
-        case status => {
-          Logger.warn(s"[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads.read] - Failed to check email. Received status:" +
-            s"${response.status}. Response body: ${response.body}")
+        case status =>
+          Logger.warn(
+            "[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads.read] - " +
+            s"Failed to check email. Received status: ${response.status}. Response body: ${response.body}"
+          )
           Left(GetEmailVerificationStateErrorResponse(status, response.body))
-        }
       }
   }
 

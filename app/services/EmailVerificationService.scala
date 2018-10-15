@@ -27,10 +27,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailVerificationService @Inject()(emailVerificationConnector: EmailVerificationConnector,
-                                  appConfig: AppConfig
-                                 )(implicit ec: ExecutionContext) {
+                                         appConfig: AppConfig)
+                                        (implicit ec: ExecutionContext) {
 
-  private def isEmailVerified(email: String)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+  def isEmailVerified(email: String)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
 
     emailVerificationConnector.getEmailVerificationState(email) map {
       case Right(EmailVerified) =>
@@ -40,18 +40,17 @@ class EmailVerificationService @Inject()(emailVerificationConnector: EmailVerifi
       case Left(_) =>
         None
     }
-  }
 
-  private def createEmailVerificationRequest(email: String, continueUrl: String)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+  def createEmailVerificationRequest(email: String, continueUrl: String)
+                                    (implicit hc: HeaderCarrier): Future[Option[Boolean]] =
 
     emailVerificationConnector.createEmailVerificationRequest(email, continueUrl) map {
       case Right(EmailVerificationRequestSent) =>
         Some(true)
       case Right(EmailAlreadyVerified) =>
         Some(false)
-      case _ => None
+      case _ =>
+        None
     }
-  }
-
 }
 

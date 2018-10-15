@@ -52,7 +52,6 @@ trait AppConfig extends ServicesConfig {
   val vatAgentClientLookupServicePath: String
   val features: Features
   val emailVerificationBaseUrl: String
-
 }
 
 @Singleton
@@ -84,7 +83,6 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/gg/sign-out?continue=$signInContinueUrl"
 
   override lazy val emailVerificationBaseUrl: String = baseUrl(Keys.emailVerificationBaseUrl)
-
 
   override def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.LanguageController.switchToLanguage(lang)
   override def languageMap: Map[String, Lang] = Map(

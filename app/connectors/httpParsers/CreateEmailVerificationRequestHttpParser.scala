@@ -21,19 +21,22 @@ import play.api.http.Status.{CONFLICT, CREATED}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object CreateEmailVerificationRequestHttpParser {
+
   type CreateEmailVerificationRequestResponse = Either[EmailVerificationRequestFailure, EmailVerificationRequestSuccess]
 
   implicit object CreateEmailVerificationRequestHttpReads extends HttpReads[CreateEmailVerificationRequestResponse] {
-    override def read(method: String, url: String, response: HttpResponse): CreateEmailVerificationRequestResponse = response.status match {
-      case CREATED =>
-        Right(EmailVerificationRequestSent)
-      case CONFLICT =>
-        Right(EmailAlreadyVerified)
-      case status => {
-        Logger.warn(s"[CreateEmailVerificationRequestResponse][CreateEmailVerificationRequestHttpReads.read] - Failed to create email verification." +
-          s"Received status:{response.status}. Response body: ${response.body}")
-        Left(EmailVerificationRequestFailure(status, response.body))
-      }
+    override def read(method: String, url: String, response: HttpResponse): CreateEmailVerificationRequestResponse =
+      response.status match {
+        case CREATED =>
+          Right(EmailVerificationRequestSent)
+        case CONFLICT =>
+          Right(EmailAlreadyVerified)
+        case status =>
+          Logger.warn(
+            "[CreateEmailVerificationRequestHttpParser][CreateEmailVerificationRequestHttpReads.read] - " +
+            s"Failed to create email verification. Received status: ${response.status}. Response body: ${response.body}"
+          )
+          Left(EmailVerificationRequestFailure(status, response.body))
     }
   }
 
