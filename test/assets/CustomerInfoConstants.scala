@@ -17,7 +17,7 @@
 package assets
 
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoError
-import models.customerInformation.{ContactDetails, CustomerInformation, PPOB, PPOBAddress}
+import models.customerInformation._
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 
@@ -73,6 +73,23 @@ object CustomerInfoConstants {
     Some("pepsimac@gmail.com"),
     Some(true)
   )
+
+  val fullEmailAddressModel = EmailAddress(
+    Some("test@email.com"),
+    Some(true)
+  )
+
+  val fullEmailAddressJson: JsObject = Json.obj(
+    "emailAddress" -> "test@email.com",
+    "emailVerified" -> true
+  )
+
+  val minEmailAddressModel = EmailAddress(
+    None,
+    None
+  )
+
+  val minEmailAddressJson: JsObject = Json.obj()
 
   val minContactDetailsJson: JsObject = Json.obj()
 

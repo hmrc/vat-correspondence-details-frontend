@@ -21,40 +21,56 @@ import config.AppConfig
 import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
 import models.User
+import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
+import play.api.Logger
+import play.api.http.Status.NOT_FOUND
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.VatSubscriptionService
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.confirm_email
 
 import scala.concurrent.Future
 
 @Singleton
 class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
                                        val messagesApi: MessagesApi,
-                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                       implicit val appConfig: AppConfig,
+                                       val vatSubscriptionService: VatSubscriptionService) extends FrontendController with I18nSupport {
 
   val show: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
+      case Some(_) =>
+        Future.successful(Ok(controllers.routes.ConfirmEmailController.show().url))
 
-      case Some(email) =>
-        Future.successful(Ok(confirm_email(email)))
-      case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
+      case _ =>
+        Future.successful(Redirect(controllers.routes.CaptureEmailController.show().url))
     }
   }
 
-  //TODO: Build submit function
-  val updateEmail: Action[AnyContent] = authenticate.async { implicit user =>
+  val updateEmailAddress: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
-      case Some(_) => Future.successful(Ok)
+      case Some(email) =>
+        vatSubscriptionService.updateEmailAddress(email, user.vrn) map {
+          case Right(EmailAddressUpdateResponseModel(true)) =>
+            Redirect(routes.EmailChangeSuccessController.show().url)
+          case Right(EmailAddressUpdateResponseModel(false)) =>
+            Redirect(routes.VerifyEmailController.show().url)
+          case notFound@Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided")) =>
+            throw new InternalServerException("updateEmail failed: status=" + notFound.left.get.message)
+          case failed@Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address")) =>
+            throw new InternalServerException("updateEmail failed: status=" + failed.left.get.message)
+        }
 
-      //TODO: Log and redirect to VAT overview page
-      case _ => Future.successful(Ok)
+      case _ =>
+        Logger.info("[VatSubscriptionConnector][updateEmailAddress] no email address found in session")
+        Future.successful(Redirect(controllers.routes.CaptureEmailController.show().url))
     }
   }
 
   private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {
-    user.session.get(SessionKeys.emailKey).filter(_.nonEmpty).orElse(None)
+    user.session.get(SessionKeys.emailKey).filter(_.nonEmpty)
   }
 }

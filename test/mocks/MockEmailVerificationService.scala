@@ -15,28 +15,34 @@
  */
 
 package mocks
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{reset, when}
-import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.BeforeAndAfterEach
+
+import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatest.mockito.MockitoSugar
+import org.mockito.Mockito.{reset, when}
 import services.EmailVerificationService
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.http.HeaderCarrier
+import org.mockito.ArgumentMatchers
 
 import scala.concurrent.Future
 
-trait MockEmailVerificationService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  val mockEmailVerificationService: EmailVerificationService = mock[EmailVerificationService]
+trait MockEmailVerificationService extends MockitoSugar with BeforeAndAfterEach {
+  this: Suite =>
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockEmailVerificationService)
   }
 
-  def setupMockCreateEmailVerification(response: Option[Boolean]): OngoingStubbing[Future[Option[Boolean]]] = {
-    when(mockEmailVerificationService.createEmailVerificationRequest(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-  }
+  val mockEmailVerificationService: EmailVerificationService = mock[EmailVerificationService]
 
+  def mockGetEmailVerificationState(emailAddress: String)(response: Future[Option[Boolean]]): Unit =
+    when(mockEmailVerificationService.isEmailVerified(
+      ArgumentMatchers.eq(emailAddress)
+    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+
+  def mockCreateEmailVerificationRequest(response: Option[Boolean]): Unit =
+    when(mockEmailVerificationService.createEmailVerificationRequest(
+      ArgumentMatchers.any(),
+      ArgumentMatchers.any()
+    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn Future.successful(response)
 }

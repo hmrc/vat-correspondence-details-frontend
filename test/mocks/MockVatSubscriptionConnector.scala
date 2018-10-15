@@ -28,12 +28,23 @@ trait MockVatSubscriptionConnector extends MockFactory {
 
   val connector: VatSubscriptionConnector = mock[VatSubscriptionConnector]
 
-  def mockResponse(result: Future[GetCustomerInfoResponse]): Unit =
+  def mockGetCustomerInfoResponse(result: Future[GetCustomerInfoResponse]): Unit =
     (connector.getCustomerInfo(_: String)(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, *, *)
       .returns(result)
 
-  def mockSuccessResponse(): Unit = mockResponse(Future.successful(Right(customerInfoModel)))
+  def mockGetCustomerInfoSuccessResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Right(customerInfoModel)))
 
-  def mockFailureResponse(): Unit = mockResponse(Future.successful(Left(invalidJsonError)))
+  def mockGetCustomerInfoFailureResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Left(invalidJsonError)))
+
+  def mockUpdateEmailAddressResponse(result: Either[String, String]): Unit =
+    (connector.updateEmailAddress(_: String, _: String))
+      .expects(*, *)
+      .returns(result)
+
+  def mockUpdateEmailAddressSuccessResponse(): Unit = mockUpdateEmailAddressResponse(Right("Updated"))
+
+  def mockUpdateEmailAddressFailureResponse(): Unit = mockUpdateEmailAddressResponse(Left("Failed"))
+
+
 }

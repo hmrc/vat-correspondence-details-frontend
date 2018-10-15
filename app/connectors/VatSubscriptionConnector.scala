@@ -44,4 +44,8 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
         httpError
     }
   }
+
+  //TODO: Build this function
+  def updateEmailAddress(value: Any, value1: Any): Either[String, String] = Right("Ok")
+
 }

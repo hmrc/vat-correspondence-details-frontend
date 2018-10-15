@@ -53,4 +53,3 @@ class EmailVerificationService @Inject()(emailVerificationConnector: EmailVerifi
         None
     }
 }
-
