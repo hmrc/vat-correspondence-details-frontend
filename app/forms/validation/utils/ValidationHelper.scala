@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package common
+package forms.validation.utils
 
-object SessionKeys {
-  val clientVrn: String = "CLIENT_VRN"
-  val redirectUrl: String = "redirectUrl"
-  val emailKey: String = "Email"
+import play.api.data.validation._
+
+object ValidationHelper {
+
+  def validate(constraint: Boolean, message: String): ValidationResult = {
+    if (constraint) Invalid(message) else Valid
+  }
+
+  def validateNot(constraint: Boolean, message: String): ValidationResult = {
+    validate(!constraint, message)
+  }
 }
