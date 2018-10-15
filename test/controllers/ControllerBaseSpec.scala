@@ -21,7 +21,7 @@ import play.api.http.Status
 import play.api.mvc.{Action, AnyContent}
 import utils.MaterializerSupport
 
-trait ControllerBaseSpec extends MockAuth with MockHttp with MaterializerSupport{
+trait ControllerBaseSpec extends MockAuth with MockHttp with MaterializerSupport {
 
   def unauthenticatedCheck(controllerAction: Action[AnyContent]): Unit = {
 
