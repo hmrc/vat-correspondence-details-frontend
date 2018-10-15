@@ -27,17 +27,21 @@ class NotSignedUpViewSpec extends ViewBaseSpec {
     lazy val view = views.html.errors.not_signed_up()(request, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    s"have the correct document title" in {
+    "have the correct document title" in {
       document.title shouldBe "You can not use this service yet"
     }
 
-    s"have the correct page heading" in {
+    "have the correct page heading" in {
       elementText("#content h1") shouldBe "You can not use this service yet"
     }
 
-    s"have the correct instructions on the page" in {
+    "have the correct instructions on the page" in {
       elementText("#content p") shouldBe "You need to sign up to use software to submit your VAT Returns."
     }
 
+    "have a link to sign up" in {
+      document.select("#content > article > p > a").first().attr("href") shouldBe
+        "https://www.gov.uk/guidance/use-software-to-submit-your-vat-returns"
+    }
   }
 }
