@@ -1,15 +1,20 @@
 # microservice specific routes
 
-GET        /language/:lang          controllers.LanguageController.switchToLanguage(lang: String)
-GET        /sign-out                controllers.SignOutController.signOut
-GET        /hello-world             controllers.HelloWorldController.helloWorld
+GET        /language/:lang                  controllers.LanguageController.switchToLanguage(lang: String)
+GET        /sign-out                        controllers.SignOutController.signOut
+
+GET        /hello-world                     controllers.HelloWorldController.helloWorld
 
 # confirm email address
-GET        /confirm-email-address          controllers.ConfirmEmailController.show
-GET        /confirm-email-address          controllers.ConfirmEmailController.updateEmail
+GET        /confirm-email-address           controllers.ConfirmEmailController.show
+GET        /confirm-email-address           controllers.ConfirmEmailController.updateEmail
 
-#verify email address
-GET        /verify-email                   controllers.VerifyEmailController.show
+# verify email address
+GET        /verify-email                    controllers.VerifyEmailController.show
 
 # email change successful
-GET        /email-change-success           controllers.EmailChangeSuccessController.show
+GET        /email-change-success            controllers.EmailChangeSuccessController.show
+
+# capture email address
+GET        /change-email-address            controllers.CaptureEmailController.show
+POST       /change-email-address            controllers.CaptureEmailController.submit

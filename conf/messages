@@ -4,6 +4,8 @@ base.finish = Finish
 
 common.clientService = Business tax account
 common.agentService = Update your client’s VAT details
+common.continue = Continue
+common.error.heading = There is a problem
 
 standardError.title = There is a problem with the service - VAT reporting through software - GOV.UK
 standardError.heading = Sorry, there is a problem with the service
@@ -26,6 +28,12 @@ unauthorised.agent.instructions2 = set up an agent services account
 agentJourneyDisabled.title = You cannot change your client’s correspondence details yet
 agentJourneyDisabled.summary = Agents cannot change their client’s correspondence details yet.
 agentJourneyDisabled.instructions = If your client needs to change their correspondence details, they need to sign in using their own Government Gateway details.
+
+captureEmail.title = What is the email address?
+captureEmail.hint = For example, me@me.com
+captureEmail.error.exceedsMaxLength = Email address must be 132 characters or less
+captureEmail.error.invalid = Enter a valid email address
+captureEmail.error.empty = Enter your email address
 
 sessionTimeout.title = Your session has timed out
 sessionTimeout.helpOne = To manage your VAT account, you will have to
