@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package common
+@(alternativeText: Option[String] = None)(implicit messages: Messages)
 
-object SessionKeys {
-  val clientVrn: String = "CLIENT_VRN"
-  val redirectUrl: String = "redirectUrl"
-  val emailKey: String = "Email"
-}
+<input id="continue-button" class="button" type="submit" value="@alternativeText.getOrElse(messages("base.continue"))">

@@ -16,6 +16,8 @@
 
 package utils
 
+import scala.concurrent.ExecutionContext
+
 import assets.BaseTestConstants._
 import common.SessionKeys
 import config.ErrorHandler
@@ -25,16 +27,14 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.Injector
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
-import play.filters.csrf.CSRF.Token
 import play.filters.csrf.{CSRFConfigProvider, CSRFFilter}
+import play.filters.csrf.CSRF.Token
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.ExecutionContext
-
-trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MaterializerSupport{
+trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MaterializerSupport {
 
   lazy val injector: Injector = app.injector
   lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
@@ -53,6 +53,12 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach
 
   implicit lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.clientVrn -> vrn)
+
+  def fakeRequestWithEmailFormBody(route: Call, email: String): FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest(route).withFormUrlEncodedBody("email" -> email)
+
+  def fakeRequestWithEmailFormBody(route: String, email: String): FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest().withFormUrlEncodedBody("email" -> email)
 
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)
   lazy val agent: User[AnyContentAsEmpty.type] =

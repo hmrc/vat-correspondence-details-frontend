@@ -2,4 +2,8 @@
 
 GET        /language/:lang          controllers.LanguageController.switchToLanguage(lang: String)
 GET        /sign-out                controllers.SignOutController.signOut
+
 GET        /hello-world             controllers.HelloWorldController.helloWorld
+
+GET        /email-address           controllers.CaptureEmailController.show
+POST       /email-address           controllers.CaptureEmailController.submit
