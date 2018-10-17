@@ -16,11 +16,11 @@
 
 package views
 
-import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.Assertion
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import _root_.utils.TestUtil
+import org.jsoup.Jsoup
 
 import scala.collection.JavaConverters._
 
