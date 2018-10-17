@@ -31,7 +31,7 @@ sessionTimeout.helpOne = To manage your VAT account, you will have to
 sessionTimeout.helpTwo = sign in
 sessionTimeout.helpThree = using your Government Gateway ID.
 
-confirm_email.title = Check your email address
+confirm_email.title = Confirm the new email address
 confirm_email.heading = Confirm the new email address
-confirm_email.link = Change email address
+confirm_email.link = Edit email address
 confirm_email.body = By confirming this change, you agree that the information you have given is complete and correct.
