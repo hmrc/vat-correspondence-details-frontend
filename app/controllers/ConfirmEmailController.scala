@@ -49,13 +49,14 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
   val updateEmail: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
+      case Some(_) => Future.successful(Ok)
 
-      case Some(email) =>
-        Future.successful(Ok(confirm_email(email)))
+      //TODO: Log and redirect to VAT overview page
+      case _ => Future.successful(Ok)
     }
   }
 
   private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {
-    user.session.get(SessionKeys.emailKey).filter(_.nonEmpty)
+    user.session.get(SessionKeys.emailKey).filter(_.nonEmpty).orElse(None)
   }
 }

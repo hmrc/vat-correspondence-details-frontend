@@ -40,11 +40,14 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
   "Calling the extractEmail function in ConfirmEmailController" when {
 
     "there is an authenticated request from a user with an email in session" should {
-      "result in an email address being retrieved" in {
+      "result in an email address being retrieved if there is an email" in {
+
         mockIndividualAuthorised()
+
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = testGetRequest.withSession(
           SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
         val user = User[AnyContent](testVatNumber, active = true, None)(request)
+
         TestConfirmEmailController.extractSessionEmail(user) shouldBe Some(testEmail)
       }
     }
@@ -52,7 +55,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
 
   "Calling the show action in ConfirmEmailController" when {
 
-    "there is a email in session" should {
+    "there is an email in session" should {
       "show the Confirm Email page" in {
 
         mockIndividualAuthorised()
@@ -66,9 +69,15 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "there isn't an email in  session" should {
-      "redirect to Capture Email page" in {
+    "there isn't an email in session" should {
+      "return OK" in {
 
+        mockIndividualAuthorised()
+
+        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> "")
+        val result = TestConfirmEmailController.show(request)
+
+        status(result) shouldBe Status.OK
       }
     }
 
@@ -79,6 +88,47 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
 
         val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.show(request)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      }
+    }
+  }
+
+  "Calling the updateEmail action in ConfirmEmailController" when {
+
+    "there is an email in session" should {
+      "return OK" in {
+
+        mockIndividualAuthorised()
+
+        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val result = TestConfirmEmailController.updateEmail(request)
+
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "there isn't an email in session" should {
+      "return OK" in {
+
+        mockIndividualAuthorised()
+
+        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber)
+        val result = TestConfirmEmailController.updateEmail(request)
+
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "the user is not authorised" should {
+      "show an internal server error" in {
+
+        mockUnauthorised()
+
+        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val result = TestConfirmEmailController.updateEmail(request)
+
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
