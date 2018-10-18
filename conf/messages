@@ -38,7 +38,11 @@ confirmEmail.body = By confirming this change, you agree that the information yo
 
 confirmationEmail.title = Verify your email address
 confirmationEmail.heading = Verify your email address
-confirmationEmail.lineOne = We’ve sent an email to . Click on the link in the email to verify your email address.
-confirmationEmail.lineTwo =
-confirmationEmail.accordion.heading =
-confirmationEmail.accordion.lineOne =
+confirmationEmail.lineOne = We’ve sent an email to {0}. Click on the link in the email to verify your email address.
+confirmationEmail.lineTwo = You can
+confirmationEmail.lineThree = change your email address
+confirmationEmail.lineFour = if it is not correct.
+confirmationEmail.accordion.heading = I did not get the email
+confirmationEmail.accordion.lineOne = Check your junk folder. If it’s not there we can
+confirmationEmail.accordion.lineTwo = send it again
+confirmationEmail.accordion.lineThree = If we send it again, any previous link will stop working.

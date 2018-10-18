@@ -22,11 +22,12 @@
 
 @accordionContent = {
 
-    //TODO: Point to edit email address
-    <p>@Html(messages(
-        "confirmationEmail.accordion.lineOne",
-        routes.ConfirmEmailController.show().url
-    ))</p>
+    @*TODO: Point to edit email address*@
+    <p>
+        @messages("confirmationEmail.accordion.lineOne")
+        <a href='@controllers.routes.HelloWorldController.helloWorld().url'>@messages("confirmationEmail.accordion.lineTwo")</a>.
+        @messages("confirmationEmail.accordion.lineThree")
+    </p>
 }
 
 @main_template(title = messages("confirmationEmail.title"), bodyClasses = None) {
@@ -35,7 +36,12 @@
 
     <p>@messages("confirmationEmail.lineOne", email)</p>
 
-    <p>@Html(messages("confirmationEmail.lineTwo", routes.ConfirmEmailController.show().url))</p>
+    <p>
+        @messages("confirmationEmail.lineTwo")
+        @*TODO: Call method to resend email*@
+        <a href='@controllers.routes.ConfirmationEmailController.show().url'>@messages("confirmationEmail.lineThree")</a>
+        @messages("confirmationEmail.lineFour")
+    </p>
 
     @accordionHelper(
         messages("confirmationEmail.accordion.heading"),

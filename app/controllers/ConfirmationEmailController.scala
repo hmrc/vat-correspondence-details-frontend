@@ -16,14 +16,14 @@
 
 package controllers
 
+import common.SessionKeys
 import config.AppConfig
 import controllers.predicates.AuthPredicate
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
+import models.User
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import
-
 
 import scala.concurrent.Future
 
@@ -34,6 +34,17 @@ class ConfirmationEmailController @Inject()(val authenticate: AuthPredicate,
 
   val show: Action[AnyContent] = authenticate.async { implicit user =>
 
-    Future.successful(Ok(views.html.confirmation_email()))
+    extractSessionEmail(user) match {
+      case Some(email) => Future.successful(Ok(views.html.confirmation_email(email)))
+
+      //TODO: Redirect(routes.CaptureEmailController.show())
+      case _ => Future.successful(Ok)
+    }
+
+  }
+
+  private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {
+    user.session.get(SessionKeys.emailKey).filter(_.nonEmpty).orElse(None)
+  }
 
 }
