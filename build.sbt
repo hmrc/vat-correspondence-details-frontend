@@ -34,7 +34,7 @@ val hmrcTestVersion            = "3.1.0"
 val scalatestVersion           = "3.0.1"
 val pegdownVersion             = "1.6.0"
 val jsoupVersion               = "1.10.3"
-val mockitoVersion             = "2.7.17"
+val mockitoVersion             = "2.8.47"
 val scalaMockVersion           = "3.6.0"
 val wiremockVersion            = "2.6.0"
 
