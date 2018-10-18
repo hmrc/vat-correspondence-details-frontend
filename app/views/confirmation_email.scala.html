@@ -21,21 +21,24 @@
 
 
 @accordionContent = {
-    <p>@Html(Messages(
-        "principal.verify_email.accordion.line_1",
+
+    //TODO: Point to edit email address
+    <p>@Html(messages(
+        "confirmationEmail.accordion.lineOne",
         routes.ConfirmEmailController.show().url
     ))</p>
 }
 
-@main_template(title = messages("verify_email.title"), bodyClasses = None) {
+@main_template(title = messages("confirmationEmail.title"), bodyClasses = None) {
 
-    <h1 class="heading-large">@messages("verify_email.heading")</h1>
+    <h1 class="heading-large">@messages("confirmationEmail.heading")</h1>
 
-    <p>@messages("verify_email.line_1", email)</p>
-    @*<p>@Html(messages("verify_email.line_2", routes.CaptureEmailController.show().url))</p>*@
+    <p>@messages("confirmationEmail.lineOne", email)</p>
+
+    <p>@Html(messages("confirmationEmail.lineTwo", routes.ConfirmEmailController.show().url))</p>
 
     @accordionHelper(
-        Messages("verify_email.accordion.heading"),
+        messages("confirmationEmail.accordion.heading"),
         accordionContent
     )
 }

@@ -35,3 +35,10 @@ confirmEmail.title = Confirm the new email address
 confirmEmail.heading = Confirm the new email address
 confirmEmail.link = Edit email address
 confirmEmail.body = By confirming this change, you agree that the information you have given is complete and correct.
+
+confirmationEmail.title = Verify your email address
+confirmationEmail.heading = Verify your email address
+confirmationEmail.lineOne = We’ve sent an email to . Click on the link in the email to verify your email address.
+confirmationEmail.lineTwo =
+confirmationEmail.accordion.heading =
+confirmationEmail.accordion.lineOne =
