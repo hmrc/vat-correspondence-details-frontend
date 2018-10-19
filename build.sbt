@@ -78,7 +78,7 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-whitelist-filter" % playWhiteListFilterVersion
 )
 
-def test(scope: String = "test"): Seq[ModuleID] = Seq(
+def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % scope,
   "org.scalatest" %% "scalatest" % "3.0.4" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
@@ -86,8 +86,8 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.mockito" % "mockito-core" % mockitoVersion % scope
-
+  "org.mockito" % "mockito-core" % mockitoVersion % scope,
+  "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {

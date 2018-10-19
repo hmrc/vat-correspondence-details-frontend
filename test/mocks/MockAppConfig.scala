@@ -40,6 +40,7 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val vatAgentClientLookupServicePath: String = ""
   override val vatAgentClientLookupServiceUrl: String = ""
   override val features: Features = new Features(runModeConfiguration)
+  override val emailVerificationBaseUrl: String = "mockEmailBaseUrl"
 
   override def routeToSwitchLanguage: String => Call =
     (lang: String) => controllers.routes.LanguageController.switchToLanguage(lang)

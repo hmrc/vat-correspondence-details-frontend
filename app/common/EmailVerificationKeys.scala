@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package views.utils
+package common
 
-import models.User
-import play.api.i18n.Messages
-import play.api.mvc.Request
-
-object ServiceNameUtil{
-
-  def generateHeader(implicit request: Request[_], messages: Messages): String = {
-    request match {
-      case user: User[_] => if (user.isAgent) messages("common.agentService") else messages("common.clientService")
-      case _ => messages("common.clientService")
-    }
-  }
-
+object EmailVerificationKeys {
+  val EmailKey = "email"
+  val TemplateIdKey = "templateId"
+  val TemplateParametersKey = "templateParameters"
+  val LinkExpiryDurationKey = "linkExpiryDuration"
+  val ContinueUrlKey = "continueUrl"
 }

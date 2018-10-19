@@ -41,6 +41,8 @@ object ConfigKeys {
   val vatAgentClientLookupServiceUrl: String = "vat-agent-client-lookup-frontend.url"
   val vatAgentClientLookupServicePath: String = "vat-agent-client-lookup-frontend.path"
 
+  val emailVerificationBaseUrl: String = "email-verification"
+
   val host: String = "host"
 
   val agentAccessFeature: String = "features.agentAccess.enabled"
