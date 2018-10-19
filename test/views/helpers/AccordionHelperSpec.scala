@@ -26,9 +26,11 @@ import org.scalatest.Matchers._
 class AccordionHelperSpec extends PlaySpec with OneServerPerSuite {
 
   val testLabel: String = "test label"
+  val testFeature: String = "test-feature"
+  val testPageName: String = "test-page-name"
   val testHtml: Html = Html("test html")
 
-  lazy val view: Html = views.html.helpers.accordionHelper(testLabel, testHtml)
+  lazy val view: Html = views.html.helpers.accordionHelper(testLabel, testFeature, testPageName, testHtml)
 
   lazy implicit val doc: Document = Jsoup.parse(view.body)
 
@@ -37,7 +39,10 @@ class AccordionHelperSpec extends PlaySpec with OneServerPerSuite {
 
       doc.getElementsByTag("summary").text() should include(testLabel)
       doc.getElementsByTag("details").text() should include(testHtml.toString())
+    }
 
+    "have a GA tag with the correct tag" in {
+      doc.getElementsByClass("summary").attr("data-journey-click") shouldBe "test-feature-help:reveal:test-page-name"
     }
   }
 }

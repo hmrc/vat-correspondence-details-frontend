@@ -25,7 +25,9 @@
     @*TODO: Point to edit email address*@
     <p>
         @messages("confirmationEmail.accordion.lineOne")
-        <a href='@controllers.routes.HelloWorldController.helloWorld().url'>@messages("confirmationEmail.accordion.lineTwo")</a>.
+        <a href='@controllers.routes.HelloWorldController.helloWorld().url'
+        data-journey-click="email-address:edit:confirmation-email">
+        @messages("confirmationEmail.accordion.lineTwo")</a>.
         @messages("confirmationEmail.accordion.lineThree")
     </p>
 }
@@ -39,12 +41,15 @@
     <p>
         @messages("confirmationEmail.lineTwo")
         @*TODO: Call method to resend email*@
-        <a href='@controllers.routes.ConfirmationEmailController.show().url'>@messages("confirmationEmail.lineThree")</a>
+        <a href='@controllers.routes.ConfirmationEmailController.show().url'
+        data-journey-click="email-address:resend:confirmation-email">@messages("confirmationEmail.lineThree")</a>
         @messages("confirmationEmail.lineFour")
     </p>
 
     @accordionHelper(
         messages("confirmationEmail.accordion.heading"),
+        "email-address",
+        "confirmation-email",
         accordionContent
     )
 }

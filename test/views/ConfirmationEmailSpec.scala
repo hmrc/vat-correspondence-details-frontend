@@ -40,6 +40,10 @@ class ConfirmationEmailSpec extends ViewBaseSpec {
       elementText("#content p:nth-of-type(2)") shouldBe "You can change your email address if it is not correct."
     }
 
+    "have a GA tag with the correct tag" in {
+      element("#content > article > p:nth-child(3) > a").attr("data-journey-click") shouldBe "email-address:resend:confirmation-email"
+    }
+
     //TODO Add test to check the link route is correct
     "have a link element in the first paragraph that links to the Capture your email page" in {
       element("#content > article > p:nth-child(3) > a").attr("href") shouldBe controllers.routes.ConfirmationEmailController.show().url
@@ -54,6 +58,10 @@ class ConfirmationEmailSpec extends ViewBaseSpec {
       "have a paragraph with the correct text" in {
         elementText(".panel.panel-border-narrow") shouldBe "Check your junk folder. If it’s not there we can" +
           " send it again. If we send it again, any previous link will stop working."
+      }
+
+      "have a GA tag with the correct tag" in {
+        element("#content > article > details > div > p > a").attr("data-journey-click") shouldBe "email-address:edit:confirmation-email"
       }
 
       //TODO: Update to call the correct controller action
