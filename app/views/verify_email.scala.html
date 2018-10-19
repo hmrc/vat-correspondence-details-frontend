@@ -24,30 +24,30 @@
 
     @*TODO: Point to edit email address*@
     <p>
-        @messages("confirmationEmail.accordion.lineOne")
+        @messages("verifyEmail.accordion.lineOne")
         <a href='@controllers.routes.HelloWorldController.helloWorld().url'
-        data-journey-click="email-address:edit:confirmation-email">
-        @messages("confirmationEmail.accordion.lineTwo")</a>.
-        @messages("confirmationEmail.accordion.lineThree")
+        data-journey-click="email-address:edit:verify-email">
+        @messages("verifyEmail.accordion.lineTwo")</a>.
+        @messages("verifyEmail.accordion.lineThree")
     </p>
 }
 
-@main_template(title = messages("confirmationEmail.title"), bodyClasses = None) {
+@main_template(title = messages("verifyEmail.title"), bodyClasses = None) {
 
-    <h1 class="heading-large">@messages("confirmationEmail.heading")</h1>
+    <h1 class="heading-large">@messages("verifyEmail.heading")</h1>
 
-    <p>@messages("confirmationEmail.lineOne", email)</p>
+    <p>@messages("verifyEmail.lineOne", email)</p>
 
     <p>
-        @messages("confirmationEmail.lineTwo")
+        @messages("verifyEmail.lineTwo")
         @*TODO: Call method to resend email*@
-        <a href='@controllers.routes.ConfirmationEmailController.show().url'
-        data-journey-click="email-address:resend:confirmation-email">@messages("confirmationEmail.lineThree")</a>
-        @messages("confirmationEmail.lineFour")
+        <a href='@controllers.routes.VerifyEmailController.show().url'
+        data-journey-click="email-address:resend:verify-email">@messages("verifyEmail.lineThree")</a>
+        @messages("verifyEmail.lineFour")
     </p>
 
     @accordionHelper(
-        messages("confirmationEmail.accordion.heading"),
+        messages("verifyEmail.accordion.heading"),
         "email-address",
         "confirmation-email",
         accordionContent

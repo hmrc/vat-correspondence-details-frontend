@@ -24,9 +24,9 @@ import play.api.test.Helpers._
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 
-class ConfirmationEmailControllerSpec extends ControllerBaseSpec {
+class VerifyEmailControllerSpec extends ControllerBaseSpec {
 
-    object TestConfirmationEmailController extends ConfirmationEmailController (
+    object TestVerifyEmailController extends VerifyEmailController (
       mockAuthPredicate,
       messagesApi,
       mockConfig
@@ -35,9 +35,9 @@ class ConfirmationEmailControllerSpec extends ControllerBaseSpec {
   val testVatNumber: String = "999999999"
   val testEmail: String = "test@email.co.uk"
 
-  lazy val testGetRequest = FakeRequest("GET", "/confirm-email")
+  lazy val testGetRequest = FakeRequest("GET", "/verify-email")
 
-  "Calling the extractEmail function in ConfirmEmailController" when {
+  "Calling the extractEmail function in VerifyEmailController" when {
 
     "there is an authenticated request from a user with an email in session" should {
       "result in an email address being retrieved if there is an email" in {
@@ -48,12 +48,12 @@ class ConfirmationEmailControllerSpec extends ControllerBaseSpec {
           SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
         val user = User[AnyContent](testVatNumber, active = true, None)(request)
 
-        TestConfirmationEmailController.extractSessionEmail(user) shouldBe Some(testEmail)
+        TestVerifyEmailController.extractSessionEmail(user) shouldBe Some(testEmail)
       }
     }
   }
 
-  "Calling the show action in ConfirmEmailController" when {
+  "Calling the show action in VerifyEmailController" when {
 
     "there is an email in session" should {
       "show the Confirmation Email page" in {
@@ -61,7 +61,7 @@ class ConfirmationEmailControllerSpec extends ControllerBaseSpec {
         mockIndividualAuthorised()
 
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmationEmailController.show(request)
+        val result = TestVerifyEmailController.show(request)
 
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
@@ -75,7 +75,7 @@ class ConfirmationEmailControllerSpec extends ControllerBaseSpec {
         mockIndividualAuthorised()
 
         val request = testGetRequest.withSession(SessionKeys.emailKey -> "")
-        val result = TestConfirmationEmailController.show(request)
+        val result = TestVerifyEmailController.show(request)
 
         status(result) shouldBe Status.OK
       }
@@ -87,7 +87,7 @@ class ConfirmationEmailControllerSpec extends ControllerBaseSpec {
         mockUnauthorised()
 
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmationEmailController.show(request)
+        val result = TestVerifyEmailController.show(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"

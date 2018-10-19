@@ -9,4 +9,4 @@ GET         /confirm-email-address          controllers.ConfirmEmailController.s
 GET         /confirm-email-address          controllers.ConfirmEmailController.updateEmail
 
 #verify email address
-GET         /confirmation-email             controllers.ConfirmationEmailController.show
+GET         /verify-email                   controllers.VerifyEmailController.show

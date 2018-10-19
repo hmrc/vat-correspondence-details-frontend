@@ -28,14 +28,14 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class ConfirmationEmailController @Inject()(val authenticate: AuthPredicate,
-                                            val messagesApi: MessagesApi,
-                                            implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
+                                      val messagesApi: MessagesApi,
+                                      implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   val show: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
-      case Some(email) => Future.successful(Ok(views.html.confirmation_email(email)))
+      case Some(email) => Future.successful(Ok(views.html.verify_email(email)))
 
       //TODO: Redirect(routes.CaptureEmailController.show())
       case _ => Future.successful(Ok)
