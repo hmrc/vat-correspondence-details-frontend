@@ -54,4 +54,5 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val whitelistExcludedPaths: Seq[Call] = Nil
   override val shutterPage: String = "https://www.tax.service.gov.uk/shutter/vat-through-software"
 
+  override val vatSubscriptionHost: String = "mockVatSubscriptionHost"
 }
