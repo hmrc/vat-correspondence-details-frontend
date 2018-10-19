@@ -62,7 +62,7 @@ class NotAuthorisedForClientViewSpec extends ViewBaseSpec {
     }
 
     s"have a link to agent client sign up" in {
-      element(Selectors.tryAgainLink).attr("href") shouldBe "/vat-through-software/correspondence/hello-world"
+      element(Selectors.tryAgainLink).attr("href") shouldBe "/vat-through-software/account/correspondence/hello-world"
     }
 
     "have a form" which {
