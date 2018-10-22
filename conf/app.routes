@@ -5,8 +5,11 @@ GET        /sign-out                controllers.SignOutController.signOut
 GET        /hello-world             controllers.HelloWorldController.helloWorld
 
 # confirm email address
-GET         /confirm-email-address          controllers.ConfirmEmailController.show
-GET         /confirm-email-address          controllers.ConfirmEmailController.updateEmail
+GET        /confirm-email-address          controllers.ConfirmEmailController.show
+GET        /confirm-email-address          controllers.ConfirmEmailController.updateEmail
 
 #verify email address
-GET         /verify-email                   controllers.VerifyEmailController.show
+GET        /verify-email                   controllers.VerifyEmailController.show
+
+# email change successful
+GET        /email-change-success           controllers.EmailChangeSuccessController.show

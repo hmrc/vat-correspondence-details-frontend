@@ -1,5 +1,6 @@
 base.signOut = Sign out
 base.confirmAndContinue = Confirm and continue
+base.finish = Finish
 
 common.clientService = Business tax account
 common.agentService = Update your client’s VAT details
@@ -46,3 +47,9 @@ verifyEmail.accordion.heading = I did not get the email
 verifyEmail.accordion.lineOne = Check your junk folder. If it’s not there we can
 verifyEmail.accordion.lineTwo = send it again
 verifyEmail.accordion.lineThree = If we send it again, any previous link will stop working.
+
+emailChangeSuccess.title = We have received the new email address
+emailChangeSuccess.heading = We have received the new email address
+emailChangeSuccess.headingTwo = What happens next
+emailChangeSuccess.helpOne = We will send an email within 2 working days telling you whether or not the request has been accepted. You can also go to your messages in your business tax account.
+emailChangeSuccess.helpTwo = Ensure your contact details are up to date.
