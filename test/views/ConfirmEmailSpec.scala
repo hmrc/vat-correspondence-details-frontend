@@ -22,13 +22,21 @@ import org.jsoup.nodes.Document
 class ConfirmEmailSpec extends ViewBaseSpec {
 
   val testEmail: String = "test@email.com"
-  lazy val view = views.html.confirm_email(testEmail)
 
-  lazy implicit val document: Document = Jsoup.parse(view.body)
+  object Selectors {
+    val heading = "heading-large"
+    val email = ""
+    val continueButton = "continue"
+    val editLink = "edit"
+    val confirmationText = ""
+  }
 
   "The Confirm Email view" should {
+    lazy val view = views.html.confirm_email(testEmail)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
+
     "have the correct heading" in {
-      document.getElementsByClass("heading-large").text() shouldBe "Confirm the new email address"
+      document.getElementsByClass(Selectors.heading).text() shouldBe "Confirm the new email address"
     }
 
     "have the email address the user provided" in {
@@ -36,11 +44,11 @@ class ConfirmEmailSpec extends ViewBaseSpec {
     }
 
     "have a continue button" in {
-      document.getElementById("continue").text() shouldBe "Confirm and continue"
+      document.getElementById(Selectors.continueButton).text() shouldBe "Confirm and continue"
     }
 
-    //TODO
     "have a link to edit email address" in {
+      document.getElementById(Selectors.editLink).text() shouldBe "Edit email address"
     }
 
     "have some body text" in {

@@ -23,7 +23,6 @@ import javax.inject.{Inject, Singleton}
 import models.User
 import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
 import play.api.Logger
-import play.api.http.Status.NOT_FOUND
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
