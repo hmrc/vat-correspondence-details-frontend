@@ -19,10 +19,19 @@ package views
 import forms.EmailForm._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.twirl.api.Html
 
 class CaptureEmailViewSpec extends ViewBaseSpec {
 
-  lazy val view = views.html.capture_email(emailForm)(request, messages, mockConfig)
+  object Selectors {
+    val pageHeading = "#content h1"
+    val hintText = "#label-email-hint"
+    val form = "form"
+    val emailField = "#email"
+    val continueButton = "button"
+  }
+
+  lazy val view: Html = views.html.capture_email(emailForm)(request, messages, mockConfig)
   lazy implicit val document: Document = Jsoup.parse(view.body)
 
   "Rendering the capture email page" should {
@@ -32,23 +41,23 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     }
 
     s"have the correct page heading" in {
-      elementText("#content h1") shouldBe "What is the email address?"
+      elementText(Selectors.pageHeading) shouldBe "What is the email address?"
     }
 
     s"have the correct hint text" in {
-      elementText("#label-email-hint") shouldBe "For example, me@me.com"
+      elementText(Selectors.hintText) shouldBe "For example, me@me.com"
     }
 
     s"have the email form with the correct form action" in {
-      element("form").attr("action") shouldBe "/vat-through-software/account/correspondence/change-email-address"
+      element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/correspondence/change-email-address"
     }
 
-    s"have the email text field with the prepopulated value" in {
-      element("#email").attr("value") shouldBe ""
+    s"have the email text field with the pre-populated value" in {
+      element(Selectors.emailField).attr("value") shouldBe ""
     }
 
     s"have the continue button" in {
-      elementText("#next") shouldBe "Continue"
+      elementText(Selectors.continueButton) shouldBe "Continue"
     }
   }
 }

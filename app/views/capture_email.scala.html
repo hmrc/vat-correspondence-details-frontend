@@ -20,11 +20,11 @@
 
 @(emailForm: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main_template(Messages("captureEmail.title")) {
+@main_template(messages("captureEmail.title")) {
 
   @errorSummary(messages("common.error.heading"), emailForm, forceDivToAppear = false)
 
-  <h1 id="main-heading" class="form-title heading-xlarge">@messages("captureEmail.title")</h1>
+  <h1 class="heading-large">@messages("captureEmail.title")</h1>
 
   @form(action = controllers.routes.CaptureEmailController.submit) {
     <fieldset>
@@ -45,7 +45,7 @@
     </fieldset>
 
     <div class="form-group">
-      <button class="btn button" type="submit" id="next">@Messages("common.continue")</button>
+      <button class="button" type="submit">@messages("common.continue")</button>
     </div>
   }
 }
