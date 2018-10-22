@@ -29,35 +29,47 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val form = "form"
     val emailField = "#email"
     val continueButton = "button"
+    val errorSummary = "error-summary-display"
   }
 
-  lazy val view: Html = views.html.capture_email(emailForm)(request, messages, mockConfig)
-  lazy implicit val document: Document = Jsoup.parse(view.body)
+  "Rendering the capture email page" when {
 
-  "Rendering the capture email page" should {
+    "the form has no errors" should {
+      lazy val view: Html = views.html.capture_email(emailForm)(request, messages, mockConfig)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    s"have the correct document title" in {
-      document.title shouldBe "What is the email address?"
+      s"have the correct document title" in {
+        document.title shouldBe "What is the email address?"
+      }
+
+      s"have the correct page heading" in {
+        elementText(Selectors.pageHeading) shouldBe "What is the email address?"
+      }
+
+      s"have the correct hint text" in {
+        elementText(Selectors.hintText) shouldBe "For example, me@me.com"
+      }
+
+      s"have the email form with the correct form action" in {
+        element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/correspondence/change-email-address"
+      }
+
+      s"have the email text field with the pre-populated value" in {
+        element(Selectors.emailField).attr("value") shouldBe ""
+      }
+
+      s"have the continue button" in {
+        elementText(Selectors.continueButton) shouldBe "Continue"
+      }
     }
 
-    s"have the correct page heading" in {
-      elementText(Selectors.pageHeading) shouldBe "What is the email address?"
-    }
+    "the form has some errors" should {
+      lazy val view = views.html.capture_email(emailForm.bind(Map("email" -> "")))(request, messages, mockConfig)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    s"have the correct hint text" in {
-      elementText(Selectors.hintText) shouldBe "For example, me@me.com"
-    }
-
-    s"have the email form with the correct form action" in {
-      element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/correspondence/change-email-address"
-    }
-
-    s"have the email text field with the pre-populated value" in {
-      element(Selectors.emailField).attr("value") shouldBe ""
-    }
-
-    s"have the continue button" in {
-      elementText(Selectors.continueButton) shouldBe "Continue"
+      "display the error summary" in {
+        document.getElementById(Selectors.errorSummary).hasClass("error-summary--show")
+      }
     }
   }
 }
