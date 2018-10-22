@@ -53,6 +53,8 @@ trait AppConfig extends ServicesConfig {
   val features: Features
   val emailVerificationBaseUrl: String
   val vatSubscriptionHost: String
+  val manageVatSubscriptionServiceUrl: String
+  val manageVatSubscriptionServicePath: String
 }
 
 @Singleton
@@ -79,8 +81,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   private lazy val signInBaseUrl: String = getString(Keys.signInBaseUrl)
   private lazy val signInOrigin = getString("appName")
   override lazy val signInUrl: String = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
-  private lazy val signInContinueBaseUrl: String = getString(Keys.signInContinueBaseUrl)
-  override lazy val signInContinueUrl: String = ContinueUrl(signInContinueBaseUrl + controllers.routes.HelloWorldController.helloWorld().url).encodedUrl
+  override lazy val signInContinueUrl: String = ContinueUrl(manageVatSubscriptionServicePath).encodedUrl
   override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/gg/sign-out?continue=$signInContinueUrl"
 
   override lazy val emailVerificationBaseUrl: String = baseUrl(Keys.emailVerificationBaseUrl)
@@ -107,6 +108,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
 
   override val vatAgentClientLookupServiceUrl: String = getString(Keys.vatAgentClientLookupServiceUrl)
   override val vatAgentClientLookupServicePath: String = getString(Keys.vatAgentClientLookupServicePath)
-
   override val vatSubscriptionHost: String = baseUrl(Keys.vatSubscription)
+  override val manageVatSubscriptionServiceUrl: String = getString(Keys.manageVatSubscriptionServiceUrl)
+  override val manageVatSubscriptionServicePath: String = manageVatSubscriptionServiceUrl + getString(Keys.manageVatSubscriptionServicePath)
 }
