@@ -19,7 +19,7 @@ package views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class VerifyEmailSpec extends ViewBaseSpec {
+class VerifyEmailViewSpec extends ViewBaseSpec {
 
   val testEmail: String = "test@email.com"
   lazy val view = views.html.verify_email(testEmail)

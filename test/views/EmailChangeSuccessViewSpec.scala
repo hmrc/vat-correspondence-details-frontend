@@ -19,7 +19,7 @@ package views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class EmailChangeSuccessSpec extends ViewBaseSpec {
+class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
   val testEmail: String = "test@email.com"
   lazy val view = views.html.email_change_success()
@@ -36,7 +36,7 @@ class EmailChangeSuccessSpec extends ViewBaseSpec {
     }
 
     "have a finish button which navigates to the Change of Circs overview page" in {
-      document.getElementsByClass("button").attr("href") shouldBe "/vat-through-software/account/change-business-details"
+      document.getElementsByClass("button").attr("href") shouldBe "mockManageVatOverviewUrl"
     }
 
     "have some body text" in {

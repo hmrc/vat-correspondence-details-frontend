@@ -2,6 +2,7 @@ base.signOut = Sign out
 base.back = Back
 base.confirmAndContinue = Confirm and continue
 base.finish = Finish
+base.back = Back
 
 common.clientService = Business tax account
 common.agentService = Update your client’s VAT details
@@ -64,3 +65,8 @@ emailChangeSuccess.heading = We have received the new email address
 emailChangeSuccess.headingTwo = What happens next
 emailChangeSuccess.helpOne = We will send an email within 2 working days telling you whether or not the request has been accepted. You can also go to your messages in your business tax account.
 emailChangeSuccess.helpTwo = Ensure your contact details are up to date.
+
+ppobChangePending.title = We are reviewing your request
+ppobChangePending.heading = You already have a change pending
+ppobChangePending.infoOne = You have already requested to change the principal place of business. While this change is pending you are unable to change your email address.
+ppobChangePending.infoTwo = We will usually update your details within 2 working days.
