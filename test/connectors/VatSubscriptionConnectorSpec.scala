@@ -27,7 +27,7 @@ class VatSubscriptionConnectorSpec extends ControllerBaseSpec {
 
     "generate the correct getCustomerInfo URL" in {
       connector.getCustomerInfoUrl("987654321") shouldBe
-        "mockVatSubscriptionHost/vat-subscription/987654321/customer-details"
+        "mockVatSubscriptionHost/vat-subscription/987654321/full-information"
     }
   }
 }
