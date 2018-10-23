@@ -52,6 +52,7 @@ trait AppConfig extends ServicesConfig {
   val vatAgentClientLookupServicePath: String
   val features: Features
   val emailVerificationBaseUrl: String
+  val vatSubscriptionHost: String
 }
 
 @Singleton
@@ -107,4 +108,5 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override val vatAgentClientLookupServiceUrl: String = getString(Keys.vatAgentClientLookupServiceUrl)
   override val vatAgentClientLookupServicePath: String = getString(Keys.vatAgentClientLookupServicePath)
 
+  override val vatSubscriptionHost: String = baseUrl(Keys.vatSubscription)
 }

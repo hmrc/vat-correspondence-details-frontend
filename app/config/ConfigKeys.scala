@@ -47,4 +47,5 @@ object ConfigKeys {
 
   val agentAccessFeature: String = "features.agentAccess.enabled"
 
+  val vatSubscription: String = "vat-subscription"
 }
