@@ -31,7 +31,6 @@ object ConfigKeys {
   val governmentGatewayHost: String = "government-gateway.host"
 
   val signInBaseUrl: String = "signIn.url"
-  val signInContinueBaseUrl: String = "signIn.continueBaseUrl"
 
   val whitelistEnabled: String = "whitelist.enabled"
   val whitelistedIps: String = "whitelist.allowedIps"
@@ -40,6 +39,8 @@ object ConfigKeys {
   val agentInvitationsFastTrack: String = "agent-invitations-fast-track.url"
   val vatAgentClientLookupServiceUrl: String = "vat-agent-client-lookup-frontend.url"
   val vatAgentClientLookupServicePath: String = "vat-agent-client-lookup-frontend.path"
+  val manageVatSubscriptionServiceUrl: String = "manage-vat-subscription-frontend.url"
+  val manageVatSubscriptionServicePath: String = "manage-vat-subscription-frontend.path"
 
   val emailVerificationBaseUrl: String = "email-verification"
 
