@@ -31,8 +31,8 @@ object GetCustomerInfoHttpParser {
     override def read(method: String, url: String, response: HttpResponse): GetCustomerInfoResponse = {
       response.status match {
         case OK => response.json.validate[CustomerInformation].fold(
-          invalid => {
-            Logger.warn(s"[GetCustomerInfoHttpParser][read] - Invalid JSON: $invalid")
+          _ => {
+            Logger.warn(s"[GetCustomerInfoHttpParser][read] - Invalid JSON: ${response.json}")
             Left(GetCustomerInfoError(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => Right(valid)
