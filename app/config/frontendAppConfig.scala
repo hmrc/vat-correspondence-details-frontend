@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.config.ServicesConfig
 
 trait AppConfig extends ServicesConfig {
+  val appName: String
   val contactHost: String
   val assetsPrefix: String
   val analyticsToken: String
@@ -61,6 +62,7 @@ trait AppConfig extends ServicesConfig {
 class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends AppConfig {
 
   override protected def mode: Mode = environment.mode
+  override lazy val appName: String = getString("appName")
 
   override lazy val contactHost: String = getString(Keys.contactFrontendHost)
   private val contactFormServiceIdentifier = "MyService" //TODO update contact frontend service identifier
