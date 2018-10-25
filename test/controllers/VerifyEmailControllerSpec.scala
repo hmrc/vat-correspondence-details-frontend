@@ -35,7 +35,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec {
   val testVatNumber: String = "999999999"
   val testEmail: String = "test@email.co.uk"
 
-  lazy val testGetRequest = FakeRequest("GET", "/verify-email")
+  lazy val testGetRequest = FakeRequest("GET", "/verify-email-address")
 
   "Calling the extractEmail function in VerifyEmailController" when {
 
