@@ -44,9 +44,8 @@ class VerifyEmailSpec extends ViewBaseSpec {
       element("#content > article > p:nth-child(3) > a").attr("data-journey-click") shouldBe "email-address:resend:verify-email"
     }
 
-    //TODO Add test to check the link route is correct
     "have a link element in the first paragraph that links to the Capture your email page" in {
-      element("#content > article > p:nth-child(3) > a").attr("href") shouldBe controllers.routes.VerifyEmailController.show().url
+      element("#content > article > p:nth-child(3) > a").attr("href") shouldBe controllers.routes.VerifyEmailController.resendVerification().url
     }
 
     "have an accordion which" should {

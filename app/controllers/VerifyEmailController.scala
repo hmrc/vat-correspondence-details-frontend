@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.{EmailVerificationService, VatSubscriptionService}
+import services.EmailVerificationService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
@@ -41,32 +41,28 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
 
       //TODO: Redirect(routes.CaptureEmailController.show())
       case _ => Future.successful(Ok)
-    }e
-
-  }
-
-  val emailVerified: Action[AnyContent] = authenticate.async { implicit user =>
-
-    extractSessionEmail(user) match {
-      //TODO: implement checking, verified, updating email etc
-      case Some(email) => Future.successful(Ok)
-
-      //TODO: Redirect(routes.CaptureEmailController.show())
-      case _ => Future.successful(Ok)
     }
+
   }
 
   val resendVerification: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) => {
-        emailVerificationService.createEmailVerificationRequest(email)
-        Future.successful(Ok(views.html.verify_email(email)))
+        emailVerificationService.createEmailVerificationRequest(email, "").map{
+          case Some(true) => Redirect(routes.VerifyEmailController.show())
+          // already verified
+          // TODO:call the code to post the email data as already found to be verified
+          case Some(false) => Redirect(routes.ConfirmEmailController.show())
+          case _ =>  InternalServerError
+        }
+
       }
 
       //TODO: Redirect(routes.CaptureEmailController.show())
       case _ => Future.successful(Ok)
     }
+
   }
 
   private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {
@@ -74,4 +70,3 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
   }
 
 }
-

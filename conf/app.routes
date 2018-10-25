@@ -12,12 +12,12 @@ GET        /confirm-email-address           controllers.ConfirmEmailController.u
 # verify email address
 GET        /verify-email                    controllers.VerifyEmailController.show
 
+# verification link clicked in email
+GET        /resend-verification           controllers.VerifyEmailController.resendVerification
+
 # email change successful
 GET        /email-change-success            controllers.EmailChangeSuccessController.show
 
 # capture email address
 GET        /change-email-address            controllers.CaptureEmailController.show
 POST       /change-email-address            controllers.CaptureEmailController.submit
-
-# verification link clicked in email
-GET        /email-verified                  controllers.EmailChangeSuccessController.emailVerified

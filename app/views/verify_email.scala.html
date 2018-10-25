@@ -41,7 +41,7 @@
     <p>
         @messages("verifyEmail.lineTwo")
         @*TODO: Call method to resend email*@
-        <a href='@controllers.routes.VerifyEmailController.show().url'
+        <a href='@controllers.routes.VerifyEmailController.resendVerification().url'
         data-journey-click="email-address:resend:verify-email">@messages("verifyEmail.lineThree")</a>
         @messages("verifyEmail.lineFour")
     </p>

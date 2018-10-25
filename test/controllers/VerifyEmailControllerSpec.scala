@@ -21,21 +21,25 @@ import models.User
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
+import mocks.MockEmailVerificationService
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 
-class VerifyEmailControllerSpec extends ControllerBaseSpec {
+class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
-    object TestVerifyEmailController extends VerifyEmailController (
-      mockAuthPredicate,
-      messagesApi,
-      mockConfig
-    )
+  object TestVerifyEmailController extends VerifyEmailController(
+    mockAuthPredicate,
+    messagesApi,
+    mockEmailVerificationService,
+    mockConfig
+  )
 
   val testVatNumber: String = "999999999"
   val testEmail: String = "test@email.co.uk"
+  val testContinueUrl: String = "/someReturnUrl/verified"
 
   lazy val testGetRequest = FakeRequest("GET", "/verify-email")
+  lazy val testResendEmailRequest = FakeRequest("GET", "/resend-verification")
 
   "Calling the extractEmail function in VerifyEmailController" when {
 
@@ -94,5 +98,117 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec {
       }
     }
   }
-}
 
+  "there isn't an email in session" should {
+    "return OK" in {
+
+      mockIndividualAuthorised()
+
+      val request = testGetRequest.withSession(SessionKeys.emailKey -> "")
+      val result = TestVerifyEmailController.show(request)
+
+      status(result) shouldBe Status.OK
+    }
+  }
+
+  "the user is not authorised" should {
+    "show an internal server error" in {
+
+      mockUnauthorised()
+
+      val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
+      val result = TestVerifyEmailController.show(request)
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+    }
+  }
+
+  "Calling the emailVerified action in VerifyEmailController" when {
+
+    "there is an email in session and the email request is successfully created" should {
+
+      "show the email verification page" in {
+
+        mockIndividualAuthorised()
+        setupMockCreteEmailVerification(Some(true))
+
+        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.resendVerification(request)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.VerifyEmailController.show().url)
+      }
+    }
+
+    "there is an email in session and the email request is not created as already verified" should {
+
+      "show the email confirmation page" in {
+
+        mockIndividualAuthorised()
+        setupMockCreteEmailVerification(Some(false))
+
+        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.resendVerification(request)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.ConfirmEmailController.show().url)
+      }
+    }
+
+
+    "there is an email in session and the email request returned an unexpected error" should {
+
+      "show the email confirmation page" in {
+
+        mockIndividualAuthorised()
+        setupMockCreteEmailVerification(None)
+
+        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.resendVerification(request)
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "there is not an email in session and the email request returned an unexpected error" should {
+
+      "show the email confirmation page" in {
+
+        mockIndividualAuthorised()
+        setupMockCreteEmailVerification(None)
+
+        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.resendVerification(request)
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "there isn't an email in session" should {
+      "return OK" in {
+
+        mockIndividualAuthorised()
+
+        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> "")
+        val result = TestVerifyEmailController.resendVerification(request)
+
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "the user is not authorised" should {
+      "show an internal server error" in {
+
+        mockUnauthorised()
+
+        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.resendVerification(request)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      }
+    }
+
+  }
+}
