@@ -40,9 +40,8 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
   val show: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
-      case Some(_) =>
-        Future.successful(Ok(controllers.routes.ConfirmEmailController.show().url))
-
+      case Some(email) =>
+        Future.successful(Ok(views.html.confirm_email(email)))
       case _ =>
         Future.successful(Redirect(controllers.routes.CaptureEmailController.show().url))
     }

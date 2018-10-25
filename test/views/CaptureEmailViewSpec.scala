@@ -25,6 +25,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val pageHeading = "#content h1"
+    val backLink = "#content > article > a"
     val hintText = "#label-email-hint"
     val form = "form"
     val emailField = "#email"
@@ -41,27 +42,38 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       .fill(testEmail))(request, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
-      s"have the correct document title" in {
+      "have the correct document title" in {
         document.title shouldBe "What is the email address?"
       }
 
-      s"have the correct page heading" in {
+      "have a back link" which {
+
+        "should have the correct text" in {
+          elementText(Selectors.backLink) shouldBe "Back"
+        }
+
+        "should have the correct back link" in {
+          element(Selectors.backLink).attr("href") shouldBe "/vat-through-software/account/change-business-details"
+        }
+      }
+
+      "have the correct page heading" in {
         elementText(Selectors.pageHeading) shouldBe "What is the email address?"
       }
 
-      s"have the correct hint text" in {
+      "have the correct hint text" in {
         elementText(Selectors.hintText) shouldBe "For example, me@me.com"
       }
 
-      s"have the email form with the correct form action" in {
+      "have the email form with the correct form action" in {
         element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/correspondence/change-email-address"
       }
 
-      s"have the email text field with the pre-populated value" in {
+      "have the email text field with the pre-populated value" in {
         element(Selectors.emailField).attr("value") shouldBe "test@example.com"
       }
 
-      s"have the continue button" in {
+      "have the continue button" in {
         elementText(Selectors.continueButton) shouldBe "Continue"
       }
     }
