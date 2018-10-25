@@ -16,14 +16,15 @@
 
 package audit
 
-import audit.models.AuditModel
+import audit.models.{AuditModel, ExtendedAuditModel}
 import config.FrontendAuditConnector
 import controllers.ControllerBaseSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import uk.gov.hmrc.play.audit.model.DataEvent
+import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,6 +44,7 @@ class AuditServiceSpec extends ControllerBaseSpec {
       }
 
       val testModel = TestAuditModel("woohoo")
+
       val expectedData: DataEvent = auditingService.toDataEvent("", testModel, "")
 
       when(mockAuditConnector.sendEvent(refEq(expectedData, "eventId", "generatedAt"))
@@ -52,6 +54,29 @@ class AuditServiceSpec extends ControllerBaseSpec {
       auditingService.audit(testModel, "")
 
       verify(mockAuditConnector).sendEvent(
+        refEq(expectedData, "eventId", "generatedAt"))(any[HeaderCarrier], any[ExecutionContext]
+      )
+    }
+
+    "extract extended data from an audit model and pass it to the Audit Connector" in {
+
+      case class TestAuditModel(testString: String) extends ExtendedAuditModel {
+        val transactionName = "testAudit"
+        val detail: JsValue = Json.parse(s"""{"test":"$testString"}""")
+        val auditType = "testType"
+      }
+
+      val testModel = TestAuditModel("woohoo")
+
+      val expectedData: ExtendedDataEvent = auditingService.toExtendedDataEvent("", testModel, "")
+
+      when(mockAuditConnector.sendExtendedEvent(refEq(expectedData, "eventId", "generatedAt"))
+                                               (any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(AuditResult.Success))
+
+      auditingService.extendedAudit(testModel, "")
+
+      verify(mockAuditConnector).sendExtendedEvent(
         refEq(expectedData, "eventId", "generatedAt"))(any[HeaderCarrier], any[ExecutionContext]
       )
     }
