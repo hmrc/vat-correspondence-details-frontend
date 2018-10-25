@@ -111,6 +111,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override val vatAgentClientLookupServiceUrl: String = getString(Keys.vatAgentClientLookupServiceUrl)
   override val vatAgentClientLookupServicePath: String = getString(Keys.vatAgentClientLookupServicePath)
   override val vatSubscriptionHost: String = baseUrl(Keys.vatSubscription)
+
   override val manageVatSubscriptionServiceUrl: String = getString(Keys.manageVatSubscriptionServiceUrl)
   override val manageVatSubscriptionServicePath: String = manageVatSubscriptionServiceUrl + getString(Keys.manageVatSubscriptionServicePath)
 }

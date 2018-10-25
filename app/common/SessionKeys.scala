@@ -20,5 +20,6 @@ object SessionKeys {
   val clientVrn: String = "CLIENT_VRN"
   val redirectUrl: String = "redirectUrl"
   val emailKey = "Email"
+  val validationEmailKey = "validationEmail"
   val vatNumberKey = "VatNumber"
 }
