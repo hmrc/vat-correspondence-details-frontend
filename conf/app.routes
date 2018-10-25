@@ -12,7 +12,7 @@ GET        /confirm-email-address           controllers.ConfirmEmailController.u
 # verify email address
 GET        /verify-email                    controllers.VerifyEmailController.show
 
-# verification link clicked in email
+# link to resend email verification
 GET        /resend-verification           controllers.VerifyEmailController.resendVerification
 
 # email change successful
