@@ -35,7 +35,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       "return the model" in {
         mockGetCustomerInfoSuccessResponse()
         val result = await(service.getCustomerInfo("123456789"))
-        result shouldBe Right(customerInfoModel)
+        result shouldBe Right(fullCustomerInfoModel)
       }
     }
 

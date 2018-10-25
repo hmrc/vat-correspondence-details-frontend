@@ -34,9 +34,9 @@ class GetCustomerInfoHttpParserSpec extends UnitSpec {
       "valid JSON is returned" should {
 
         "return a CustomerInformation model" in {
-          val response = HttpResponse(Status.OK, Some(customerInfoJson))
+          val response = HttpResponse(Status.OK, Some(fullCustomerInfoJson))
           val result = customerInfoResult(response)
-          result shouldBe Right(customerInfoModel)
+          result shouldBe Right(fullCustomerInfoModel)
         }
       }
 

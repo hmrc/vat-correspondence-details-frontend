@@ -38,27 +38,31 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
   val mockVatSubscriptionService: VatSubscriptionService = mock[VatSubscriptionService]
 
   val customerInfoResult: CustomerInformation =
-    CustomerInformation(PPOB(
-      PPOBAddress(
-        "address line 1",
-        None,
-        None,
-        None,
-        None,
-        None,
-        "en"
-      ),
-      Some(ContactDetails(
-        None,
-        None,
-        None,
-        Some("test@example.com"),
+    CustomerInformation(
+      PPOB(
+        PPOBAddress(
+          "address line 1",
+          None,
+          None,
+          None,
+          None,
+          None,
+          "en"
+        ),
+        Some(ContactDetails(
+          None,
+          None,
+          None,
+          Some("test@example.com"),
+          None
+        )),
         None
-      )),
+      ),
       None
-    ))
+    )
 
-  def setup(result: GetCustomerInfoResponse): Any = when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+  def setup(result: GetCustomerInfoResponse): Any =
+    when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
     .thenReturn(Future.successful(result))
 
   def target(result: GetCustomerInfoResponse = Right(customerInfoResult)): CaptureEmailController = {

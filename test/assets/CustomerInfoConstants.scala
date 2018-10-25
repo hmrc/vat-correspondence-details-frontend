@@ -123,8 +123,17 @@ object CustomerInfoConstants {
     None
   )
 
-  val customerInfoJson: JsObject = Json.obj("ppob" -> fullPPOBJson)
-  val customerInfoModel = CustomerInformation(fullPPOBModel)
+  val pendingChangesModel = PendingChanges(Some(fullPPOBModel))
+  val pendingChangesJson: JsObject = Json.obj("PPOBDetails" -> fullPPOBJson)
+
+  val fullCustomerInfoJson: JsObject = Json.obj(
+    "ppob" -> fullPPOBJson,
+    "pendingChanges" -> pendingChangesJson
+  )
+  val minCustomerInfoJson: JsObject = Json.obj("ppob" -> minPPOBJson)
+
+  val fullCustomerInfoModel = CustomerInformation(fullPPOBModel, Some(pendingChangesModel))
+  val minCustomerInfoModel = CustomerInformation(minPPOBModel, None)
 
   val invalidJsonError = GetCustomerInfoError(Status.INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
 }

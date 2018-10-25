@@ -33,7 +33,7 @@ trait MockVatSubscriptionConnector extends MockFactory {
       .expects(*, *, *)
       .returns(result)
 
-  def mockGetCustomerInfoSuccessResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Right(customerInfoModel)))
+  def mockGetCustomerInfoSuccessResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Right(fullCustomerInfoModel)))
 
   def mockGetCustomerInfoFailureResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Left(invalidJsonError)))
 
@@ -45,6 +45,4 @@ trait MockVatSubscriptionConnector extends MockFactory {
   def mockUpdateEmailAddressSuccessResponse(): Unit = mockUpdateEmailAddressResponse(Right("Updated"))
 
   def mockUpdateEmailAddressFailureResponse(): Unit = mockUpdateEmailAddressResponse(Left("Failed"))
-
-
 }
