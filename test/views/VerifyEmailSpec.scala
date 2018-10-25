@@ -66,7 +66,7 @@ class VerifyEmailSpec extends ViewBaseSpec {
 
       //TODO: Update to call the correct controller action
       "have a link element which calls the resend email controller action" in {
-        element("#content > article > details > div > p > a").attr("href") shouldBe controllers.routes.HelloWorldController.helloWorld().url
+        element("#content > article > details > div > p > a").attr("href") shouldBe controllers.routes.VerifyEmailController.show().url
       }
     }
   }

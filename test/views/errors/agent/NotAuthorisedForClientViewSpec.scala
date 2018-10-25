@@ -62,7 +62,7 @@ class NotAuthorisedForClientViewSpec extends ViewBaseSpec {
     }
 
     s"have a link to agent client sign up" in {
-      element(Selectors.tryAgainLink).attr("href") shouldBe "/vat-through-software/account/correspondence/hello-world"
+      element(Selectors.tryAgainLink).attr("href") shouldBe "/vat-through-software/account/change-business-details"
     }
 
     "have a form" which {
@@ -71,7 +71,7 @@ class NotAuthorisedForClientViewSpec extends ViewBaseSpec {
         val form = element(Selectors.form)
         form.attr("method") shouldBe "POST"
         form.attr("action") shouldBe s"${mockConfig.agentInvitationsFastTrack}?continue=" +
-          s"${URLEncoder.encode(s"${mockConfig.host}${controllers.routes.HelloWorldController.helloWorld().url}", "UTF-8")}"
+          s"${URLEncoder.encode(mockConfig.manageVatSubscriptionServicePath, "UTF-8")}"
       }
 
       "has a hidden field for the VAT service enrolment id" in {
