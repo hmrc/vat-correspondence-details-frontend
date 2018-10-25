@@ -22,6 +22,8 @@
 
 @main_template(messages("captureEmail.title")) {
 
+  <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
+
   @errorSummary(messages("common.error.heading"), emailForm, forceDivToAppear = false)
 
   <h1 class="heading-large">@messages("captureEmail.title")</h1>

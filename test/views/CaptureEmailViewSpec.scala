@@ -32,10 +32,13 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val errorSummary = "error-summary-display"
   }
 
+  val testEmail: String = "test@example.com"
+
   "Rendering the capture email page" when {
 
     "the form has no errors" should {
-      lazy val view: Html = views.html.capture_email(emailForm)(request, messages, mockConfig)
+      lazy val view: Html = views.html.capture_email(emailForm(testEmail)
+      .fill(testEmail))(request, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       s"have the correct document title" in {
@@ -55,7 +58,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       }
 
       s"have the email text field with the pre-populated value" in {
-        element(Selectors.emailField).attr("value") shouldBe ""
+        element(Selectors.emailField).attr("value") shouldBe "test@example.com"
       }
 
       s"have the continue button" in {
@@ -64,7 +67,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     }
 
     "the form has some errors" should {
-      lazy val view = views.html.capture_email(emailForm.bind(Map("email" -> "")))(request, messages, mockConfig)
+      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "")))(request, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "display the error summary" in {

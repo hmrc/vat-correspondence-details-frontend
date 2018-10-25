@@ -16,31 +16,63 @@
 
 package controllers
 
-import scala.concurrent.Future
-
 import common.SessionKeys
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicate
 import forms.EmailForm._
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import services.VatSubscriptionService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+
+import scala.concurrent.Future
 
 @Singleton
 class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
-                                     val messagesApi: MessagesApi,
-                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                       val messagesApi: MessagesApi,
+                                       val vatSubscriptionService: VatSubscriptionService,
+                                       val errorHandler: ErrorHandler,
+                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = authenticate.async { implicit user =>
-    Future.successful(Ok(views.html.capture_email(emailForm)))
+    val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
+      case Some(email) => Future.successful(Some(email))
+      case _ =>
+        vatSubscriptionService.getCustomerInfo(user.vrn) map {
+          case Right(details) => Some(details.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""))
+          case _ => None
+        }
+    }
+
+    val prepopulationEmail: Future[String] = validationEmail map { validation =>
+      user.session.get(SessionKeys.emailKey)
+        .getOrElse(validation.getOrElse(""))
+    }
+
+    for {
+      validation    <- validationEmail
+      prepopulation <- prepopulationEmail
+    } yield {
+      validation match {
+        case Some(valEmail) => Ok(views.html.capture_email(emailForm(valEmail).fill(prepopulation)))
+          .addingToSession(SessionKeys.validationEmailKey -> valEmail)
+        case _ => errorHandler.showInternalServerError
+      }
+    }
   }
 
   def submit: Action[AnyContent] = authenticate.async { implicit user =>
-    emailForm.bindFromRequest.fold(
-      errorForm => Future.successful(BadRequest(views.html.capture_email(errorForm))),
-      email     => Future.successful(Redirect(controllers.routes.ConfirmEmailController.show)
-        .addingToSession(SessionKeys.emailKey -> email))
-    )
+    val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
+    val prepopulationEmail: Option[String] = user.session.get(SessionKeys.emailKey)
+
+    (validationEmail, prepopulationEmail) match {
+      case (Some(validation), prepopulation) => emailForm(validation).bindFromRequest.fold(
+        errorForm => Future.successful(BadRequest(views.html.capture_email(errorForm.fill(prepopulation.getOrElse(validation))))),
+        email     => Future.successful(Redirect(controllers.routes.ConfirmEmailController.show())
+          .addingToSession(SessionKeys.emailKey -> email))
+      )
+      case (None, _) => Future.successful(errorHandler.showInternalServerError)
+    }
   }
 }
