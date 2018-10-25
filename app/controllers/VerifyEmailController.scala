@@ -38,11 +38,8 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
 
     extractSessionEmail(user) match {
       case Some(email) => Future.successful(Ok(views.html.verify_email(email)))
-
-      //TODO: Redirect(routes.CaptureEmailController.show())
-      case _ => Future.successful(Ok)
+      case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
     }
-
   }
 
   val resendVerification: Action[AnyContent] = authenticate.async { implicit user =>
@@ -59,8 +56,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
 
       }
 
-      //TODO: Redirect(routes.CaptureEmailController.show())
-      case _ => Future.successful(Ok)
+      case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
     }
 
   }

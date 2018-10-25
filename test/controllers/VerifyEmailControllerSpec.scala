@@ -81,7 +81,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         val request = testGetRequest.withSession(SessionKeys.emailKey -> "")
         val result = TestVerifyEmailController.show(request)
 
-        status(result) shouldBe Status.OK
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
       }
     }
 
@@ -96,31 +97,6 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
-    }
-  }
-
-  "there isn't an email in session" should {
-    "return OK" in {
-
-      mockIndividualAuthorised()
-
-      val request = testGetRequest.withSession(SessionKeys.emailKey -> "")
-      val result = TestVerifyEmailController.show(request)
-
-      status(result) shouldBe Status.OK
-    }
-  }
-
-  "the user is not authorised" should {
-    "show an internal server error" in {
-
-      mockUnauthorised()
-
-      val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-      val result = TestVerifyEmailController.show(request)
-
-      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
     }
   }
 
@@ -193,7 +169,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> "")
         val result = TestVerifyEmailController.resendVerification(request)
 
-        status(result) shouldBe Status.OK
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
       }
     }
 
