@@ -17,15 +17,16 @@
 package controllers
 
 import common.SessionKeys
-import connectors.httpParsers.GetCustomerInfoHttpParser.{GetCustomerInfoError, GetCustomerInfoResponse}
+import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.predicates.InflightPPOBPredicate
 import models.customerInformation._
+import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import org.mockito.Mockito.{never, verify, when}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -157,7 +158,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the customerInfo call fails" should {
 
-          lazy val result = target(Left(GetCustomerInfoError(
+          lazy val result = target(Left(ErrorModel(
             Status.INTERNAL_SERVER_ERROR,
             "error"
           ))).show(request)

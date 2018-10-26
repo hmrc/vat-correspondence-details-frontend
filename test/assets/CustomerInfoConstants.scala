@@ -16,8 +16,8 @@
 
 package assets
 
-import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoError
-import models.customerInformation._
+import models.customerInformation.{ContactDetails, CustomerInformation, PPOB, PPOBAddress, _}
+import models.errors.ErrorModel
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 
@@ -152,5 +152,5 @@ object CustomerInfoConstants {
   val fullCustomerInfoModel = CustomerInformation(fullPPOBModel, Some(PendingChanges(Some(fullPPOBModel))))
   val minCustomerInfoModel = CustomerInformation(minPPOBModel, None)
 
-  val invalidJsonError = GetCustomerInfoError(Status.INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
+  val invalidJsonError = ErrorModel(Status.INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
 }

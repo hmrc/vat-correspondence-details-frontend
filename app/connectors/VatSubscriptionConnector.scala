@@ -16,10 +16,10 @@
 
 package connectors
 
-import javax.inject.{Inject, Singleton}
-
 import config.AppConfig
-import connectors.httpParsers.GetCustomerInfoHttpParser._
+import connectors.httpParsers.ResponseHttpParser.{HttpGetResult, HttpPutResult}
+import javax.inject.{Inject, Singleton}
+import models.customerInformation.{CustomerInformation, PPOB, UpdateEmailSuccess}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -33,20 +33,35 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
   private[connectors] def getCustomerInfoUrl(vrn: String): String =
     s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/full-information"
 
-  def getCustomerInfo(vrn: String)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetCustomerInfoResponse] = {
+  private[connectors] def updateEmailUrl(vrn: String): String =
+    s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/ppob"
 
-    http.GET(getCustomerInfoUrl(vrn)).map {
+  def getCustomerInfo(vrn: String)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[CustomerInformation]] = {
+
+    import connectors.httpParsers.GetCustomerInfoHttpParser.CustomerInfoReads
+
+    http.GET[HttpGetResult[CustomerInformation]](getCustomerInfoUrl(vrn)).map {
       case customerInfo@Right(_) =>
         Logger.debug(s"[VatSubscriptionConnector][getCustomerInfo] successfully received customer info response")
         customerInfo
       case httpError@Left(error) =>
-        Logger.warn(s"[VatSubscriptionConnector][getCustomerInfo] received - ${error.code}: ${error.body}")
+        Logger.warn("[VatSubscriptionConnector][getCustomerInfo] received error - " + error.message)
         httpError
     }
   }
 
-  //TODO: Build this function
-  def updateEmailAddress(value: Any, value1: Any): Either[String, String] = Right("Ok")
+  def updateEmail(vrn: String, ppob: PPOB)
+                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpPutResult[UpdateEmailSuccess]] = {
 
+    import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailReads
+
+    http.PUT[PPOB, HttpPutResult[UpdateEmailSuccess]](updateEmailUrl(vrn), ppob).map {
+      case result@Right(_) =>
+        result
+      case httpError@Left(error) =>
+        Logger.warn("[VatSubscriptionConnector][updateEmail] received error - " + error.message)
+        httpError
+    }
+  }
 }

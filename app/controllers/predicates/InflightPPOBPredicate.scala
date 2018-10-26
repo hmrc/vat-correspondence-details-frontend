@@ -78,7 +78,7 @@ class InflightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
         }
       case Left(error) =>
         Logger.warn(s"[InflightPPOBPredicate][invokeBlock] - " +
-          s"The call to the GetCustomerInfo API failed. Error: ${error.body}")
+          s"The call to the GetCustomerInfo API failed. Error: ${error.message}")
         Future.successful(errorHandler.showInternalServerError)
     }
 }
