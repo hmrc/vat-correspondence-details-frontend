@@ -37,7 +37,7 @@ object EmailForm {
     "email" -> text.verifying(
       StopOnFirstFail(
         constraint[String](Messages("captureEmail.error.empty"), _.length != 0),
-        constraint[String](Messages("captureEmail.error.notChanged"), _ != currentEmail),
+        constraint[String](Messages("captureEmail.error.notChanged"), _.toLowerCase != currentEmail.toLowerCase),
         constraint[String](Messages("captureEmail.error.exceedsMaxLength"), _.length <= maxLength),
         constraint[String](Messages("captureEmail.error.invalid"), _.matches(emailRegex))
       )
