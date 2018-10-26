@@ -21,6 +21,7 @@ import config.AppConfig
 import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
 import models.User
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.EmailVerificationService
@@ -46,11 +47,19 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
 
     extractSessionEmail(user) match {
       case Some(email) => {
-        emailVerificationService.createEmailVerificationRequest(email, "").map{
+        //TODO: Need to change routes.VerifyEmailController.resendVerification().url to be the controller action when the link is clicked
+        emailVerificationService.createEmailVerificationRequest(email, routes.VerifyEmailController.resendVerification().url).map{
           case Some(true) => Redirect(routes.VerifyEmailController.show())
           // already verified
-          // TODO:call the code to post the email data as already found to be verified
-          case Some(false) => Redirect(routes.ConfirmEmailController.show())
+          // TODO:this is an edge case. Just send them to the confirm page for now. That pag can then do the post etc if appropriate
+          case Some(false) => {
+            Logger.warn(
+              "[VerifyEmailController][resendVerification] - " +
+                s"Unable to resend email verification request. Service responded with 'already verified'"
+            )
+
+            Redirect(routes.ConfirmEmailController.show())
+          }
           case _ =>  InternalServerError
         }
 
