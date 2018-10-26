@@ -21,12 +21,10 @@
 
 
 @accordionContent = {
-
-    @*TODO: Point to edit email address*@
     <p>
         @messages("verifyEmail.accordion.lineOne")
-        <a href='@controllers.routes.HelloWorldController.helloWorld().url'
-        data-journey-click="email-address:edit:verify-email">
+        <a href='@controllers.routes.VerifyEmailController.resendVerification().url'
+        data-journey-click="email-address:resend:verify-email">
         @messages("verifyEmail.accordion.lineTwo")</a>.
         @messages("verifyEmail.accordion.lineThree")
     </p>
@@ -40,9 +38,8 @@
 
     <p>
         @messages("verifyEmail.lineTwo")
-        @*TODO: Call method to resend email*@
-        <a href='@controllers.routes.VerifyEmailController.resendVerification().url'
-        data-journey-click="email-address:resend:verify-email">@messages("verifyEmail.lineThree")</a>
+        <a href='@controllers.routes.CaptureEmailController.show().url'
+           data-journey-click="email-address:edit:verify-email">@messages("verifyEmail.lineThree")</a>
         @messages("verifyEmail.lineFour")
     </p>
 

@@ -41,11 +41,11 @@ class VerifyEmailSpec extends ViewBaseSpec {
     }
 
     "have a GA tag with the correct tag" in {
-      element("#content > article > p:nth-child(3) > a").attr("data-journey-click") shouldBe "email-address:resend:verify-email"
+      element("#content > article > p:nth-child(3) > a").attr("data-journey-click") shouldBe "email-address:edit:verify-email"
     }
 
     "have a link element in the first paragraph that links to the Capture your email page" in {
-      element("#content > article > p:nth-child(3) > a").attr("href") shouldBe controllers.routes.VerifyEmailController.resendVerification().url
+      element("#content > article > p:nth-child(3) > a").attr("href") shouldBe controllers.routes.CaptureEmailController.show().url
     }
 
     "have an accordion which" should {
@@ -60,12 +60,12 @@ class VerifyEmailSpec extends ViewBaseSpec {
       }
 
       "have a GA tag with the correct tag" in {
-        element("#content > article > details > div > p > a").attr("data-journey-click") shouldBe "email-address:edit:verify-email"
+        element("#content > article > details > div > p > a").attr("data-journey-click") shouldBe "email-address:resend:verify-email"
       }
-
-      //TODO: Update to call the correct controller action
+      
       "have a link element which calls the resend email controller action" in {
-        element("#content > article > details > div > p > a").attr("href") shouldBe controllers.routes.HelloWorldController.helloWorld().url
+        element("#content > article > details > div > p > a").attr("href") shouldBe
+          controllers.routes.VerifyEmailController.resendVerification().url
       }
     }
   }

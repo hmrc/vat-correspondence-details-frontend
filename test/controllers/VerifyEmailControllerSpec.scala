@@ -38,8 +38,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   val testEmail: String = "test@email.co.uk"
   val testContinueUrl: String = "/someReturnUrl/verified"
 
-  lazy val testGetRequest = FakeRequest("GET", "/verify-email")
   lazy val testResendEmailRequest = FakeRequest("GET", "/resend-verification")
+  lazy val testGetRequest = FakeRequest("GET", "/verify-email-address")
 
   "Calling the extractEmail function in VerifyEmailController" when {
 

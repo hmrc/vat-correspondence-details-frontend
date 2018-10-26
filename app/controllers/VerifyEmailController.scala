@@ -51,7 +51,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
         emailVerificationService.createEmailVerificationRequest(email, routes.VerifyEmailController.resendVerification().url).map{
           case Some(true) => Redirect(routes.VerifyEmailController.show())
           // already verified - this is an edge case.
-          // Just send them to the confirm page for now. That pag can then do the post etc if appropriate
+          // Just send them to the confirm page for now. That page can then do the post etc if appropriate
           case Some(false) =>
             Logger.warn(
               "[VerifyEmailController][resendVerification] - " +

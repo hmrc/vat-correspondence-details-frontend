@@ -39,9 +39,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
 
       case Some(email) =>
         Future.successful(Ok(confirm_email(email)))
-
-      //TODO: Redirect(routes.CaptureEmailController.show())
-      case _ => Future.successful(Ok)
+      case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
     }
   }
 

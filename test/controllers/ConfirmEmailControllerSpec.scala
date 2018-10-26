@@ -77,7 +77,8 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
         val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> "")
         val result = TestConfirmEmailController.show(request)
 
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
       }
     }
 
