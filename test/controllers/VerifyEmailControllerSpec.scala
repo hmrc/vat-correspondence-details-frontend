@@ -25,6 +25,8 @@ import mocks.MockEmailVerificationService
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 
+import scala.concurrent.Future
+
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyEmailController extends VerifyEmailController(
@@ -107,7 +109,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "show the email verification page" in {
 
         mockIndividualAuthorised()
-        setupMockCreateEmailVerification(Some(true))
+        mockCreateEmailVerificationRequest(Some(true))
 
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestVerifyEmailController.resendVerification(request)
@@ -122,7 +124,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "show the email confirmation page" in {
 
         mockIndividualAuthorised()
-        setupMockCreateEmailVerification(Some(false))
+        mockCreateEmailVerificationRequest(Some(false))
 
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestVerifyEmailController.resendVerification(request)
@@ -138,7 +140,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "show the email confirmation page" in {
 
         mockIndividualAuthorised()
-        setupMockCreateEmailVerification(None)
+        mockCreateEmailVerificationRequest(None)
 
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestVerifyEmailController.resendVerification(request)
@@ -152,7 +154,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "show the email confirmation page" in {
 
         mockIndividualAuthorised()
-        setupMockCreateEmailVerification(None)
+        mockCreateEmailVerificationRequest(None)
 
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestVerifyEmailController.resendVerification(request)

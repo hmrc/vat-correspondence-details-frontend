@@ -30,4 +30,12 @@ class VatSubscriptionConnectorSpec extends ControllerBaseSpec {
         "mockVatSubscriptionHost/vat-subscription/987654321/full-information"
     }
   }
+
+  "VatSubscriptionConnector" should {
+
+    "return a Right(Ok)" in {
+      connector.updateEmailAddress("email@test.com", "987654321") shouldBe
+        Right("Ok")
+    }
+  }
 }

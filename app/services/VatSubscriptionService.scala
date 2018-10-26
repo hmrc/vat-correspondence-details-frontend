@@ -17,17 +17,40 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-
 import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
+import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
+import play.api.Logger
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector) {
+class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emailVerificationService: EmailVerificationService) {
 
   def getCustomerInfo(vrn: String)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetCustomerInfoResponse] =
     connector.getCustomerInfo(vrn)
+
+  def updateEmailAddress(emailAddress: String, vrn: String)
+                        (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, EmailAddressUpdateResponseModel]] = {
+
+  emailVerificationService.isEmailVerified(emailAddress) map {
+      case Some(true) =>
+        connector.updateEmailAddress(vrn, emailAddress) match {
+          case Right(_) =>
+            Right(EmailAddressUpdateResponseModel(true))
+          case Left(error) =>
+            Logger.warn(s"[VatSubscriptionService][UpdateEmailAddress] - Error received from vat-subscription: $error")
+            Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))
+        }
+      case Some(false) =>
+        Logger.warn("[VatSubscriptionService][UpdateEmailAddress] - Email address not verified")
+        Right(EmailAddressUpdateResponseModel(false))
+      case None =>
+        Logger.warn("[VatSubscriptionService][UpdateEmailAddress] - Couldn't verify email address")
+        Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))
+    }
+  }
 }
