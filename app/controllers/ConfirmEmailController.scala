@@ -23,7 +23,6 @@ import javax.inject.{Inject, Singleton}
 import models.User
 import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
 import play.api.Logger
-import play.api.http.Status.NOT_FOUND
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
@@ -41,9 +40,8 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
   val show: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
-      case Some(_) =>
-        Future.successful(Ok(controllers.routes.ConfirmEmailController.show().url))
-
+      case Some(email) =>
+        Future.successful(Ok(views.html.confirm_email(email)))
       case _ =>
         Future.successful(Redirect(controllers.routes.CaptureEmailController.show().url))
     }

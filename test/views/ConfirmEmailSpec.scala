@@ -22,29 +22,65 @@ import org.jsoup.nodes.Document
 class ConfirmEmailSpec extends ViewBaseSpec {
 
   val testEmail: String = "test@email.com"
-  lazy val view = views.html.confirm_email(testEmail)
 
-  lazy implicit val document: Document = Jsoup.parse(view.body)
+  object Selectors {
+    val heading = "heading-large"
+    val backLink = "#content > article > a"
+    val continueButton = ".button"
+    val editLink = "#content > article > p:nth-child(4) > a"
+  }
 
   "The Confirm Email view" should {
+    lazy val view = views.html.confirm_email(testEmail)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
+
     "have the correct heading" in {
-      document.getElementsByClass("heading-large").text() shouldBe "Confirm the new email address"
+      document.getElementsByClass(Selectors.heading).text() shouldBe "Confirm the new email address"
+    }
+
+    "have a back link" which {
+
+      "should have the correct text" in {
+        elementText(Selectors.backLink) shouldBe "Back"
+      }
+
+      "should have the correct back link" in {
+        element(Selectors.backLink).attr("href") shouldBe controllers.routes.CaptureEmailController.show().url
+      }
     }
 
     "have the email address the user provided" in {
       document.text() contains testEmail
     }
 
-    "have a continue button" in {
-      document.getElementById("continue").text() shouldBe "Confirm and continue"
-    }
+    "have a link to edit email address" which {
 
-    //TODO
-    "have a link to edit email address" in {
+      "has the correct text" in {
+        elementText(Selectors.editLink) shouldBe "Edit email address"
+      }
+
+      "has the correct link" in {
+        element(Selectors.editLink).attr("href") shouldBe controllers.routes.CaptureEmailController.show().url
+      }
+
+      "has the correct GA tag" in {
+        element(Selectors.editLink).attr("data-journey-click") shouldBe "email-address:edit:confirm-email"
+      }
     }
 
     "have some body text" in {
       document.text() contains "By confirming this change, you agree that the information you have given is complete and correct."
+    }
+
+    "have a continue button" which {
+
+      "has the correct text" in {
+        elementText(Selectors.continueButton) shouldBe "Confirm and continue"
+      }
+
+      "has the correct GA tag" in {
+        element(Selectors.continueButton).attr("data-journey-click") shouldBe "email-address:confirm:confirm-email"
+      }
     }
   }
 }

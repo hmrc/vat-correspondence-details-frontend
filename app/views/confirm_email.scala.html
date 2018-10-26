@@ -21,14 +21,21 @@
 
 @main_template(title = messages("confirmEmail.title"), bodyClasses = None) {
 
+ <a class="link-back" href='@controllers.routes.CaptureEmailController.show()'>@messages("base.back")</a>
+
  <h1 class="heading-large">@messages("confirmEmail.heading")</h1>
 
  <h2 class="lede" data-journey="email-address:view:confirm-email">@email</h2>
+
+ <p>
+   <a href="@controllers.routes.CaptureEmailController.show().url"
+   data-journey-click="email-address:edit:confirm-email">@messages("confirmEmail.edit")</a>
+ </p>
 
  <hr>
 
  <p>@messages("confirmEmail.body")</p>
 
- <a id="continue" href='@controllers.routes.ConfirmEmailController.updateEmailAddress().url' role="button" tabindex="0" class="button"
+ <a href='@controllers.routes.ConfirmEmailController.updateEmailAddress().url' role="button" tabindex="0" class="button"
     data-journey-click="email-address:confirm:confirm-email">@messages("base.confirmAndContinue")</a>
 }
