@@ -42,19 +42,22 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
       "return a CustomerInformation model" in new Test {
         override def setupStubs(): StubMapping = VatSubscriptionStub.stubCustomerInfo
         setupStubs()
-        val expected = Right(CustomerInformation(PPOB(
-          PPOBAddress(
-            "firstLine",
+        val expected = Right(CustomerInformation(
+          PPOB(
+            PPOBAddress(
+              "firstLine",
+              None,
+              None,
+              None,
+              None,
+              None,
+              "codeOfMyCountry"
+            ),
             None,
-            None,
-            None,
-            None,
-            None,
-            "codeOfMyCountry"
+            Some("www.pepsi-mac.biz")
           ),
-          None,
-          Some("www.pepsi-mac.biz")
-        )))
+          None
+        ))
         val result: GetCustomerInfoResponse = await(connector.getCustomerInfo("123456789"))
 
         result shouldBe expected

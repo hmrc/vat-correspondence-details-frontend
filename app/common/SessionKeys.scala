@@ -22,4 +22,5 @@ object SessionKeys {
   val emailKey = "Email"
   val validationEmailKey = "validationEmail"
   val vatNumberKey = "VatNumber"
+  val inflightPPOBKey = "inflightPPOB"
 }

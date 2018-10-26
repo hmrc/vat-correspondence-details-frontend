@@ -31,6 +31,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
   object TestVerifyEmailController extends VerifyEmailController(
     mockAuthPredicate,
+    mockInflightPPOBPredicate,
     messagesApi,
     mockEmailVerificationService,
     mockConfig

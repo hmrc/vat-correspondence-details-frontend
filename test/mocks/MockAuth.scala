@@ -17,7 +17,7 @@
 package mocks
 
 import controllers.predicates._
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
@@ -28,10 +28,12 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import utils.TestUtil
 import assets.BaseTestConstants._
+import models.User
+import play.api.mvc.{Request, Result}
 
 import scala.concurrent.Future
 
-trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar  {
+trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with MockVatSubscriptionService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -43,8 +45,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar  {
 
   def setupAuthResponse(authResult: Future[~[Option[AffinityGroup], Enrolments]]): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] = {
     when(mockAuthConnector.authorise(
-      ArgumentMatchers.any(), ArgumentMatchers.any[Retrieval[~[Option[AffinityGroup], Enrolments]]]())(
-      ArgumentMatchers.any(), ArgumentMatchers.any())
+      any(), any[Retrieval[~[Option[AffinityGroup], Enrolments]]]())(any(), any())
     ).thenReturn(authResult)
   }
 
@@ -68,6 +69,22 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar  {
       mockAuthAsAgentWithClient,
       mockConfig
     )
+
+  def mockInflightPPOBPredicate: InflightPPOBPredicate = {
+
+    object MockPredicate extends InflightPPOBPredicate(
+      mockVatSubscriptionService,
+      mockEnrolmentsAuthService,
+      mockErrorHandler,
+      messagesApi,
+      mockConfig
+    ) {
+      override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]) =
+        block(User[A]("999999999")(request))
+    }
+
+    MockPredicate
+  }
 
   def mockIndividualAuthorised(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.successful(

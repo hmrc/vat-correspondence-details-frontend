@@ -18,9 +18,10 @@ package controllers
 
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.AuthPredicate
+import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import forms.EmailForm._
 import javax.inject.{Inject, Singleton}
+
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.VatSubscriptionService
@@ -30,12 +31,13 @@ import scala.concurrent.Future
 
 @Singleton
 class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
+                                       val inflightCheck: InflightPPOBPredicate,
                                        val messagesApi: MessagesApi,
                                        val vatSubscriptionService: VatSubscriptionService,
                                        val errorHandler: ErrorHandler,
                                        implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def show: Action[AnyContent] = authenticate.async { implicit user =>
+  def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
       case Some(email) => Future.successful(Some(email))
       case _ =>
@@ -62,7 +64,7 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
     }
   }
 
-  def submit: Action[AnyContent] = authenticate.async { implicit user =>
+  def submit: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
     val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
     val prepopulationEmail: Option[String] = user.session.get(SessionKeys.emailKey)
 

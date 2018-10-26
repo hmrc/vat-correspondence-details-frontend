@@ -123,16 +123,33 @@ object CustomerInfoConstants {
     None
   )
 
-  val pendingChangesModel = PendingChanges(Some(fullPPOBModel))
-  val pendingChangesJson: JsObject = Json.obj("PPOBDetails" -> fullPPOBJson)
+  val pendingChangesModel = PendingChanges(Some(minPPOBModel))
+  val pendingChangesJson: JsObject = Json.obj("PPOBDetails" -> minPPOBModel)
+
+  val customerInfoPendingAddressModel = CustomerInformation(
+    fullPPOBModel,
+    Some(PendingChanges(Some(PPOB(
+      minPPOBAddressModel,
+      Some(fullContactDetailsModel),
+      Some("www.pepsi-mac.biz")
+    )
+  ))))
+
+  val customerInfoPendingEmailModel = CustomerInformation(
+    fullPPOBModel,
+    Some(PendingChanges(Some(PPOB(
+      fullPPOBAddressModel,
+      Some(ContactDetails(None, None, None, Some("myEmail@cool.com"), Some(false))),
+      None
+    )))))
 
   val fullCustomerInfoJson: JsObject = Json.obj(
     "ppob" -> fullPPOBJson,
-    "pendingChanges" -> pendingChangesJson
+    "pendingChanges" -> Some(PendingChanges(Some(fullPPOBModel)))
   )
   val minCustomerInfoJson: JsObject = Json.obj("ppob" -> minPPOBJson)
 
-  val fullCustomerInfoModel = CustomerInformation(fullPPOBModel, Some(pendingChangesModel))
+  val fullCustomerInfoModel = CustomerInformation(fullPPOBModel, Some(PendingChanges(Some(fullPPOBModel))))
   val minCustomerInfoModel = CustomerInformation(minPPOBModel, None)
 
   val invalidJsonError = GetCustomerInfoError(Status.INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")

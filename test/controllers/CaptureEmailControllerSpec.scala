@@ -18,7 +18,6 @@ package controllers
 
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.{GetCustomerInfoError, GetCustomerInfoResponse}
-import services.VatSubscriptionService
 import models.customerInformation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -34,8 +33,6 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
   val testValidationEmail: String = "validation@example.com"
   val testValidEmail: String      = "test@example.com"
   val testInvalidEmail: String    = "invalidEmail"
-
-  val mockVatSubscriptionService: VatSubscriptionService = mock[VatSubscriptionService]
 
   val customerInfoResult: CustomerInformation =
     CustomerInformation(
@@ -70,6 +67,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     new CaptureEmailController(
       mockAuthPredicate,
+      mockInflightPPOBPredicate,
       messagesApi,
       mockVatSubscriptionService,
       mockErrorHandler,
