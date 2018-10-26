@@ -18,7 +18,7 @@ package connectors.httpParsers
 
 import models.customerInformation.CustomerInformation
 import play.api.Logger
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object GetCustomerInfoHttpParser {
@@ -30,14 +30,19 @@ object GetCustomerInfoHttpParser {
   implicit object CustomerInfoReads extends HttpReads[GetCustomerInfoResponse] {
     override def read(method: String, url: String, response: HttpResponse): GetCustomerInfoResponse = {
       response.status match {
-        case OK => response.json.validate[CustomerInformation].fold(
-          _ => {
-            Logger.warn(s"[GetCustomerInfoHttpParser][read] - Invalid JSON: ${response.json}")
-            Left(GetCustomerInfoError(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
-          },
-          valid => Right(valid)
-        )
-        case _ => Left(GetCustomerInfoError(response.status, response.body))
+        case Status.OK => {
+          Logger.debug("[CustomerCircumstancesHttpParser][read]: Status OK")
+          response.json.validate[CustomerInformation].fold(
+            invalid => {
+              Logger.warn(s"[GetCustomerInfoHttpParser][read]: Invalid JSON: $invalid")
+              Left(GetCustomerInfoError(Status.INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
+            },
+            valid => Right(valid)
+          )
+        }
+        case status =>
+          Logger.warn(s"[GetCustomerInfoHttpParser][read]: Unexpected response. Status $status returned")
+          Left(GetCustomerInfoError(response.status, response.body))
       }
     }
   }
