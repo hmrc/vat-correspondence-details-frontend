@@ -24,14 +24,30 @@ class CustomerInformationSpec extends UnitSpec {
 
   "CustomerInformation" should {
 
-    "parse from JSON" in {
-      val result = customerInfoJson.as[CustomerInformation]
-      result shouldBe customerInfoModel
+    "parse from JSON" when {
+
+      "all fields are present" in {
+        val result = fullCustomerInfoJson.as[CustomerInformation]
+        result shouldBe fullCustomerInfoModel
+      }
+
+      "the minimum number of fields are present" in {
+        val result = minCustomerInfoJson.as[CustomerInformation]
+        result shouldBe minCustomerInfoModel
+      }
     }
 
-    "parse to JSON" in {
-      val result = Json.toJson(customerInfoModel)
-      result shouldBe customerInfoJson
+    "parse to JSON" when {
+
+      "all fields are present" in {
+        val result = Json.toJson(fullCustomerInfoModel)
+        result shouldBe fullCustomerInfoJson
+      }
+
+      "the minimum number of fields are present" in {
+        val result = Json.toJson(minCustomerInfoModel)
+        result shouldBe minCustomerInfoJson
+      }
     }
   }
 }

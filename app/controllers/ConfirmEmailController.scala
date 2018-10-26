@@ -18,8 +18,9 @@ package controllers
 
 import common.SessionKeys
 import config.AppConfig
-import controllers.predicates.AuthPredicate
+import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
+
 import models.User
 import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
 import play.api.Logger
@@ -33,11 +34,12 @@ import scala.concurrent.Future
 
 @Singleton
 class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
+                                       val inflightCheck: InflightPPOBPredicate,
                                        val messagesApi: MessagesApi,
                                        implicit val appConfig: AppConfig,
                                        val vatSubscriptionService: VatSubscriptionService) extends FrontendController with I18nSupport {
 
-  val show: Action[AnyContent] = authenticate.async { implicit user =>
+  val show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
@@ -47,7 +49,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
     }
   }
 
-  val updateEmailAddress: Action[AnyContent] = authenticate.async { implicit user =>
+  val updateEmailAddress: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>

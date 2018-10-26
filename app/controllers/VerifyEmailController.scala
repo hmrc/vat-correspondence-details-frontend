@@ -18,8 +18,9 @@ package controllers
 
 import common.SessionKeys
 import config.AppConfig
-import controllers.predicates.AuthPredicate
+import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
+
 import models.User
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,11 +32,12 @@ import scala.concurrent.Future
 
 @Singleton
 class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
+                                      val inflightCheck: InflightPPOBPredicate,
                                       val messagesApi: MessagesApi,
                                       val emailVerificationService: EmailVerificationService,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  val show: Action[AnyContent] = authenticate.async { implicit user =>
+  val show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) => Future.successful(Ok(views.html.verify_email(email)))

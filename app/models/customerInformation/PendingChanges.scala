@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package common
+package models.customerInformation
 
-object SessionKeys {
-  val clientVrn: String = "CLIENT_VRN"
-  val redirectUrl: String = "redirectUrl"
-  val emailKey = "Email"
-  val validationEmailKey = "validationEmail"
-  val vatNumberKey = "VatNumber"
-  val inflightPPOBKey = "inflightPPOB"
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Reads, Writes}
+
+case class PendingChanges(ppob: Option[PPOB])
+
+object PendingChanges {
+
+  private val ppobPath = JsPath \ "PPOBDetails"
+
+  implicit val reads: Reads[PendingChanges] =
+    ppobPath.readNullable[PPOB].map(PendingChanges.apply)
+
+  implicit val writes: Writes[PendingChanges] =
+    ppobPath.writeNullable[PPOB].contramap(unlift(PendingChanges.unapply))
 }

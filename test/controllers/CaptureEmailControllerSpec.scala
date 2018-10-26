@@ -18,7 +18,7 @@ package controllers
 
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.{GetCustomerInfoError, GetCustomerInfoResponse}
-import services.VatSubscriptionService
+import controllers.predicates.InflightPPOBPredicate
 import models.customerInformation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -35,30 +35,32 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
   val testValidEmail: String      = "test@example.com"
   val testInvalidEmail: String    = "invalidEmail"
 
-  val mockVatSubscriptionService: VatSubscriptionService = mock[VatSubscriptionService]
-
   val customerInfoResult: CustomerInformation =
-    CustomerInformation(PPOB(
-      PPOBAddress(
-        "address line 1",
-        None,
-        None,
-        None,
-        None,
-        None,
-        "en"
-      ),
-      Some(ContactDetails(
-        None,
-        None,
-        None,
-        Some("test@example.com"),
+    CustomerInformation(
+      PPOB(
+        PPOBAddress(
+          "address line 1",
+          None,
+          None,
+          None,
+          None,
+          None,
+          "en"
+        ),
+        Some(ContactDetails(
+          None,
+          None,
+          None,
+          Some("test@example.com"),
+          None
+        )),
         None
-      )),
+      ),
       None
-    ))
+    )
 
-  def setup(result: GetCustomerInfoResponse): Any = when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+  def setup(result: GetCustomerInfoResponse): Any =
+    when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
     .thenReturn(Future.successful(result))
 
   def target(result: GetCustomerInfoResponse = Right(customerInfoResult)): CaptureEmailController = {
@@ -66,6 +68,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     new CaptureEmailController(
       mockAuthPredicate,
+      mockInflightPPOBPredicate,
       messagesApi,
       mockVatSubscriptionService,
       mockErrorHandler,
@@ -194,6 +197,41 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       "return 401" in {
         mockMissingBearerToken()
         status(result) shouldBe Status.UNAUTHORIZED
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+    }
+
+    "the inflight predicate is not mocked out and there is nothing in session" should {
+
+      val inflightPredicate = new InflightPPOBPredicate(
+        mockVatSubscriptionService,
+        mockEnrolmentsAuthService,
+        mockErrorHandler,
+        messagesApi,
+        mockConfig
+      )
+
+      lazy val inflightTarget = {
+
+        setup(Right(customerInfoResult))
+        new CaptureEmailController(
+          mockAuthPredicate,
+          inflightPredicate,
+          messagesApi,
+          mockVatSubscriptionService,
+          mockErrorHandler,
+          mockConfig
+        )
+      }
+
+      lazy val result = inflightTarget.show(request)
+
+      "return 200" in {
+        status(result) shouldBe Status.OK
       }
 
       "return HTML" in {

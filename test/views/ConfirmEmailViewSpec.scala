@@ -19,7 +19,7 @@ package views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class ConfirmEmailSpec extends ViewBaseSpec {
+class ConfirmEmailViewSpec extends ViewBaseSpec {
 
   val testEmail: String = "test@email.com"
 

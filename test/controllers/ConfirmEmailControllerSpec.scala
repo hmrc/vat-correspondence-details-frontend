@@ -37,6 +37,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
   object TestConfirmEmailController extends ConfirmEmailController(
     mockAuthPredicate,
+    mockInflightPPOBPredicate,
     messagesApi,
     mockConfig,
     mockVatSubscriptionService

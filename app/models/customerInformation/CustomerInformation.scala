@@ -19,15 +19,25 @@ package models.customerInformation
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Reads, Writes}
 
-case class CustomerInformation(ppob: PPOB)
+case class CustomerInformation(ppob: PPOB,
+                               pendingChanges: Option[PendingChanges]) {
+
+  val addressAndPendingMatch: Boolean =
+    ppob.address equals pendingChanges.flatMap(_.ppob.map(_.address)).getOrElse("")
+}
 
 object CustomerInformation {
 
   private val ppobPath = JsPath \ "ppob"
+  private val pendingChangesPath = JsPath \ "pendingChanges"
 
-  implicit val reads: Reads[CustomerInformation] =
-    ppobPath.read[PPOB].map(CustomerInformation.apply)
+  implicit val reads: Reads[CustomerInformation] = (
+    ppobPath.read[PPOB] and
+    pendingChangesPath.readNullable[PendingChanges].orElse(Reads.pure(None))
+  )(CustomerInformation.apply _)
 
-  implicit val writes: Writes[CustomerInformation] =
-    ppobPath.write[PPOB].contramap(unlift(CustomerInformation.unapply))
+  implicit val writes: Writes[CustomerInformation] = (
+    ppobPath.write[PPOB] and
+    pendingChangesPath.writeNullable[PendingChanges]
+  )(unlift(CustomerInformation.unapply))
 }
