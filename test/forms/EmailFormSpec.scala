@@ -69,8 +69,8 @@ class EmailFormSpec extends PlaySpec with GuiceOneAppPerSuite {
       formWithError.errors should contain(FormError("email", emptyEmailErrorMessage))
     }
 
-    "validate that the current email is different" in {
-      val formWithError = emailForm(testEmail).bind(Map("email" -> testEmail))
+    "validate that the current email is different (case-insensitive)" in {
+      val formWithError = emailForm(testEmail.toUpperCase).bind(Map("email" -> testEmail.toLowerCase))
       formWithError.errors should contain(FormError("email", notChangedErrorMessage))
     }
 
