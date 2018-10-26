@@ -21,8 +21,10 @@ import config.AppConfig
 import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
 import models.User
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.EmailVerificationService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
@@ -30,15 +32,37 @@ import scala.concurrent.Future
 @Singleton
 class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
                                       val messagesApi: MessagesApi,
+                                      val emailVerificationService: EmailVerificationService,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   val show: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) => Future.successful(Ok(views.html.verify_email(email)))
+      case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
+    }
+  }
 
-      //TODO: Redirect(routes.CaptureEmailController.show())
-      case _ => Future.successful(Ok)
+  val resendVerification: Action[AnyContent] = authenticate.async { implicit user =>
+
+    extractSessionEmail(user) match {
+      case Some(email) =>
+        //TODO: Need to change routes.VerifyEmailController.resendVerification().url to be the controller action when the link is clicked
+        emailVerificationService.createEmailVerificationRequest(email, routes.VerifyEmailController.resendVerification().url).map{
+          case Some(true) => Redirect(routes.VerifyEmailController.show())
+          // already verified - this is an edge case.
+          // Just send them to the confirm page for now. That page can then do the post etc if appropriate
+          case Some(false) =>
+            Logger.warn(
+              "[VerifyEmailController][resendVerification] - " +
+                s"Unable to resend email verification request. Service responded with 'already verified'"
+            )
+
+            Redirect(routes.ConfirmEmailController.show())
+          case _ =>  InternalServerError
+        }
+
+      case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
     }
 
   }
