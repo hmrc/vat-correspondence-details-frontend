@@ -107,7 +107,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "show the email verification page" in {
 
         mockIndividualAuthorised()
-        setupMockCreteEmailVerification(Some(true))
+        setupMockCreateEmailVerification(Some(true))
 
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestVerifyEmailController.resendVerification(request)
@@ -122,7 +122,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "show the email confirmation page" in {
 
         mockIndividualAuthorised()
-        setupMockCreteEmailVerification(Some(false))
+        setupMockCreateEmailVerification(Some(false))
 
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestVerifyEmailController.resendVerification(request)
@@ -138,7 +138,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "show the email confirmation page" in {
 
         mockIndividualAuthorised()
-        setupMockCreteEmailVerification(None)
+        setupMockCreateEmailVerification(None)
 
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestVerifyEmailController.resendVerification(request)
@@ -152,7 +152,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "show the email confirmation page" in {
 
         mockIndividualAuthorised()
-        setupMockCreteEmailVerification(None)
+        setupMockCreateEmailVerification(None)
 
         val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestVerifyEmailController.resendVerification(request)

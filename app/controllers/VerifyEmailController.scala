@@ -46,24 +46,21 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
   val resendVerification: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
-      case Some(email) => {
+      case Some(email) =>
         //TODO: Need to change routes.VerifyEmailController.resendVerification().url to be the controller action when the link is clicked
         emailVerificationService.createEmailVerificationRequest(email, routes.VerifyEmailController.resendVerification().url).map{
           case Some(true) => Redirect(routes.VerifyEmailController.show())
-          // already verified
-          // TODO:this is an edge case. Just send them to the confirm page for now. That pag can then do the post etc if appropriate
-          case Some(false) => {
+          // already verified - this is an edge case.
+          // Just send them to the confirm page for now. That pag can then do the post etc if appropriate
+          case Some(false) =>
             Logger.warn(
               "[VerifyEmailController][resendVerification] - " +
                 s"Unable to resend email verification request. Service responded with 'already verified'"
             )
 
             Redirect(routes.ConfirmEmailController.show())
-          }
           case _ =>  InternalServerError
         }
-
-      }
 
       case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
     }

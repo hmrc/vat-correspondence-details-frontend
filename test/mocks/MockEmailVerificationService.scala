@@ -34,7 +34,7 @@ trait MockEmailVerificationService extends UnitSpec with MockitoSugar with Befor
     reset(mockEmailVerificationService)
   }
 
-  def setupMockCreteEmailVerification(response: Option[Boolean]): OngoingStubbing[Future[Option[Boolean]]] = {
+  def setupMockCreateEmailVerification(response: Option[Boolean]): OngoingStubbing[Future[Option[Boolean]]] = {
     when(mockEmailVerificationService.createEmailVerificationRequest(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
