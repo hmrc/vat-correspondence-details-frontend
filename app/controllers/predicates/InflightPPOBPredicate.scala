@@ -64,7 +64,7 @@ class InflightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
         customerInfo.pendingChanges match {
           case Some(_) =>
             if(!customerInfo.addressAndPendingMatch) {
-              Logger.debug("[InflightPPOBPredicate][invokeBlock] - " +
+              Logger.warn("[InflightPPOBPredicate][invokeBlock] - " +
                 "The current PPOB address and inflight PPOB address are different. Rendering graceful error page.")
               Future.successful(Ok(views.html.errors.ppobChangePending()).addingToSession(inflightPPOBKey -> "true"))
             } else {

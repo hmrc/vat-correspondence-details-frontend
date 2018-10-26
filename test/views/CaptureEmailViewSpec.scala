@@ -53,7 +53,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         }
 
         "should have the correct back link" in {
-          element(Selectors.backLink).attr("href") shouldBe "/vat-through-software/account/change-business-details"
+          element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
         }
       }
 

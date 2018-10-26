@@ -18,6 +18,7 @@ package controllers
 
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.{GetCustomerInfoError, GetCustomerInfoResponse}
+import controllers.predicates.InflightPPOBPredicate
 import models.customerInformation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -196,6 +197,41 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       "return 401" in {
         mockMissingBearerToken()
         status(result) shouldBe Status.UNAUTHORIZED
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+    }
+
+    "the inflight predicate is not mocked out and there is nothing in session" should {
+
+      val inflightPredicate = new InflightPPOBPredicate(
+        mockVatSubscriptionService,
+        mockEnrolmentsAuthService,
+        mockErrorHandler,
+        messagesApi,
+        mockConfig
+      )
+
+      lazy val inflightTarget = {
+
+        setup(Right(customerInfoResult))
+        new CaptureEmailController(
+          mockAuthPredicate,
+          inflightPredicate,
+          messagesApi,
+          mockVatSubscriptionService,
+          mockErrorHandler,
+          mockConfig
+        )
+      }
+
+      lazy val result = inflightTarget.show(request)
+
+      "return 200" in {
+        status(result) shouldBe Status.OK
       }
 
       "return HTML" in {

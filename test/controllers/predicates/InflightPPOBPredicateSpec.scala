@@ -55,7 +55,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
     }
   }
 
-  "The InflightPPOBPredicateSpec" when {
+  "The InflightPPOBPredicate" when {
 
     "there is an inflight indicator in session" when {
 
@@ -130,6 +130,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
       "the user has an inflight email" should {
 
         lazy val result = await(target(Right(customerInfoPendingEmailModel))(request))
+        lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -137,6 +138,10 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
         "add the inflight indicator 'error' to session" in {
           session(result).get(inflightPPOBKey) shouldBe Some("error")
+        }
+
+        "show the standard error page" in {
+          document.title shouldBe "Sorry, we are experiencing technical difficulties - 500"
         }
       }
 
