@@ -17,13 +17,13 @@
 package mocks
 
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
-import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatest.mockito.MockitoSugar
+import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.VatSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
-import org.mockito.ArgumentMatchers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,10 +37,10 @@ trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {
 
   val mockVatSubscriptionService: VatSubscriptionService = mock[VatSubscriptionService]
 
-  def mockUpdateEmailAddress(emailAddress: String, vrn: String)(response: Future[Either[ErrorModel, EmailAddressUpdateResponseModel]]): Unit =
-    when(mockVatSubscriptionService.updateEmailAddress(
-      ArgumentMatchers.eq(emailAddress),
-      ArgumentMatchers.eq(vrn)
+  def mockUpdateEmailAddress(vrn: String, email: String)(response: Future[UpdateEmailResponse]): Unit =
+    when(mockVatSubscriptionService.updateEmail(
+      ArgumentMatchers.eq(vrn),
+      ArgumentMatchers.eq(email)
     )(ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[ExecutionContext])) thenReturn response
 

@@ -17,7 +17,8 @@
 package connectors.httpParsers
 
 import assets.CustomerInfoConstants._
-import connectors.httpParsers.GetCustomerInfoHttpParser.{CustomerInfoReads, GetCustomerInfoError}
+import connectors.httpParsers.GetCustomerInfoHttpParser.{CustomerInfoReads, GetCustomerInfoResponse}
+import models.errors.ErrorModel
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpResponse
@@ -25,7 +26,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class GetCustomerInfoHttpParserSpec extends UnitSpec {
 
-  private def customerInfoResult(response: HttpResponse) = CustomerInfoReads.read("", "", response)
+  private def customerInfoResult(response: HttpResponse): GetCustomerInfoResponse =
+    CustomerInfoReads.read("", "", response)
 
   "CustomerInfoReads" when {
 
@@ -59,7 +61,7 @@ class GetCustomerInfoHttpParserSpec extends UnitSpec {
         )
         val response = HttpResponse(Status.NOT_FOUND, Some(notFoundJson))
         val result = customerInfoResult(response)
-        result shouldBe Left(GetCustomerInfoError(Status.NOT_FOUND, Json.prettyPrint(notFoundJson)))
+        result shouldBe Left(ErrorModel(Status.NOT_FOUND, Json.prettyPrint(notFoundJson)))
       }
     }
   }

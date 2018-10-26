@@ -18,14 +18,15 @@ package controllers.predicates
 
 import assets.CustomerInfoConstants._
 import common.SessionKeys.inflightPPOBKey
-import connectors.httpParsers.GetCustomerInfoHttpParser.{GetCustomerInfoError, GetCustomerInfoResponse}
+import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import mocks.MockAuth
+import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
-import play.api.mvc.{Action, AnyContent}
 import play.api.mvc.Results.Ok
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -160,7 +161,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
       "the service call fails" should {
 
-        lazy val result = await(target(Left(GetCustomerInfoError(Status.INTERNAL_SERVER_ERROR, "error")))(request))
+        lazy val result = await(target(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))(request))
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR

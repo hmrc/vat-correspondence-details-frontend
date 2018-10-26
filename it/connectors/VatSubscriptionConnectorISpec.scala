@@ -17,9 +17,11 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import connectors.httpParsers.GetCustomerInfoHttpParser.{GetCustomerInfoError, GetCustomerInfoResponse}
+import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
+import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import helpers.IntegrationBaseSpec
-import models.customerInformation.{CustomerInformation, PPOB, PPOBAddress}
+import models.customerInformation.{CustomerInformation, PPOB, PPOBAddress, UpdateEmailSuccess}
+import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import stubs.VatSubscriptionStub
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,13 +37,32 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
     implicit val ec: ExecutionContext = ExecutionContext.global
   }
 
+  val testVrn: String = "23456789"
+  val testEmail: String = "test@exmaple.com"
+
+  val testPPOB = PPOB(
+    PPOBAddress(
+      "firstLine",
+      None,
+      None,
+      None,
+      None,
+      None,
+      "codeOfMyCountry"
+    ),
+    None,
+    Some("www.pepsi-mac.biz")
+  )
+
   "Calling getCustomerInfo" when {
 
     "valid JSON is returned by the endpoint" should {
 
       "return a CustomerInformation model" in new Test {
         override def setupStubs(): StubMapping = VatSubscriptionStub.stubCustomerInfo
+
         setupStubs()
+
         val expected = Right(CustomerInformation(
           PPOB(
             PPOBAddress(
@@ -62,12 +83,48 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
 
         result shouldBe expected
       }
+    }
 
-      "return an Error model" in new Test {
-        override def setupStubs(): StubMapping = VatSubscriptionStub.stubErrorFromApi
+    "the endpoint returns an unexpected status" should {
+
+      "return an error model" in new Test {
+        override def setupStubs(): StubMapping = VatSubscriptionStub.stubCustomerInfoError
+
         setupStubs()
-        val expected = Left(GetCustomerInfoError(INTERNAL_SERVER_ERROR, """{"fail":"nope"}"""))
+
+        val expected = Left(ErrorModel(INTERNAL_SERVER_ERROR, """{"fail":"nope"}"""))
         val result: GetCustomerInfoResponse = await(connector.getCustomerInfo("123456789"))
+
+        result shouldBe expected
+      }
+    }
+  }
+
+  "Calling updateEmail" when {
+
+    "valid JSON is returned by the endpoint" should {
+
+      "return an UpdateEmailSuccess model" in new Test {
+        override def setupStubs(): StubMapping = VatSubscriptionStub.stubUpdateEmail
+
+        setupStubs()
+
+        val expected = Right(UpdateEmailSuccess("success"))
+        val result: UpdateEmailResponse = await(connector.updateEmail(testVrn, testPPOB))
+
+        result shouldBe expected
+      }
+    }
+
+    "the endpoint returns an unexpected status" should {
+
+      "return an error model" in new Test {
+        override def setupStubs(): StubMapping = VatSubscriptionStub.stubUpdateEmailError
+
+        setupStubs()
+
+        val expected = Left(ErrorModel(INTERNAL_SERVER_ERROR, """{"fail":"nope"}"""))
+        val result: UpdateEmailResponse = await(connector.updateEmail(testVrn, testPPOB))
 
         result shouldBe expected
       }

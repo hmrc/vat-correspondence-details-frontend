@@ -17,21 +17,21 @@
 package connectors.httpParsers
 
 import models.errors.ErrorModel
-import models.customerInformation.CustomerInformation
+import models.customerInformation.UpdateEmailSuccess
 import play.api.Logger
-import play.api.http.Status.{OK, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-object GetCustomerInfoHttpParser {
+object UpdateEmailHttpParser {
 
-  type GetCustomerInfoResponse = Either[ErrorModel, CustomerInformation]
+  type UpdateEmailResponse = Either[ErrorModel, UpdateEmailSuccess]
 
-  implicit object CustomerInfoReads extends HttpReads[GetCustomerInfoResponse] {
-    override def read(method: String, url: String, response: HttpResponse): GetCustomerInfoResponse = {
+  implicit object UpdateEmailReads extends HttpReads[UpdateEmailResponse] {
+    override def read(method: String, url: String, response: HttpResponse): UpdateEmailResponse = {
       response.status match {
-        case OK => response.json.validate[CustomerInformation].fold(
+        case OK => response.json.validate[UpdateEmailSuccess].fold(
           _ => {
-            Logger.warn(s"[GetCustomerInfoHttpParser][read] - Invalid JSON: ${response.json}")
+            Logger.warn(s"[UpdateEmailHttpParser][read] - Invalid JSON: ${response.json}")
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => Right(valid)

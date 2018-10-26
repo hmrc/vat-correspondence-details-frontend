@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.errors
+package connectors.httpParsers
 
-import play.api.libs.json.{Format, Json}
+import models.errors.ErrorModel
 
-case class EmailAddressUpdateResponseModel(stored: Boolean)
-
-object SubscriptionUpdateResponseModel {
-  implicit val format: Format[EmailAddressUpdateResponseModel] = Json.format[EmailAddressUpdateResponseModel]
+object ResponseHttpParser {
+  type HttpGetResult[T]  = Either[ErrorModel, T]
+  type HttpPostResult[T] = Either[ErrorModel, T]
+  type HttpPutResult[T]  = Either[ErrorModel, T]
 }

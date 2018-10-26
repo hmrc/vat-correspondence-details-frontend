@@ -28,7 +28,12 @@ object GetEmailVerificationStateHttpParser {
     override def read(method: String, url: String, response: HttpResponse): GetEmailVerificationStateResponse =
       response.status match {
         case OK => Right(EmailVerified)
-        case NOT_FOUND => Right(EmailNotVerified)
+        case NOT_FOUND =>
+          Logger.debug(
+            "[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads.read] - " +
+            "Email not verified"
+          )
+          Right(EmailNotVerified)
         case status =>
           Logger.warn(
             "[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads.read] - " +

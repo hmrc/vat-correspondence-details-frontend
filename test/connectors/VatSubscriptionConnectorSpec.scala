@@ -23,19 +23,18 @@ class VatSubscriptionConnectorSpec extends ControllerBaseSpec {
 
   lazy val connector = new VatSubscriptionConnector(mock[HttpClient], mockConfig)
 
+  val testVrn: String = "123456789"
+
   "VatSubscriptionConnector" should {
 
-    "generate the correct getCustomerInfo URL" in {
-      connector.getCustomerInfoUrl("987654321") shouldBe
-        "mockVatSubscriptionHost/vat-subscription/987654321/full-information"
+    "generate the correct url for getCustomerInfo" in {
+      connector.getCustomerInfoUrl(testVrn) shouldBe
+        "mockVatSubscriptionHost/vat-subscription/123456789/full-information"
     }
-  }
 
-  "VatSubscriptionConnector" should {
-
-    "return a Right(Ok)" in {
-      connector.updateEmailAddress("email@test.com", "987654321") shouldBe
-        Right("Ok")
+    "generate the correct url for updateEmail" in {
+      connector.updateEmailUrl(testVrn) shouldBe
+        "mockVatSubscriptionHost/vat-subscription/123456789/ppob"
     }
   }
 }

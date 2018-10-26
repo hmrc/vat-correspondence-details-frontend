@@ -16,12 +16,13 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
 import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
-import play.api.Logger
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
+import javax.inject.{Inject, Singleton}
+import models.customerInformation.{CustomerInformation, PPOB, UpdateEmailSuccess}
+import models.errors.ErrorModel
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,28 +30,31 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emailVerificationService: EmailVerificationService) {
 
+  private[services] def buildEmailUpdateModel(email: String, ppob: PPOB): PPOB = {
+    ppob.copy(
+      contactDetails = ppob.contactDetails.map(_.copy(emailAddress = Some(email)))
+    )
+  }
+
   def getCustomerInfo(vrn: String)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetCustomerInfoResponse] =
     connector.getCustomerInfo(vrn)
 
-  def updateEmailAddress(emailAddress: String, vrn: String)
-                        (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, EmailAddressUpdateResponseModel]] = {
+  def updateEmail(vrn: String, email: String)
+                 (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[UpdateEmailResponse] = {
 
-  emailVerificationService.isEmailVerified(emailAddress) map {
+    emailVerificationService.isEmailVerified(email) flatMap {
       case Some(true) =>
-        connector.updateEmailAddress(vrn, emailAddress) match {
-          case Right(_) =>
-            Right(EmailAddressUpdateResponseModel(true))
-          case Left(error) =>
-            Logger.warn(s"[VatSubscriptionService][UpdateEmailAddress] - Error received from vat-subscription: $error")
-            Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))
+        this.getCustomerInfo(vrn) flatMap {
+          case Right(customerInfo) =>
+            connector.updateEmail(vrn, buildEmailUpdateModel(email, customerInfo.ppob)) map {
+              case Right(success) => Right(success)
+              case Left(error) => Left(error)
+            }
+          case Left(error) => Future.successful(Left(error))
         }
-      case Some(false) =>
-        Logger.warn("[VatSubscriptionService][UpdateEmailAddress] - Email address not verified")
-        Right(EmailAddressUpdateResponseModel(false))
-      case None =>
-        Logger.warn("[VatSubscriptionService][UpdateEmailAddress] - Couldn't verify email address")
-        Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))
+      case Some(false) => Future.successful(Right(UpdateEmailSuccess("")))
+      case None => Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address")))
     }
   }
 }

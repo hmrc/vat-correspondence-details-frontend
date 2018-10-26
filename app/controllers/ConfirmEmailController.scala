@@ -17,17 +17,15 @@
 package controllers
 
 import common.SessionKeys
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
-
 import models.User
-import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
+import models.customerInformation.UpdateEmailSuccess
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
-import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
@@ -36,6 +34,7 @@ import scala.concurrent.Future
 class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
                                        val inflightCheck: InflightPPOBPredicate,
                                        val messagesApi: MessagesApi,
+                                       val errorHandler: ErrorHandler,
                                        implicit val appConfig: AppConfig,
                                        val vatSubscriptionService: VatSubscriptionService) extends FrontendController with I18nSupport {
 
@@ -53,15 +52,12 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
 
     extractSessionEmail(user) match {
       case Some(email) =>
-        vatSubscriptionService.updateEmailAddress(email, user.vrn) map {
-          case Right(EmailAddressUpdateResponseModel(true)) =>
-            Redirect(routes.EmailChangeSuccessController.show().url)
-          case Right(EmailAddressUpdateResponseModel(false)) =>
+        vatSubscriptionService.updateEmail(user.vrn, email) map {
+          case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
             Redirect(routes.VerifyEmailController.show().url)
-          case notFound@Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided")) =>
-            throw new InternalServerException("updateEmail failed: status=" + notFound.left.get.message)
-          case failed@Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address")) =>
-            throw new InternalServerException("updateEmail failed: status=" + failed.left.get.message)
+          case Right(UpdateEmailSuccess(_)) =>
+            Redirect(routes.EmailChangeSuccessController.show().url)
+          case Left(_) => errorHandler.showInternalServerError
         }
 
       case _ =>

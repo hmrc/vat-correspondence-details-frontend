@@ -16,18 +16,18 @@
 
 package controllers
 
+import common.SessionKeys
+import mocks.MockVatSubscriptionService
+import models.User
+import models.customerInformation.UpdateEmailSuccess
+import models.errors.ErrorModel
+import org.jsoup.Jsoup
+import org.scalatest.concurrent.{Waiters, _}
 import play.api.http.Status
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import common.SessionKeys
-import mocks.MockVatSubscriptionService
-import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
-import models.User
-import org.jsoup.Jsoup
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
-import org.scalatest.concurrent._
-import org.scalatest.concurrent.Waiters
 import uk.gov.hmrc.http.InternalServerException
 
 import scala.concurrent.Future
@@ -39,6 +39,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
     mockAuthPredicate,
     mockInflightPPOBPredicate,
     messagesApi,
+    mockErrorHandler,
     mockConfig,
     mockVatSubscriptionService
   )
@@ -110,7 +111,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
       "show the email changed success page" in {
 
         mockIndividualAuthorised()
-        mockUpdateEmailAddress(testEmail, testVatNumber)(Future(Right(EmailAddressUpdateResponseModel(true))))
+        mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess("success"))))
         val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
@@ -124,7 +125,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
       "redirect the user to the we have sent you an email page" in {
 
         mockIndividualAuthorised()
-        mockUpdateEmailAddress(testEmail, testVatNumber)(Future(Right(EmailAddressUpdateResponseModel(false))))
+        mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess(""))))
         val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
@@ -138,20 +139,12 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
       "throw an Internal Server Exception" in {
 
         mockIndividualAuthorised()
-        mockUpdateEmailAddress(testEmail, testVatNumber)(Future(Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))))
+        mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))))
         val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val result = TestConfirmEmailController.updateEmailAddress(request)
 
-        val updateResponse = TestConfirmEmailController.updateEmailAddress(request)
-
-        val w = new Waiter
-        updateResponse onComplete {
-          case Failure(e) => w(throw e); w.dismiss()
-          case _ => w.dismiss()
-        }
-
-        intercept[InternalServerException] {
-          w.await()
-        }
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
 
@@ -159,21 +152,12 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
       "throw an Internal Server Exception" in {
 
         mockIndividualAuthorised()
-        mockUpdateEmailAddress(testEmail, testVatNumber)(Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
+        mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
         val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val result = TestConfirmEmailController.updateEmailAddress(request)
 
-        val updateResponse = TestConfirmEmailController.updateEmailAddress(request)
-
-        val w = new Waiter
-        updateResponse onComplete {
-          case Failure(e) => w(throw e); w.dismiss()
-          case _ => w.dismiss()
-        }
-
-        intercept[InternalServerException] {
-          w.await()
-        }
-
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
 

@@ -16,10 +16,11 @@
 
 package services
 
+import play.api.http.Status
 import assets.CustomerInfoConstants._
 import mocks.{MockEmailVerificationService, MockVatSubscriptionConnector}
-import models.errors.{EmailAddressUpdateResponseModel, ErrorModel}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import models.customerInformation._
+import models.errors.ErrorModel
 import utils.TestUtil
 
 import scala.concurrent.Future
@@ -28,65 +29,96 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
 
   val service = new VatSubscriptionService(connector, mockEmailVerificationService)
 
-  "The getCustomerInfo function" when {
+  val testVrn: String   = "123456789"
+  val testEmail: String = "test@example.com"
 
-    "a CustomerInformation model is returned by the connector" should {
+  "calling getCustomerInfo" when {
+
+    "the VatSubscriptionConnector returns a model" should {
 
       "return the model" in {
         mockGetCustomerInfoSuccessResponse()
-        val result = await(service.getCustomerInfo("123456789"))
+
+        val result = await(service.getCustomerInfo(testVrn))
         result shouldBe Right(fullCustomerInfoModel)
       }
     }
 
-    "an error is returned by the connector" should {
+    "the VatSubscriptionConnector returns an error" should {
 
       "return the error" in {
         mockGetCustomerInfoFailureResponse()
-        val result = await(service.getCustomerInfo("123456789"))
+
+        val result = await(service.getCustomerInfo(testVrn))
         result shouldBe Left(invalidJsonError)
       }
     }
   }
 
-  "The updateEmailAddress function" when {
+  "calling updateEmail" when {
 
     "the email has been verified and the email update has been successful" should {
 
-      "return an email address update response model" in {
-        mockGetEmailVerificationState("test@email.com")(Future(Some(true)))
-        mockUpdateEmailAddressSuccessResponse()
-        val result = await(service.updateEmailAddress("test@email.com", "123456789"))
-        result shouldBe Right(EmailAddressUpdateResponseModel(true))
+      "return the model" in {
+        mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdateEmailSuccessResponse()
+
+        val result = await(service.updateEmail(testVrn, testEmail))
+        result shouldBe Right(UpdateEmailSuccess("success"))
       }
     }
 
-    "the email has been verified but the email update was not successful" should {
+    "the VatSubscriptionConnector returns an error" should {
 
-      "return an error model" in {
-        mockGetEmailVerificationState("test@email.com")(Future(Some(true)))
-        mockUpdateEmailAddressFailureResponse()
-        val result = await(service.updateEmailAddress("test@email.com", "123456789"))
-        result shouldBe Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))
+      "return the error" in {
+        mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdateEmailFailureResponse()
+
+        val result = await(service.updateEmail(testVrn, testEmail))
+        result shouldBe Left(invalidJsonError)
       }
     }
 
     "the email has not been verified" should {
 
-      "return an error model" in {
-        mockGetEmailVerificationState("test@email.com")(Future(Some(false)))
-        val result = await(service.updateEmailAddress("test@email.com", "123456789"))
-        result shouldBe Right(EmailAddressUpdateResponseModel(false))
+      "return the error" in {
+        mockGetEmailVerificationState(testEmail)(Future(Some(false)))
+
+        val result = await(service.updateEmail(testVrn, testEmail))
+        result shouldBe Right(UpdateEmailSuccess(""))
       }
     }
 
     "there was an unexpected response from email verification service" should {
 
-      "return an error model" in {
-        mockGetEmailVerificationState("test@email.com")(Future(None))
-        val result = await(service.updateEmailAddress("test@email.com", "123456789"))
-        result shouldBe Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))
+      "return the error" in {
+        mockGetEmailVerificationState(testEmail)(Future(None))
+
+        val result = await(service.updateEmail(testVrn, testEmail))
+        result shouldBe Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Couldn't verify email address"))
       }
+    }
+  }
+
+  "calling buildEmailUpdateModel" should {
+
+    "return a CustomerInformation model with the updated email" in {
+      val expectedPPOB: PPOB = PPOB(
+        fullPPOBAddressModel,
+        Some(ContactDetails(
+          Some("01234567890"),
+          Some("07707707707"),
+          Some("0123456789"),
+          Some(testEmail),
+          Some(true)
+        )),
+        Some("www.pepsi-mac.biz")
+      )
+
+      val result = service.buildEmailUpdateModel(testEmail, fullPPOBModel)
+      result shouldBe expectedPPOB
     }
   }
 }
