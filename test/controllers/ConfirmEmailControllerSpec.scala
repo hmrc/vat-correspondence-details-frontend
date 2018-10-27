@@ -122,7 +122,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
     }
 
     "there is a non-verified email in session" should {
-      "redirect the user to the we have sent you an email page" in {
+      "redirect the user to the send email verification pagee" in {
 
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess(""))))
@@ -130,7 +130,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/verify-email-address")
+        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-verification")
 
       }
     }

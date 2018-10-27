@@ -30,14 +30,13 @@ object GetEmailVerificationStateHttpParser {
         case OK => Right(EmailVerified)
         case NOT_FOUND =>
           Logger.debug(
-            "[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads.read] - " +
-            "Email not verified"
+            "[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads][read] - Email not verified"
           )
           Right(EmailNotVerified)
         case status =>
           Logger.warn(
-            "[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads.read] - " +
-            s"Failed to check email. Received status: ${response.status}. Response body: ${response.body}"
+            s"[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads][read] - " +
+              s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )
           Left(GetEmailVerificationStateErrorResponse(status, response.body))
       }

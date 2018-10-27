@@ -43,7 +43,7 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
 
     http.GET[HttpGetResult[CustomerInformation]](getCustomerInfoUrl(vrn)).map {
       case customerInfo@Right(_) =>
-        Logger.debug(s"[VatSubscriptionConnector][getCustomerInfo] successfully received customer info response")
+        Logger.warn(s"[VatSubscriptionConnector][getCustomerInfo] successfully received customer info response")
         customerInfo
       case httpError@Left(error) =>
         Logger.warn("[VatSubscriptionConnector][getCustomerInfo] received error - " + error.message)

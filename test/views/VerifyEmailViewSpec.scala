@@ -63,9 +63,9 @@ class VerifyEmailViewSpec extends ViewBaseSpec {
         element("#content > article > details > div > p > a").attr("data-journey-click") shouldBe "email-address:resend:verify-email"
       }
       
-      "have a link element which calls the resend email controller action" in {
+      "have a link element which calls the send email controller action" in {
         element("#content > article > details > div > p > a").attr("href") shouldBe
-          controllers.routes.VerifyEmailController.resendVerification().url
+          controllers.routes.VerifyEmailController.sendVerification().url
       }
     }
   }

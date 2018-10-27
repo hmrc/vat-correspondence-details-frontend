@@ -44,7 +44,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
       case Some(email) =>
         Future.successful(Ok(views.html.confirm_email(email)))
       case _ =>
-        Future.successful(Redirect(controllers.routes.CaptureEmailController.show().url))
+        Future.successful(Redirect(controllers.routes.CaptureEmailController.show()))
     }
   }
 
@@ -54,15 +54,15 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
       case Some(email) =>
         vatSubscriptionService.updateEmail(user.vrn, email) map {
           case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
-            Redirect(routes.VerifyEmailController.show().url)
+            Redirect(routes.VerifyEmailController.sendVerification())
           case Right(UpdateEmailSuccess(_)) =>
-            Redirect(routes.EmailChangeSuccessController.show().url)
+            Redirect(routes.EmailChangeSuccessController.show())
           case Left(_) => errorHandler.showInternalServerError
         }
 
       case _ =>
         Logger.info("[VatSubscriptionConnector][updateEmailAddress] no email address found in session")
-        Future.successful(Redirect(controllers.routes.CaptureEmailController.show().url))
+        Future.successful(Redirect(controllers.routes.CaptureEmailController.show()))
     }
   }
 
