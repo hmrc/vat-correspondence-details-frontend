@@ -65,7 +65,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override lazy val appName: String = getString("appName")
 
   override lazy val contactHost: String = getString(Keys.contactFrontendHost)
-  private val contactFormServiceIdentifier = "MyService" //TODO update contact frontend service identifier
+  private val contactFormServiceIdentifier = "VATC"
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 

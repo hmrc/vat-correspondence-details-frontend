@@ -16,6 +16,7 @@
 
 package connectors.httpParsers
 
+import connectors.httpParsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateErrorResponse
 import models.errors.ErrorModel
 import models.customerInformation.UpdateEmailSuccess
 import play.api.Logger
@@ -30,14 +31,21 @@ object UpdateEmailHttpParser {
     override def read(method: String, url: String, response: HttpResponse): UpdateEmailResponse = {
       response.status match {
         case OK => response.json.validate[UpdateEmailSuccess].fold(
-          _ => {
-            Logger.warn(s"[UpdateEmailHttpParser][read] - Invalid JSON: ${response.json}")
+          invalid => {
+            Logger.warn(s"[UpdateEmailHttpParser][read] - Invalid JSON: $invalid")
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => Right(valid)
         )
-        case _ => Left(ErrorModel(response.status, response.body))
+        case status => {
+          Logger.warn(
+            s"[UpdateEmailHttpParser][read] - " +
+              s"Unexpected Response, Status $status returned, with response: ${response.body}"
+          )
+          Left(ErrorModel(status, response.body))
+        }
       }
     }
   }
+
 }
