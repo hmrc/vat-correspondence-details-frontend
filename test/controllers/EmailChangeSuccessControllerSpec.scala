@@ -16,6 +16,7 @@
 
 package controllers
 
+import common.SessionKeys._
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -33,7 +34,10 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
 
     "a user is enrolled with a valid enrolment" should {
 
-      lazy val result = TestController.show(fakeRequestWithVrnAndRedirectUrl)
+      lazy val result = TestController.show(request.withSession(
+        emailKey -> "myemail@gmail.com",
+        validationEmailKey -> "anotheremail@gmail.com"
+      ))
       lazy val document = Jsoup.parse(bodyOf(result))
 
       "return 200" in {
@@ -46,6 +50,14 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
         charset(result) shouldBe Some("utf-8")
       }
 
+      "remove the email session key from the session" in {
+        session(result).get(emailKey) shouldBe None
+      }
+
+      "remove the validation email session key from the session" in {
+        session(result).get(validationEmailKey) shouldBe None
+      }
+
       "render the email change success page" in {
         mockIndividualAuthorised()
         document.select("h1").text() shouldBe "We have received the new email address"
@@ -54,7 +66,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
 
     "a user is does not have a valid enrolment" should {
 
-      lazy val result = TestController.show(fakeRequestWithVrnAndRedirectUrl)
+      lazy val result = TestController.show(request)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
