@@ -18,8 +18,5 @@ GET        /verify-email-address           controllers.VerifyEmailController.sho
 # link to send email verification
 GET        /send-verification              controllers.VerifyEmailController.sendVerification
 
-# route to receive verification email link clicks
-GET        /email-verified                 controllers.ConfirmEmailController.updateEmailAddress
-
 # email change successful
 GET        /email-change-success           controllers.EmailChangeSuccessController.show
