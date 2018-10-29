@@ -17,10 +17,9 @@
 package controllers
 
 import common.SessionKeys
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
-
 import models.User
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,6 +34,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
                                       val inflightCheck: InflightPPOBPredicate,
                                       val messagesApi: MessagesApi,
                                       val emailVerificationService: EmailVerificationService,
+                                      val errorHandler: ErrorHandler,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   val show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
@@ -45,23 +45,20 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
     }
   }
 
-  val resendVerification: Action[AnyContent] = authenticate.async { implicit user =>
+  val sendVerification: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
-        //TODO: Need to change routes.VerifyEmailController.resendVerification().url to be the controller action when the link is clicked
-        emailVerificationService.createEmailVerificationRequest(email, routes.VerifyEmailController.resendVerification().url).map{
+        emailVerificationService.createEmailVerificationRequest(email, routes.ConfirmEmailController.updateEmailAddress().url).map{
           case Some(true) => Redirect(routes.VerifyEmailController.show())
-          // already verified - this is an edge case.
-          // Just send them to the confirm page for now. That page can then do the post etc if appropriate
           case Some(false) =>
             Logger.warn(
-              "[VerifyEmailController][resendVerification] - " +
-                s"Unable to resend email verification request. Service responded with 'already verified'"
+              "[VerifyEmailController][sendVerification] - " +
+                "Unable to send email verification request. Service responded with 'already verified'"
             )
-
-            Redirect(routes.ConfirmEmailController.show())
-          case _ =>  InternalServerError
+            //edge case. already verified. just try to the update then? TODO: check this is best thing to do?
+            Redirect(routes.ConfirmEmailController.updateEmailAddress())
+          case _ =>  errorHandler.showInternalServerError
         }
 
       case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))

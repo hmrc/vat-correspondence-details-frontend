@@ -25,8 +25,6 @@ import mocks.MockEmailVerificationService
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 
-import scala.concurrent.Future
-
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyEmailController extends VerifyEmailController(
@@ -34,6 +32,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     mockInflightPPOBPredicate,
     messagesApi,
     mockEmailVerificationService,
+    mockErrorHandler,
     mockConfig
   )
 
@@ -41,7 +40,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   val testEmail: String = "test@email.co.uk"
   val testContinueUrl: String = "/someReturnUrl/verified"
 
-  lazy val testResendEmailRequest = FakeRequest("GET", "/resend-verification")
+  lazy val testSendEmailRequest = FakeRequest("GET", "/send-verification")
   lazy val testGetRequest = FakeRequest("GET", "/verify-email-address")
 
   "Calling the extractEmail function in VerifyEmailController" when {
@@ -112,8 +111,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(Some(true))
 
-        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.resendVerification(request)
+        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.sendVerification(request)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.VerifyEmailController.show().url)
@@ -127,11 +126,11 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(Some(false))
 
-        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.resendVerification(request)
+        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.sendVerification(request)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ConfirmEmailController.show().url)
+        redirectLocation(result) shouldBe Some(routes.ConfirmEmailController.updateEmailAddress().url)
       }
     }
 
@@ -143,8 +142,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(None)
 
-        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.resendVerification(request)
+        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.sendVerification(request)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -157,8 +156,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(None)
 
-        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.resendVerification(request)
+        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.sendVerification(request)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -169,8 +168,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
         mockIndividualAuthorised()
 
-        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> "")
-        val result = TestVerifyEmailController.resendVerification(request)
+        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> "")
+        val result = TestVerifyEmailController.sendVerification(request)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
@@ -182,8 +181,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
         mockUnauthorised()
 
-        val request = testResendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.resendVerification(request)
+        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestVerifyEmailController.sendVerification(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"

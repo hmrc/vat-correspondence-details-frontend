@@ -28,13 +28,19 @@ object CreateEmailVerificationRequestHttpParser {
     override def read(method: String, url: String, response: HttpResponse): CreateEmailVerificationRequestResponse =
       response.status match {
         case CREATED =>
+          Logger.debug(
+            "[CreateEmailVerificationRequestHttpReads][read] - Email request sent successfully"
+          )
           Right(EmailVerificationRequestSent)
         case CONFLICT =>
+          Logger.debug(
+            "[CreateEmailVerificationRequestHttpReads][read] - Email already verified"
+          )
           Right(EmailAlreadyVerified)
         case status =>
           Logger.warn(
-            "[CreateEmailVerificationRequestHttpParser][CreateEmailVerificationRequestHttpReads.read] - " +
-            s"Failed to create email verification. Received status: ${response.status}. Response body: ${response.body}"
+            "[CreateEmailVerificationRequestHttpParser][CreateEmailVerificationRequestHttpReads][read] - " +
+            s"Failed to create email verification. Received status: $status Response body: ${response.body}"
           )
           Left(EmailVerificationRequestFailure(status, response.body))
     }

@@ -59,7 +59,7 @@
     <logger name="io.netty.util.internal" level="WARN" />
     <logger name="akka.stream" level="WARN" />
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>

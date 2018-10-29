@@ -23,7 +23,7 @@
 @accordionContent = {
     <p>
         @messages("verifyEmail.accordion.lineOne")
-        <a href='@controllers.routes.VerifyEmailController.resendVerification().url'
+        <a href='@controllers.routes.VerifyEmailController.sendVerification().url'
         data-journey-click="email-address:resend:verify-email">
         @messages("verifyEmail.accordion.lineTwo")</a>.
         @messages("verifyEmail.accordion.lineThree")
