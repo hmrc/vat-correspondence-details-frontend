@@ -36,7 +36,7 @@ class UpdateEmailHttpParserSpec extends UnitSpec with EitherValues {
         read("", "", httpResponse).right.value shouldBe updateEmailSuccess
       }
 
-      "return the expected Left Error Model when the response Json can be parsed" in {
+      "return the expected Left Error Model when the response Json cannot be parsed" in {
         val httpResponse = HttpResponse(Status.OK, Some(Json.obj("notExpectedKey" -> s"$formBundle")))
 
         read("", "", httpResponse).left.value shouldBe ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
