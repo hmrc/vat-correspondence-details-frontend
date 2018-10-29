@@ -34,7 +34,7 @@ class VatSubscriptionConnectorSpec extends ControllerBaseSpec {
 
     "generate the correct url for updateEmail" in {
       connector.updateEmailUrl(testVrn) shouldBe
-        "mockVatSubscriptionHost/vat-subscription/123456789/ppob"
+        "mockVatSubscriptionHost/vat-subscription/123456789/email-address"
     }
   }
 }

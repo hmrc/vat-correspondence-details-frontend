@@ -34,7 +34,7 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
     s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/full-information"
 
   private[connectors] def updateEmailUrl(vrn: String): String =
-    s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/ppob"
+    s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/email-address"
 
   def getCustomerInfo(vrn: String)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[CustomerInformation]] = {

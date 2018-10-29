@@ -24,7 +24,7 @@ import play.api.libs.json.{JsObject, Json}
 object VatSubscriptionStub extends WireMockMethods {
 
   private val getCustomerInfoUri: String = "/vat-subscription/([0-9]+)/full-information"
-  private val updateEmailUri: String = "/vat-subscription/([0-9]+)/ppob"
+  private val updateEmailUri: String = "/vat-subscription/([0-9]+)/email-address"
 
   def stubCustomerInfo: StubMapping = {
     when(method = GET, uri = getCustomerInfoUri)
