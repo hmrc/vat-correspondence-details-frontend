@@ -54,7 +54,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
           case Some(false) =>
             Logger.warn(
               "[VerifyEmailController][sendVerification] - " +
-                s"Unable to send email verification request. Service responded with 'already verified'"
+                "Unable to send email verification request. Service responded with 'already verified'"
             )
             //edge case. already verified. just try to the update then? TODO: check this is best thing to do?
             Redirect(routes.ConfirmEmailController.updateEmailAddress())

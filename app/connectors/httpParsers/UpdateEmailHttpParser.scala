@@ -16,7 +16,6 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateErrorResponse
 import models.errors.ErrorModel
 import models.customerInformation.UpdateEmailSuccess
 import play.api.Logger
