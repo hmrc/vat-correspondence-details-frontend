@@ -19,18 +19,17 @@ package config
 import java.util.Base64
 
 import config.features.Features
+import config.{ConfigKeys => Keys}
 import javax.inject.{Inject, Singleton}
+import play.api.Mode.Mode
 import play.api.i18n.Lang
 import play.api.mvc.Call
-import config.{ConfigKeys => Keys}
 import play.api.{Configuration, Environment}
-import play.api.Mode.Mode
 import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.config.ServicesConfig
 
 trait AppConfig extends ServicesConfig {
   val appName: String
-  val contactHost: String
   val assetsPrefix: String
   val analyticsToken: String
   val analyticsHost: String
@@ -56,6 +55,9 @@ trait AppConfig extends ServicesConfig {
   val vatSubscriptionHost: String
   val manageVatSubscriptionServiceUrl: String
   val manageVatSubscriptionServicePath: String
+  val feedbackFormPartialUrl: String
+  val contactFrontendService: String
+  val contactFormServiceIdentifier: String
 }
 
 @Singleton
@@ -64,10 +66,11 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override protected def mode: Mode = environment.mode
   override lazy val appName: String = getString("appName")
 
-  override lazy val contactHost: String = getString(Keys.contactFrontendHost)
-  private val contactFormServiceIdentifier = "VATC"
-  override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val contactFormServiceIdentifier = "VATC"
+  override lazy val contactFrontendService: String = getString(Keys.contactFrontendService)
+  override lazy val feedbackFormPartialUrl: String = s"$contactFrontendService/contact/beta-feedback/form"
+  override lazy val reportAProblemPartialUrl = s"$contactFrontendService/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemNonJSUrl = s"$contactFrontendService/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 
   override lazy val assetsPrefix: String = getString(Keys.assetsUrl) + getString(Keys.assetsVersion)
 
