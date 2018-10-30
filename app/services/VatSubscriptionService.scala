@@ -32,7 +32,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
 
   private[services] def buildEmailUpdateModel(email: String, ppob: PPOB): PPOB = {
     ppob.copy(
-      contactDetails = ppob.contactDetails.map(_.copy(emailAddress = Some(email)))
+      contactDetails = ppob.contactDetails.map(_.copy(emailAddress = Some(email), emailVerified = Some(true)))
     )
   }
 
