@@ -4,6 +4,14 @@ base.confirmAndContinue = Confirm and continue
 base.finish = Finish
 base.back = Back
 
+banner.newService = This is a new service – your
+banner.feedback = feedback
+banner.feedbackImprove = will help us to improve it.
+banner.phaseName = BETA
+
+feedback.title = Feedback
+feedbackThanks.title = Thank you
+
 common.clientService = Business tax account
 common.agentService = Update your client’s VAT details
 common.continue = Continue
