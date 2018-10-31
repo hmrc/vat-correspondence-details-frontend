@@ -116,7 +116,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-change-success")
+        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-address-confirmation")
 
       }
     }
