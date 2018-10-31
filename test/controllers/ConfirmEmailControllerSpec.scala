@@ -37,6 +37,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
     mockInflightPPOBPredicate,
     messagesApi,
     mockErrorHandler,
+    mockAuditService,
     mockConfig,
     mockVatSubscriptionService
   )

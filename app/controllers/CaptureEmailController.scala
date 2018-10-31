@@ -16,12 +16,13 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.CurrentEmailAddressAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import forms.EmailForm._
 import javax.inject.{Inject, Singleton}
-
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.VatSubscriptionService
@@ -35,6 +36,7 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
                                        val messagesApi: MessagesApi,
                                        val vatSubscriptionService: VatSubscriptionService,
                                        val errorHandler: ErrorHandler,
+                                       val auditService: AuditingService,
                                        implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
@@ -74,8 +76,22 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
           val notChanged: Boolean = errorForm.errors.head.message == messagesApi.apply("captureEmail.error.notChanged")
           Future.successful(BadRequest(views.html.capture_email(errorForm.fill(prepopulation.getOrElse(validation)), notChanged)))
         },
-        email     => Future.successful(Redirect(controllers.routes.ConfirmEmailController.show())
-          .addingToSession(SessionKeys.emailKey -> email))
+
+
+      email     => {
+    auditService.extendedAudit(
+    CurrentEmailAddressAuditModel(
+    prepopulation,
+    validation,
+    user.vrn,
+    user.isAgent,
+    user.arn
+    )
+    )
+    Future.successful(Redirect(controllers.routes.ConfirmEmailController.show())
+    .addingToSession(SessionKeys.emailKey -> email))
+
+        }
       )
       case (None, _) => Future.successful(errorHandler.showInternalServerError)
     }

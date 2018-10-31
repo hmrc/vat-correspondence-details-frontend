@@ -17,8 +17,8 @@
 package utils
 
 import scala.concurrent.ExecutionContext
-
 import assets.BaseTestConstants._
+import audit.AuditingService
 import common.SessionKeys
 import config.ErrorHandler
 import mocks.MockAppConfig
@@ -42,6 +42,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach
 
   implicit lazy val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
   implicit lazy val serviceErrorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
+  lazy val mockAuditService: AuditingService = injector.instanceOf[AuditingService]
 
   lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 

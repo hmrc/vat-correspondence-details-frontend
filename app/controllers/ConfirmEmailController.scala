@@ -16,6 +16,8 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.CurrentEmailAddressAuditModel
 import common.SessionKeys
 import common.SessionKeys.{emailKey, validationEmailKey, inflightPPOBKey}
 import config.{AppConfig, ErrorHandler}
@@ -36,6 +38,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
                                        val inflightCheck: InflightPPOBPredicate,
                                        val messagesApi: MessagesApi,
                                        val errorHandler: ErrorHandler,
+                                       val auditService: AuditingService,
                                        implicit val appConfig: AppConfig,
                                        val vatSubscriptionService: VatSubscriptionService) extends FrontendController with I18nSupport {
 
@@ -57,6 +60,16 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
           case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
             Redirect(routes.VerifyEmailController.sendVerification())
           case Right(UpdateEmailSuccess(_)) =>
+            auditService.extendedAudit(
+              CurrentEmailAddressAuditModel(
+                user.session.get(SessionKeys.validationEmailKey),
+                email,
+                user.vrn,
+                user.isAgent,
+                user.arn
+              )
+            )
+
             Redirect(routes.EmailChangeSuccessController.show()).removingFromSession(emailKey, validationEmailKey, inflightPPOBKey)
           case Left(_) => errorHandler.showInternalServerError
         }
