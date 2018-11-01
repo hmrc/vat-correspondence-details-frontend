@@ -19,7 +19,7 @@ GET        /verify-email-address           controllers.VerifyEmailController.sho
 GET        /send-verification              controllers.VerifyEmailController.sendVerification
 
 # email change successful
-GET        /email-change-success           controllers.EmailChangeSuccessController.show
+GET        /email-address-confirmation     controllers.EmailChangeSuccessController.show
 
 # feedback
 GET        /feedback                       controllers.feedback.FeedbackController.show
