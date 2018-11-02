@@ -4,7 +4,7 @@
 
 ## Summary
 
-This is the repository for VAT Correspondence Details Frontend
+This is the repository for VAT Correspondence Details Frontend.
 
 This service provides the functionality to update business correspondence details for a VAT account.
 

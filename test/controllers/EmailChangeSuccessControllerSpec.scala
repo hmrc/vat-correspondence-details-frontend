@@ -29,7 +29,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
     mockConfig
   )
 
-  "Calling the helloWorld action" when {
+  "Calling the show action" when {
 
     "a user is enrolled with a valid enrolment" should {
 

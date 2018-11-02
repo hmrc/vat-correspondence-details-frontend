@@ -21,7 +21,7 @@
 @(vrn: String)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
 @postToInvitations = @{
-    s"${appConfig.agentInvitationsFastTrack}?continue=${URLEncoder.encode(s"${appConfig.host}${controllers.routes.HelloWorldController.helloWorld().url}", "UTF-8")}"
+    s"${appConfig.agentInvitationsFastTrack}?continue=${URLEncoder.encode(appConfig.manageVatSubscriptionServicePath, "UTF-8")}"
 }
 
 @views.html.main_template(
@@ -49,7 +49,7 @@
     <p>
         @messages("unauthorised.agentForClient.enterDetails")
         <a data-journey-click="unauthorised:try-again:unauthorised-for-client"
-           href="@controllers.routes.HelloWorldController.helloWorld.url">
+           href="@appConfig.manageVatSubscriptionServicePath">
             @messages("unauthorised.agentForClient.tryAgain")</a>.
     </p>
 
