@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package common
+@import uk.gov.hmrc.play.partials.CachedStaticHtmlPartialRetriever
+@import config.AppConfig
 
-object SessionKeys {
-  val clientVrn: String = "CLIENT_VRN"
-  val emailKey = "Email"
-  val validationEmailKey = "validationEmail"
-  val inflightPPOBKey = "inflightPPOB"
+@(partialUrl: String, redirectUrl: String)(implicit request: Request[_], cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever,
+  messages: Messages, appConfig: AppConfig)
+
+@views.html.main_template(title = messages("feedbackThanks.title"), bodyClasses = None) {
+  @cachedStaticHtmlPartialRetriever.getPartialContent(partialUrl)
+  <a id="back" href='@redirectUrl' role="button" tabindex="0" class="button">@messages("base.back")</a>
 }

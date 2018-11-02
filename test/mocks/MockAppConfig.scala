@@ -26,10 +26,12 @@ import play.api.mvc.Call
 class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mode.Test) extends AppConfig {
   override val appName = ""
   override val signInUrl = ""
-  override val contactHost = ""
+  override val contactFormServiceIdentifier = ""
+  override val contactFrontendService = ""
   override val assetsPrefix = ""
   override val analyticsToken = ""
   override val analyticsHost = ""
+  override val feedbackFormPartialUrl = ""
   override val reportAProblemPartialUrl = ""
   override val reportAProblemNonJSUrl = ""
   override val agentServicesGovUkGuidance = "/setup-agent-services-account"

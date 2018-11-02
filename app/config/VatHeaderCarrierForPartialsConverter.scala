@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package common
+package config
 
-object SessionKeys {
-  val clientVrn: String = "CLIENT_VRN"
-  val emailKey = "Email"
-  val validationEmailKey = "validationEmail"
-  val inflightPPOBKey = "inflightPPOB"
+import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.crypto.PlainText
+import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
+
+@Singleton
+class VatHeaderCarrierForPartialsConverter @Inject()(sessionCookieCrypto: SessionCookieCrypto) extends HeaderCarrierForPartialsConverter {
+
+  override val crypto: String => String = cookie =>
+    sessionCookieCrypto.crypto.encrypt(PlainText(cookie)).value
 }

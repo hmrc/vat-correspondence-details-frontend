@@ -28,10 +28,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.InternalServerException
-
 import scala.concurrent.Future
-import scala.util.Failure
 
 class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService with ScalaFutures with Waiters {
 
@@ -57,7 +54,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         mockIndividualAuthorised()
 
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = testGetRequest.withSession(
-          SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+         SessionKeys.emailKey -> testEmail)
 
         val user = User[AnyContent](testVatNumber, active = true, None)(request)
         TestConfirmEmailController.extractSessionEmail(user) shouldBe Some(testEmail)
@@ -72,7 +69,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockIndividualAuthorised()
 
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.show(request)
 
         status(result) shouldBe Status.OK
@@ -84,7 +81,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockIndividualAuthorised()
 
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> "")
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> "")
         val result = TestConfirmEmailController.show(request)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -97,7 +94,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockUnauthorised()
 
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.show(request)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
@@ -112,11 +109,11 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess("success"))))
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-change-success")
+        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-address-confirmation")
 
       }
     }
@@ -126,7 +123,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess(""))))
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -140,7 +137,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))))
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -153,7 +150,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -166,7 +163,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockIndividualAuthorised()
 
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber)
+        val request = testGetRequest
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -180,7 +177,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockUnauthorised()
 
-        val request = testGetRequest.withSession(SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR

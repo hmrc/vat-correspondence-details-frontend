@@ -17,10 +17,8 @@
 package controllers
 
 import config.AppConfig
-import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
+import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
-
-import common.SessionKeys.{emailKey, validationEmailKey}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -29,13 +27,10 @@ import scala.concurrent.Future
 
 @Singleton
 class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
-                                             val inflightCheck: InflightPPOBPredicate,
                                              val messagesApi: MessagesApi,
                                              implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
-    Future.successful(Ok(views.html.email_change_success())
-      .removingFromSession(emailKey, validationEmailKey)
-    )
+  def show: Action[AnyContent] = authenticate.async { implicit user =>
+    Future.successful(Ok(views.html.email_change_success()))
   }
 }

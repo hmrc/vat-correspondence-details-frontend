@@ -51,7 +51,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         mockIndividualAuthorised()
 
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = testGetRequest.withSession(
-          SessionKeys.vatNumberKey -> testVatNumber, SessionKeys.emailKey -> testEmail)
+          SessionKeys.emailKey -> testEmail)
         val user = User[AnyContent](testVatNumber, active = true, None)(request)
 
         TestVerifyEmailController.extractSessionEmail(user) shouldBe Some(testEmail)
