@@ -30,7 +30,8 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val form = "form"
     val emailField = "#email"
     val continueButton = "button"
-    val errorSummary = "error-summary-display"
+    val errorSummary = "#error-summary-heading"
+    val emailFieldset = "fieldset"
   }
 
   val testEmail: String = "test@example.com"
@@ -39,7 +40,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
     "the form has no errors" should {
       lazy val view: Html = views.html.capture_email(emailForm(testEmail)
-      .fill(testEmail))(request, messages, mockConfig)
+        .fill(testEmail), emailNotChangedError = false)(request, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {
@@ -78,12 +79,29 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       }
     }
 
-    "the form has some errors" should {
-      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "")))(request, messages, mockConfig)
+    "the form has the email unchanged error" should {
+      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "")), emailNotChangedError = true)(request, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "display the error summary" in {
-        document.getElementById(Selectors.errorSummary).hasClass("error-summary--show")
+        element(Selectors.errorSummary).text() shouldBe "There is a problem"
+      }
+
+      "display the GA tag" in {
+        element(Selectors.emailFieldset).attr("data-journey") shouldBe "email-address:form-error:unchanged"
+      }
+    }
+
+    "the form has any other error" should {
+      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "invalid")), emailNotChangedError = false)(request, messages, mockConfig)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "display the error summary" in {
+        element(Selectors.errorSummary).text() shouldBe "There is a problem"
+      }
+
+      "display no GA tag" in {
+        element(Selectors.emailFieldset).attr("data-journey") shouldBe empty
       }
     }
   }
