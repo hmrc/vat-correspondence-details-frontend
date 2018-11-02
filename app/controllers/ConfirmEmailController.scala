@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.CurrentEmailAddressAuditModel
+import audit.models.ChangedEmailAddressAuditModel
 import common.SessionKeys
 import common.SessionKeys.{emailKey, validationEmailKey, inflightPPOBKey}
 import config.{AppConfig, ErrorHandler}
@@ -60,8 +60,9 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
           case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
             Redirect(routes.VerifyEmailController.sendVerification())
           case Right(UpdateEmailSuccess(_)) =>
+
             auditService.extendedAudit(
-              CurrentEmailAddressAuditModel(
+              ChangedEmailAddressAuditModel(
                 user.session.get(SessionKeys.validationEmailKey),
                 email,
                 user.vrn,

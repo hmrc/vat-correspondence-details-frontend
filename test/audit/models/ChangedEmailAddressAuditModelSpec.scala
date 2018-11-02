@@ -19,34 +19,34 @@ package audit.models
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class CurrentEmailAddressAuditModelSpec extends UnitSpec {
+class ChangedEmailAddressAuditModelSpec extends UnitSpec {
 
-  val currentAddressNonAgentModel: CurrentEmailAddressAuditModel = CurrentEmailAddressAuditModel(
+  val changedAddressNonAgentModel: ChangedEmailAddressAuditModel = ChangedEmailAddressAuditModel(
     currentEmailAddress = Some("testemail@test.com"),
-    attemptedEmailAddress = "attemptedchange@test.com",
+    requestedEmailAddress = "attemptedchange@test.com",
     vrn = "987654321",
     isAgent = false,
     arn = None
   )
 
-  val currentAddressAgentModel: CurrentEmailAddressAuditModel = CurrentEmailAddressAuditModel(
+  val changedAddressAgentModel: ChangedEmailAddressAuditModel = ChangedEmailAddressAuditModel(
     currentEmailAddress = Some("testemail@test.com"),
-    attemptedEmailAddress = "attemptedchange@test.com",
+    requestedEmailAddress = "attemptedchange@test.com",
     vrn = "987654321",
     isAgent = true,
     arn = Some("XAIT123456789")
   )
 
-  val noCurrentEmailAddressModel: CurrentEmailAddressAuditModel = CurrentEmailAddressAuditModel(
+  val noCurrentEmailAddressModel: ChangedEmailAddressAuditModel = ChangedEmailAddressAuditModel(
     vrn = "987654321",
     isAgent = false,
-    attemptedEmailAddress = "attemptedchange@test.com",
+    requestedEmailAddress = "attemptedchange@test.com",
     arn = None,
     currentEmailAddress = None
   )
 
 
-  "CurrentEmailAddressAuditModel" when {
+  "ChangedEmailAddressAuditModel" when {
 
     "the user is not an agent" should {
 
@@ -56,10 +56,10 @@ class CurrentEmailAddressAuditModelSpec extends UnitSpec {
           "vrn" -> "987654321",
           "isAgent" -> false,
           "currentEmailAddress" -> "testemail@test.com",
-          "attemptedEmailAddress" -> "attemptedchange@test.com"
+          "requestedEmailAddress" -> "attemptedchange@test.com"
         )
 
-        currentAddressNonAgentModel.detail shouldBe expectedJson
+        changedAddressNonAgentModel.detail shouldBe expectedJson
       }
     }
 
@@ -72,10 +72,10 @@ class CurrentEmailAddressAuditModelSpec extends UnitSpec {
           "arn" -> "XAIT123456789",
           "vrn" -> "987654321",
           "currentEmailAddress" -> "testemail@test.com",
-          "attemptedEmailAddress" -> "attemptedchange@test.com"
+          "requestedEmailAddress" -> "attemptedchange@test.com"
         )
 
-        currentAddressAgentModel.detail shouldBe expectedJson
+        changedAddressAgentModel.detail shouldBe expectedJson
       }
     }
 
@@ -84,7 +84,7 @@ class CurrentEmailAddressAuditModelSpec extends UnitSpec {
         val expectedJson: JsValue = Json.obj(
           "vrn" -> "987654321",
           "isAgent" -> false,
-          "attemptedEmailAddress" -> "attemptedchange@test.com"
+          "requestedEmailAddress" -> "attemptedchange@test.com"
         )
 
         noCurrentEmailAddressModel.detail shouldBe expectedJson

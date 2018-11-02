@@ -20,11 +20,11 @@ import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
 
-case class CurrentEmailAddressAuditModel(currentEmailAddress: Option[String],
-                                         attemptedEmailAddress: String,
-                                         vrn: String,
-                                         isAgent: Boolean,
-                                         arn: Option[String]) extends ExtendedAuditModel {
+case class AttemptedEmailAddressAuditModel(currentEmailAddress: Option[String],
+                                           attemptedEmailAddress: String,
+                                           vrn: String,
+                                           isAgent: Boolean,
+                                           arn: Option[String]) extends ExtendedAuditModel {
 
   override val auditType: String = "ChangeEmailAddressAttempted"
   override val detail: JsValue = Json.toJson(this)
@@ -32,9 +32,9 @@ case class CurrentEmailAddressAuditModel(currentEmailAddress: Option[String],
 
 }
 
-object CurrentEmailAddressAuditModel extends JsonObjectSugar {
+object AttemptedEmailAddressAuditModel extends JsonObjectSugar {
 
-  implicit val writes: Writes[CurrentEmailAddressAuditModel] = Writes { model =>
+  implicit val writes: Writes[AttemptedEmailAddressAuditModel] = Writes { model =>
     jsonObjNoNulls(
       "isAgent" -> model.isAgent,
       "arn" -> model.arn,

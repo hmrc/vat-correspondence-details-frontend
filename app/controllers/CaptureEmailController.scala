@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.CurrentEmailAddressAuditModel
+import audit.models.AttemptedEmailAddressAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
@@ -76,21 +76,18 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
           val notChanged: Boolean = errorForm.errors.head.message == messagesApi.apply("captureEmail.error.notChanged")
           Future.successful(BadRequest(views.html.capture_email(errorForm.fill(prepopulation.getOrElse(validation)), notChanged)))
         },
-
-
-      email     => {
-    auditService.extendedAudit(
-    CurrentEmailAddressAuditModel(
-    prepopulation,
-    validation,
-    user.vrn,
-    user.isAgent,
-    user.arn
-    )
-    )
-    Future.successful(Redirect(controllers.routes.ConfirmEmailController.show())
-    .addingToSession(SessionKeys.emailKey -> email))
-
+        email     => {
+          auditService.extendedAudit(
+            AttemptedEmailAddressAuditModel(
+              prepopulation,
+              validation,
+              user.vrn,
+              user.isAgent,
+              user.arn
+            )
+          )
+          Future.successful(Redirect(controllers.routes.ConfirmEmailController.show())
+            .addingToSession(SessionKeys.emailKey -> email))
         }
       )
       case (None, _) => Future.successful(errorHandler.showInternalServerError)
