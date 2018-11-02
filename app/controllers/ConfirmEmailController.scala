@@ -17,6 +17,7 @@
 package controllers
 
 import common.SessionKeys
+import common.SessionKeys.{emailKey, validationEmailKey, inflightPPOBKey}
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
@@ -56,7 +57,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
           case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
             Redirect(routes.VerifyEmailController.sendVerification())
           case Right(UpdateEmailSuccess(_)) =>
-            Redirect(routes.EmailChangeSuccessController.show())
+            Redirect(routes.EmailChangeSuccessController.show()).removingFromSession(emailKey, validationEmailKey, inflightPPOBKey)
           case Left(_) => errorHandler.showInternalServerError
         }
 

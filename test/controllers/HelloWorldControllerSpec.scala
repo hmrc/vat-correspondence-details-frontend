@@ -32,7 +32,7 @@ class HelloWorldControllerSpec extends ControllerBaseSpec {
 
     "a user is enrolled with a valid enrolment" should {
 
-      lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithVrnAndRedirectUrl)
+      lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithClientsVRN)
       lazy val document = Jsoup.parse(bodyOf(result))
 
       "return 200" in {
@@ -53,7 +53,7 @@ class HelloWorldControllerSpec extends ControllerBaseSpec {
 
     "a user is does not have a valid enrolment" should {
 
-      lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithVrnAndRedirectUrl)
+      lazy val result = TestHelloWorldController.helloWorld(fakeRequestWithClientsVRN)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
