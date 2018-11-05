@@ -34,15 +34,17 @@ object UpdateEmailHttpParser {
             Logger.warn(s"[UpdateEmailHttpParser][read] - Invalid JSON: $invalid")
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
-          valid => Right(valid)
+          valid => {
+            Logger.debug("[UpdateEmailHttpParser][read] - Successfully parsed email update response.")
+            Right(valid)
+          }
         )
-        case status => {
+        case status =>
           Logger.warn(
             s"[UpdateEmailHttpParser][read] - " +
               s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )
           Left(ErrorModel(status, response.body))
-        }
       }
     }
   }

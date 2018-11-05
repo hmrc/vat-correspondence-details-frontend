@@ -37,7 +37,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
                                       val errorHandler: ErrorHandler,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  val show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
+  def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) => Future.successful(Ok(views.html.verify_email(email)))
@@ -45,7 +45,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
     }
   }
 
-  val sendVerification: Action[AnyContent] = authenticate.async { implicit user =>
+  def sendVerification: Action[AnyContent] = authenticate.async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
