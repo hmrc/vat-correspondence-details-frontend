@@ -102,7 +102,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
     }
   }
 
-  "Calling the updateEmailAddress action in ConfirmEmailController" when {
+  "Calling the updateEmailAddress() action in ConfirmEmailController" when {
 
     "there is a verified email in session and the email has been updated successfully" should {
       "show the email changed success page" in {
@@ -110,7 +110,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess("success"))))
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress(request)
+        val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-address-confirmation")
@@ -124,7 +124,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess(""))))
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress(request)
+        val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-verification")
@@ -138,7 +138,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))))
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress(request)
+        val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
@@ -151,7 +151,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         mockIndividualAuthorised()
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress(request)
+        val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
@@ -164,7 +164,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         mockIndividualAuthorised()
 
         val request = testGetRequest
-        val result = TestConfirmEmailController.updateEmailAddress(request)
+        val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
@@ -178,7 +178,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
         mockUnauthorised()
 
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress(request)
+        val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"

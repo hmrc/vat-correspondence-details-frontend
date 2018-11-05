@@ -39,7 +39,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
                                        implicit val appConfig: AppConfig,
                                        val vatSubscriptionService: VatSubscriptionService) extends FrontendController with I18nSupport {
 
-  val show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
+  def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
@@ -49,7 +49,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
     }
   }
 
-  val updateEmailAddress: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
+  def updateEmailAddress(): Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
@@ -62,7 +62,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
         }
 
       case _ =>
-        Logger.info("[VatSubscriptionConnector][updateEmailAddress] no email address found in session")
+        Logger.info("[ConfirmEmailController][updateEmailAddress] no email address found in session")
         Future.successful(Redirect(controllers.routes.CaptureEmailController.show()))
     }
   }
