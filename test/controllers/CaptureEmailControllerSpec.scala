@@ -73,6 +73,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       messagesApi,
       mockVatSubscriptionService,
       mockErrorHandler,
+      mockAuditService,
       mockConfig
     )
   }
@@ -225,6 +226,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           messagesApi,
           mockVatSubscriptionService,
           mockErrorHandler,
+          mockAuditService,
           mockConfig
         )
       }
