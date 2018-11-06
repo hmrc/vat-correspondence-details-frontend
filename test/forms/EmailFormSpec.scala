@@ -64,6 +64,18 @@ class EmailFormSpec extends PlaySpec with GuiceOneAppPerSuite {
       actual shouldBe Some(expectedEmail)
     }
 
+    "validate our controlled email where the local part contains capitals" in {
+      val expectedEmail = "TEST" + testEmailDomain
+      val actual = emailForm("").bind(Map("email" -> expectedEmail)).value
+      actual shouldBe Some(expectedEmail)
+    }
+
+    "validate our controlled email where the domain contains capitals" in {
+      val expectedEmail = testEmailLocalPart + "@TEST.COM"
+      val actual = emailForm("").bind(Map("email" -> expectedEmail)).value
+      actual shouldBe Some(expectedEmail)
+    }
+
     "validate that data has been entered" in {
       val formWithError = emailForm("").bind(Map("email" -> ""))
       formWithError.errors should contain(FormError("email", emptyEmailErrorMessage))
