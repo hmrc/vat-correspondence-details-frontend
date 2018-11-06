@@ -79,8 +79,8 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
         email     => {
           auditService.extendedAudit(
             AttemptedEmailAddressAuditModel(
-              prepopulation,
-              validation,
+              Option(validation).filter(_.nonEmpty),
+              email,
               user.vrn,
               user.isAgent,
               user.arn

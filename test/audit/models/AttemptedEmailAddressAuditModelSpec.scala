@@ -38,11 +38,11 @@ class AttemptedEmailAddressAuditModelSpec extends UnitSpec {
   )
 
   val noCurrentEmailAddressModel: AttemptedEmailAddressAuditModel = AttemptedEmailAddressAuditModel(
+    currentEmailAddress = None,
+    attemptedEmailAddress = "attemptedchange@test.com",
     vrn = "987654321",
     isAgent = false,
-    attemptedEmailAddress = "attemptedchange@test.com",
-    arn = None,
-    currentEmailAddress = None
+    arn = None
   )
 
 
