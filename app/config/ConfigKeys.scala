@@ -23,7 +23,7 @@ object ConfigKeys {
   val googleAnalyticsToken: String = "google-analytics.token"
   val googleAnalyticsHost: String = "google-analytics.host"
 
-  val contactFrontendService: String = "contact-frontend"
+  val contactFrontendService: String = "contact-frontend.url"
 
   val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
   val govUkCommercialSoftware: String = "govuk.software.commercialSoftware.url"
