@@ -36,6 +36,8 @@ trait AppConfig extends ServicesConfig {
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
   val agentServicesGovUkGuidance: String
+  val feedbackSurveyUrl: String
+  val feedbackSignOutUrl: String
   val unauthorisedSignOutUrl: String
   def routeToSwitchLanguage: String => Call
   def languageMap: Map[String, Lang]
@@ -83,10 +85,14 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
 
   override val features = new Features(runModeConfiguration)
 
+  private lazy val feedbackSurveyBase = getString(Keys.surveyUrl) + getString(Keys.surveyPath)
+  override lazy val feedbackSurveyUrl = s"$feedbackSurveyBase/?origin=$contactFormServiceIdentifier"
+
   private lazy val signInBaseUrl: String = getString(Keys.signInBaseUrl)
   private lazy val signInOrigin = getString("appName")
   override lazy val signInUrl: String = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
   override lazy val signInContinueUrl: String = ContinueUrl(manageVatSubscriptionServicePath).encodedUrl
+  override lazy val feedbackSignOutUrl: String = s"$governmentGatewayHost/gg/sign-out?continue=$feedbackSurveyUrl"
   override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/gg/sign-out?continue=$signInContinueUrl"
 
   override lazy val emailVerificationBaseUrl: String = baseUrl(Keys.emailVerificationBaseUrl)

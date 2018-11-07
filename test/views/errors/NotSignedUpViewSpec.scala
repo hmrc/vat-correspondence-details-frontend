@@ -43,5 +43,10 @@ class NotSignedUpViewSpec extends ViewBaseSpec {
       document.select("#content > article > p > a").first().attr("href") shouldBe
         "https://www.gov.uk/guidance/use-software-to-submit-your-vat-returns"
     }
+
+    "have a sign out button which allows the user to sign out" in {
+      element("#content .button").attr("href") shouldBe
+        controllers.routes.SignOutController.signOut(feedbackOnSignOut = false).url
+    }
   }
 }

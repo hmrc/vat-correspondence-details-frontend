@@ -24,16 +24,33 @@ class SignOutControllerSpec extends ControllerBaseSpec {
 
   val controller = new SignOutController(messagesApi, mockConfig)
 
-  "Navigating to the sign out page" should {
+  "Navigating to the sign out page" when {
 
-    "return 303" in {
-      val result = controller.signOut(request)
-      status(result) shouldBe Status.SEE_OTHER
+    "feedback on sign-out is enabled" should {
+
+      "return 303" in {
+        val result = controller.signOut(feedbackOnSignOut = true)(request)
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the correct location" in {
+        val result = controller.signOut(feedbackOnSignOut = true)(request)
+        println(mockConfig.feedbackSignOutUrl)
+        redirectLocation(result) shouldBe Some(mockConfig.feedbackSignOutUrl)
+      }
     }
 
-    "redirect to the correct location" in {
-      val result = controller.signOut(request)
-      redirectLocation(result) shouldBe Some(mockConfig.unauthorisedSignOutUrl)
+    "feedback on sign-out is disabled" should {
+
+      "return 303" in {
+        val result = controller.signOut(feedbackOnSignOut = false)(request)
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the correct location" in {
+        val result = controller.signOut(feedbackOnSignOut = false)(request)
+        redirectLocation(result) shouldBe Some(mockConfig.unauthorisedSignOutUrl)
+      }
     }
   }
 }

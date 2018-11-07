@@ -56,8 +56,8 @@ class AgentJourneyDisabledViewSpec extends ViewBaseSpec {
     }
 
     s"have a link to sign out" in {
-      element(Selectors.signOutButton).attr("href") shouldBe controllers.routes.SignOutController.signOut().url
+      element(Selectors.signOutButton).attr("href") shouldBe
+        controllers.routes.SignOutController.signOut(feedbackOnSignOut = false).url
     }
   }
-
 }

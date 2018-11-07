@@ -48,8 +48,8 @@ class UnauthorisedAgentViewSpec extends ViewBaseSpec {
     }
 
     "have a sign out button which allows the user to sign out" in {
-      element("#content .button").attr("href") shouldBe controllers.routes.SignOutController.signOut().url
+      element("#content .button").attr("href") shouldBe
+        controllers.routes.SignOutController.signOut(feedbackOnSignOut = false).url
     }
-
   }
 }
