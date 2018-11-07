@@ -67,7 +67,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override lazy val appName: String = getString("appName")
 
   override lazy val contactFormServiceIdentifier = "VATC"
-  override lazy val contactFrontendService: String = baseUrl(Keys.contactFrontendService)
+  override lazy val contactFrontendService: String = getString(Keys.contactFrontendService)
   override lazy val feedbackFormPartialUrl: String = s"$contactFrontendService/contact/beta-feedback/form"
   override lazy val reportAProblemPartialUrl = s"$contactFrontendService/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactFrontendService/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
