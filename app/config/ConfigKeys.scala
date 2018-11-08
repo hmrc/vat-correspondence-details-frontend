@@ -49,4 +49,7 @@ object ConfigKeys {
   val agentAccessFeature: String = "features.agentAccess.enabled"
 
   val vatSubscription: String = "vat-subscription"
+
+  val surveyUrl: String = "feedback-survey-frontend.url"
+  val surveyPath: String = "feedback-survey-frontend.path"
 }

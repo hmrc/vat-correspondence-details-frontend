@@ -26,7 +26,8 @@
 
 @views.html.main_template(
     title = messages("unauthorised.agentForClient.title"),
-    bodyClasses = None
+    bodyClasses = None,
+    feedbackOnSignOut = false
 ) {
 
     <h1>@messages("unauthorised.agentForClient.title")</h1>
@@ -55,7 +56,7 @@
 
     <a data-journey-click="unauthorised:sign-out:unauthorised-for-client"
        class="button"
-       href="@controllers.routes.SignOutController.signOut()">
+       href="@controllers.routes.SignOutController.signOut(feedbackOnSignOut = false)">
         @messages("base.signOut")
     </a>
 }

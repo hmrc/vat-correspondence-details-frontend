@@ -19,7 +19,9 @@
 @views.html.main_template(
     title = messages("agentJourneyDisabled.title"),
     bodyClasses = None,
-    serviceName = Some(messages("common.agentService"))) {
+    serviceName = Some(messages("common.agentService")),
+    feedbackOnSignOut = false
+) {
 
   <h1>@messages("agentJourneyDisabled.title")</h1>
   <p>@messages("agentJourneyDisabled.summary")</p>
@@ -27,7 +29,7 @@
 
   <a data-journey-click="unauthorised:sign-out:agent-journey-disabled"
      class="button"
-     href="@controllers.routes.SignOutController.signOut()">
+     href="@controllers.routes.SignOutController.signOut(feedbackOnSignOut = false)">
     @messages("base.signOut")
   </a>
 }
