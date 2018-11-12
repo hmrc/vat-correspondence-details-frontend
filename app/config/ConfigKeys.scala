@@ -52,4 +52,7 @@ object ConfigKeys {
 
   val surveyUrl: String = "feedback-survey-frontend.url"
   val surveyPath: String = "feedback-survey-frontend.path"
+
+  val timeoutPeriod: String = "timeout.period"
+  val timeoutCountdown: String = "timeout.countdown"
 }

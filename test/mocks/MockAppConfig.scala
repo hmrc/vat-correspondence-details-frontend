@@ -62,4 +62,7 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val shutterPage: String = "https://www.tax.service.gov.uk/shutter/vat-through-software"
 
   override val vatSubscriptionHost: String = "mockVatSubscriptionHost"
+
+  override val timeoutPeriod: Int = 999
+  override val timeoutCountdown: Int = 999
 }

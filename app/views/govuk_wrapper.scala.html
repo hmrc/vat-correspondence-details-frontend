@@ -72,12 +72,27 @@
 
 @afterHeader = {}
 
+@scriptElement = {
+  <script>
+    @if(showSignOut) {
+      $.timeoutDialog({
+        timeout: @appConfig.timeoutPeriod,
+        countdown: @appConfig.timeoutCountdown,
+        keep_alive_url: window.location.href,
+        logout_url: '@routes.SignOutController.signOut(feedbackOnSignOut)',
+        sign_out_button_text: '@messages("base.signOut")'
+      });
+      var dialogOpen;
+    }
+  </script>
+}
+
 @bodyEnd = {
     @uiLayouts.footer(
       analyticsToken = Some(appConfig.analyticsToken),
       analyticsHost = appConfig.analyticsHost,
       ssoUrl = None,
-      scriptElem = scriptElem,
+      scriptElem = Some(scriptElement),
       gaCalls = None)
 }
 
