@@ -60,6 +60,8 @@ trait AppConfig extends ServicesConfig {
   val feedbackFormPartialUrl: String
   val contactFrontendService: String
   val contactFormServiceIdentifier: String
+  val timeoutPeriod: Int
+  val timeoutCountdown: Int
 }
 
 @Singleton
@@ -124,4 +126,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override val manageVatSubscriptionServiceUrl: String = getString(Keys.manageVatSubscriptionServiceUrl)
   override val manageVatSubscriptionServicePath: String =
     manageVatSubscriptionServiceUrl + getString(Keys.manageVatSubscriptionServicePath)
+
+  override lazy val timeoutPeriod: Int = getInt(Keys.timeoutPeriod)
+  override lazy val timeoutCountdown: Int = getInt(Keys.timeoutCountdown)
 }
