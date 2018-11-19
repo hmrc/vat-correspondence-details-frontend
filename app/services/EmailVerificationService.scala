@@ -32,24 +32,32 @@ class EmailVerificationService @Inject()(emailVerificationConnector: EmailVerifi
 
   def isEmailVerified(email: String)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
 
-    emailVerificationConnector.getEmailVerificationState(email) map {
-      case Right(EmailVerified) =>
-        Some(true)
-      case Right(EmailNotVerified) =>
-        Some(false)
-      case Left(_) =>
-        None
+    if(appConfig.features.emailVerificationEnabled()) {
+      emailVerificationConnector.getEmailVerificationState(email) map {
+        case Right(EmailVerified) =>
+          Some(true)
+        case Right(EmailNotVerified) =>
+          Some(false)
+        case Left(_) =>
+          None
+      }
+    } else {
+      Future.successful(Some(true))
     }
 
   def createEmailVerificationRequest(email: String, continueUrl: String)
                                     (implicit hc: HeaderCarrier): Future[Option[Boolean]] =
 
-    emailVerificationConnector.createEmailVerificationRequest(email, continueUrl) map {
-      case Right(EmailVerificationRequestSent) =>
-        Some(true)
-      case Right(EmailAlreadyVerified) =>
-        Some(false)
-      case _ =>
-        None
+    if(appConfig.features.emailVerificationEnabled()) {
+      emailVerificationConnector.createEmailVerificationRequest(email, continueUrl) map {
+        case Right(EmailVerificationRequestSent) =>
+          Some(true)
+        case Right(EmailAlreadyVerified) =>
+          Some(false)
+        case _ =>
+          None
+      }
+    } else {
+      Future.successful(Some(false))
     }
 }
