@@ -23,6 +23,5 @@ import play.api.Configuration
 class Features @Inject()(config: Configuration) {
 
   val agentAccessEnabled = new Feature(ConfigKeys.agentAccessFeature, config)
-
-
+  val emailVerificationEnabled = new Feature(ConfigKeys.emailVerificationFeature, config)
 }
