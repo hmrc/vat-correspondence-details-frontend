@@ -74,7 +74,7 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
       case (Some(validation), prepopulation) => emailForm(validation).bindFromRequest.fold(
         errorForm => {
           val notChanged: Boolean = errorForm.errors.head.message == messagesApi.apply("captureEmail.error.notChanged")
-          Future.successful(BadRequest(views.html.capture_email(errorForm.fill(prepopulation.getOrElse(validation)), notChanged)))
+          Future.successful(BadRequest(views.html.capture_email(errorForm, notChanged)))
         },
         email     => {
           auditService.extendedAudit(
