@@ -30,7 +30,7 @@ class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
                                              val messagesApi: MessagesApi,
                                              implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def show: Action[AnyContent] = authenticate.async { implicit user =>
-    Future.successful(Ok(views.html.email_change_success()))
+  def show: Action[AnyContent] = authenticate { implicit user =>
+    Ok(views.html.email_change_success())
   }
 }
