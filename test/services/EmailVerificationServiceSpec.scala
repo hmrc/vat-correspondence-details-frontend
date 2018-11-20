@@ -20,6 +20,7 @@ import java.util.UUID
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{EmailAlreadyVerified, EmailVerificationRequestFailure, EmailVerificationRequestSent}
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.{EmailNotVerified, EmailVerified, GetEmailVerificationStateErrorResponse}
 import mocks.MockEmailVerificationConnector
+import org.mockito.Mockito.{never, verify}
 import org.scalatest.EitherValues
 import play.api.http.Status._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,67 +42,132 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
   val testEmail: String = UUID.randomUUID().toString
 
   "Create Email verifications request" when {
-    "the email verification is sent successfully" should {
-      "return a StoreEmailSuccess with an emailVerified of false" in {
-        mockCreateEmailVerificationRequest(testEmail, continueUrl)(Future.successful(Right(EmailVerificationRequestSent)))
 
-        val res: Option[Boolean] = await(TestStoreEmailService.createEmailVerificationRequest(testEmail, continueUrl))
+    "the email verification feature switch is on" when {
 
-        res shouldBe Some(true)
+      "the email verification is sent successfully" should {
+
+        "return a StoreEmailSuccess with an emailVerified of false" in {
+
+          mockCreateEmailVerificationRequest(testEmail, continueUrl)(
+            Future.successful(Right(EmailVerificationRequestSent))
+          )
+          val res: Option[Boolean] = {
+            mockConfig.features.emailVerificationEnabled(true)
+            await(TestStoreEmailService.createEmailVerificationRequest(testEmail, continueUrl))
+          }
+          res shouldBe Some(true)
+        }
+      }
+
+      "the email address has already been verified" should {
+
+        "return a StoreEmailSuccess with an emailVerified of true" in {
+
+          mockCreateEmailVerificationRequest(testEmail, continueUrl)(Future.successful(Right(EmailAlreadyVerified)))
+          val res: Option[Boolean] = {
+            mockConfig.features.emailVerificationEnabled(true)
+            await(TestStoreEmailService.createEmailVerificationRequest(testEmail, continueUrl))
+          }
+          res shouldBe Some(false)
+        }
+      }
+
+      "the email address verification request failed" should {
+
+        "return an EmailVerificationFailure" in {
+
+          mockCreateEmailVerificationRequest(testEmail, continueUrl)(
+            Future.successful(Left(EmailVerificationRequestFailure(BAD_REQUEST, "")))
+          )
+          val res: Option[Boolean] = {
+            mockConfig.features.emailVerificationEnabled(true)
+            await(TestStoreEmailService.createEmailVerificationRequest(testEmail, continueUrl))
+          }
+          res shouldBe None
+        }
       }
     }
 
-    "the email address has already been verified" should {
-      "return a StoreEmailSuccess with an emailVerified of true" in {
-        mockCreateEmailVerificationRequest(testEmail, continueUrl)(Future.successful(Right(EmailAlreadyVerified)))
+    "the email verification feature switch is off" should {
+      def res: Option[Boolean] = {
+        mockConfig.features.emailVerificationEnabled(false)
+        await(TestStoreEmailService.createEmailVerificationRequest(testEmail, "/continue"))
+      }
 
-        val res: Option[Boolean] = await(TestStoreEmailService.createEmailVerificationRequest(testEmail, continueUrl))
-
+      "return Some(false)" in {
         res shouldBe Some(false)
       }
-    }
 
-    "the email address verification request failed" should {
-      "return an EmailVerificationFailure" in {
-        mockCreateEmailVerificationRequest(testEmail, continueUrl)(Future.successful(Left(EmailVerificationRequestFailure(BAD_REQUEST, ""))))
-
-        val res: Option[Boolean] = await(TestStoreEmailService.createEmailVerificationRequest(testEmail, continueUrl))
-
-        res shouldBe None
+      "not call the email verification connector" in {
+        res
+        verify(mockEmailVerificationConnector, never()).createEmailVerificationRequest(testEmail, "/continue")
       }
     }
   }
 
 
   "Check Email verifications status request" when {
-    "the email verified" should {
-      "return Some(true)" in {
-        mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
 
-        val res: Option[Boolean] = await(TestStoreEmailService.isEmailVerified(testEmail))
+    "the email verification feature switch is on" when {
 
-        res shouldBe Some(true)
+      "the email is verified" should {
+
+        "return Some(true)" in {
+
+          mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+          val res: Option[Boolean] = {
+            mockConfig.features.emailVerificationEnabled(true)
+            await(TestStoreEmailService.isEmailVerified(testEmail))
+          }
+          res shouldBe Some(true)
+        }
       }
-    }
 
-    "the email is not verified" should {
-      "return Some(false)" in {
-        mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailNotVerified)))
+      "the email is not verified" should {
 
-        val res: Option[Boolean] = await(TestStoreEmailService.isEmailVerified(testEmail))
+        "return Some(false)" in {
 
-        res shouldBe Some(false)
+          mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailNotVerified)))
+          val res: Option[Boolean] = {
+            mockConfig.features.emailVerificationEnabled(true)
+            await(TestStoreEmailService.isEmailVerified(testEmail))
+          }
+          res shouldBe Some(false)
+        }
       }
-    }
-    "the email is check failed" should {
-      "return None" in {
-        mockGetEmailVerificationState(testEmail)(Future.successful(Left(GetEmailVerificationStateErrorResponse(BAD_REQUEST, ""))))
 
-        val res: Option[Boolean] = await(TestStoreEmailService.isEmailVerified(testEmail))
+      "the email is check failed" should {
 
-        res shouldBe None
+        "return None" in {
+
+          mockGetEmailVerificationState(testEmail)(
+            Future.successful(Left(GetEmailVerificationStateErrorResponse(BAD_REQUEST, "")))
+          )
+          val res: Option[Boolean] = {
+            mockConfig.features.emailVerificationEnabled(true)
+            await(TestStoreEmailService.isEmailVerified(testEmail))
+          }
+          res shouldBe None
+        }
       }
     }
   }
 
+  "the email verification feature switch is off" should {
+
+    def res: Option[Boolean] = {
+      mockConfig.features.emailVerificationEnabled(false)
+      await(TestStoreEmailService.isEmailVerified(testEmail))
+    }
+
+    "return Some(true)" in {
+      res shouldBe Some(true)
+    }
+
+    "not call the email verification connector" in {
+      res
+      verify(mockEmailVerificationConnector, never()).getEmailVerificationState(testEmail)
+    }
+  }
 }

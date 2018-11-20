@@ -47,6 +47,7 @@ object ConfigKeys {
   val host: String = "host"
 
   val agentAccessFeature: String = "features.agentAccess.enabled"
+  val emailVerificationFeature: String = "features.emailVerification.enabled"
 
   val vatSubscription: String = "vat-subscription"
 

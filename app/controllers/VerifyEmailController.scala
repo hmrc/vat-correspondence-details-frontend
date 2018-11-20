@@ -56,7 +56,6 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
               "[VerifyEmailController][sendVerification] - " +
                 "Unable to send email verification request. Service responded with 'already verified'"
             )
-            //edge case. already verified. just try to the update then? TODO: check this is best thing to do?
             Redirect(routes.ConfirmEmailController.updateEmailAddress())
           case _ =>  errorHandler.showInternalServerError
         }
@@ -69,5 +68,4 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
   private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {
     user.session.get(SessionKeys.emailKey).filter(_.nonEmpty).orElse(None)
   }
-
 }

@@ -24,7 +24,8 @@ import play.api.data.Forms._
 object FeatureSwitchForm {
   val form: Form[FeatureSwitchModel] = Form(
     mapping(
-      ConfigKeys.agentAccessFeature -> boolean
+      ConfigKeys.agentAccessFeature -> boolean,
+      ConfigKeys.emailVerificationFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }
