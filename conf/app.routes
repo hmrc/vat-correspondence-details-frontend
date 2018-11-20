@@ -1,5 +1,7 @@
 # microservice specific routes
 
+GET        /assets/*file controllers.Assets.at(path="/public", file)
+
 GET        /language/:lang                 controllers.LanguageController.switchToLanguage(lang: String)
 GET        /sign-out                       controllers.SignOutController.signOut(feedbackOnSignOut: Boolean)
 

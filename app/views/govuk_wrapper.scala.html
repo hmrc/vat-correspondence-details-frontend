@@ -73,6 +73,7 @@
 @afterHeader = {}
 
 @scriptElement = {
+  <script type="text/javascript" src='@routes.Assets.at("javascript/vat-corr-v1.js")'></script>
   <script>
     @if(showSignOut) {
       $.timeoutDialog({
@@ -85,6 +86,7 @@
       var dialogOpen;
     }
   </script>
+  @scriptElem.map(x => x)
 }
 
 @bodyEnd = {
