@@ -58,7 +58,8 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       mockEnrolmentsAuthService,
       injector.instanceOf[ErrorHandler],
       messagesApi,
-      mockConfig
+      mockConfig,
+      ec
     )
 
   val mockAuthPredicate: AuthPredicate =
@@ -67,7 +68,8 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       messagesApi,
       mockErrorHandler,
       mockAuthAsAgentWithClient,
-      mockConfig
+      mockConfig,
+      ec
     )
 
   def mockInflightPPOBPredicate: InflightPPOBPredicate = {
@@ -77,7 +79,8 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       mockEnrolmentsAuthService,
       mockErrorHandler,
       messagesApi,
-      mockConfig
+      mockConfig,
+      ec
     ) {
       override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]) =
         block(User[A]("999999999")(request))

@@ -20,30 +20,31 @@ import javax.inject.{Inject, Singleton}
 
 import common.SessionKeys.inflightPPOBKey
 import config.{AppConfig, ErrorHandler}
+import controllers.BaseController
 import models.User
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import services.{EnrolmentsAuthService, VatSubscriptionService}
-import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.auth.core.retrieve._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class InflightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionService,
                                       enrolmentsAuthService: EnrolmentsAuthService,
                                       val errorHandler: ErrorHandler,
                                       val messagesApi: MessagesApi,
-                                      implicit val appConfig: AppConfig) extends FrontendController
-  with AuthBasePredicate with I18nSupport with ActionBuilder[User] with ActionFunction[Request, User] {
+                                      implicit val appConfig: AppConfig,
+                                      implicit val ec: ExecutionContext) extends BaseController
+  with AuthBasePredicate with ActionBuilder[User] with ActionFunction[Request, User] {
 
   override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
 
     implicit val req: Request[A] = request
 
     val authorisedUser: Future[User[A]] =
-      enrolmentsAuthService.authorised().retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
+      enrolmentsAuthService.authorised().retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
         case Some(_) ~ enrolments => Future.successful(User(enrolments))
       }
 

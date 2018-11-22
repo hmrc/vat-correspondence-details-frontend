@@ -19,13 +19,12 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
-import play.api.i18n.{I18nSupport, Lang, MessagesApi}
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 
 @Singleton
-class LanguageController @Inject()(val appConfig: AppConfig, implicit val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class LanguageController @Inject()(val appConfig: AppConfig, implicit val messagesApi: MessagesApi) extends BaseController {
 
   def languageMap: Map[String, Lang] = appConfig.languageMap
 

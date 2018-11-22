@@ -45,7 +45,8 @@ class InflightPPOBPredicateSpec extends MockAuth {
       mockEnrolmentsAuthService,
       mockErrorHandler,
       messagesApi,
-      mockConfig
+      mockConfig,
+      ec
     )
 
   def target(result: GetCustomerInfoResponse = Right(customerInfoPendingAddressModel)): Action[AnyContent] = {

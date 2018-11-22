@@ -20,7 +20,7 @@ import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import javax.inject.{Inject, Singleton}
-import models.customerInformation.{CustomerInformation, PPOB, UpdateEmailSuccess}
+import models.customerInformation.{PPOB, UpdateEmailSuccess}
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier

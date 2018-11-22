@@ -16,42 +16,41 @@
 
 package controllers.predicates
 
+import javax.inject.{Inject, Singleton}
+
 import common.EnrolmentKeys
 import config.{AppConfig, ErrorHandler}
-import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolments, NoActiveSession}
-import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.auth.core.retrieve._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
                               val messagesApi: MessagesApi,
                               val errorHandler: ErrorHandler,
                               val authenticateAsAgentWithClient: AuthoriseAsAgentWithClient,
-                              implicit val appConfig: AppConfig
-                             ) extends FrontendController with AuthBasePredicate with I18nSupport with ActionBuilder[User] with ActionFunction[Request, User] {
+                              implicit val appConfig: AppConfig,
+                              implicit val ec: ExecutionContext)
+  extends AuthBasePredicate with ActionBuilder[User] with ActionFunction[Request, User] {
 
   override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
 
     implicit val req: Request[A] = request
-    enrolmentsAuthService.authorised().retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
+    enrolmentsAuthService.authorised().retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
       case Some(affinityGroup) ~ allEnrolments =>
         (isAgent(affinityGroup), allEnrolments) match {
-          case (true, enrolments) => {
+          case (true, enrolments) =>
             if (appConfig.features.agentAccessEnabled()) {
               checkAgentEnrolment(enrolments, block)
             } else {
               Future.successful(Unauthorized(views.html.errors.agent.agentJourneyDisabled()))
             }
-          }
           case (false, enrolments) => checkVatEnrolment(enrolments, block)
         }
       case _ =>

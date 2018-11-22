@@ -25,7 +25,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
 
   object TestController extends EmailChangeSuccessController(
     mockAuthPredicate,
-        messagesApi,
+    messagesApi,
     mockConfig
   )
 
