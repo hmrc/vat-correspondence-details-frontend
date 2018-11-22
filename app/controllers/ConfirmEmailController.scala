@@ -16,20 +16,19 @@
 
 package controllers
 
+import javax.inject.{Inject, Singleton}
+
 import audit.AuditingService
 import audit.models.ChangedEmailAddressAuditModel
-import common.SessionKeys
-import common.SessionKeys.{emailKey, validationEmailKey, inflightPPOBKey}
+import common.SessionKeys.{emailKey, inflightPPOBKey, validationEmailKey}
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
-import javax.inject.{Inject, Singleton}
 import models.User
 import models.customerInformation.UpdateEmailSuccess
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
@@ -40,7 +39,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
                                        val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
                                        implicit val appConfig: AppConfig,
-                                       val vatSubscriptionService: VatSubscriptionService) extends FrontendController with I18nSupport {
+                                       val vatSubscriptionService: VatSubscriptionService) extends BaseController {
 
   def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
@@ -63,7 +62,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
 
             auditService.extendedAudit(
               ChangedEmailAddressAuditModel(
-                user.session.get(SessionKeys.validationEmailKey),
+                user.session.get(validationEmailKey),
                 email,
                 user.vrn,
                 user.isAgent,
@@ -82,6 +81,6 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
   }
 
   private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {
-    user.session.get(SessionKeys.emailKey).filter(_.nonEmpty)
+    user.session.get(emailKey).filter(_.nonEmpty)
   }
 }

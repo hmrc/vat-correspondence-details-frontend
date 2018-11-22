@@ -22,10 +22,9 @@ import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.EmailVerificationService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
@@ -35,7 +34,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
                                       val messagesApi: MessagesApi,
                                       val emailVerificationService: EmailVerificationService,
                                       val errorHandler: ErrorHandler,
-                                      implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                      implicit val appConfig: AppConfig) extends BaseController {
 
   def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 

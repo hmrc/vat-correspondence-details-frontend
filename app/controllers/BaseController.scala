@@ -16,17 +16,13 @@
 
 package controllers
 
-import com.google.inject.{Inject, Singleton}
-import config.AppConfig
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.i18n.I18nSupport
+import uk.gov.hmrc.http.logging.LoggingDetails
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-@Singleton
-class SignOutController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig)
-  extends BaseController {
+import scala.concurrent.ExecutionContext
 
-  def signOut(feedbackOnSignOut: Boolean): Action[AnyContent] = Action { implicit request =>
-    val redirectUrl: String = if(feedbackOnSignOut) appConfig.feedbackSignOutUrl else appConfig.unauthorisedSignOutUrl
-    Redirect(redirectUrl)
-  }
+trait BaseController extends FrontendController with I18nSupport {
+  override implicit def mdcExecutionContext(implicit loggingDetails: LoggingDetails): ExecutionContext =
+    ExecutionContext.Implicits.global
 }

@@ -19,16 +19,13 @@ package controllers
 import config.AppConfig
 import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
-import scala.concurrent.Future
 
 @Singleton
 class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
                                              val messagesApi: MessagesApi,
-                                             implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                             implicit val appConfig: AppConfig) extends BaseController {
 
   def show: Action[AnyContent] = authenticate { implicit user =>
     Ok(views.html.email_change_success())

@@ -16,18 +16,17 @@
 
 package controllers.predicates
 
+import javax.inject.{Inject, Singleton}
+
 import common.{EnrolmentKeys, SessionKeys}
 import config.{AppConfig, ErrorHandler}
-import javax.inject.{Inject, Singleton}
 import models.{Agent, User}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.errors.standardError
+import uk.gov.hmrc.auth.core.retrieve._
 
 import scala.concurrent.Future
 
@@ -35,10 +34,8 @@ import scala.concurrent.Future
 class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
                                            val errorHandler: ErrorHandler,
                                            implicit val messagesApi: MessagesApi,
-                                           implicit val appConfig: AppConfig
-                                           )
-  extends FrontendController with AuthBasePredicate with I18nSupport with ActionBuilder[User]
-    with ActionFunction[Request, User] {
+                                           implicit val appConfig: AppConfig)
+  extends AuthBasePredicate with ActionBuilder[User] with ActionFunction[Request, User] {
 
   private def delegatedAuthRule(vrn: String): Enrolment =
     Enrolment(EnrolmentKeys.vatEnrolmentId)
@@ -52,30 +49,29 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
         request.session.get(SessionKeys.clientVrn) match {
           case Some(vrn) =>
             Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
-            enrolmentsAuthService.authorised(delegatedAuthRule(vrn)).retrieve(Retrievals.affinityGroup
-              and Retrievals.allEnrolments) {
-              case None ~ _ =>
-                Future.successful(errorHandler.showInternalServerError)
-              case _ ~ allEnrolments =>
-                val agent = Agent(allEnrolments)
-                val user = User(vrn, active = true, Some(agent.arn))
-                block(user)
-            } recover {
-              case _: NoActiveSession =>
-                Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
-                  s"rendering Session Timeout")
-                Unauthorized(views.html.errors.sessionTimeout())
+            enrolmentsAuthService.authorised(delegatedAuthRule(vrn))
+              .retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
+                case None ~ _ =>
+                  Future.successful(errorHandler.showInternalServerError)
+                case _ ~ allEnrolments =>
+                  val agent = Agent(allEnrolments)
+                  val user = User(vrn, active = true, Some(agent.arn))
+                  block(user)
+              } recover {
+                case _: NoActiveSession =>
+                  Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
+                    s"rendering Session Timeout")
+                  Unauthorized(views.html.errors.sessionTimeout())
 
-              case _: AuthorisationException =>
-                Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
-                  s"delegated authority for Client")
-                Ok(views.html.errors.agent.notAuthorisedForClient(vrn))
+                case _: AuthorisationException =>
+                  Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
+                    s"delegated authority for Client")
+                  Ok(views.html.errors.agent.notAuthorisedForClient(vrn))
 
-            }
-          case _ => {
+              }
+          case _ =>
             //TODO redirect to VALCUFE with query string for redirectURL
             Future.successful(errorHandler.showInternalServerError)
-          }
         }
       } else {
         Future.successful(Unauthorized(views.html.errors.agent.agentJourneyDisabled()))

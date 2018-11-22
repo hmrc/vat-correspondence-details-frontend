@@ -24,9 +24,9 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import common.EmailVerificationKeys._
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.CreateEmailVerificationRequestResponse
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateResponse
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class EmailVerificationConnector @Inject()(http: HttpClient,

@@ -20,14 +20,16 @@ import java.net.URLEncoder
 
 import config.{FrontendAppConfig, VatHeaderCarrierForPartialsConverter}
 import javax.inject.{Inject, Singleton}
+
+import controllers.BaseController
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendController, UnauthorisedAction}
+import uk.gov.hmrc.play.bootstrap.controller.UnauthorisedAction
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials._
@@ -42,7 +44,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val messagesApi: MessagesApi,
                                    val sessionCookieCrypto: SessionCookieCrypto,
                                    val vatHeaderCarrierForPartialsConverter: VatHeaderCarrierForPartialsConverter
-                                  ) extends FrontendController with PartialRetriever with I18nSupport {
+                                  ) extends BaseController with PartialRetriever {
   override val httpGet: HttpClient = wsHttp
   val httpPost: HttpClient = wsHttp
 
