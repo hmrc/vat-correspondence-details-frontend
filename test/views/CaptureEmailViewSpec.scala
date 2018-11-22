@@ -31,7 +31,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val emailField = "#email"
     val continueButton = "button"
     val errorSummary = "#error-summary-heading"
-    val emailFieldset = "fieldset"
+    val emailFormGroup = "#content > article > form > div:nth-child(1)"
   }
 
   val testEmail: String = "test@example.com"
@@ -88,7 +88,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       }
 
       "display the GA tag" in {
-        element(Selectors.emailFieldset).attr("data-journey") shouldBe "email-address:form-error:unchanged"
+        element(Selectors.emailFormGroup).attr("data-journey") shouldBe "email-address:form-error:unchanged"
       }
     }
 
@@ -101,7 +101,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       }
 
       "display no GA tag" in {
-        element(Selectors.emailFieldset).attr("data-journey") shouldBe empty
+        element(Selectors.emailFormGroup).attr("data-journey") shouldBe empty
       }
     }
   }
