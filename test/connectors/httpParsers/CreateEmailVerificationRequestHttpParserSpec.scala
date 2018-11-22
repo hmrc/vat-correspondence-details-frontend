@@ -25,36 +25,31 @@ import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
 
 class CreateEmailVerificationRequestHttpParserSpec extends UnitSpec with EitherValues {
-  "GetEmailVerifiedHttpReads#read" when {
-    "the response status is OK" should {
-      "return a RegistrationSuccess with the returned SAFE ID" in {
-        val httpResponse: HttpResponse = HttpResponse(
-          responseStatus = CREATED
-        )
 
+  "CreateEmailVerificationRequestHttpReads" when {
+
+    "the response status is CREATED" should {
+
+      "return an EmailVerificationRequestSent object" in {
+        val httpResponse: HttpResponse = HttpResponse(responseStatus = CREATED)
         read("", "", httpResponse).right.value shouldBe EmailVerificationRequestSent
       }
     }
 
-    "the response status is NOT_FOUND" should {
-      "return an InvalidJsonResponse" in {
-        val httpResponse: HttpResponse = HttpResponse(
-          responseStatus = CONFLICT
-        )
+    "the response status is CONFLICT" should {
 
+      "return an EmailAlreadyVerified object" in {
+        val httpResponse: HttpResponse = HttpResponse(responseStatus = CONFLICT)
         read("", "", httpResponse).right.value shouldBe EmailAlreadyVerified
       }
     }
 
-    "the response status is INTERNAL_SERVER_ERROR" should {
-      "return an InvalidJsonResponse" in {
-        val httpResponse: HttpResponse = HttpResponse(
-            responseStatus = INTERNAL_SERVER_ERROR
-        )
+    "the response returns an unexpected status" should {
 
+      "return an error model with the status and response body" in {
+        val httpResponse: HttpResponse = HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)
         read("", "", httpResponse).left.value shouldBe EmailVerificationRequestFailure(INTERNAL_SERVER_ERROR, httpResponse.body)
       }
     }
-
   }
 }

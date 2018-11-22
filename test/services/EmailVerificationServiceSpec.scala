@@ -41,13 +41,13 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
   private lazy val continueUrl = mockConfig.emailVerificationBaseUrl
   val testEmail: String = UUID.randomUUID().toString
 
-  "Create Email verifications request" when {
+  "Creating an email verification request" when {
 
     "the email verification feature switch is on" when {
 
-      "the email verification is sent successfully" should {
+      "the email verification request is sent successfully" should {
 
-        "return a StoreEmailSuccess with an emailVerified of false" in {
+        "return Some(true)" in {
 
           mockCreateEmailVerificationRequest(testEmail, continueUrl)(
             Future.successful(Right(EmailVerificationRequestSent))
@@ -62,7 +62,7 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
 
       "the email address has already been verified" should {
 
-        "return a StoreEmailSuccess with an emailVerified of true" in {
+        "return Some(false)" in {
 
           mockCreateEmailVerificationRequest(testEmail, continueUrl)(Future.successful(Right(EmailAlreadyVerified)))
           val res: Option[Boolean] = {
@@ -75,7 +75,7 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
 
       "the email address verification request failed" should {
 
-        "return an EmailVerificationFailure" in {
+        "return None" in {
 
           mockCreateEmailVerificationRequest(testEmail, continueUrl)(
             Future.successful(Left(EmailVerificationRequestFailure(BAD_REQUEST, "")))
@@ -107,7 +107,7 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
   }
 
 
-  "Check Email verifications status request" when {
+  "Checking email verification status" when {
 
     "the email verification feature switch is on" when {
 
