@@ -29,22 +29,19 @@
   <h1 class="heading-large">@messages("captureEmail.title")</h1>
 
   @form(action = controllers.routes.CaptureEmailController.submit) {
-    <fieldset @if(emailNotChangedError){data-journey="email-address:form-error:unchanged"}>
-      <legend class="visuallyhidden">@messages("captureEmail.title")</legend>
-      <div class="form-group">
-        @input(
-          emailForm("email"),
-          '_divClass       -> "form-label",
-          '_labelId        -> "label-email",
-          '_hintId         -> "label-email-hint",
-          '_label          -> messages("captureEmail.title"),
-          '_labelTextClass -> "visuallyhidden",
-          '_inputClass     -> "input--fullwidth",
-          '_maxlength      -> maxLength,
-          '_inputHint      -> messages("captureEmail.hint")
-        )
-      </div>
-    </fieldset>
+    <div class="form-group" @if(emailNotChangedError){data-journey="email-address:form-error:unchanged"}>
+      @input(
+        emailForm("email"),
+        '_divClass       -> "form-label",
+        '_labelId        -> "label-email",
+        '_hintId         -> "label-email-hint",
+        '_label          -> messages("captureEmail.title"),
+        '_labelTextClass -> "visuallyhidden",
+        '_inputClass     -> "input--fullwidth",
+        '_maxlength      -> maxLength,
+        '_inputHint      -> messages("captureEmail.hint")
+      )
+    </div>
 
     <div class="form-group">
       <button class="button" type="submit">@messages("common.continue")</button>
