@@ -74,7 +74,8 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       mockVatSubscriptionService,
       mockErrorHandler,
       mockAuditService,
-      mockConfig
+      mockConfig,
+      ec
     )
   }
 
@@ -214,7 +215,8 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         mockEnrolmentsAuthService,
         mockErrorHandler,
         messagesApi,
-        mockConfig
+        mockConfig,
+        ec
       )
 
       lazy val inflightTarget = {
@@ -227,7 +229,8 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           mockVatSubscriptionService,
           mockErrorHandler,
           mockAuditService,
-          mockConfig
+          mockConfig,
+          ec
         )
       }
 

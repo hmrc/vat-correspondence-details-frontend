@@ -17,19 +17,17 @@
 package forms
 
 import forms.EmailForm._
-import org.scalatest.Matchers._
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
+import utils.TestUtil
 
-class EmailFormSpec extends PlaySpec with GuiceOneAppPerSuite {
+class EmailFormSpec extends TestUtil {
 
   "The emailForm" should {
 
-    val invalidEmailFormatErrorMessage: String = "Enter a valid email address"
-    val maxLengthErrorMessage: String = "Email address must be 132 characters or less"
-    val emptyEmailErrorMessage: String = "Enter your email address"
-    val notChangedErrorMessage: String = "Enter a different email address"
+    val invalidEmailFormatErrorMessage: String = "captureEmail.error.invalid"
+    val maxLengthErrorMessage: String = "captureEmail.error.exceedsMaxLength"
+    val emptyEmailErrorMessage: String = "captureEmail.error.empty"
+    val notChangedErrorMessage: String = "captureEmail.error.notChanged"
 
     val testEmailLocalPart: String = "user"
     val testEmailDomain: String = "@example.com"

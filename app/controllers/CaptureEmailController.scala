@@ -23,12 +23,12 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
 import forms.EmailForm._
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+
+import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.VatSubscriptionService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
@@ -37,7 +37,8 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
                                        val vatSubscriptionService: VatSubscriptionService,
                                        val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
-                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                       implicit val appConfig: AppConfig,
+                                       implicit val ec: ExecutionContext) extends BaseController {
 
   def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {

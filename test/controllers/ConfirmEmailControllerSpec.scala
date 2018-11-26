@@ -38,8 +38,9 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
     messagesApi,
     mockErrorHandler,
     mockAuditService,
+    mockVatSubscriptionService,
     mockConfig,
-    mockVatSubscriptionService
+    ec
   )
 
   val testVatNumber: String = "999999999"

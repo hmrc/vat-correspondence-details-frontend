@@ -18,19 +18,20 @@ package connectors
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
+
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import common.EmailVerificationKeys._
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.CreateEmailVerificationRequestResponse
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateResponse
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailVerificationConnector @Inject()(http: HttpClient,
-                                           appConfig: AppConfig) {
+                                           appConfig: AppConfig)(
+                                           implicit ec: ExecutionContext) {
 
   private[connectors] def checkVerifiedEmailUrl(email: String): String =
     s"${appConfig.emailVerificationBaseUrl}/email-verification/verified-email-addresses/$email"

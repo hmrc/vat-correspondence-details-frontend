@@ -20,20 +20,22 @@ import java.net.URLEncoder
 
 import config.{FrontendAppConfig, VatHeaderCarrierForPartialsConverter}
 import javax.inject.{Inject, Singleton}
+
+import controllers.BaseController
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendController, UnauthorisedAction}
+import uk.gov.hmrc.play.bootstrap.controller.UnauthorisedAction
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials._
 import views.html.feedback.feedback_thankyou
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 //$COVERAGE-OFF$
 @Singleton
@@ -41,8 +43,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val wsHttp: HttpClient,
                                    val messagesApi: MessagesApi,
                                    val sessionCookieCrypto: SessionCookieCrypto,
-                                   val vatHeaderCarrierForPartialsConverter: VatHeaderCarrierForPartialsConverter
-                                  ) extends FrontendController with PartialRetriever with I18nSupport {
+                                   val vatHeaderCarrierForPartialsConverter: VatHeaderCarrierForPartialsConverter,
+                                   val ec: ExecutionContext) extends BaseController with PartialRetriever {
   override val httpGet: HttpClient = wsHttp
   val httpPost: HttpClient = wsHttp
 
@@ -85,7 +87,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
     implicit request =>
       request.body.asFormUrlEncoded.map { formData =>
         httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
-          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec = mdcExecutionContext).map {
+          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec = ec).map {
           resp =>
             resp.status match {
               case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
