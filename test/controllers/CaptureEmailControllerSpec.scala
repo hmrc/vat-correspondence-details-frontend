@@ -112,9 +112,10 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the previous form value is retrieved from session" should {
 
-          lazy val result = target().show(request
-            .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
-            .withSession(common.SessionKeys.emailKey -> testValidEmail))
+          lazy val result = target().show(request.withSession(
+              common.SessionKeys.validationEmailKey -> testValidationEmail,
+              common.SessionKeys.emailKey -> testValidEmail)
+          )
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return 200" in {
@@ -210,21 +211,12 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "the inflight predicate is not mocked out and there is nothing in session" should {
 
-      val inflightPredicate = new InflightPPOBPredicate(
-        mockVatSubscriptionService,
-        mockEnrolmentsAuthService,
-        mockErrorHandler,
-        messagesApi,
-        mockConfig,
-        ec
-      )
-
       lazy val inflightTarget = {
 
         setup(Right(customerInfoResult))
         new CaptureEmailController(
           mockAuthPredicate,
-          inflightPredicate,
+          mockInflightPPOBPredicate,
           messagesApi,
           mockVatSubscriptionService,
           mockErrorHandler,

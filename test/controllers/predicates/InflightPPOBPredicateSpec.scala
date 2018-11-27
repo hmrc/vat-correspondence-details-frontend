@@ -20,13 +20,13 @@ import assets.CustomerInfoConstants._
 import common.SessionKeys.inflightPPOBKey
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import mocks.MockAuth
+import models.User
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
-import play.api.mvc.Results.Ok
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -34,28 +34,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class InflightPPOBPredicateSpec extends MockAuth {
 
-  def setup(result: GetCustomerInfoResponse): Unit = {
+  def setup(result: GetCustomerInfoResponse = Right(customerInfoPendingAddressModel)): Unit =
     when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(result))
-  }
 
-  def inflightPredicate: InflightPPOBPredicate =
-    new InflightPPOBPredicate(
-      mockVatSubscriptionService,
-      mockEnrolmentsAuthService,
-      mockErrorHandler,
-      messagesApi,
-      mockConfig,
-      ec
-    )
+  val inflightPPOBPredicate = new InflightPPOBPredicate(
+    mockVatSubscriptionService,
+    mockErrorHandler,
+    messagesApi,
+    mockConfig,
+    ec
+  )
 
-  def target(result: GetCustomerInfoResponse = Right(customerInfoPendingAddressModel)): Action[AnyContent] = {
-    setup(result)
-    mockIndividualAuthorised()
-    inflightPredicate.async {
-      implicit user => Future.successful(Ok("test"))
-    }
-  }
+  def userWithSession(inflightPPOBValue: String): User[AnyContentAsEmpty.type] =
+    User[AnyContentAsEmpty.type]("999943620")(request.withSession(inflightPPOBKey -> inflightPPOBValue))
 
   "The InflightPPOBPredicate" when {
 
@@ -63,7 +55,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
       "the inflight indicator is set to 'true'" should {
 
-        lazy val result = await(target()(request.withSession(inflightPPOBKey -> "true")))
+        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("true"))).left.get
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 200" in {
@@ -82,10 +74,10 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
       "the inflight indicator is set to 'false'" should {
 
-        lazy val result = await(target()(request.withSession(inflightPPOBKey -> "false")))
+        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("false")))
 
-        "return 200" in {
-          status(result) shouldBe Status.OK
+        "allow the request to pass through the predicate" in {
+          result shouldBe Right(userWithSession("false"))
         }
 
         "not call the VatSubscriptionService" in {
@@ -96,7 +88,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
       "the inflight indicator is set to 'error'" should {
 
-        lazy val result = await(target()(request.withSession(inflightPPOBKey -> "error")))
+        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("error"))).left.get
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -113,7 +105,10 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
       "the user has an inflight PPOB address" should {
 
-        lazy val result = await(target()(request))
+        lazy val result = {
+          setup()
+          await(inflightPPOBPredicate.refine(user)).left.get
+        }
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 200" in {
@@ -131,7 +126,10 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
       "the user has an inflight email" should {
 
-        lazy val result = await(target(Right(customerInfoPendingEmailModel))(request))
+        lazy val result = {
+          setup(Right(customerInfoPendingEmailModel))
+          await(inflightPPOBPredicate.refine(user)).left.get
+        }
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 500" in {
@@ -149,10 +147,17 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
       "the user has no inflight information" should {
 
-        lazy val result = await(target(Right(minCustomerInfoModel))(request))
+        lazy val result = {
+          setup(Right(minCustomerInfoModel))
+          await(inflightPPOBPredicate.refine(user)).left.get
+        }
 
-        "return 200" in {
-          status(result) shouldBe Status.OK
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to the capture email address page" in {
+          redirectLocation(result) shouldBe Some(controllers.routes.CaptureEmailController.show().url)
         }
 
         "add the inflight indicator 'false' to session" in {
@@ -162,7 +167,10 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
       "the service call fails" should {
 
-        lazy val result = await(target(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))(request))
+        lazy val result = {
+          setup(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
+          await(inflightPPOBPredicate.refine(user)).left.get
+        }
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR

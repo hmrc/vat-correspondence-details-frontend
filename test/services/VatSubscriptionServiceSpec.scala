@@ -30,7 +30,6 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
   val service = new VatSubscriptionService(connector, mockEmailVerificationService)
 
   val testVrn: String   = "123456789"
-  val testEmail: String = "test@example.com"
 
   "calling getCustomerInfo" when {
 

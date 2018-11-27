@@ -21,12 +21,11 @@ import org.jsoup.nodes.Document
 
 class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
-  val testEmail: String = "test@email.com"
-  lazy val view = views.html.email_change_success()
-
-  lazy implicit val document: Document = Jsoup.parse(view.body)
-
   "The Email Change Successful view" should {
+
+    lazy val view = views.html.email_change_success()
+    lazy implicit val document: Document = Jsoup.parse(view.body)
+
     "have the correct heading" in {
       document.getElementsByClass("heading-xlarge").text() shouldBe "We have received the new email address"
     }

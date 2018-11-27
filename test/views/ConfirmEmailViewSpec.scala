@@ -21,8 +21,6 @@ import org.jsoup.nodes.Document
 
 class ConfirmEmailViewSpec extends ViewBaseSpec {
 
-  val testEmail: String = "test@email.com"
-
   object Selectors {
     val heading = "heading-large"
     val backLink = "#content > article > a"

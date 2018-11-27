@@ -23,13 +23,12 @@ import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import _root_.services.EnrolmentsAuthService
-import config.ErrorHandler
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import utils.TestUtil
 import assets.BaseTestConstants._
 import models.User
-import play.api.mvc.{Request, Result}
+import play.api.mvc.Result
 
 import scala.concurrent.Future
 
@@ -51,12 +50,10 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
 
   val mockEnrolmentsAuthService: EnrolmentsAuthService = new EnrolmentsAuthService(mockAuthConnector)
 
-  val mockErrorHandler: ErrorHandler = new ErrorHandler(messagesApi, mockConfig)
-
   val mockAuthAsAgentWithClient: AuthoriseAsAgentWithClient =
     new AuthoriseAsAgentWithClient(
       mockEnrolmentsAuthService,
-      injector.instanceOf[ErrorHandler],
+      mockErrorHandler,
       messagesApi,
       mockConfig,
       ec
@@ -72,18 +69,17 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       ec
     )
 
-  def mockInflightPPOBPredicate: InflightPPOBPredicate = {
+  val mockInflightPPOBPredicate: InflightPPOBPredicate = {
 
     object MockPredicate extends InflightPPOBPredicate(
       mockVatSubscriptionService,
-      mockEnrolmentsAuthService,
       mockErrorHandler,
       messagesApi,
       mockConfig,
       ec
     ) {
-      override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]) =
-        block(User[A]("999999999")(request))
+      override def refine[A](request: User[A]): Future[Either[Result, User[A]]] =
+        Future.successful(Right(User(vrn)(request)))
     }
 
     MockPredicate

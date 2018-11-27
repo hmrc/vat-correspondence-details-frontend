@@ -17,11 +17,11 @@
 package controllers
 
 import common.SessionKeys
-import models.User
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
 import mocks.MockEmailVerificationService
+import models.User
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 
@@ -38,24 +38,21 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   )
 
   val testVatNumber: String = "999999999"
-  val testEmail: String = "test@email.co.uk"
   val testContinueUrl: String = "/someReturnUrl/verified"
 
-  lazy val testSendEmailRequest = FakeRequest("GET", "/send-verification")
-  lazy val testGetRequest = FakeRequest("GET", "/verify-email-address")
+  lazy val testEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
+    request.withSession(SessionKeys.emailKey -> testEmail)
+  lazy val emptyEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
+    request.withSession(SessionKeys.emailKey -> "")
 
-  "Calling the extractEmail function in VerifyEmailController" when {
+
+  "Calling the extractSessionEmail function in VerifyEmailController" when {
 
     "there is an authenticated request from a user with an email in session" should {
+
       "result in an email address being retrieved if there is an email" in {
-
-        mockIndividualAuthorised()
-
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = testGetRequest.withSession(
-          SessionKeys.emailKey -> testEmail)
-        val user = User[AnyContent](testVatNumber, active = true, None)(request)
-
-        TestVerifyEmailController.extractSessionEmail(user) shouldBe Some(testEmail)
+        val userWithSession = User[AnyContent](testVatNumber)(testEmailSessionRequest)
+        TestVerifyEmailController.extractSessionEmail(userWithSession) shouldBe Some(testEmail)
       }
     }
   }
@@ -63,74 +60,87 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   "Calling the show action in VerifyEmailController" when {
 
     "there is an email in session" should {
-      "show the Confirmation Email page" in {
 
+      lazy val result = {
         mockIndividualAuthorised()
+        TestVerifyEmailController.show()(testEmailSessionRequest)
+      }
 
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.show(request)
-
+      "return 200 (OK)" in {
         status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
       }
     }
 
     "there isn't an email in session" should {
-      "return OK" in {
 
+      lazy val result = {
         mockIndividualAuthorised()
+        TestVerifyEmailController.show()(emptyEmailSessionRequest)
+      }
 
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> "")
-        val result = TestVerifyEmailController.show(request)
-
+      "return 303 (SEE_OTHER)" in {
         status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the capture email page" in {
         redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
       }
     }
 
     "the user is not authorised" should {
-      "show an internal server error" in {
 
+      lazy val result = {
         mockUnauthorised()
+        TestVerifyEmailController.show()(testEmailSessionRequest)
+      }
 
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.show(request)
-
+      "return 500 (INTERNAL_SERVER_ERROR)" in {
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "show the technical difficulties page" in {
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
   }
 
-  "Calling the emailVerified action in VerifyEmailController" when {
+  "Calling the sendVerification action in VerifyEmailController" when {
 
     "there is an email in session and the email request is successfully created" should {
 
-      "show the email verification page" in {
-
+      lazy val result = {
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(Some(true))
+        TestVerifyEmailController.sendVerification()(testEmailSessionRequest)
+      }
 
-        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.sendVerification(request)
-
+      "return 303 (SEE_OTHER)" in {
         status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the verify your email page" in {
         redirectLocation(result) shouldBe Some(routes.VerifyEmailController.show().url)
       }
     }
 
     "there is an email in session and the email request is not created as already verified" should {
 
-      "show the email confirmation page" in {
-
+      lazy val result = {
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(Some(false))
+        TestVerifyEmailController.sendVerification()(testEmailSessionRequest)
+      }
 
-        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.sendVerification(request)
-
+      "return 303 (SEE_OTHER)" in {
         status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the update email address route" in {
         redirectLocation(result) shouldBe Some(routes.ConfirmEmailController.updateEmailAddress().url)
       }
     }
@@ -138,57 +148,47 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
     "there is an email in session and the email request returned an unexpected error" should {
 
-      "show the email confirmation page" in {
-
+      lazy val result = {
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(None)
-
-        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.sendVerification(request)
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        TestVerifyEmailController.sendVerification()(testEmailSessionRequest)
       }
-    }
 
-    "there is not an email in session and the email request returned an unexpected error" should {
-
-      "show the email confirmation page" in {
-
-        mockIndividualAuthorised()
-        mockCreateEmailVerificationRequest(None)
-
-        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.sendVerification(request)
-
+      "return 500 (INTERNAL_SERVER_ERROR)" in {
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
 
     "there isn't an email in session" should {
-      "return OK" in {
 
+      lazy val result = {
         mockIndividualAuthorised()
+        TestVerifyEmailController.sendVerification()(emptyEmailSessionRequest)
+      }
 
-        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> "")
-        val result = TestVerifyEmailController.sendVerification(request)
-
+      "return 303 (SEE_OTHER)" in {
         status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the capture email route" in {
         redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
       }
     }
 
     "the user is not authorised" should {
-      "show an internal server error" in {
 
+      lazy val result = {
         mockUnauthorised()
+        TestVerifyEmailController.sendVerification()(testEmailSessionRequest)
+      }
 
-        val request = testSendEmailRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestVerifyEmailController.sendVerification(request)
-
+      "return 500 (INTERNAL_SERVER_ERROR)" in {
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "show the internal server error page" in {
         Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
-
   }
 }

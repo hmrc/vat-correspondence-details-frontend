@@ -16,7 +16,6 @@
 
 package services
 
-import java.util.UUID
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{EmailAlreadyVerified, EmailVerificationRequestFailure, EmailVerificationRequestSent}
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.{EmailNotVerified, EmailVerified, GetEmailVerificationStateErrorResponse}
 import mocks.MockEmailVerificationConnector
@@ -39,7 +38,6 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   private lazy val continueUrl = mockConfig.emailVerificationBaseUrl
-  val testEmail: String = UUID.randomUUID().toString
 
   "Creating an email verification request" when {
 

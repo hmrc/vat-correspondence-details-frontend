@@ -21,19 +21,17 @@ import org.jsoup.nodes.Document
 
 class VerifyEmailViewSpec extends ViewBaseSpec {
 
-  val testEmail: String = "test@email.com"
-  lazy val view = views.html.verify_email(testEmail)
-
-  lazy implicit val document: Document = Jsoup.parse(view.body)
-
   "The Verify Email view" should {
+
+    lazy val view = views.html.verify_email(testEmail)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct heading" in {
       document.getElementsByClass("heading-large").text() shouldBe "Verify your email address"
     }
 
     "have the correct text for the first paragraph" in {
-      elementText("#content p") shouldBe "We’ve sent an email to test@email.com. Click on the link in the email to verify your email address."
+      elementText("#content p") shouldBe "We’ve sent an email to test@email.co.uk. Click on the link in the email to verify your email address."
     }
 
     "have the correct text for the second paragraph" in {
