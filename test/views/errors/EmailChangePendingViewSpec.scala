@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
 
-class PPOBChangePendingViewSpec extends ViewBaseSpec {
+class EmailChangePendingViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "h1"
@@ -29,9 +29,9 @@ class PPOBChangePendingViewSpec extends ViewBaseSpec {
     val backLink = ".link-back"
   }
 
-  "The PPOB change pending view" should {
+  "The email change pending view" should {
 
-    lazy val view = views.html.errors.ppobChangePending()(request, messages, mockConfig)
+    lazy val view = views.html.errors.emailChangePending()(request, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct title" in {
@@ -43,8 +43,8 @@ class PPOBChangePendingViewSpec extends ViewBaseSpec {
     }
 
     "have the correct information in the first paragraph" in {
-      elementText(Selectors.paragraphOne) shouldBe "You have already requested to change your principal place " +
-        "of business. While this change is pending you are unable to change your email address."
+      elementText(Selectors.paragraphOne) shouldBe "You have already requested to change your email " +
+        "address. While this change is pending you are unable to change your principal place of business."
     }
 
     "have the correct information in the second paragraph" in {
