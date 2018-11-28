@@ -34,13 +34,11 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val emailFormGroup = "#content > article > form > div:nth-child(1)"
   }
 
-  val testEmail: String = "test@example.com"
-
   "Rendering the capture email page" when {
 
     "the form has no errors" should {
       lazy val view: Html = views.html.capture_email(emailForm(testEmail)
-        .fill(testEmail), emailNotChangedError = false)(request, messages, mockConfig)
+        .fill(testEmail), emailNotChangedError = false)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {
@@ -71,7 +69,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       }
 
       "have the email text field with the pre-populated value" in {
-        element(Selectors.emailField).attr("value") shouldBe "test@example.com"
+        element(Selectors.emailField).attr("value") shouldBe "test@email.co.uk"
       }
 
       "have the continue button" in {
@@ -80,7 +78,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     }
 
     "the form has the email unchanged error" should {
-      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "")), emailNotChangedError = true)(request, messages, mockConfig)
+      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "")), emailNotChangedError = true)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "display the error summary" in {
@@ -93,7 +91,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     }
 
     "the form has any other error" should {
-      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "invalid")), emailNotChangedError = false)(request, messages, mockConfig)
+      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "invalid")), emailNotChangedError = false)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "display the error summary" in {

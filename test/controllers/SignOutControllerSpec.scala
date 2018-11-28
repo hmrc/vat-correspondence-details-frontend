@@ -35,7 +35,6 @@ class SignOutControllerSpec extends ControllerBaseSpec {
 
       "redirect to the correct location" in {
         val result = controller.signOut(feedbackOnSignOut = true)(request)
-        println(mockConfig.feedbackSignOutUrl)
         redirectLocation(result) shouldBe Some(mockConfig.feedbackSignOutUrl)
       }
     }

@@ -17,12 +17,10 @@
 package controllers
 
 import common.SessionKeys
-import mocks.MockVatSubscriptionService
 import models.User
 import models.customerInformation.UpdateEmailSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.scalatest.concurrent.{Waiters, _}
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
@@ -30,7 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import scala.concurrent.Future
 
-class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService with ScalaFutures with Waiters {
+class ConfirmEmailControllerSpec extends ControllerBaseSpec {
 
   object TestConfirmEmailController extends ConfirmEmailController(
     mockAuthPredicate,
@@ -44,7 +42,6 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
   )
 
   val testVatNumber: String = "999999999"
-  val testEmail: String = "test@email.co.uk"
 
   lazy val testGetRequest = FakeRequest("GET", "/confirm-email")
 
@@ -55,7 +52,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec with MockVatSubscrip
 
         mockIndividualAuthorised()
 
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = testGetRequest.withSession(
+        val request: FakeRequest[AnyContentAsEmpty.type] = testGetRequest.withSession(
          SessionKeys.emailKey -> testEmail)
 
         val user = User[AnyContent](testVatNumber, active = true, None)(request)

@@ -109,6 +109,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
+    Keys.fork in Test := true,
     scalaVersion := "2.11.11",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,

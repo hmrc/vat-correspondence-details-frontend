@@ -23,7 +23,6 @@ import common.SessionKeys
 import config.ErrorHandler
 import mocks.MockAppConfig
 import models.User
-import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.Injector
@@ -34,7 +33,7 @@ import play.filters.csrf.CSRF.Token
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 
-trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MaterializerSupport {
+trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport {
 
   lazy val injector: Injector = app.injector
   lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
@@ -43,10 +42,13 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach
   implicit lazy val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
   implicit lazy val serviceErrorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
   lazy val mockAuditService: AuditingService = injector.instanceOf[AuditingService]
+  lazy val mockErrorHandler: ErrorHandler = new ErrorHandler(messagesApi, mockConfig)
 
-  lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  val testEmail = "test@email.co.uk"
 
-  implicit lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
+  implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+
+  lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.clientVrn -> vrn)
 
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)
@@ -70,4 +72,3 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach
     }
   }
 }
-

@@ -20,66 +20,62 @@ import javax.inject.{Inject, Singleton}
 
 import common.SessionKeys.inflightPPOBKey
 import config.{AppConfig, ErrorHandler}
-import controllers.BaseController
 import models.User
 import play.api.Logger
-import play.api.i18n.MessagesApi
-import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
-import services.{EnrolmentsAuthService, VatSubscriptionService}
-import uk.gov.hmrc.auth.core.retrieve._
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.Results.{Ok, Redirect}
+import services.VatSubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class InflightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionService,
-                                      enrolmentsAuthService: EnrolmentsAuthService,
                                       val errorHandler: ErrorHandler,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig,
-                                      implicit val ec: ExecutionContext) extends BaseController
-  with AuthBasePredicate with ActionBuilder[User] with ActionFunction[Request, User] {
+                                      implicit val ec: ExecutionContext)
+  extends ActionRefiner[User, User] with I18nSupport {
 
-  override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
+  override def refine[A](request: User[A]): Future[Either[Result, User[A]]] = {
 
-    implicit val req: Request[A] = request
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val req: User[A] = request
 
-    val authorisedUser: Future[User[A]] =
-      enrolmentsAuthService.authorised().retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
-        case Some(_) ~ enrolments => Future.successful(User(enrolments))
-      }
-
-    authorisedUser.flatMap { user =>
-      request.session.get(inflightPPOBKey) match {
-        case Some("true") => Future.successful(Ok(views.html.errors.ppobChangePending()))
-        case Some("false") => block(user)
-        case Some(_) => Future.successful(errorHandler.showInternalServerError)
-        case None => getCustomerInfoCall(user.vrn, block)
-      }
+    req.session.get(inflightPPOBKey) match {
+      case Some("true") => Future.successful(Left(Ok(views.html.errors.ppobChangePending())))
+      case Some("false") => Future.successful(Right(req))
+      case Some(_) => Future.successful(Left(errorHandler.showInternalServerError))
+      case None => getCustomerInfoCall(req.vrn)
     }
   }
 
-  private def getCustomerInfoCall[A](vrn: String, block: User[A] => Future[Result])
-                                    (implicit request: Request[A]): Future[Result] =
-    vatSubscriptionService.getCustomerInfo(vrn).flatMap {
+  private def getCustomerInfoCall[A](vrn: String)(implicit hc: HeaderCarrier,
+                                                  request: User[A]): Future[Either[Result, User[A]]] =
+    vatSubscriptionService.getCustomerInfo(vrn).map {
       case Right(customerInfo) =>
         customerInfo.pendingChanges match {
           case Some(_) =>
-            if(!customerInfo.addressAndPendingMatch) {
-              Logger.warn("[InflightPPOBPredicate][invokeBlock] - " +
+            if (!customerInfo.addressAndPendingMatch) {
+              Logger.warn("[InflightPPOBPredicate][getCustomerInfoCall] - " +
                 "The current PPOB address and inflight PPOB address are different. Rendering graceful error page.")
-              Future.successful(Ok(views.html.errors.ppobChangePending()).addingToSession(inflightPPOBKey -> "true"))
+              Left(Ok(views.html.errors.ppobChangePending()).addingToSession(inflightPPOBKey -> "true"))
             } else {
-              Logger.warn("[InflightPPOBPredicate][invokeBlock] - " +
+              Logger.warn("[InflightPPOBPredicate][getCustomerInfoCall] - " +
                 "There is a pending change to something other than PPOB address. Rendering standard error page.")
-              Future.successful(errorHandler.showInternalServerError.addingToSession(inflightPPOBKey -> "error"))
+              Left(errorHandler.showInternalServerError.addingToSession(inflightPPOBKey -> "error"))
             }
           case None =>
-            Logger.debug("[InflightPPOBPredicate][invokeBlock] - There is no inflight data.")
-            block(User(vrn)).map(_.addingToSession(inflightPPOBKey -> "false"))
+            Logger.debug("[InflightPPOBPredicate][getCustomerInfoCall] - " +
+              "There is no inflight data. Redirecting user to the start of the journey.")
+            Left(Redirect(controllers.routes.CaptureEmailController.show().url)
+              .addingToSession(inflightPPOBKey -> "false"))
         }
       case Left(error) =>
-        Logger.warn(s"[InflightPPOBPredicate][invokeBlock] - " +
+        Logger.warn(s"[InflightPPOBPredicate][getCustomerInfoCall] - " +
           s"The call to the GetCustomerInfo API failed. Error: ${error.message}")
-        Future.successful(errorHandler.showInternalServerError)
+        Left(errorHandler.showInternalServerError)
     }
 }

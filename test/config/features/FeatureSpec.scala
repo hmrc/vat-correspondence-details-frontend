@@ -17,11 +17,11 @@
 package config.features
 
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
+import uk.gov.hmrc.play.test.UnitSpec
 
-class FeatureSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
+class FeatureSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
   private val features = new Features(app.injector.instanceOf[Configuration])
 
@@ -34,24 +34,24 @@ class FeatureSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterE
   "The Agent Access Feature" should {
 
     "return its current state" in {
-      features.agentAccessEnabled() mustBe true
+      features.agentAccessEnabled() shouldBe true
     }
 
     "switch to a new state" in {
       features.agentAccessEnabled(false)
-      features.agentAccessEnabled() mustBe false
+      features.agentAccessEnabled() shouldBe false
     }
   }
 
   "The Email Verification Feature" should {
 
     "return its current state" in {
-      features.emailVerificationEnabled() mustBe true
+      features.emailVerificationEnabled() shouldBe true
     }
 
     "switch to a new state" in {
       features.emailVerificationEnabled(false)
-      features.emailVerificationEnabled() mustBe false
+      features.emailVerificationEnabled() shouldBe false
     }
   }
 }
