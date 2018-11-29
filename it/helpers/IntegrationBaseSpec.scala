@@ -18,23 +18,32 @@ package helpers
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, TestSuite}
+import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Matchers, TestSuite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.{Application, Environment, Mode}
+import play.api.data.Form
+import play.api.http.HeaderNames
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.{Application, Environment, Mode}
+import stubs.AuthStub
 
-trait IntegrationBaseSpec extends UnitSpec with WireMockHelper with GuiceOneServerPerSuite with TestSuite
-  with BeforeAndAfterEach with BeforeAndAfterAll {
+trait IntegrationBaseSpec extends TestSuite with CustomMatchers
+  with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
+  with WireMockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually {
 
   val mockHost: String = WireMockHelper.host
   val mockPort: String = WireMockHelper.wireMockPort.toString
-  val appRouteContext: String = "/vat-through-software/correspondence"
+  val appRouteContext: String = "/vat-through-software/account/correspondence"
+
+  lazy val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit lazy val messages: Messages = Messages(Lang("en-GB"), messagesApi)
 
   lazy val client: WSClient = app.injector.instanceOf[WSClient]
 
   def servicesConfig: Map[String, String] = Map(
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.email-verification.host" -> mockHost,
@@ -58,7 +67,57 @@ trait IntegrationBaseSpec extends UnitSpec with WireMockHelper with GuiceOneServ
     super.afterAll()
   }
 
+  class PreconditionBuilder {
+    implicit val builder: PreconditionBuilder = this
+
+    def user: User = new User()
+  }
+
+  def given: PreconditionBuilder = new PreconditionBuilder
+
+  class User()(implicit builder: PreconditionBuilder) {
+    def isAuthenticated: PreconditionBuilder = {
+      Given("I stub a User who successfully signed up to MTD VAT")
+      AuthStub.authorised()
+      builder
+    }
+
+    def isNotAuthenticated: PreconditionBuilder = {
+      Given("I stub a User who is not logged in")
+      AuthStub.unauthorisedNotLoggedIn()
+      builder
+    }
+
+    def isNotEnrolled: PreconditionBuilder = {
+      Given("I stub a User who is NOT signed up to MTD VAT")
+      AuthStub.unauthorisedOtherEnrolment()
+      builder
+    }
+
+    def noAffinityGroup: PreconditionBuilder = {
+      Given("I stub a User who is authenticated but does NOT have an Affinity Group")
+      AuthStub.authorisedNoAffinityGroup()
+      builder
+    }
+  }
+
   def buildRequest(path: String): WSRequest = client.url(s"http://localhost:$port$appRouteContext$path").withFollowRedirects(false)
 
   def document(response: WSResponse): Document = Jsoup.parse(response.body)
+
+  def get(path: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = await(
+    buildRequest(path, additionalCookies).get()
+  )
+
+  def post(path: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = await(
+    buildRequest(path, additionalCookies).post(body)
+  )
+
+  def toFormData[T](form: Form[T], data: T): Map[String, Seq[String]] =
+    form.fill(data).data map { case (k, v) => k -> Seq(v) }
+
+  def buildRequest(path: String, additionalCookies: Map[String, String] = Map.empty): WSRequest =
+    client.url(s"http://localhost:$port$appRouteContext$path")
+      .withHeaders(HeaderNames.COOKIE -> SessionCookieBaker.bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck")
+      .withFollowRedirects(false)
 }

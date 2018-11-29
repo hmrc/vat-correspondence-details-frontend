@@ -10,8 +10,8 @@ GET        /change-email-address           controllers.CaptureEmailController.sh
 POST       /change-email-address           controllers.CaptureEmailController.submit
 
 # confirm email address
-GET         /confirm-email-address         controllers.ConfirmEmailController.show
-GET         /update-email-address          controllers.ConfirmEmailController.updateEmailAddress
+GET        /confirm-email-address          controllers.ConfirmEmailController.show
+GET        /update-email-address           controllers.ConfirmEmailController.updateEmailAddress
 
 # verify email address
 GET        /verify-email-address           controllers.VerifyEmailController.show

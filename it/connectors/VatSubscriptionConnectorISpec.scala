@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import helpers.IntegrationBaseSpec
-import models.customerInformation.{CustomerInformation, PPOB, PPOBAddress, UpdateEmailSuccess}
+import models.customerInformation._
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import stubs.VatSubscriptionStub
@@ -50,7 +50,13 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
       None,
       "codeOfMyCountry"
     ),
-    None,
+    Some(ContactDetails(
+      None,
+      None,
+      None,
+      Some("testemail@test.com"),
+      None
+    )),
     Some("www.pepsi-mac.biz")
   )
 
@@ -74,7 +80,13 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
               None,
               "codeOfMyCountry"
             ),
-            None,
+            Some(ContactDetails(
+              None,
+              None,
+              None,
+              Some("testemail@test.com"),
+              None
+            )),
             Some("www.pepsi-mac.biz")
           ),
           None
