@@ -41,6 +41,11 @@ object VatSubscriptionStub extends WireMockMethods {
       .thenReturn(status = OK, body = updateEmailJson)
   }
 
+  def stubUpdateEmailNoMessage: StubMapping = {
+    when(method = PUT, uri = updateEmailUri)
+      .thenReturn(status = OK, body = updateEmailEmptyResponse)
+  }
+
   def stubCustomerInfoError: StubMapping = {
     when(method = GET, uri = getCustomerInfoUri)
       .thenReturn(status = INTERNAL_SERVER_ERROR, body = Json.obj("fail" -> "nope"))
@@ -78,5 +83,9 @@ object VatSubscriptionStub extends WireMockMethods {
 
   val updateEmailJson: JsObject = Json.obj(
     "formBundle" -> "success"
+  )
+
+  val updateEmailEmptyResponse: JsObject = Json.obj(
+    "formBundle" -> ""
   )
 }

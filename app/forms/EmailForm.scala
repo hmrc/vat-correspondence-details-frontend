@@ -16,7 +16,6 @@
 
 package forms
 
-import models.EmailModel
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.play.mappers.StopOnFirstFail
@@ -31,16 +30,14 @@ object EmailForm {
     |[0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\
     |x09\x0b\x0c\x0e-\x7f])+)\])$""".stripMargin
 
-  def emailForm(currentEmail:String): Form[EmailModel] = Form(
-    mapping(
+  def emailForm(currentEmail:String): Form[String] = Form(
     "email" -> text.verifying(
-        StopOnFirstFail(
-          constraint[String]("captureEmail.error.empty", _.length != 0),
-          constraint[String]("captureEmail.error.notChanged", _.toLowerCase != currentEmail.toLowerCase),
-          constraint[String]("captureEmail.error.exceedsMaxLength", _.length <= maxLength),
-          constraint[String]("captureEmail.error.invalid", _.matches(emailRegex))
-        )
+      StopOnFirstFail(
+        constraint[String]("captureEmail.error.empty", _.length != 0),
+        constraint[String]("captureEmail.error.notChanged", _.toLowerCase != currentEmail.toLowerCase),
+        constraint[String]("captureEmail.error.exceedsMaxLength", _.length <= maxLength),
+        constraint[String]("captureEmail.error.invalid", _.matches(emailRegex))
       )
-    )(EmailModel.apply)(EmailModel.unapply)
+    )
   )
 }

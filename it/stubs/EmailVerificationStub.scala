@@ -44,11 +44,11 @@ object EmailVerificationStub extends WireMockMethods {
   def stubVerificationRequestError: StubMapping = when(method = POST, uri = emailVerificationRequestUri)
     .thenReturn(status = INTERNAL_SERVER_ERROR, body = internalServerErrorJson)
 
-  val emailVerifiedResponseJson: JsValue = Json.parse("""{"email": "scala@gmail.com"}""")
+  val emailVerifiedResponseJson: JsValue = Json.parse("""{"email": "scala@test.com"}""")
 
   val emailVerificationNotFoundJson: JsValue = Json.parse(
     """{
-      |  "code": "EMAIL_NOT_FOUND_OR_NOT_VERIFIED",
+      |  "code": "NOT_VERIFIED",
       |  "message":"Email not found or not verified."
       |}""".stripMargin
   )

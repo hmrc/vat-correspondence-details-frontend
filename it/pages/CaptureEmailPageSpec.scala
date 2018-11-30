@@ -108,6 +108,8 @@ class CaptureEmailPageSpec extends BasePageISpec {
     }
   }
 
+  //TODO: Fix @ symbol being turned in unicode charatcer when passed to the form
+
 //  "Calling the Capture email (.submit) route with an authenticated user" when {
 //
 //    val testEmail = "test@test.com"
