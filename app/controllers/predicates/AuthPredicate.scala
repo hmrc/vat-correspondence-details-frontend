@@ -62,7 +62,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
         Unauthorized(views.html.errors.sessionTimeout())
 
       case _: AuthorisationException =>
-        Logger.warn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering Unauthorised view")
+        Logger.warn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering standard error view")
         errorHandler.showInternalServerError
     }
   }

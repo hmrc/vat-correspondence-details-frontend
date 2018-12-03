@@ -88,7 +88,6 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
         }
       }
 
-      //TODO this will be updated when we build in the real no VRN in session journey
       "there is no client VRN in session" should {
 
         mockConfig.features.agentAccessEnabled(true)

@@ -33,7 +33,7 @@ object VatSubscriptionStub extends WireMockMethods {
 
   def stubCustomerInfoNoEmailJson: StubMapping = {
     when(method = GET, uri = getCustomerInfoUri)
-      .thenReturn(status = OK, body = emptyCustomerIno)
+      .thenReturn(status = OK, body = emptyCustomerInfo)
   }
 
   def stubUpdateEmail: StubMapping = {
@@ -69,7 +69,7 @@ object VatSubscriptionStub extends WireMockMethods {
     )
   )
 
-  val emptyCustomerIno: JsObject = Json.obj("xxx" -> "xxx")
+  val emptyCustomerInfo: JsObject = Json.obj("xxx" -> "xxx")
 
   val customerInfoNoEmailJson: JsObject = Json.obj(
     "ppob" -> Json.obj(

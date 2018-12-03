@@ -49,7 +49,7 @@ object EmailVerificationStub extends WireMockMethods {
   val emailVerificationNotFoundJson: JsValue = Json.parse(
     """{
       |  "code": "NOT_VERIFIED",
-      |  "message":"Email not found or not verified."
+      |  "message":"Email not verified."
       |}""".stripMargin
   )
 

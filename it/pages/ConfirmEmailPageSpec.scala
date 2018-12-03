@@ -46,16 +46,16 @@ class ConfirmEmailPageSpec extends BasePageISpec {
           When("the Confirm email page is called")
           val result = show
 
-          result should have {
-            httpStatus(Status.OK)
+          result should have(
+            httpStatus(Status.OK),
             pageTitle(messages("confirmEmail.title"))
-          }
+          )
         }
       }
 
       "there is not an email in session" should {
 
-        "render the confirm email page" in {
+        "render the capture email page" in {
 
           def show: WSResponse = get(confirmEmailPath)
 
@@ -67,10 +67,10 @@ class ConfirmEmailPageSpec extends BasePageISpec {
           When("the Capture email page is called")
           val result = show
 
-          result should have {
-            httpStatus(Status.SEE_OTHER)
+          result should have(
+            httpStatus(Status.SEE_OTHER),
             redirectURI(controllers.routes.CaptureEmailController.show().url)
-          }
+          )
         }
       }
 
@@ -88,15 +88,33 @@ class ConfirmEmailPageSpec extends BasePageISpec {
           When("the Capture email page is called")
           val result = show
 
-          result should have {
-            httpStatus(Status.OK)
+          result should have(
+            httpStatus(Status.INTERNAL_SERVER_ERROR),
             pageTitle("Sorry, we are experiencing technical difficulties - 500")
-          }
+          )
         }
       }
     }
 
-    "the user is not authenticated" should {
+    "the user is an authenticated Agent" should {
+
+      def show: WSResponse = get(confirmEmailPath, formatEmail(Some(email)))
+
+      "render the not authorised page" in {
+
+        given.user.isAuthenticatedAgent
+
+        When("the Confirm email page is called")
+        val result = show
+
+        result should have(
+          httpStatus(Status.UNAUTHORIZED),
+          pageTitle("You cannot change your client’s correspondence details yet")
+        )
+      }
+    }
+
+    "the user is not enrolled for MTD VAT" should {
 
       def show: WSResponse = get(confirmEmailPath, formatEmail(Some(email)))
 
@@ -107,21 +125,24 @@ class ConfirmEmailPageSpec extends BasePageISpec {
         When("the Confirm email page is called")
         val result = show
 
-        result should have {
-          httpStatus(Status.OK)
-          pageTitle("You cannot change your client’s correspondence details yet")
-        }
+        result should have(
+          httpStatus(Status.FORBIDDEN),
+          pageTitle("You can not use this service yet")
+        )
       }
     }
   }
 
-  "Calling the Capture email (.updateEmailAddress) route" when {
+  "Calling the update email address route" when {
 
     "the user is authenticated" when {
 
       "there is an email in session" when {
 
-        def show: WSResponse = get(updateEmailPath, formatEmail(Some(email)))
+        def show: WSResponse = get(
+          updateEmailPath,
+          formatEmail(Some(email)) ++ formatValidationEmail(Some(email)) ++ formatInflightPPOB(Some("false"))
+        )
 
         "the vat subscription service successfully updates the email" should {
 
@@ -141,15 +162,13 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             VatSubscriptionStub.stubUpdateEmail
             val result = show
 
-            result should have {
-              httpStatus(Status.SEE_OTHER)
+            result should have(
+              httpStatus(Status.SEE_OTHER),
               redirectURI(controllers.routes.EmailChangeSuccessController.show().url)
-            }
+            )
           }
 
           "remove the email, validationEmail and inflightPPOBKey from session" in {
-
-            def show: WSResponse = get(updateEmailPath, formatEmail(Some(email)))
 
             given.user.isAuthenticated
 
@@ -167,13 +186,11 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.emailKey) shouldBe None
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.validationEmailKey) shouldBe None
-
-            //TODO Make sure this removed from session
-//            SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.inflightPPOBKey) shouldBe None
+            SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.inflightPPOBKey) shouldBe None
           }
         }
 
-        "the vat subscription service returns is says the email is not verified" should {
+        "the email verification service says the email is not verified" should {
 
           "redirect to the send verification controller" in {
 
@@ -191,10 +208,10 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             VatSubscriptionStub.stubUpdateEmailNoMessage
             val result = show
 
-            result should have {
-              httpStatus(Status.SEE_OTHER)
+            result should have(
+              httpStatus(Status.SEE_OTHER),
               redirectURI(controllers.routes.VerifyEmailController.sendVerification().url)
-            }
+            )
           }
         }
 
@@ -206,23 +223,18 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
             When("The update email address route is called")
 
-            And("a successful email update response is stubbed")
-            EmailVerificationStub.stubVerificationRequestError
-
             And("a successful customer information response is stubbed")
             VatSubscriptionStub.stubCustomerInfo
 
-            And("a successful vat subscription response is stubbed")
-            VatSubscriptionStub.stubUpdateEmailError
+            And("an email verification check error response is stubbed")
+            EmailVerificationStub.stubEmailVerifiedError
             val result = show
 
-            result should have {
-              httpStatus(Status.OK)
+            result should have(
+              httpStatus(Status.INTERNAL_SERVER_ERROR),
               pageTitle("Sorry, we are experiencing technical difficulties - 500")
-            }
-
+            )
           }
-
         }
       }
 
@@ -246,15 +258,33 @@ class ConfirmEmailPageSpec extends BasePageISpec {
           VatSubscriptionStub.stubUpdateEmail
           val result = show
 
-          result should have {
-            httpStatus(Status.SEE_OTHER)
+          result should have(
+            httpStatus(Status.SEE_OTHER),
             redirectURI(controllers.routes.CaptureEmailController.show().url)
-          }
+          )
         }
       }
     }
 
-    "the is not authenticated" should {
+    "the user is an authenticated Agent" should {
+
+      def show: WSResponse = get(updateEmailPath, formatEmail(Some(email)))
+
+      "render the not authorised page" in {
+
+        given.user.isAuthenticatedAgent
+
+        When("the Confirm email page is called")
+        val result = show
+
+        result should have(
+          httpStatus(Status.UNAUTHORIZED),
+          pageTitle("You cannot change your client’s correspondence details yet")
+        )
+      }
+    }
+
+    "the user is not enrolled for MTD VAT" should {
 
       def show: WSResponse = get(updateEmailPath, formatEmail(Some(email)))
 
@@ -265,12 +295,11 @@ class ConfirmEmailPageSpec extends BasePageISpec {
         When("the Confirm email page is called")
         val result = show
 
-        result should have {
-          httpStatus(Status.OK)
-          pageTitle("You cannot change your client’s correspondence details yet")
-        }
+        result should have(
+          httpStatus(Status.FORBIDDEN),
+          pageTitle("You can not use this service yet")
+        )
       }
-
     }
   }
 }

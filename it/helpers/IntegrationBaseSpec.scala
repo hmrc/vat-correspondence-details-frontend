@@ -49,7 +49,8 @@ trait IntegrationBaseSpec extends TestSuite with CustomMatchers
     "microservice.services.email-verification.host" -> mockHost,
     "microservice.services.email-verification.port" -> mockPort,
     "microservice.services.vat-subscription.host" -> mockHost,
-    "microservice.services.vat-subscription.port" -> mockPort
+    "microservice.services.vat-subscription.port" -> mockPort,
+    "features.emailVerification.enabled" -> "true"
   )
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -77,8 +78,14 @@ trait IntegrationBaseSpec extends TestSuite with CustomMatchers
 
   class User()(implicit builder: PreconditionBuilder) {
     def isAuthenticated: PreconditionBuilder = {
-      Given("I stub a User who successfully signed up to MTD VAT")
+      Given("I stub a User who is successfully signed up to MTD VAT")
       AuthStub.authorised()
+      builder
+    }
+
+    def isAuthenticatedAgent: PreconditionBuilder = {
+      Given("I stub an Agent who is successfully signed up to change their client's MTD VAT details")
+      AuthStub.authorisedAgent()
       builder
     }
 

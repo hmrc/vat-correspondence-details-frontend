@@ -37,9 +37,14 @@ object AuthStub extends WireMockMethods {
       .thenReturn(status = OK, body = successfulAuthResponse(Some(AffinityGroup.Organisation), mtdVatEnrolment))
   }
 
+  def authorisedAgent(): StubMapping = {
+    when(method = POST, uri = authoriseUri)
+      .thenReturn(status = OK, body = successfulAuthResponse(Some(AffinityGroup.Agent), agentEnrolment))
+  }
+
   def unauthorisedOtherEnrolment(): StubMapping = {
     when(method = POST, uri = authoriseUri)
-      .thenReturn(status = OK, body = successfulAuthResponse(Some(AffinityGroup.Agent), otherEnrolment))
+      .thenReturn(status = OK, body = successfulAuthResponse(Some(AffinityGroup.Organisation), otherEnrolment))
   }
 
   def authorisedNoAffinityGroup(): StubMapping = {

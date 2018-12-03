@@ -44,10 +44,10 @@ class VerifyEmailPageSpec extends BasePageISpec {
             When("the Verify email page is called")
             val result = show
 
-            result should have {
-              httpStatus(Status.OK)
+            result should have(
+              httpStatus(Status.OK),
               pageTitle(messages("verifyEmail.title"))
-            }
+            )
           }
         }
       }
@@ -66,14 +66,32 @@ class VerifyEmailPageSpec extends BasePageISpec {
           When("the Verify email page is called")
           val result = show
 
-          result should have {
-            httpStatus(Status.SEE_OTHER)
+          result should have(
+            httpStatus(Status.SEE_OTHER),
             redirectURI(controllers.routes.CaptureEmailController.show().url)
-          }
+          )
         }
       }
 
-    "the user is not authenticated" should {
+    "the user is an authenticated agent" should {
+
+      def show: WSResponse = get(verifyEmailPath, formatEmail(Some(email)))
+
+      "render the Agent unauthorised view" in {
+
+        given.user.isAuthenticatedAgent
+
+        When("the Verify email page is called")
+        val result = show
+
+        result should have(
+          httpStatus(Status.UNAUTHORIZED),
+          pageTitle("You cannot change your client’s correspondence details yet")
+        )
+      }
+    }
+
+    "the user is not enrolled for MTD VAT" should {
 
       def show: WSResponse = get(verifyEmailPath, formatEmail(Some(email)))
 
@@ -81,16 +99,13 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         given.user.isNotEnrolled
 
-        And("a successful response for an individual is stubbed")
-        VatSubscriptionStub.stubCustomerInfo
-
         When("the Verify email page is called")
         val result = show
 
-        result should have {
-          httpStatus(Status.OK)
-          pageTitle("You cannot change your client’s correspondence details yet")
-        }
+        result should have(
+          httpStatus(Status.FORBIDDEN),
+          pageTitle("You can not use this service yet")
+        )
       }
     }
   }
@@ -101,9 +116,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
       "there is an email in session" should {
 
-        "return a true from the Email verification service" in {
-
-          //TODO: Fix failing test. Apparently it's getting a Some(false) back from the email verification service and redirectng to wrong place
+        "redirect to the verify email page" in {
 
           def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)))
 
@@ -115,10 +128,10 @@ class VerifyEmailPageSpec extends BasePageISpec {
           When("The verify email page is called")
           val result = show
 
-          result should have {
-            httpStatus(Status.SEE_OTHER)
+          result should have(
+            httpStatus(Status.SEE_OTHER),
             redirectURI(controllers.routes.VerifyEmailController.show().url)
-          }
+          )
         }
 
         "return a false from the Email Verification service" should {
@@ -135,20 +148,18 @@ class VerifyEmailPageSpec extends BasePageISpec {
             When("The verify email page is called")
             val result = show
 
-            result should have {
-              httpStatus(Status.SEE_OTHER)
+            result should have(
+              httpStatus(Status.SEE_OTHER),
               redirectURI(controllers.routes.ConfirmEmailController.updateEmailAddress().url)
-            }
+            )
           }
         }
 
         "return None from the Email Verification service" should {
 
-          //TODO: Fix failing test. Apparently it's getting a Some(false) back from the email verification service and redirectng to wrong place
-
           def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)))
 
-          "render the internal service error page" in {
+          "render the internal server error page" in {
 
             given.user.isAuthenticated
 
@@ -158,10 +169,10 @@ class VerifyEmailPageSpec extends BasePageISpec {
             When("the verify email page is called")
             val result = show
 
-            result should have {
-              httpStatus(Status.OK)
+            result should have(
+              httpStatus(Status.INTERNAL_SERVER_ERROR),
               pageTitle("Sorry, we are experiencing technical difficulties - 500")
-            }
+            )
           }
         }
       }
@@ -180,15 +191,33 @@ class VerifyEmailPageSpec extends BasePageISpec {
           When("the Verify email page is called")
           val result = show
 
-          result should have {
-            httpStatus(Status.SEE_OTHER)
+          result should have(
+            httpStatus(Status.SEE_OTHER),
             redirectURI(controllers.routes.CaptureEmailController.show().url)
-          }
+          )
         }
       }
     }
 
-    "the user is not authenticated" should {
+    "the user is an authenticated Agent" should {
+
+      def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)))
+
+      "render the unauthorised view" in {
+
+        given.user.isAuthenticatedAgent
+
+        When("the Verify email page is called")
+        val result = show
+
+        result should have(
+          httpStatus(Status.UNAUTHORIZED),
+          pageTitle("You cannot change your client’s correspondence details yet")
+        )
+      }
+    }
+
+    "the user is not enrolled for MTD VAT" should {
 
       def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)))
 
@@ -196,16 +225,13 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         given.user.isNotEnrolled
 
-        And("a successful response for an individual is stubbed")
-        VatSubscriptionStub.stubCustomerInfo
-
         When("the Verify email page is called")
         val result = show
 
-        result should have {
-          httpStatus(Status.OK)
-          pageTitle("You cannot change your client’s correspondence details yet")
-        }
+        result should have(
+          httpStatus(Status.FORBIDDEN),
+          pageTitle("You can not use this service yet")
+        )
       }
     }
   }

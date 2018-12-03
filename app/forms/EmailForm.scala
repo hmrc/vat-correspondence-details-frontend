@@ -30,7 +30,7 @@ object EmailForm {
     |[0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\
     |x09\x0b\x0c\x0e-\x7f])+)\])$""".stripMargin
 
-  def emailForm(currentEmail:String): Form[String] = Form(
+  def emailForm(currentEmail: String): Form[String] = Form(
     "email" -> text.verifying(
       StopOnFirstFail(
         constraint[String]("captureEmail.error.empty", _.length != 0),

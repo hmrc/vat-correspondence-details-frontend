@@ -21,7 +21,6 @@ import audit.models.AttemptedEmailAddressAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
-import forms.EmailForm
 import forms.EmailForm._
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
@@ -60,7 +59,8 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
       prepopulation <- prepopulationEmail
     } yield {
       validation match {
-        case Some(valEmail) => Ok(views.html.capture_email(emailForm(valEmail), emailNotChangedError = false))
+        case Some(valEmail) =>
+          Ok(views.html.capture_email(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false))
           .addingToSession(SessionKeys.validationEmailKey -> valEmail)
         case _ => errorHandler.showInternalServerError
       }

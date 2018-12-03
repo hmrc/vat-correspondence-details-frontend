@@ -45,11 +45,10 @@ class CaptureEmailPageSpec extends BasePageISpec {
           When("the Capture email page is called")
           val result = show
 
-          result should have {
-            httpStatus(Status.OK)
+          result should have(
+            httpStatus(Status.OK),
             pageTitle(messages("captureEmail.title"))
-          }
-
+          )
         }
 
         "not contain a valid response" in {
@@ -62,10 +61,10 @@ class CaptureEmailPageSpec extends BasePageISpec {
           When("the Capture email page is called")
           val result = show
 
-          result should have {
-            httpStatus(Status.OK)
+          result should have(
+            httpStatus(Status.INTERNAL_SERVER_ERROR),
             pageTitle("Sorry, we are experiencing technical difficulties - 500")
-          }
+          )
         }
       }
 
@@ -79,74 +78,87 @@ class CaptureEmailPageSpec extends BasePageISpec {
         When("the Capture email page is called")
         val result = show
 
-        result should have {
-          httpStatus(Status.OK)
+        result should have(
+          httpStatus(Status.INTERNAL_SERVER_ERROR),
           pageTitle("Sorry, we are experiencing technical difficulties - 500")
-        }
+        )
       }
-
     }
 
-    "the user is not authenticated" should {
+    "a user is an authenticated agent" should {
 
-      "show render the Agent unauthorised page" in {
+      "render the Agent unauthorised page" in {
 
-        given.user.isNotEnrolled
-
-        And("a successful response for an individual is stubbed")
-        VatSubscriptionStub.stubCustomerInfo
+        given.user.isAuthenticatedAgent
 
         When("the Capture email page is called")
         val result = show
 
-        result should have {
-          httpStatus(Status.OK)
+        result should have(
+          httpStatus(Status.UNAUTHORIZED),
           pageTitle("You cannot change your client’s correspondence details yet")
-        }
+        )
+      }
+    }
 
+    "the user is not enrolled for MTD VAT" should {
+
+      "render the unauthorised page" in {
+
+        given.user.isNotEnrolled
+
+        When("the Capture email page is called")
+        val result = show
+
+        result should have(
+          httpStatus(Status.FORBIDDEN),
+          pageTitle("You can not use this service yet")
+        )
       }
     }
   }
 
-  //TODO: Fix @ symbol being turned in unicode charatcer when passed to the form
+  "Calling the Capture email (.submit) route with an authenticated user" when {
 
-//  "Calling the Capture email (.submit) route with an authenticated user" when {
-//
-//    val testEmail = "test@test.com"
-//
-//    def submit(data: String): WSResponse = post(path, formatValidationEmail(Some(data))
-//      ++ formatEmail(Some(testEmail)))(toFormData(EmailForm.emailForm(testEmail), data))
-//
-//    "the user is authenticated" when {
-//
-//      "a valid amil address is submitted" should {
-//
-//        "redirect to the the Confirm Email page" in {
-//          given.user.isAuthenticated
-//
-//          When("a valid email is submitted")
-//          val res = submit(testEmail)
-//
-//          res should have(
-//            httpStatus(Status.SEE_OTHER),
-//            redirectURI(controllers.routes.ConfirmEmailController.show().url)
-//          )
-//        }
-//
-//        "add the email to session" in {
-//
-//          given.user.isAuthenticated
-//
-//          When("a valid email is submitted")
-//          val res = submit("test@test.com")
-//
-//          SessionCookieCrumbler.getSessionMap(res).get(SessionKeys.emailKey) shouldBe Some(testEmail)
-//
-//        }
-//
-//      }
-//
-//    }
-//  }
+    val currentEmail = "test@test.com"
+    val newEmail = "pepsi-mac@test.com"
 
+    def submit(data: String): WSResponse =
+      post(path, formatValidationEmail(Some(currentEmail)))(toFormData(EmailForm.emailForm(currentEmail), data))
+
+    "the user is authenticated" when {
+
+      "a valid email address is submitted" should {
+
+        "redirect to the the Confirm Email page" in {
+
+          given.user.isAuthenticated
+
+          And("a successful response for an individual is stubbed")
+          VatSubscriptionStub.stubCustomerInfo
+
+          When("a valid email is submitted")
+          val res = submit(newEmail)
+
+          res should have(
+            httpStatus(Status.SEE_OTHER),
+            redirectURI(controllers.routes.ConfirmEmailController.show().url)
+          )
+        }
+
+        "add the email to session" in {
+
+          given.user.isAuthenticated
+
+          And("a successful response for an individual is stubbed")
+          VatSubscriptionStub.stubCustomerInfo
+
+          When("a valid email is submitted")
+          val res = submit(newEmail)
+
+          SessionCookieCrumbler.getSessionMap(res).get(SessionKeys.emailKey) shouldBe Some(newEmail)
+        }
+      }
+    }
+  }
 }
