@@ -29,7 +29,7 @@ class CaptureEmailPageSpec extends BasePageISpec {
 
   "Calling the Capture email (.show)" when {
 
-    def show: WSResponse = get(path)
+    def show: WSResponse = get(path, formatInflightPPOB(Some("false")))
 
     "the user is authenticated" when {
 
@@ -123,8 +123,9 @@ class CaptureEmailPageSpec extends BasePageISpec {
     val currentEmail = "test@test.com"
     val newEmail = "pepsi-mac@test.com"
 
-    def submit(data: String): WSResponse =
-      post(path, formatValidationEmail(Some(currentEmail)))(toFormData(EmailForm.emailForm(currentEmail), data))
+    def submit(data: String): WSResponse = post(
+      path, formatValidationEmail(Some(currentEmail)) ++ formatInflightPPOB(Some("false"))
+    )(toFormData(EmailForm.emailForm(currentEmail), data))
 
     "the user is authenticated" when {
 

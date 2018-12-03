@@ -34,7 +34,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
       "there is an email in session" should {
 
-        def show: WSResponse = get(confirmEmailPath, formatEmail(Some(email)))
+        def show: WSResponse = get(confirmEmailPath, formatEmail(Some(email)) ++ formatInflightPPOB(Some("false")))
 
         "render the confirm email page" in {
 
@@ -57,12 +57,9 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
         "render the capture email page" in {
 
-          def show: WSResponse = get(confirmEmailPath)
+          def show: WSResponse = get(confirmEmailPath, formatInflightPPOB(Some("false")))
 
           given.user.isAuthenticated
-
-          And("a successful response for an individual is stubbed")
-          VatSubscriptionStub.stubCustomerInfo
 
           When("the Capture email page is called")
           val result = show
@@ -240,7 +237,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
       "there is not an email in session" should {
 
-        def show: WSResponse = get(updateEmailPath)
+        def show: WSResponse = get(updateEmailPath, formatInflightPPOB(Some("false")))
 
         "redirect to the Capture Email controller" in {
 
@@ -250,9 +247,6 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
           And("a successful email update response is stubbed")
           EmailVerificationStub.stubEmailVerified
-
-          And("a successful customer information response is stubbed")
-          VatSubscriptionStub.stubCustomerInfo
 
           And("a successful vat subscription response is stubbed")
           VatSubscriptionStub.stubUpdateEmail
