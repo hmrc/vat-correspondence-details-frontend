@@ -24,7 +24,8 @@ case class ChangedEmailAddressAuditModel(currentEmailAddress: Option[String],
                                          requestedEmailAddress: String,
                                          vrn: String,
                                          isAgent: Boolean,
-                                         arn: Option[String]) extends ExtendedAuditModel {
+                                         arn: Option[String],
+                                         partyType: Option[String]) extends ExtendedAuditModel {
 
   override val auditType: String = "ChangeEmailAddress"
   override val detail: JsValue = Json.toJson(this)

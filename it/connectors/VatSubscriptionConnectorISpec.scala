@@ -89,6 +89,7 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
             )),
             Some("www.pepsi-mac.biz")
           ),
+          None,
           None
         ))
         val result: GetCustomerInfoResponse = await(connector.getCustomerInfo("123456789"))

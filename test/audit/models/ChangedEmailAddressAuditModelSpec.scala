@@ -26,7 +26,8 @@ class ChangedEmailAddressAuditModelSpec extends UnitSpec {
     requestedEmailAddress = "attemptedchange@test.com",
     vrn = "987654321",
     isAgent = false,
-    arn = None
+    arn = None,
+    partyType = Some("50")
   )
 
   val changedAddressAgentModel: ChangedEmailAddressAuditModel = ChangedEmailAddressAuditModel(
@@ -34,7 +35,8 @@ class ChangedEmailAddressAuditModelSpec extends UnitSpec {
     requestedEmailAddress = "attemptedchange@test.com",
     vrn = "987654321",
     isAgent = true,
-    arn = Some("XAIT123456789")
+    arn = Some("XAIT123456789"),
+    partyType = Some("50")
   )
 
   val noCurrentEmailAddressModel: ChangedEmailAddressAuditModel = ChangedEmailAddressAuditModel(
@@ -42,7 +44,8 @@ class ChangedEmailAddressAuditModelSpec extends UnitSpec {
     isAgent = false,
     requestedEmailAddress = "attemptedchange@test.com",
     arn = None,
-    currentEmailAddress = None
+    currentEmailAddress = None,
+    partyType = Some("50")
   )
 
 

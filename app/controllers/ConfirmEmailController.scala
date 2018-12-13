@@ -17,7 +17,6 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import audit.AuditingService
 import audit.models.ChangedEmailAddressAuditModel
 import common.SessionKeys.{emailKey, inflightPPOBKey, validationEmailKey}
@@ -29,6 +28,7 @@ import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,30 +55,39 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
   def updateEmailAddress(): Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
+
       case Some(email) =>
-        vatSubscriptionService.updateEmail(user.vrn, email) map {
-          case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
-            Redirect(routes.VerifyEmailController.sendVerification())
-          case Right(UpdateEmailSuccess(_)) =>
-
-            auditService.extendedAudit(
-              ChangedEmailAddressAuditModel(
-                user.session.get(validationEmailKey),
-                email,
-                user.vrn,
-                user.isAgent,
-                user.arn
-              )
-            )
-
-            Redirect(routes.EmailChangeSuccessController.show()).removingFromSession(emailKey, validationEmailKey, inflightPPOBKey)
-          case Left(_) => errorHandler.showInternalServerError
+        vatSubscriptionService.getCustomerInfo(user.vrn) flatMap {
+          case Right(details) =>
+            handleAudit(user,email,details.partyType)
+            vatSubscriptionService.updateEmail(user.vrn, email) map {
+              case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
+                Redirect(routes.VerifyEmailController.sendVerification())
+              case Right(UpdateEmailSuccess(_)) =>
+                Redirect(routes.EmailChangeSuccessController.show()).removingFromSession(emailKey, validationEmailKey, inflightPPOBKey)
+              case Left(_) => errorHandler.showInternalServerError
+            }
+          case _ => Future.successful(errorHandler.showInternalServerError)
         }
 
       case _ =>
         Logger.info("[ConfirmEmailController][updateEmailAddress] no email address found in session")
         Future.successful(Redirect(controllers.routes.CaptureEmailController.show()))
     }
+  }
+
+  private[controllers] def handleAudit(user: User[AnyContent], email: String, partyType: Option[String])
+                                      (implicit hc: HeaderCarrier) {
+    auditService.extendedAudit(
+      ChangedEmailAddressAuditModel(
+        currentEmailAddress = user.session.get(validationEmailKey),
+        requestedEmailAddress = email,
+        vrn = user.vrn,
+        isAgent = user.isAgent,
+        arn = user.arn,
+        partyType = partyType
+      )
+    )
   }
 
   private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {

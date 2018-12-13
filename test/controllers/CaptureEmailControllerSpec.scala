@@ -57,6 +57,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         )),
         None
       ),
+      None,
       None
     )
 

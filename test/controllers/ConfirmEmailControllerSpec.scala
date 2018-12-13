@@ -16,6 +16,7 @@
 
 package controllers
 
+import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys
 import models.User
 import models.customerInformation.UpdateEmailSuccess
@@ -26,6 +27,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+
 import scala.concurrent.Future
 
 class ConfirmEmailControllerSpec extends ControllerBaseSpec {
@@ -107,6 +109,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
       "show the email changed success page" in {
 
         mockIndividualAuthorised()
+        mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess("success"))))
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress()(request)
@@ -121,6 +124,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
       "redirect the user to the send email verification pagee" in {
 
         mockIndividualAuthorised()
+        mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess(""))))
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress()(request)
@@ -135,6 +139,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
       "throw an Internal Server Exception" in {
 
         mockIndividualAuthorised()
+        mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))))
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress()(request)
@@ -148,7 +153,21 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec {
       "throw an Internal Server Exception" in {
 
         mockIndividualAuthorised()
+        mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
         mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
+        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
+        val result = TestConfirmEmailController.updateEmailAddress()(request)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      }
+    }
+
+    "there is a verified email in session but there was an error trying to retrieve customer info for the auditing" should {
+      "throw an Internal Server Exception" in {
+
+        mockIndividualAuthorised()
+        mockGetCustomerInfo("999999999")(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error"))))
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.updateEmailAddress()(request)
 
