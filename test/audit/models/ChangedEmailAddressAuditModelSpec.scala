@@ -59,7 +59,8 @@ class ChangedEmailAddressAuditModelSpec extends UnitSpec {
           "vrn" -> "987654321",
           "isAgent" -> false,
           "currentEmailAddress" -> "testemail@test.com",
-          "requestedEmailAddress" -> "attemptedchange@test.com"
+          "requestedEmailAddress" -> "attemptedchange@test.com",
+          "partyType" -> "50"
         )
 
         changedAddressNonAgentModel.detail shouldBe expectedJson
@@ -75,7 +76,8 @@ class ChangedEmailAddressAuditModelSpec extends UnitSpec {
           "arn" -> "XAIT123456789",
           "vrn" -> "987654321",
           "currentEmailAddress" -> "testemail@test.com",
-          "requestedEmailAddress" -> "attemptedchange@test.com"
+          "requestedEmailAddress" -> "attemptedchange@test.com",
+          "partyType" -> "50"
         )
 
         changedAddressAgentModel.detail shouldBe expectedJson
@@ -87,7 +89,8 @@ class ChangedEmailAddressAuditModelSpec extends UnitSpec {
         val expectedJson: JsValue = Json.obj(
           "vrn" -> "987654321",
           "isAgent" -> false,
-          "requestedEmailAddress" -> "attemptedchange@test.com"
+          "requestedEmailAddress" -> "attemptedchange@test.com",
+          "partyType" -> "50"
         )
 
         noCurrentEmailAddressModel.detail shouldBe expectedJson

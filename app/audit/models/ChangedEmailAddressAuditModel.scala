@@ -41,7 +41,8 @@ object ChangedEmailAddressAuditModel extends JsonObjectSugar {
       "arn" -> model.arn,
       "vrn" -> model.vrn,
       "currentEmailAddress" -> model.currentEmailAddress,
-      "requestedEmailAddress" -> model.requestedEmailAddress
+      "requestedEmailAddress" -> model.requestedEmailAddress,
+      "partyType" -> model.partyType
     )
   }
 }
