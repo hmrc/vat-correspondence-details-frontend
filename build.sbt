@@ -22,7 +22,7 @@ import uk.gov.hmrc.{SbtArtifactory, SbtAutoBuildPlugin}
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "4.3.0"
+val bootstrapPlayVersion       = "4.6.0"
 val govTemplateVersion         = "5.26.0-play-25"
 val playPartialsVersion        = "6.3.0"
 val authClientVersion          = "2.17.0-play-25"
