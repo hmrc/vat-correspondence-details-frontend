@@ -29,15 +29,19 @@ object GetEmailVerificationStateHttpParser {
       response.status match {
         case OK => Right(EmailVerified)
         case NOT_FOUND =>
+          // $COVERAGE-OFF$
           Logger.debug(
             "[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads][read] - Email not verified"
           )
+          // $COVERAGE-ON$
           Right(EmailNotVerified)
         case status =>
+          // $COVERAGE-OFF$
           Logger.warn(
             s"[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads][read] - " +
               s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )
+          // $COVERAGE-ON$
           Left(GetEmailVerificationStateErrorResponse(status, response.body))
       }
   }
