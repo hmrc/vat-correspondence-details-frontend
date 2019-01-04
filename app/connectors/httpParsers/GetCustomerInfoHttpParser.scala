@@ -31,18 +31,23 @@ object GetCustomerInfoHttpParser {
       response.status match {
         case OK => response.json.validate[CustomerInformation].fold(
           invalid => {
+            // $COVERAGE-OFF$
             Logger.warn(s"[GetCustomerInfoHttpParser][read] - Invalid JSON: $invalid")
+            // $COVERAGE-ON$
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => {
+            // $COVERAGE-OFF$
             Logger.debug(s"Successfully parsed the get customer info JSON: $valid")
+            // $COVERAGE-ON$
             Right(valid)
           }
         )
         case status =>
-          Logger.warn(
-            s"[GetCustomerInfoHttpParser][read]: Unexpected Response, Status $status returned,with response: ${response.body}"
-          )
+          // $COVERAGE-OFF$
+          Logger.warn(s"[GetCustomerInfoHttpParser][read]: Unexpected Response, Status $status returned,with " +
+            s"response: ${response.body}")
+          // $COVERAGE-ON$
           Left(ErrorModel(status, response.body))
       }
     }

@@ -31,19 +31,25 @@ object UpdateEmailHttpParser {
       response.status match {
         case OK => response.json.validate[UpdateEmailSuccess].fold(
           invalid => {
+            // $COVERAGE-OFF$
             Logger.warn(s"[UpdateEmailHttpParser][read] - Invalid JSON: $invalid")
+            // $COVERAGE-ON$
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => {
+            // $COVERAGE-OFF$
             Logger.debug("[UpdateEmailHttpParser][read] - Successfully parsed email update response.")
+            // $COVERAGE-ON$
             Right(valid)
           }
         )
         case status =>
+          // $COVERAGE-OFF$
           Logger.warn(
             s"[UpdateEmailHttpParser][read] - " +
               s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )
+          // $COVERAGE-ON$
           Left(ErrorModel(status, response.body))
       }
     }
