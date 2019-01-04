@@ -24,8 +24,8 @@ class PPOBChangePendingViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "h1"
-    val paragraphOne = "article > p:nth-child(3)"
-    val paragraphTwo = "article > p:nth-child(4)"
+    val paragraphOne = "article > p:nth-child(4)"
+    val paragraphTwo = "article > p:nth-child(5)"
     val backLink = ".link-back"
   }
 

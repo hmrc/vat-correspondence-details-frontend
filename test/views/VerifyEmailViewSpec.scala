@@ -39,11 +39,11 @@ class VerifyEmailViewSpec extends ViewBaseSpec {
     }
 
     "have a GA tag with the correct tag" in {
-      element("#content > article > p:nth-child(3) > a").attr("data-journey-click") shouldBe "email-address:edit:verify-email"
+      element("#content > article > p:nth-child(4) > a").attr("data-journey-click") shouldBe "email-address:edit:verify-email"
     }
 
     "have a link element in the first paragraph that links to the Capture your email page" in {
-      element("#content > article > p:nth-child(3) > a").attr("href") shouldBe controllers.routes.CaptureEmailController.show().url
+      element("#content > article > p:nth-child(4) > a").attr("href") shouldBe controllers.routes.CaptureEmailController.show().url
     }
 
     "have an accordion which" should {
