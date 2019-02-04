@@ -143,6 +143,14 @@ object CustomerInfoConstants {
       None
     )))))
 
+  val customerInfoPendingWebsiteModel = CustomerInformation(
+    fullPPOBModel,
+    Some(PendingChanges(Some(PPOB(
+      fullPPOBAddressModel,
+      Some(fullContactDetailsModel),
+      Some("new email")
+    )))))
+
   val fullCustomerInfoJson: JsObject = Json.obj(
     "ppob" -> fullPPOBJson,
     "pendingChanges" -> Some(PendingChanges(Some(fullPPOBModel)))

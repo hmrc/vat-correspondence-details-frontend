@@ -183,7 +183,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.emailKey) shouldBe None
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.validationEmailKey) shouldBe None
-            SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.inflightPPOBKey) shouldBe None
+            SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe None
           }
         }
 

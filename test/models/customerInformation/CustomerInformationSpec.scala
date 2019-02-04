@@ -49,5 +49,121 @@ class CustomerInformationSpec extends UnitSpec {
         result shouldBe minCustomerInfoJson
       }
     }
+
+    "approvedAndPendingEmailAddressMatch" when {
+
+      "pending email and approved email are not present" should {
+
+        val model = CustomerInformation(
+          PPOB(
+            minPPOBAddressModel,
+            Some(ContactDetails(None, None, None, None, None)),
+            None
+          ),
+          Some(PendingChanges(
+            Some(PPOB(
+              minPPOBAddressModel,
+              Some(ContactDetails(None, None, None, None, None)),
+              None
+            ))
+          ))
+        )
+
+        "return true" in {
+          model.approvedAndPendingEmailAddressMatch shouldBe true
+        }
+      }
+
+      "pending email does not match approved email" should {
+
+        val model = CustomerInformation(
+          PPOB(
+            minPPOBAddressModel,
+            Some(ContactDetails(None, None, None, Some("email"), None)),
+            None
+          ),
+          Some(PendingChanges(
+            Some(PPOB(
+              minPPOBAddressModel,
+              Some(ContactDetails(None, None, None, Some("different email"), None)),
+              None
+            ))
+          ))
+        )
+
+        "return false" in {
+          model.approvedAndPendingEmailAddressMatch shouldBe false
+        }
+      }
+
+      "pending email matches approved email" should {
+
+        val model = CustomerInformation(
+          PPOB(
+            minPPOBAddressModel,
+            Some(ContactDetails(None, None, None, Some("email"), None)),
+            None
+          ),
+          Some(PendingChanges(
+            Some(PPOB(
+              minPPOBAddressModel,
+              Some(ContactDetails(None, None, None, Some("email"), None)),
+              None
+            ))
+          ))
+        )
+
+        "return true" in {
+          model.approvedAndPendingEmailAddressMatch shouldBe true
+        }
+      }
+    }
+
+    "approvedAndPendingPPOBAddressMatch" when {
+
+      "pending PPOB does not match approved PPOB" should {
+
+        val model = CustomerInformation(
+          PPOB(
+            PPOBAddress("Add", None, None, None, None, None, ""),
+            None,
+            None
+          ),
+          Some(PendingChanges(
+            Some(PPOB(
+              PPOBAddress("Address", None, None, None, None, None, ""),
+              None,
+              None
+            ))
+          ))
+        )
+
+        "return false" in {
+          model.approvedAndPendingPPOBAddressMatch shouldBe false
+        }
+      }
+
+      "pending PPOB matches approved PPOB" should {
+
+        val model = CustomerInformation(
+          PPOB(
+            minPPOBAddressModel,
+            None,
+            None
+          ),
+          Some(PendingChanges(
+            Some(PPOB(
+              minPPOBAddressModel,
+              None,
+              None
+            ))
+          ))
+        )
+
+        "return true" in {
+          model.approvedAndPendingPPOBAddressMatch shouldBe true
+        }
+      }
+    }
   }
 }

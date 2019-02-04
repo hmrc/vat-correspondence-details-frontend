@@ -18,7 +18,7 @@ package controllers
 
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import controllers.predicates.InflightPPOBPredicate
+import controllers.predicates.InFlightPPOBPredicate
 import models.customerInformation._
 import models.errors.ErrorModel
 import org.jsoup.Jsoup

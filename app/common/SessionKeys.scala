@@ -20,5 +20,5 @@ object SessionKeys {
   val clientVrn: String = "CLIENT_VRN"
   val emailKey = "Email"
   val validationEmailKey = "validationEmail"
-  val inflightPPOBKey = "inflightPPOB"
+  val inFlightContactDetailsChangeKey = "inFlightContactDetailsChange"
 }

@@ -18,7 +18,7 @@ package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
 
-import common.SessionKeys.inflightPPOBKey
+import common.SessionKeys.inFlightContactDetailsChangeKey
 import config.{AppConfig, ErrorHandler}
 import models.User
 import play.api.Logger
@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class InflightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionService,
+class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionService,
                                       val errorHandler: ErrorHandler,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig,
@@ -44,7 +44,7 @@ class InflightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val req: User[A] = request
 
-    req.session.get(inflightPPOBKey) match {
+    req.session.get(inFlightContactDetailsChangeKey) match {
       case Some("true") => Future.successful(Left(Ok(views.html.errors.ppobChangePending())))
       case Some("false") => Future.successful(Right(req))
       case Some(_) => Future.successful(Left(errorHandler.showInternalServerError))
@@ -58,24 +58,26 @@ class InflightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
       case Right(customerInfo) =>
         customerInfo.pendingChanges match {
           case Some(_) =>
-            if (!customerInfo.addressAndPendingMatch) {
-              Logger.warn("[InflightPPOBPredicate][getCustomerInfoCall] - " +
-                "The current PPOB address and inflight PPOB address are different. Rendering graceful error page.")
-              Left(Ok(views.html.errors.ppobChangePending()).addingToSession(inflightPPOBKey -> "true"))
-            } else {
-              Logger.warn("[InflightPPOBPredicate][getCustomerInfoCall] - " +
-                "There is a pending change to something other than PPOB address. Rendering standard error page.")
-              Left(errorHandler.showInternalServerError.addingToSession(inflightPPOBKey -> "error"))
+            (customerInfo.approvedAndPendingPPOBAddressMatch, customerInfo.approvedAndPendingEmailAddressMatch) match {
+              case (false, true) =>
+                Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
+                  "There is an in-flight PPOB address change. Rendering graceful error page.")
+                Left(Ok(views.html.errors.ppobChangePending()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
+              case (true, false) =>
+                Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
+                  "There is an in-flight email address change. Redirecting to Manage VAT homepage")
+                Left(Redirect(appConfig.manageVatSubscriptionServicePath).addingToSession(inFlightContactDetailsChangeKey -> "true"))
+              case (_, _) =>
+                Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
+                  "There is an in-flight contact details change that is not PPOB or email address. Rendering standard error page.")
+                Left(errorHandler.showInternalServerError.addingToSession(inFlightContactDetailsChangeKey -> "error"))
             }
           case None =>
-            Logger.debug("[InflightPPOBPredicate][getCustomerInfoCall] - " +
-              "There is no inflight data. Redirecting user to the start of the journey.")
-            Left(Redirect(controllers.routes.CaptureEmailController.show().url)
-              .addingToSession(inflightPPOBKey -> "false"))
+            Logger.debug("[InFlightPPOBPredicate][getCustomerInfoCall] - There is no in-flight change. Redirecting user to the start of the journey.")
+            Left(Redirect(controllers.routes.CaptureEmailController.show().url).addingToSession(inFlightContactDetailsChangeKey -> "false"))
         }
       case Left(error) =>
-        Logger.warn(s"[InflightPPOBPredicate][getCustomerInfoCall] - " +
-          s"The call to the GetCustomerInfo API failed. Error: ${error.message}")
+        Logger.warn(s"[InFlightPPOBPredicate][getCustomerInfoCall] - The call to the GetCustomerInfo API failed. Error: ${error.message}")
         Left(errorHandler.showInternalServerError)
     }
 }

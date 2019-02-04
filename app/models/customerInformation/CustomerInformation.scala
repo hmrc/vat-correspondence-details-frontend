@@ -22,8 +22,19 @@ import play.api.libs.json.{JsPath, Reads, Writes}
 case class CustomerInformation(ppob: PPOB,
                                pendingChanges: Option[PendingChanges]) {
 
-  val addressAndPendingMatch: Boolean =
+  val approvedAndPendingPPOBAddressMatch: Boolean =
     ppob.address equals pendingChanges.flatMap(_.ppob.map(_.address)).getOrElse("")
+
+  val approvedAndPendingEmailAddressMatch: Boolean = {
+    val approvedEmail: Option[String] = ppob.contactDetails.flatMap(_.emailAddress)
+    val pendingEmail: Option[String] = for {
+      pendingChanges <- pendingChanges
+      ppob <- pendingChanges.ppob
+      contactDetails <- ppob.contactDetails
+      emailAddress <- contactDetails.emailAddress
+    } yield emailAddress
+    approvedEmail equals pendingEmail
+  }
 }
 
 object CustomerInformation {
