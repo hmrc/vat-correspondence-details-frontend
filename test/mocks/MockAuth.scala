@@ -69,9 +69,9 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       ec
     )
 
-  val mockInflightPPOBPredicate: InflightPPOBPredicate = {
+  val mockInflightPPOBPredicate: InFlightPPOBPredicate = {
 
-    object MockPredicate extends InflightPPOBPredicate(
+    object MockPredicate extends InFlightPPOBPredicate(
       mockVatSubscriptionService,
       mockErrorHandler,
       messagesApi,

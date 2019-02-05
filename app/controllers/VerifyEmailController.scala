@@ -18,7 +18,7 @@ package controllers
 
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
+import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
 
 import models.User
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
-                                      val inflightCheck: InflightPPOBPredicate,
+                                      val inflightCheck: InFlightPPOBPredicate,
                                       val messagesApi: MessagesApi,
                                       val emailVerificationService: EmailVerificationService,
                                       val errorHandler: ErrorHandler,

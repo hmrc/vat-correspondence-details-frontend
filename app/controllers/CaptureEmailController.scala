@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.AttemptedEmailAddressAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
+import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import forms.EmailForm._
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
-                                       val inflightCheck: InflightPPOBPredicate,
+                                       val inflightCheck: InFlightPPOBPredicate,
                                        val messagesApi: MessagesApi,
                                        val vatSubscriptionService: VatSubscriptionService,
                                        val errorHandler: ErrorHandler,

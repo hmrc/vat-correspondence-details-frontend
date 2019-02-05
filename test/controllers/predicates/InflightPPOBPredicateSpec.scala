@@ -17,7 +17,7 @@
 package controllers.predicates
 
 import assets.CustomerInfoConstants._
-import common.SessionKeys.inflightPPOBKey
+import common.SessionKeys.inFlightContactDetailsChangeKey
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import mocks.MockAuth
 import models.User
@@ -38,7 +38,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
     when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(result))
 
-  val inflightPPOBPredicate = new InflightPPOBPredicate(
+  val inflightPPOBPredicate = new InFlightPPOBPredicate(
     mockVatSubscriptionService,
     mockErrorHandler,
     messagesApi,
@@ -47,9 +47,9 @@ class InflightPPOBPredicateSpec extends MockAuth {
   )
 
   def userWithSession(inflightPPOBValue: String): User[AnyContentAsEmpty.type] =
-    User[AnyContentAsEmpty.type]("999943620")(request.withSession(inflightPPOBKey -> inflightPPOBValue))
+    User[AnyContentAsEmpty.type]("999943620")(request.withSession(inFlightContactDetailsChangeKey -> inflightPPOBValue))
 
-  "The InflightPPOBPredicate" when {
+  "The InFlightPPOBPredicate" when {
 
     "there is an inflight indicator in session" when {
 
@@ -116,7 +116,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
 
         "add the inflight indicator 'true' to session" in {
-          session(result).get(inflightPPOBKey) shouldBe Some("true")
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("true")
         }
 
         "show the 'PPOB change pending' error page" in {
@@ -130,18 +130,17 @@ class InflightPPOBPredicateSpec extends MockAuth {
           setup(Right(customerInfoPendingEmailModel))
           await(inflightPPOBPredicate.refine(user)).left.get
         }
-        lazy val document = Jsoup.parse(bodyOf(result))
 
-        "return 500" in {
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
         }
 
-        "add the inflight indicator 'error' to session" in {
-          session(result).get(inflightPPOBKey) shouldBe Some("error")
+        "add the inflight indicator 'true' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("true")
         }
 
-        "show the standard error page" in {
-          document.title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        "redirect to 'mockManageVatOverviewUrl'" in {
+          redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
         }
       }
 
@@ -161,7 +160,28 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
 
         "add the inflight indicator 'false' to session" in {
-          session(result).get(inflightPPOBKey) shouldBe Some("false")
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("false")
+        }
+      }
+
+      "the user has no inflight PPOB or email change" should {
+
+        lazy val result = {
+          setup(Right(customerInfoPendingWebsiteModel))
+          await(inflightPPOBPredicate.refine(user)).left.get
+        }
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 500" in {
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "add the inflight indicator 'error' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("error")
+        }
+
+        "show the standard error page" in {
+          document.title shouldBe "Sorry, we are experiencing technical difficulties - 500"
         }
       }
 

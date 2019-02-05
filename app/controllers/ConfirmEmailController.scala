@@ -20,9 +20,9 @@ import javax.inject.{Inject, Singleton}
 
 import audit.AuditingService
 import audit.models.ChangedEmailAddressAuditModel
-import common.SessionKeys.{emailKey, inflightPPOBKey, validationEmailKey}
+import common.SessionKeys.{emailKey, inFlightContactDetailsChangeKey, validationEmailKey}
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthPredicate, InflightPPOBPredicate}
+import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import models.User
 import models.customerInformation.UpdateEmailSuccess
 import play.api.Logger
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
-                                       val inflightCheck: InflightPPOBPredicate,
+                                       val inflightCheck: InFlightPPOBPredicate,
                                        val messagesApi: MessagesApi,
                                        val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
@@ -71,7 +71,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
               )
             )
 
-            Redirect(routes.EmailChangeSuccessController.show()).removingFromSession(emailKey, validationEmailKey, inflightPPOBKey)
+            Redirect(routes.EmailChangeSuccessController.show()).removingFromSession(emailKey, validationEmailKey, inFlightContactDetailsChangeKey)
           case Left(_) => errorHandler.showInternalServerError
         }
 
