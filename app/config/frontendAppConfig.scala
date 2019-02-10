@@ -62,6 +62,8 @@ trait AppConfig extends ServicesConfig {
   val contactFormServiceIdentifier: String
   val timeoutPeriod: Int
   val timeoutCountdown: Int
+  val contactPreferencesService: String
+  def contactPreferencesUrl(vrn: String): String
 }
 
 @Singleton
@@ -129,4 +131,15 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
 
   override lazy val timeoutPeriod: Int = getInt(Keys.timeoutPeriod)
   override lazy val timeoutCountdown: Int = getInt(Keys.timeoutCountdown)
+
+  override lazy val contactPreferencesService: String = {
+    if(features.stubContactPreferences()){
+      baseUrl("vat-subscription-dynamic-stub")
+    } else {
+      baseUrl(Keys.contactPreferencesService)
+    }
+  }
+
+  override def contactPreferencesUrl(vrn: String): String = contactPreferencesService + s"/contact-preferences/vat/vrn/$vrn"
+
 }
