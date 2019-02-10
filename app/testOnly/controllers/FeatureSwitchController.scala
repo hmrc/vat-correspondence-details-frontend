@@ -48,6 +48,7 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.agentAccessEnabled(model.agentAccess)
     appConfig.features.emailVerificationEnabled(model.emailVerification)
+    appConfig.features.stubContactPreferences(model.stubContactPreferences)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 }
