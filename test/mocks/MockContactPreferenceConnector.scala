@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,15 @@
 package mocks
 
 import connectors.ContactPreferenceConnector
-import org.mockito.Mockito.reset
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import models.contactPreferences.ContactPreference
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockContactPreferenceConnector extends MockitoSugar with BeforeAndAfterEach {
   this: Suite =>
@@ -31,5 +37,9 @@ trait MockContactPreferenceConnector extends MockitoSugar with BeforeAndAfterEac
 
   val mockContactPreferenceConnector: ContactPreferenceConnector = mock[ContactPreferenceConnector]
 
+  def mockGetContactPreference(vrn: String)(response: Future[HttpGetResult[ContactPreference]]): Unit =
+    when(mockContactPreferenceConnector.getContactPreference(
+      ArgumentMatchers.eq(vrn)
+    )(ArgumentMatchers.any[HeaderCarrier], ArgumentMatchers.any[ExecutionContext])) thenReturn response
 
 }

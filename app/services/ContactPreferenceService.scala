@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,17 @@
 
 package services
 
-@Singleton
-class ContactPreferenceService {
+import connectors.ContactPreferenceConnector
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import javax.inject.{Inject, Singleton}
+import models.contactPreferences.ContactPreference
+import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
+class ContactPreferenceService @Inject()(connector: ContactPreferenceConnector) {
+
+  def getContactPreference(vrn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[ContactPreference]] = {
+    connector.getContactPreference(vrn)
+  }
 }
