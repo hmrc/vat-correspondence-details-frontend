@@ -17,51 +17,98 @@
 package controllers
 
 import common.SessionKeys._
+import mocks.MockContactPreferenceService
+import models.contactPreferences.ContactPreference
+import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
 
-class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
+import scala.concurrent.Future
+
+class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
 
   object TestController extends EmailChangeSuccessController(
     mockAuthPredicate,
     messagesApi,
+    mockContactPreferenceService,
     mockConfig
   )
 
   "Calling the show action" when {
 
-    "a user is enrolled with a valid enrolment" should {
+    "a user is enrolled with a valid enrolment" when {
 
-      lazy val result = TestController.show(request.withSession(
-        emailKey -> "myemail@gmail.com",
-        validationEmailKey -> "anotheremail@gmail.com"
-      ))
-      lazy val document = Jsoup.parse(bodyOf(result))
+      "a valid response is retrieved from the contact preference service" should {
 
-      "return 200" in {
-        mockIndividualAuthorised()
-        status(result) shouldBe Status.OK
-      }
-      "return HTML" in {
-        mockIndividualAuthorised()
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        lazy val result = TestController.show(request.withSession(
+          emailKey -> "myemail@gmail.com",
+          validationEmailKey -> "anotheremail@gmail.com"
+        ))
+
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 200" in {
+          mockIndividualAuthorised()
+          getMockContactPreference("999999999")(Future(Right(ContactPreference("DIGITAL"))))
+          status(result) shouldBe Status.OK
+        }
+        "return HTML" in {
+          mockIndividualAuthorised()
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "remove the email session key from the session" in {
+          session(result).get(emailKey) shouldBe None
+        }
+
+        "remove the validation email session key from the session" in {
+          session(result).get(validationEmailKey) shouldBe None
+        }
+
+        "render the email change success page" in {
+          mockIndividualAuthorised()
+          document.select("h1").text() shouldBe "We have received the new email address"
+        }
       }
 
-      "remove the email session key from the session" in {
-        session(result).get(emailKey) shouldBe None
+      "an invalid response is retrieved from the contact preference service" should {
+
+        lazy val result = TestController.show(request.withSession(
+          emailKey -> "myemail@gmail.com",
+          validationEmailKey -> "anotheremail@gmail.com"
+        ))
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 200" in {
+          mockIndividualAuthorised()
+          getMockContactPreference("999999999")(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
+          status(result) shouldBe Status.OK
+        }
+        "return HTML" in {
+          mockIndividualAuthorised()
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "remove the email session key from the session" in {
+          session(result).get(emailKey) shouldBe None
+        }
+
+        "remove the validation email session key from the session" in {
+          session(result).get(validationEmailKey) shouldBe None
+        }
+
+        "render the email change success page" in {
+          mockIndividualAuthorised()
+          document.select("h1").text() shouldBe "We have received the new email address"
+        }
       }
 
-      "remove the validation email session key from the session" in {
-        session(result).get(validationEmailKey) shouldBe None
-      }
 
-      "render the email change success page" in {
-        mockIndividualAuthorised()
-        document.select("h1").text() shouldBe "We have received the new email address"
-      }
     }
+
 
     "a user is does not have a valid enrolment" should {
 
