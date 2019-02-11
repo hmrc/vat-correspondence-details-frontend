@@ -32,7 +32,8 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
     Ok(testOnly.views.html.featureSwitch(FeatureSwitchForm.form.fill(
       FeatureSwitchModel(
         agentAccess = appConfig.features.agentAccessEnabled(),
-        emailVerification = appConfig.features.emailVerificationEnabled()
+        emailVerification = appConfig.features.emailVerificationEnabled(),
+        stubContactPreferences = appConfig.features.stubContactPreferences()
       )
     )))
   }
@@ -47,6 +48,7 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.agentAccessEnabled(model.agentAccess)
     appConfig.features.emailVerificationEnabled(model.emailVerification)
+    appConfig.features.stubContactPreferences(model.stubContactPreferences)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 }

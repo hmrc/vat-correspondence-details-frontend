@@ -48,6 +48,7 @@ object ConfigKeys {
 
   val agentAccessFeature: String = "features.agentAccess.enabled"
   val emailVerificationFeature: String = "features.emailVerification.enabled"
+  val stubContactPreferencesFeature: String = "features.stubContactPreferences.enabled"
 
   val vatSubscription: String = "vat-subscription"
 
@@ -56,4 +57,7 @@ object ConfigKeys {
 
   val timeoutPeriod: String = "timeout.period"
   val timeoutCountdown: String = "timeout.countdown"
+
+  val contactPreferencesService: String = "contact-preferences"
+
 }
