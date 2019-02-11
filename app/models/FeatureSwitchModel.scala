@@ -18,4 +18,6 @@ package models
 
 case class FeatureSwitchModel(agentAccess: Boolean,
                               emailVerification: Boolean,
-                              stubContactPreferences: Boolean)
+                              stubContactPreferences: Boolean,
+                              contactPreferences: Boolean
+                             )

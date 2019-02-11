@@ -33,7 +33,8 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
       FeatureSwitchModel(
         agentAccess = appConfig.features.agentAccessEnabled(),
         emailVerification = appConfig.features.emailVerificationEnabled(),
-        stubContactPreferences = appConfig.features.stubContactPreferences()
+        stubContactPreferences = appConfig.features.stubContactPreferences(),
+        contactPreferences = appConfig.features.contactPreferencesEnabled()
       )
     )))
   }
@@ -49,6 +50,7 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
     appConfig.features.agentAccessEnabled(model.agentAccess)
     appConfig.features.emailVerificationEnabled(model.emailVerification)
     appConfig.features.stubContactPreferences(model.stubContactPreferences)
+    appConfig.features.contactPreferencesEnabled(model.contactPreferences)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 }
