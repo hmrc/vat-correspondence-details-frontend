@@ -63,7 +63,7 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
                 Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight PPOB address change. Rendering graceful error page.")
                 Left(Ok(views.html.errors.ppobChangePending()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
-              case (true, false) =>
+              case (_, false) =>
                 Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight email address change. Redirecting to Manage VAT homepage")
                 Left(Redirect(appConfig.manageVatSubscriptionServicePath).addingToSession(inFlightContactDetailsChangeKey -> "true"))
