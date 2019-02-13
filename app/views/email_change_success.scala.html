@@ -14,23 +14,39 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import uk.gov.hmrc.play.views.html.helpers.form
+@import models.contactPreferences.ContactPreference
 
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(preference: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
 @main_template(title = messages("emailChangeSuccess.title"), bodyClasses = None) {
 
- <div class="govuk-box-highlight">
-  <h1 class="heading-xlarge" data-journey="email-address:view:change-email-success">@messages("emailChangeSuccess.heading")</h1>
- </div>
+  <div class="govuk-box-highlight">
+    <h1 class="heading-xlarge" data-journey="email-address:view:change-email-success">@messages("emailChangeSuccess.heading")</h1>
+  </div>
 
- <h2 class="heading-medium">@messages("emailChangeSuccess.headingTwo")</h2>
+  <h2 class="heading-medium">@messages("emailChangeSuccess.headingTwo")</h2>
 
- <p>@messages("emailChangeSuccess.helpOne")</p>
+  @if(appConfig.features.contactPreferencesEnabled()) {
 
- <p>@messages("emailChangeSuccess.helpTwo")</p>
+    @preference match {
 
- <a href="@appConfig.manageVatSubscriptionServicePath" role="button" tabindex="0" class="button"
-    data-journey-click="email-address:confirm:finish-email-change">@messages("base.finish")</a>
+      case (Some(ContactPreference.digital)) => {
+        <p>@messages("emailChangeSuccess.helpOne.digitalPreference")</p>
+      }
+      case (Some(ContactPreference.paper)) => {
+        <p>@messages("emailChangeSuccess.helpOne.paperPreference")</p>
+      }
+      case _ => {
+        <p>@messages("emailChangeSuccess.helpOne.apiFailure")</p>
+      }
+    }
+
+  } else {
+    <p>@messages("emailChangeSuccess.helpOne")</p>
+  }
+
+  <p>@messages("emailChangeSuccess.helpTwo")</p>
+
+  <a href="@appConfig.manageVatSubscriptionServicePath" role="button" tabindex="0" class="button"
+  data-journey-click="email-address:confirm:finish-email-change">@messages("base.finish")</a>
 }
