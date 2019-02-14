@@ -16,21 +16,26 @@
 
 package controllers
 
+import audit.models.ContactPreferenceAuditModel
 import common.SessionKeys._
-import mocks.MockContactPreferenceService
+import mocks.{MockAuditingService, MockContactPreferenceService}
 import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.verify
 import play.api.http.Status
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
+class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService with MockAuditingService {
 
   object TestController extends EmailChangeSuccessController(
     mockAuthPredicate,
     messagesApi,
+    mockAuditingService,
     mockContactPreferenceService,
     mockConfig
   )
@@ -54,6 +59,16 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
             mockIndividualAuthorised()
             getMockContactPreference("999999999")(Future(Right(ContactPreference("DIGITAL"))))
             status(result) shouldBe Status.OK
+
+            verify(mockAuditingService)
+              .extendedAudit(
+                ArgumentMatchers.any[ContactPreferenceAuditModel],
+                ArgumentMatchers.any[String]
+
+              )(
+                ArgumentMatchers.any[HeaderCarrier],
+                ArgumentMatchers.any[ExecutionContext]
+              )
           }
 
           "render the email change success page" in {
@@ -78,6 +93,16 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
             mockIndividualAuthorised()
             getMockContactPreference("999999999")(Future(Right(ContactPreference("PAPER"))))
             status(result) shouldBe Status.OK
+
+            verify(mockAuditingService)
+              .extendedAudit(
+                ArgumentMatchers.any[ContactPreferenceAuditModel],
+                ArgumentMatchers.any[String]
+
+              )(
+                ArgumentMatchers.any[HeaderCarrier],
+                ArgumentMatchers.any[ExecutionContext]
+              )
           }
 
           "render the email change success page" in {
@@ -90,10 +115,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
       "an invalid response is retrieved from the contact preference service" should {
 
-        lazy val result = TestController.show(request.withSession(
-          emailKey -> "myemail@gmail.com",
-          validationEmailKey -> "anotheremail@gmail.com"
-        ))
+        lazy val result = TestController.show(request)
+
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 200" in {
@@ -102,6 +125,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
           getMockContactPreference("999999999")(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
           status(result) shouldBe Status.OK
         }
+
         "return HTML" in {
           mockIndividualAuthorised()
           contentType(result) shouldBe Some("text/html")

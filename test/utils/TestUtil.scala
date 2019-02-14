@@ -18,11 +18,11 @@ package utils
 
 import scala.concurrent.ExecutionContext
 import assets.BaseTestConstants._
-import audit.AuditingService
 import common.SessionKeys
 import config.ErrorHandler
 import mocks.MockAppConfig
 import models.User
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.Injector
@@ -33,7 +33,12 @@ import play.filters.csrf.CSRF.Token
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 
-trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport {
+trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport with BeforeAndAfterEach {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    mockConfig.features.contactPreferencesEnabled(false)
+  }
 
   lazy val injector: Injector = app.injector
   lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
@@ -41,7 +46,6 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
 
   implicit lazy val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
   implicit lazy val serviceErrorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
-  lazy val mockAuditService: AuditingService = injector.instanceOf[AuditingService]
   lazy val mockErrorHandler: ErrorHandler = new ErrorHandler(messagesApi, mockConfig)
 
   val testEmail = "test@email.co.uk"
