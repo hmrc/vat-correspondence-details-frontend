@@ -32,25 +32,34 @@ object ContactPreferenceHttpParser {
 
       response.status match {
         case Status.OK => {
+          //$COVERAGE-OFF$
           Logger.debug("[ContactPreferencesHttpParser][read]: Status OK")
+          //$COVERAGE-ON$
           response.json.validate[ContactPreference].fold(
             invalid => {
+              //$COVERAGE-OFF$
               Logger.debug(s"[ContactPreferencesHttpParser][read]: Invalid Json - $invalid")
               Logger.warn(s"[ContactPreferencesHttpParser][read]: Invalid Json received from Contact Preferences")
+              //$COVERAGE-ON$
               Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json received from Contact Preferences"))
             },
             valid => valid.preference match {
               case `digital` | `paper` => Right(valid)
               case _ =>
+                //$COVERAGE-OFF$
                 Logger.warn(s"[ContactPreferencesHttpParser][read]: Invalid preference type received from Contact Preferences")
+                //$COVERAGE-ON$
                 Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid preference type received from Contact Preferences"))
             }
           )
         }
         case status =>
+          //$COVERAGE-OFF$
           Logger.warn(s"[ContactPreferencesHttpParser][read]: Unexpected Response, Status: $status, Response: ${response.body}")
+          //$COVERAGE-ON$
           Left(ErrorModel(status, s"Unexpected Response. Response: ${response.body}"))
       }
     }
   }
+
 }

@@ -49,6 +49,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 200" in {
+          mockConfig.features.contactPreferencesEnabled(true)
           mockIndividualAuthorised()
           getMockContactPreference("999999999")(Future(Right(ContactPreference("DIGITAL"))))
           status(result) shouldBe Status.OK
@@ -83,6 +84,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
         "return 200" in {
           mockIndividualAuthorised()
+          mockConfig.features.contactPreferencesEnabled(true)
           getMockContactPreference("999999999")(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
           status(result) shouldBe Status.OK
         }
@@ -106,7 +108,38 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         }
       }
 
+      "the contact preference feature switch is disabled" should {
 
+        lazy val result = TestController.show(request.withSession(
+          emailKey -> "myemail@gmail.com",
+          validationEmailKey -> "anotheremail@gmail.com"
+        ))
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 200" in {
+          mockIndividualAuthorised()
+          mockConfig.features.contactPreferencesEnabled(false)
+          status(result) shouldBe Status.OK
+        }
+        "return HTML" in {
+          mockIndividualAuthorised()
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "remove the email session key from the session" in {
+          session(result).get(emailKey) shouldBe None
+        }
+
+        "remove the validation email session key from the session" in {
+          session(result).get(validationEmailKey) shouldBe None
+        }
+
+        "render the email change success page" in {
+          mockIndividualAuthorised()
+          document.select("h1").text() shouldBe "We have received the new email address"
+        }
+      }
     }
 
 
