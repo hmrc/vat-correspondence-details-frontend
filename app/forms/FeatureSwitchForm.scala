@@ -26,7 +26,8 @@ object FeatureSwitchForm {
     mapping(
       ConfigKeys.agentAccessFeature -> boolean,
       ConfigKeys.emailVerificationFeature -> boolean,
-      ConfigKeys.stubContactPreferencesFeature -> boolean
+      ConfigKeys.stubContactPreferencesFeature -> boolean,
+      ConfigKeys.contactPreferencesFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }

@@ -25,5 +25,6 @@ class Features @Inject()(config: Configuration) {
   val agentAccessEnabled = new Feature(ConfigKeys.agentAccessFeature, config)
   val emailVerificationEnabled = new Feature(ConfigKeys.emailVerificationFeature, config)
   val stubContactPreferences = new Feature(ConfigKeys.stubContactPreferencesFeature, config)
+  val contactPreferencesEnabled = new Feature(ConfigKeys.contactPreferencesFeature, config)
 
 }

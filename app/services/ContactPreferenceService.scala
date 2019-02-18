@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package services
 
-case class FeatureSwitchModel(agentAccess: Boolean,
-                              emailVerification: Boolean,
-                              stubContactPreferences: Boolean,
-                              contactPreferences: Boolean
-                             )
+import connectors.ContactPreferenceConnector
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import javax.inject.{Inject, Singleton}
+import models.contactPreferences.ContactPreference
+import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class ContactPreferenceService @Inject()(connector: ContactPreferenceConnector) {
+
+  def getContactPreference(vrn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[ContactPreference]] = {
+    connector.getContactPreference(vrn)
+  }
+}

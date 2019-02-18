@@ -17,51 +17,147 @@
 package controllers
 
 import common.SessionKeys._
+import mocks.MockContactPreferenceService
+import models.contactPreferences.ContactPreference
+import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
 
-class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
+import scala.concurrent.Future
+
+class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
 
   object TestController extends EmailChangeSuccessController(
     mockAuthPredicate,
     messagesApi,
+    mockContactPreferenceService,
     mockConfig
   )
 
   "Calling the show action" when {
 
-    "a user is enrolled with a valid enrolment" should {
+    "a user is enrolled with a valid enrolment" when {
 
-      lazy val result = TestController.show(request.withSession(
-        emailKey -> "myemail@gmail.com",
-        validationEmailKey -> "anotheremail@gmail.com"
-      ))
-      lazy val document = Jsoup.parse(bodyOf(result))
+      "a valid response is retrieved from the contact preference service" should {
 
-      "return 200" in {
-        mockIndividualAuthorised()
-        status(result) shouldBe Status.OK
+        "a digital preference is retrieved" should {
+          lazy val result = TestController.show(request.withSession(
+            emailKey -> "myemail@gmail.com",
+            validationEmailKey -> "anotheremail@gmail.com"
+          ))
+
+          lazy val document = Jsoup.parse(bodyOf(result))
+
+          "return 200" in {
+            mockConfig.features.contactPreferencesEnabled(true)
+            mockIndividualAuthorised()
+            getMockContactPreference("999999999")(Future(Right(ContactPreference("DIGITAL"))))
+            status(result) shouldBe Status.OK
+          }
+
+          "render the email change success page" in {
+            mockIndividualAuthorised()
+            document.select("#content p:nth-of-type(1)").text() shouldBe "We will send you an email within 2 working days" +
+              " with an update, followed by a letter to your principal place of business. You can also go to your" +
+              " HMRC secure messages to find out if your request has been accepted."
+          }
+        }
+
+        "a paper preference is retrieved" should {
+
+          lazy val result = TestController.show(request.withSession(
+            emailKey -> "myemail@gmail.com",
+            validationEmailKey -> "anotheremail@gmail.com"
+          ))
+
+          lazy val document = Jsoup.parse(bodyOf(result))
+
+          "return 200" in {
+            mockConfig.features.contactPreferencesEnabled(true)
+            mockIndividualAuthorised()
+            getMockContactPreference("999999999")(Future(Right(ContactPreference("PAPER"))))
+            status(result) shouldBe Status.OK
+          }
+
+          "render the email change success page" in {
+            mockIndividualAuthorised()
+            document.select("#content p:nth-of-type(1)").text() shouldBe "We will send a letter to your principal place of" +
+              " business with an update within 15 working days."
+          }
+        }
       }
-      "return HTML" in {
-        mockIndividualAuthorised()
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+
+      "an invalid response is retrieved from the contact preference service" should {
+
+        lazy val result = TestController.show(request.withSession(
+          emailKey -> "myemail@gmail.com",
+          validationEmailKey -> "anotheremail@gmail.com"
+        ))
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 200" in {
+          mockIndividualAuthorised()
+          mockConfig.features.contactPreferencesEnabled(true)
+          getMockContactPreference("999999999")(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
+          status(result) shouldBe Status.OK
+        }
+        "return HTML" in {
+          mockIndividualAuthorised()
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "remove the email session key from the session" in {
+          session(result).get(emailKey) shouldBe None
+        }
+
+        "remove the validation email session key from the session" in {
+          session(result).get(validationEmailKey) shouldBe None
+        }
+
+        "render the email change success page" in {
+          mockIndividualAuthorised()
+          document.select("#content p:nth-of-type(1)").text() shouldBe "We will send you an update within 15 working days."
+        }
       }
 
-      "remove the email session key from the session" in {
-        session(result).get(emailKey) shouldBe None
-      }
+      "the contact preference feature switch is disabled" should {
 
-      "remove the validation email session key from the session" in {
-        session(result).get(validationEmailKey) shouldBe None
-      }
+        lazy val result = TestController.show(request.withSession(
+          emailKey -> "myemail@gmail.com",
+          validationEmailKey -> "anotheremail@gmail.com"
+        ))
+        lazy val document = Jsoup.parse(bodyOf(result))
 
-      "render the email change success page" in {
-        mockIndividualAuthorised()
-        document.select("h1").text() shouldBe "We have received the new email address"
+        "return 200" in {
+          mockIndividualAuthorised()
+          mockConfig.features.contactPreferencesEnabled(false)
+          status(result) shouldBe Status.OK
+        }
+        "return HTML" in {
+          mockIndividualAuthorised()
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "remove the email session key from the session" in {
+          session(result).get(emailKey) shouldBe None
+        }
+
+        "remove the validation email session key from the session" in {
+          session(result).get(validationEmailKey) shouldBe None
+        }
+
+        "render the email change success page" in {
+          mockIndividualAuthorised()
+          document.select("#content p:nth-of-type(1)").text() shouldBe "We will send an email within 2 working days " +
+            "telling you whether or not the request has been accepted. " +
+            "You can also go to your messages in your business tax account."
+        }
       }
     }
+
 
     "a user is does not have a valid enrolment" should {
 

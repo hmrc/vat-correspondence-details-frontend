@@ -21,13 +21,26 @@ import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
+import services.ContactPreferenceService
+
+import scala.concurrent.Future
 
 @Singleton
 class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
                                              val messagesApi: MessagesApi,
+                                             contactPreferenceService: ContactPreferenceService,
                                              implicit val appConfig: AppConfig) extends BaseController {
 
-  def show: Action[AnyContent] = authenticate { implicit user =>
-    Ok(views.html.email_change_success())
+  def show: Action[AnyContent] = authenticate.async { implicit user =>
+    if (appConfig.features.contactPreferencesEnabled()) {
+
+      contactPreferenceService.getContactPreference(user.vrn) map {
+        case Right(preference) => Ok(views.html.email_change_success(Some(preference.preference)))
+        case Left(_) => Ok(views.html.email_change_success())
+      }
+
+    } else {
+      Future.successful(Ok(views.html.email_change_success()))
+    }
   }
 }
