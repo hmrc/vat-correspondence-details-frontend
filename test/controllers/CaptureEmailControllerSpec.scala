@@ -18,7 +18,6 @@ package controllers
 
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import controllers.predicates.InFlightPPOBPredicate
 import models.customerInformation._
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
@@ -73,7 +72,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       messagesApi,
       mockVatSubscriptionService,
       mockErrorHandler,
-      mockAuditService,
+      mockAuditingService,
       mockConfig,
       ec
     )
@@ -220,7 +219,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           messagesApi,
           mockVatSubscriptionService,
           mockErrorHandler,
-          mockAuditService,
+          mockAuditingService,
           mockConfig,
           ec
         )

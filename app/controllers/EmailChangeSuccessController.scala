@@ -16,9 +16,12 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.ContactPreferenceAuditModel
 import config.AppConfig
 import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.ContactPreferenceService
@@ -28,6 +31,7 @@ import scala.concurrent.Future
 @Singleton
 class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
                                              val messagesApi: MessagesApi,
+                                             auditService: AuditingService,
                                              contactPreferenceService: ContactPreferenceService,
                                              implicit val appConfig: AppConfig) extends BaseController {
 
@@ -35,8 +39,22 @@ class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
     if (appConfig.features.contactPreferencesEnabled()) {
 
       contactPreferenceService.getContactPreference(user.vrn) map {
-        case Right(preference) => Ok(views.html.email_change_success(Some(preference.preference)))
-        case Left(_) => Ok(views.html.email_change_success())
+        case Right(preference) =>
+
+          auditService.extendedAudit(
+            ContactPreferenceAuditModel(
+              user.vrn,
+              preference.preference
+            )
+          )
+
+          Ok(views.html.email_change_success(Some(preference.preference)))
+
+        case Left(error) =>
+          Logger.warn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
+            s" Error code: ${error.status}, Error message: ${error.message}")
+          Ok(views.html.email_change_success())
+
       }
 
     } else {

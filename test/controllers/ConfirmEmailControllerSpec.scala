@@ -28,14 +28,14 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import scala.concurrent.Future
 
-class ConfirmEmailControllerSpec extends ControllerBaseSpec {
+class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
   object TestConfirmEmailController extends ConfirmEmailController(
     mockAuthPredicate,
     mockInflightPPOBPredicate,
     messagesApi,
     mockErrorHandler,
-    mockAuditService,
+    mockAuditingService,
     mockVatSubscriptionService,
     mockConfig,
     ec

@@ -83,11 +83,11 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
         "the contact preference is Paper" should {
 
-          mockConfig.features.contactPreferencesEnabled(true)
           lazy val view = views.html.email_change_success(Some(ContactPreference.paper))
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the correct first paragraph" in {
+            mockConfig.features.contactPreferencesEnabled(true)
             elementText(Selectors.paragraphOne) shouldBe "We will send a letter to your principal place of" +
               " business with an update within 15 working days."
           }
@@ -100,6 +100,7 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct first paragraph" in {
+          mockConfig.features.contactPreferencesEnabled(true)
           elementText(Selectors.paragraphOne) shouldBe "We will send you an update within 15 working days."
         }
       }
