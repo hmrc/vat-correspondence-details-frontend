@@ -20,7 +20,8 @@ import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
 case class ContactPreferenceAuditModel(vrn: String,
-                                       contactPreference: String) extends ExtendedAuditModel {
+                                       contactPreference: String,
+                                       action: String = "ChangeEmailAddressContactPreference") extends ExtendedAuditModel {
 
   override val auditType: String = "ContactPreference"
   override val detail: JsValue = Json.toJson(this)
@@ -33,7 +34,8 @@ object ContactPreferenceAuditModel extends JsonObjectSugar {
   implicit val writes: Writes[ContactPreferenceAuditModel] = Writes { model =>
     jsonObjNoNulls(
       "vrn" -> model.vrn,
-      "contactPreference" -> model.contactPreference
+      "contactPreference" -> model.contactPreference,
+      "action" -> model.action
     )
   }
 }
