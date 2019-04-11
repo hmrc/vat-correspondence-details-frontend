@@ -43,7 +43,7 @@ object ContactPreferenceHttpParser {
               //$COVERAGE-ON$
               Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json received from Contact Preferences"))
             },
-            valid => valid.preference match {
+            valid => valid.preference.toUpperCase match {
               case `digital` | `paper` => Right(valid)
               case _ =>
                 //$COVERAGE-OFF$

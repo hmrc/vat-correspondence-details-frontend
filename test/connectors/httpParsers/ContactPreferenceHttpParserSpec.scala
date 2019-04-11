@@ -48,6 +48,15 @@ class ContactPreferenceHttpParserSpec extends TestUtil {
         }
       }
 
+      "preference is of various cases" should {
+
+        val response = Json.obj("preference" -> "digITaL")
+
+        "return DIGITAL" in {
+          ContactPreferenceReads.read("", "", HttpResponse(Status.OK, Some(response))) shouldBe Right(ContactPreference("digITaL"))
+        }
+      }
+
       "preference is invalid" should {
 
         val response = Json.obj("preference" -> "Invalid")
