@@ -31,10 +31,10 @@
     @preference match {
 
       case (Some(ContactPreference.digital)) => {
-        <p>@messages("emailChangeSuccess.helpOne.digitalPreference")</p>
+        <p id="preference-message">@messages("emailChangeSuccess.helpOne.digitalPreference")</p>
       }
       case (Some(ContactPreference.paper)) => {
-        <p>@messages("emailChangeSuccess.helpOne.paperPreference")</p>
+        <p id="preference-message">@messages("emailChangeSuccess.helpOne.paperPreference")</p>
       }
       case _ => {
         <p>@messages("emailChangeSuccess.helpOne.apiFailure")</p>

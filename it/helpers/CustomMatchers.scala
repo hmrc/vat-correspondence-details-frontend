@@ -53,6 +53,22 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen{
       }
     }
 
+  def elementText(cssSelector: String)(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
+    new HavePropertyMatcher[WSResponse, String] {
+
+      def apply(response: WSResponse) = {
+        val body = Jsoup.parse(response.body)
+        Then(s"the text of '$cssSelector' should be '$expectedValue'")
+
+        HavePropertyMatchResult(
+          body.select(cssSelector).text == expectedValue,
+          cssSelector,
+          expectedValue,
+          body.select(cssSelector).text
+        )
+      }
+    }
+
   def redirectURI(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 

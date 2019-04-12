@@ -53,7 +53,7 @@ class ContactPreferenceHttpParserSpec extends TestUtil {
         val response = Json.obj("preference" -> "digITaL")
 
         "return DIGITAL" in {
-          ContactPreferenceReads.read("", "", HttpResponse(Status.OK, Some(response))) shouldBe Right(ContactPreference("digITaL"))
+          ContactPreferenceReads.read("", "", HttpResponse(Status.OK, Some(response))) shouldBe Right(ContactPreference("DIGITAL"))
         }
       }
 
