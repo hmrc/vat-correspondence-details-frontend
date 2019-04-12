@@ -50,6 +50,10 @@ trait IntegrationBaseSpec extends TestSuite with CustomMatchers
     "microservice.services.email-verification.port" -> mockPort,
     "microservice.services.vat-subscription.host" -> mockHost,
     "microservice.services.vat-subscription.port" -> mockPort,
+    "microservice.services.contact-preferences.host" -> mockHost,
+    "microservice.services.contact-preferences.port" -> mockPort,
+    "microservice.services.vat-subscription-dynamic-stub.host" -> mockHost,
+    "microservice.services.vat-subscription-dynamic-stub.port" -> mockPort,
     "features.emailVerification.enabled" -> "true"
   )
 
