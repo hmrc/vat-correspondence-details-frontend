@@ -73,7 +73,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
           "render the email change success page" in {
             mockIndividualAuthorised()
-            document.select("#content p:nth-of-type(1)").text() shouldBe "We will send you an email within 2 working days" +
+            document.select("#content article p:nth-of-type(1)").text() shouldBe "We will send you an email within 2 working days" +
               " with an update, followed by a letter to your principal place of business. You can also go to your" +
               " HMRC secure messages to find out if your request has been accepted."
           }
@@ -107,7 +107,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
           "render the email change success page" in {
             mockIndividualAuthorised()
-            document.select("#content p:nth-of-type(1)").text() shouldBe "We will send a letter to your principal place of" +
+            document.select("#content article p:nth-of-type(1)").text() shouldBe "We will send a letter to your principal place of" +
               " business with an update within 15 working days."
           }
         }
@@ -142,7 +142,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
         "render the email change success page" in {
           mockIndividualAuthorised()
-          document.select("#content p:nth-of-type(1)").text() shouldBe "We will send you an update within 15 working days."
+          document.select("#content article p:nth-of-type(1)").text() shouldBe "We will send you an update within 15 working days."
         }
       }
 
@@ -175,7 +175,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
         "render the email change success page" in {
           mockIndividualAuthorised()
-          document.select("#content p:nth-of-type(1)").text() shouldBe "We will send an email within 2 working days " +
+          document.select("#content article p:nth-of-type(1)").text() shouldBe "We will send an email within 2 working days " +
             "telling you whether or not the request has been accepted. " +
             "You can also go to your messages in your business tax account."
         }
