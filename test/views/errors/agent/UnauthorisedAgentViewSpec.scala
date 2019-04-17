@@ -22,6 +22,13 @@ import views.ViewBaseSpec
 
 class UnauthorisedAgentViewSpec extends ViewBaseSpec {
 
+  object Selectors {
+    val heading = "h1"
+    val instructions = "#content article p"
+    val signOutButton = ".button"
+    val signOutLink = "#content article p a"
+  }
+
   "Rendering the agent unauthorised page" should {
 
     lazy val view = views.html.errors.agent.unauthorisedAgent()(request, messages, mockConfig)
@@ -32,23 +39,23 @@ class UnauthorisedAgentViewSpec extends ViewBaseSpec {
     }
 
     "have the correct page heading" in {
-      elementText("#content h1") shouldBe "You can not use this service yet"
+      elementText(Selectors.heading) shouldBe "You can not use this service yet"
     }
 
     "have the correct instructions on the page" in {
-      elementText("#content p") shouldBe "To use this service, you need to set up an agent services account."
+      elementText(Selectors.instructions) shouldBe "To use this service, you need to set up an agent services account."
     }
 
     "have a link to sign out" in {
-      element("#content p a").attr("href") shouldBe mockConfig.agentServicesGovUkGuidance
+      element(Selectors.signOutLink).attr("href") shouldBe mockConfig.agentServicesGovUkGuidance
     }
 
     "have a sign out button" in {
-      element("#content .button").text() shouldBe "Sign out"
+      element(Selectors.signOutButton).text() shouldBe "Sign out"
     }
 
     "have a sign out button which allows the user to sign out" in {
-      element("#content .button").attr("href") shouldBe
+      element(Selectors.signOutButton).attr("href") shouldBe
         controllers.routes.SignOutController.signOut(feedbackOnSignOut = false).url
     }
   }

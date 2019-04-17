@@ -22,6 +22,13 @@ import views.ViewBaseSpec
 
 class NotSignedUpViewSpec extends ViewBaseSpec {
 
+  object Selectors {
+    val heading = "#content h1"
+    val instructions = "#content article p"
+    val signUpLink = "#content > article > p> a"
+    val signUpButton = "#content .button"
+  }
+
   "Rendering the unauthorised page" should {
 
     lazy val view = views.html.errors.not_signed_up()(request, messages, mockConfig)
@@ -32,20 +39,20 @@ class NotSignedUpViewSpec extends ViewBaseSpec {
     }
 
     "have the correct page heading" in {
-      elementText("#content h1") shouldBe "You can not use this service yet"
+      elementText(Selectors.heading) shouldBe "You can not use this service yet"
     }
 
     "have the correct instructions on the page" in {
-      elementText("#content p") shouldBe "You need to sign up to use software to submit your VAT Returns."
+      elementText(Selectors.instructions) shouldBe "You need to sign up to use software to submit your VAT Returns."
     }
 
     "have a link to sign up" in {
-      document.select("#content > article > p > a").first().attr("href") shouldBe
+      document.select(Selectors.signUpLink).first().attr("href") shouldBe
         "https://www.gov.uk/guidance/use-software-to-submit-your-vat-returns"
     }
 
     "have a sign out button which allows the user to sign out" in {
-      element("#content .button").attr("href") shouldBe
+      element(Selectors.signUpButton).attr("href") shouldBe
         controllers.routes.SignOutController.signOut(feedbackOnSignOut = false).url
     }
   }

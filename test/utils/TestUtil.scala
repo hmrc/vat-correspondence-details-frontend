@@ -38,6 +38,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   override def beforeEach(): Unit = {
     super.beforeEach()
     mockConfig.features.contactPreferencesEnabled(false)
+    mockConfig.features.languageSelectorEnabled(true)
   }
 
   lazy val injector: Injector = app.injector

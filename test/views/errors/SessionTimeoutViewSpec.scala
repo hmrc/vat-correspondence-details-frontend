@@ -22,25 +22,31 @@ import views.ViewBaseSpec
 
 class SessionTimeoutViewSpec extends ViewBaseSpec {
 
+  object Selectors {
+    val heading = "#content h1"
+    val instructions = "#content article p"
+    val signInLink = "#content article a:nth-of-type(1)"
+  }
+
   "Rendering the session timeout page" should {
 
     lazy val view = views.html.errors.sessionTimeout()(request, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    s"have the correct document title" in {
+    "have the correct document title" in {
       document.title shouldBe "Your session has timed out"
     }
 
-    s"have the correct page heading" in {
-      elementText("#content h1") shouldBe "Your session has timed out"
+    "have the correct page heading" in {
+      elementText(Selectors.heading) shouldBe "Your session has timed out"
     }
 
-    s"have the correct instructions on the page" in {
-      elementText("#content p") shouldBe "To manage your VAT account, you will have to sign in using your Government Gateway ID."
+    "have the correct instructions on the page" in {
+      elementText(Selectors.instructions) shouldBe "To manage your VAT account, you will have to sign in using your Government Gateway ID."
     }
 
-    s"have a link to the correct sign in url" in {
-      element("a:nth-of-type(2)").attr("href") shouldBe mockConfig.signInContinueUrl
+    "have a link to the correct sign in url" in {
+      element(Selectors.signInLink).attr("href") shouldBe mockConfig.signInContinueUrl
 
     }
   }

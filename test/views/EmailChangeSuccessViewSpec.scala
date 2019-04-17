@@ -26,8 +26,8 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
     val title = "title"
     val pageHeading = "h1"
     val secondaryHeading = "h2"
-    val paragraphOne = "#content p:nth-of-type(1)"
-    val paragraphTwo = "#content p:nth-of-type(2)"
+    val paragraphOne = "#content article p:nth-of-type(1)"
+    val paragraphTwo = "#content article p:nth-of-type(2)"
     val button = "#content > article > a"
   }
 
