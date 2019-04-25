@@ -17,7 +17,7 @@
 package mocks
 
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.mockito.Mockito.{reset, when}
 import services.EmailVerificationService
 import uk.gov.hmrc.http.HeaderCarrier

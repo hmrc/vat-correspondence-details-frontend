@@ -23,7 +23,7 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Matchers, TestSuite
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.data.Form
 import play.api.http.HeaderNames
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.{Application, Environment, Mode}
@@ -38,7 +38,7 @@ trait IntegrationBaseSpec extends TestSuite with CustomMatchers
   val appRouteContext: String = "/vat-through-software/account/correspondence"
 
   lazy val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit lazy val messages: Messages = Messages(Lang("en-GB"), messagesApi)
+  implicit lazy val messages: Messages = MessagesImpl(Lang("en-GB"), messagesApi)
 
   lazy val client: WSClient = app.injector.instanceOf[WSClient]
 
@@ -129,6 +129,6 @@ trait IntegrationBaseSpec extends TestSuite with CustomMatchers
 
   def buildRequest(path: String, additionalCookies: Map[String, String] = Map.empty): WSRequest =
     client.url(s"http://localhost:$port$appRouteContext$path")
-      .withHeaders(HeaderNames.COOKIE -> SessionCookieBaker.bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck")
+      .withHttpHeaders(HeaderNames.COOKIE -> SessionCookieBaker.bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck")
       .withFollowRedirects(false)
 }

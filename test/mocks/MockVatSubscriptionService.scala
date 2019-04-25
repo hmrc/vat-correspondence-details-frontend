@@ -20,7 +20,7 @@ import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.VatSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier

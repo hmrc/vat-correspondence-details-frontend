@@ -17,65 +17,70 @@
 package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
-
 import common.{EnrolmentKeys, SessionKeys}
 import config.{AppConfig, ErrorHandler}
 import models.{Agent, User}
 import play.api.Logger
-import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
+import views.html.errors.SessionTimeoutView
+import views.html.errors.agent.{AgentJourneyDisabledView, NotAuthorisedForClientView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
                                            val errorHandler: ErrorHandler,
-                                           implicit val messagesApi: MessagesApi,
+                                           override val mcc: MessagesControllerComponents,
+                                           sessionTimeoutView: SessionTimeoutView,
+                                           notAuthorisedForClientView: NotAuthorisedForClientView,
+                                           agentJourneyDisabledView: AgentJourneyDisabledView,
                                            implicit val appConfig: AppConfig,
-                                           implicit val ec: ExecutionContext)
-  extends AuthBasePredicate with ActionBuilder[User] with ActionFunction[Request, User] {
+                                           override implicit val executionContext: ExecutionContext)
+  extends AuthBasePredicate(mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] {
+
+  override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   private def delegatedAuthRule(vrn: String): Enrolment =
     Enrolment(EnrolmentKeys.vatEnrolmentId)
       .withIdentifier(EnrolmentKeys.vatIdentifierId, vrn)
       .withDelegatedAuthRule(EnrolmentKeys.mtdVatDelegatedAuthRule)
 
-    override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
-      implicit val req: Request[A] = request
+  override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
+    implicit val req: Request[A] = request
 
-      if (appConfig.features.agentAccessEnabled()) {
-        request.session.get(SessionKeys.clientVrn) match {
-          case Some(vrn) =>
-            Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
-            enrolmentsAuthService.authorised(delegatedAuthRule(vrn))
-              .retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
-                case None ~ _ =>
-                  Future.successful(errorHandler.showInternalServerError)
-                case _ ~ allEnrolments =>
-                  val agent = Agent(allEnrolments)
-                  val user = User(vrn, active = true, Some(agent.arn))
-                  block(user)
-              } recover {
-                case _: NoActiveSession =>
-                  Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
-                    s"rendering Session Timeout")
-                  Unauthorized(views.html.errors.sessionTimeout())
+    if (appConfig.features.agentAccessEnabled()) {
+      request.session.get(SessionKeys.clientVrn) match {
+        case Some(vrn) =>
+          Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
+          enrolmentsAuthService.authorised(delegatedAuthRule(vrn))
+            .retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
+              case None ~ _ =>
+                Future.successful(errorHandler.showInternalServerError)
+              case _ ~ allEnrolments =>
+                val agent = Agent(allEnrolments)
+                val user = User(vrn, active = true, Some(agent.arn))
+                block(user)
+            } recover {
+              case _: NoActiveSession =>
+                Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
+                  s"rendering Session Timeout")
+                Unauthorized(sessionTimeoutView())
 
-                case _: AuthorisationException =>
-                  Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
-                    s"delegated authority for Client")
-                  Ok(views.html.errors.agent.notAuthorisedForClient(vrn))
+              case _: AuthorisationException =>
+                Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
+                  s"delegated authority for Client")
+                Ok(notAuthorisedForClientView(vrn))
 
-              }
-          case _ =>
-            //TODO redirect to VALCUFE with query string for redirectURL
-            Future.successful(errorHandler.showInternalServerError)
-        }
-      } else {
-        Future.successful(Unauthorized(views.html.errors.agent.agentJourneyDisabled()))
+            }
+        case _ =>
+          //TODO redirect to VALCUFE with query string for redirectURL
+          Future.successful(errorHandler.showInternalServerError)
       }
+    } else {
+      Future.successful(Unauthorized(agentJourneyDisabledView()))
     }
   }
+}

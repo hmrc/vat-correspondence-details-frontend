@@ -14,19 +14,16 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.partials.CachedStaticHtmlPartialRetriever
+@import config.AppConfig
 
-@views.html.main_template(title = messages("unauthorised.title"), bodyClasses = None, feedbackOnSignOut = false) {
+@this(mainTemplate: MainTemplate)
 
-    <h1>@messages("unauthorised.title")</h1>
+@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialRetriever: FormPartialRetriever,
+  partialRetriever: CachedStaticHtmlPartialRetriever, messages: Messages, appConfig: AppConfig)
 
-    <p>@messages("unauthorised.instructions")
-        <a href="@appConfig.govUkCommercialSoftware">@messages("unauthorised.instructions2")</a>.
-    </p>
 
-    <a href="@routes.SignOutController.signOut(feedbackOnSignOut = false)"
-       class="button"
-       role="button">
-        @messages("base.signOut")
-    </a>
+@mainTemplate(title = messages("feedback.title")) {
+  @formBody.getOrElse(formPartialRetriever.getPartialContent(partialUrl))
 }

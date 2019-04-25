@@ -18,19 +18,19 @@ package views.helpers
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.twirl.api.Html
-import org.scalatest.Matchers._
+import views.ViewBaseSpec
+import views.html.helpers.AccordionHelper
 
-
-class AccordionHelperSpec extends PlaySpec with OneServerPerSuite {
+class AccordionHelperSpec extends ViewBaseSpec {
 
   val testLabel: String = "test label"
   val testFeature: String = "test-feature"
   val testPageName: String = "test-page-name"
   val testHtml: Html = Html("test html")
 
-  lazy val view: Html = views.html.helpers.accordionHelper(testLabel, testFeature, testPageName, testHtml)
+  val injectedView: AccordionHelper = injector.instanceOf[AccordionHelper]
+  lazy val view: Html = injectedView(testLabel, testFeature, testPageName, testHtml)
 
   lazy implicit val doc: Document = Jsoup.parse(view.body)
 

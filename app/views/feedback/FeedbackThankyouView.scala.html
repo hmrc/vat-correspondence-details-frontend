@@ -14,12 +14,15 @@
  * limitations under the License.
  *@
 
-@(field: Field, label: String)(implicit messages: Messages)
+@import uk.gov.hmrc.play.partials.CachedStaticHtmlPartialRetriever
+@import config.AppConfig
 
-@value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
+@this(mainTemplate: MainTemplate)
 
-<div class="multiple-choice">
-    <input id="@{field.name}" name="@{field.name}" type="checkbox" value="true" @if(value == "true"){ checked }>
-    <label for="@{field.name}">@label</label>
-</div>
+@(partialUrl: String, redirectUrl: String)(implicit request: Request[_], cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever,
+  messages: Messages, appConfig: AppConfig)
 
+@mainTemplate(title = messages("feedbackThanks.title")) {
+  @cachedStaticHtmlPartialRetriever.getPartialContent(partialUrl)
+  <a id="back" href='@redirectUrl' role="button" tabindex="0" class="button">@messages("base.back")</a>
+}

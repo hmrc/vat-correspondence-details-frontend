@@ -69,7 +69,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "render the Unauthorised page" in {
-              Jsoup.parse(bodyOf(result)).title shouldBe "Your session has timed out"
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Your session has timed out"
             }
           }
 
@@ -84,7 +84,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "render the Unauthorised page" in {
-              Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
             }
           }
         }
@@ -100,7 +100,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
           }
 
           "render the Unauthorised Agent page" in {
-            Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet"
           }
         }
       }
@@ -128,7 +128,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
 
         "render the Not Signed Up page" in {
-          Jsoup.parse(bodyOf(result)).title shouldBe "You can not use this service yet"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet"
         }
       }
     }
@@ -139,7 +139,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         mockAgentAuthorised()
         val result = target(request)
         status(result) shouldBe Status.UNAUTHORIZED
-        Jsoup.parse(bodyOf(result)).title shouldBe "You cannot change your client’s correspondence details yet"
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s correspondence details yet"
       }
     }
   }

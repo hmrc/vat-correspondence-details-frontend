@@ -19,8 +19,11 @@ package views
 import models.contactPreferences.ContactPreference
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import views.html.EmailChangeSuccessView
 
 class EmailChangeSuccessViewSpec extends ViewBaseSpec {
+
+  val injectedView: EmailChangeSuccessView = injector.instanceOf[EmailChangeSuccessView]
 
   object Selectors {
     val title = "title"
@@ -39,7 +42,7 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
         "the contact preference is Digital" should {
 
-          lazy val view = views.html.email_change_success(Some(ContactPreference.digital))(request, messages, mockConfig)
+          lazy val view = injectedView(Some(ContactPreference.digital))(request, messages, mockConfig)
 
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -83,7 +86,7 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
         "the contact preference is Paper" should {
 
-          lazy val view = views.html.email_change_success(Some(ContactPreference.paper))
+          lazy val view = injectedView(Some(ContactPreference.paper))
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the correct first paragraph" in {
@@ -96,8 +99,7 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
       "the contact preference is not retrieved" should {
 
-        lazy val view = views.html.email_change_success()
-        lazy implicit val document: Document = Jsoup.parse(view.body)
+        lazy implicit val document: Document = Jsoup.parse(injectedView().body)
 
         "have the correct first paragraph" in {
           mockConfig.features.contactPreferencesEnabled(true)
@@ -108,8 +110,7 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
     "the contact preference feature switch is not enabled" should {
 
-      lazy val view = views.html.email_change_success()
-      lazy implicit val document: Document = Jsoup.parse(view.body)
+      lazy implicit val document: Document = Jsoup.parse(injectedView().body)
 
       "have the correct first paragraph" in {
         mockConfig.features.contactPreferencesEnabled(false)

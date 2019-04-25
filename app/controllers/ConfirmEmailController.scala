@@ -17,7 +17,6 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import audit.AuditingService
 import audit.models.ChangedEmailAddressAuditModel
 import common.SessionKeys.{emailKey, inFlightContactDetailsChangeKey, validationEmailKey}
@@ -26,27 +25,28 @@ import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import models.User
 import models.customerInformation.UpdateEmailSuccess
 import play.api.Logger
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
+import views.html.ConfirmEmailView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
                                        val inflightCheck: InFlightPPOBPredicate,
-                                       val messagesApi: MessagesApi,
+                                       override val mcc: MessagesControllerComponents,
                                        val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
                                        val vatSubscriptionService: VatSubscriptionService,
+                                       confirmEmailView: ConfirmEmailView,
                                        implicit val appConfig: AppConfig,
-                                       implicit val ec: ExecutionContext) extends BaseController {
+                                       implicit val ec: ExecutionContext) extends BaseController(mcc) {
 
   def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
-        Future.successful(Ok(views.html.confirm_email(email)))
+        Future.successful(Ok(confirmEmailView(email)))
       case _ =>
         Future.successful(Redirect(controllers.routes.CaptureEmailController.show()))
     }

@@ -22,12 +22,16 @@ import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import play.api.mvc.Results.InternalServerError
+import views.html.errors.StandardErrorView
 
 @Singleton
-class ErrorHandler @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendErrorHandler {
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    views.html.errors.standardError(pageTitle, heading, message)
+class ErrorHandler @Inject()(val messagesApi: MessagesApi,
+                             standardErrorView: StandardErrorView,
+                             implicit val appConfig: AppConfig) extends FrontendErrorHandler {
+
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)
+                                    (implicit request: Request[_]): Html =
+    standardErrorView(pageTitle, heading, message)
 
   def showInternalServerError(implicit request: Request[_]): Result = InternalServerError(internalServerErrorTemplate)
-
 }

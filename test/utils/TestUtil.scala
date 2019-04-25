@@ -24,14 +24,14 @@ import mocks.MockAppConfig
 import models.User
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.Injector
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.FakeRequest
-import play.filters.csrf.{CSRFConfigProvider, CSRFFilter}
-import play.filters.csrf.CSRF.Token
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+import views.html.errors.StandardErrorView
 
 trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport with BeforeAndAfterEach {
 
@@ -42,12 +42,12 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   }
 
   lazy val injector: Injector = app.injector
-  lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
-  implicit lazy val messages: Messages = Messages(Lang("en-GB"), messagesApi)
-
+  lazy val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
+  implicit lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+  implicit lazy val messages: Messages = MessagesImpl(Lang("en-GB"), messagesApi)
   implicit lazy val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
-  implicit lazy val serviceErrorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
-  lazy val mockErrorHandler: ErrorHandler = new ErrorHandler(messagesApi, mockConfig)
+
+  lazy val mockErrorHandler: ErrorHandler = new ErrorHandler(messagesApi, injector.instanceOf[StandardErrorView], mockConfig)
 
   val testEmail = "test@email.co.uk"
 
@@ -61,19 +61,5 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
     User[AnyContentAsEmpty.type](vrn, active = true, Some(arn))(fakeRequestWithClientsVRN)
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
-  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
-
-  implicit class CSRFTokenAdder[T](req: FakeRequest[T]) {
-
-    def addToken(): FakeRequest[T] = {
-      val csrfConfig = app.injector.instanceOf[CSRFConfigProvider].get
-      val csrfFilter = app.injector.instanceOf[CSRFFilter]
-      val token = csrfFilter.tokenProvider.generateToken
-
-      req.copyFakeRequest(tags = req.tags ++ Map(
-        Token.NameRequestTag -> csrfConfig.tokenName,
-        Token.RequestTag -> token
-      )).withHeaders(csrfConfig.headerName -> token)
-    }
-  }
+  implicit lazy val ec: ExecutionContext = mcc.executionContext
 }

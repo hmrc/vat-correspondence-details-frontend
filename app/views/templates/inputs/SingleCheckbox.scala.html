@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.partials.CachedStaticHtmlPartialRetriever
-@import config.AppConfig
+@this()
 
-@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialRetriever: FormPartialRetriever,
-  partialRetriever: CachedStaticHtmlPartialRetriever, messages: Messages, appConfig: AppConfig)
+@(field: Field, label: String)(implicit messages: Messages)
 
+@value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
 
-@views.html.main_template(title = messages("feedback.title"), bodyClasses = None, mainClass = None) {
-  @formBody.getOrElse(formPartialRetriever.getPartialContent(partialUrl))
-}
+<div class="multiple-choice">
+    <input id="@{field.name}" name="@{field.name}" type="checkbox" value="true" @if(value == "true"){ checked }>
+    <label for="@{field.name}">@label</label>
+</div>
+

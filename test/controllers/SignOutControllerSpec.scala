@@ -22,7 +22,7 @@ import play.api.test.Helpers._
 
 class SignOutControllerSpec extends ControllerBaseSpec {
 
-  val controller = new SignOutController(messagesApi, mockConfig)
+  val controller = new SignOutController(mcc, mockConfig)
 
   "Navigating to the sign out page" when {
 

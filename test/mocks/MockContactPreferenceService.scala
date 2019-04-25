@@ -21,7 +21,7 @@ import models.contactPreferences.ContactPreference
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import services.ContactPreferenceService
 import uk.gov.hmrc.http.HeaderCarrier
 

@@ -68,9 +68,8 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
         }
 
         "page title is correct" in {
-          Jsoup.parse(bodyOf(result)).title shouldBe "You are not authorised for this client"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You are not authorised for this client"
         }
-
       }
 
       "the agent has no enrolments" should {
@@ -84,7 +83,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
         }
 
         "render the Internal Server Error page" in {
-          Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
         }
       }
 
@@ -99,7 +98,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
         }
 
         "page title is correct" in {
-          Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
         }
       }
     }
@@ -114,7 +113,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       }
 
       "show the correct title" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe "You cannot change your client’s correspondence details yet"
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s correspondence details yet"
       }
     }
   }

@@ -20,8 +20,11 @@ import forms.EmailForm._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
+import views.html.CaptureEmailView
 
 class CaptureEmailViewSpec extends ViewBaseSpec {
+
+  val injectedView: CaptureEmailView = injector.instanceOf[CaptureEmailView]
 
   object Selectors {
     val pageHeading = "#content h1"
@@ -37,8 +40,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
   "Rendering the capture email page" when {
 
     "the form has no errors" should {
-      lazy val view: Html = views.html.capture_email(emailForm(testEmail)
-        .fill(testEmail), emailNotChangedError = false)
+      lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail), emailNotChangedError = false)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {
@@ -78,7 +80,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     }
 
     "the form has the email unchanged error" should {
-      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "")), emailNotChangedError = true)
+      lazy val view = injectedView(emailForm("").bind(Map("email" -> "")), emailNotChangedError = true)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "display the error summary" in {
@@ -91,7 +93,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     }
 
     "the form has any other error" should {
-      lazy val view = views.html.capture_email(emailForm("").bind(Map("email" -> "invalid")), emailNotChangedError = false)
+      lazy val view = injectedView(emailForm("").bind(Map("email" -> "invalid")), emailNotChangedError = false)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "display the error summary" in {

@@ -27,17 +27,22 @@ import org.mockito.Mockito.verify
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.EmailChangeSuccessView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService with MockAuditingService {
 
+  val view: EmailChangeSuccessView = injector.instanceOf[EmailChangeSuccessView]
+
   object TestController extends EmailChangeSuccessController(
     mockAuthPredicate,
-    messagesApi,
+    mcc,
     mockAuditingService,
     mockContactPreferenceService,
-    mockConfig
+    view,
+    mockConfig,
+    ec
   )
 
   "Calling the show action" when {
@@ -73,9 +78,10 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
           "render the email change success page" in {
             mockIndividualAuthorised()
-            document.select("#content article p:nth-of-type(1)").text() shouldBe "We will send you an email within 2 working days" +
-              " with an update, followed by a letter to your principal place of business. You can also go to your" +
-              " HMRC secure messages to find out if your request has been accepted."
+            messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
+              "We will send you an email within 2 working days with an update, followed by a letter to your " +
+                "principal place of business. You can also go to your HMRC secure messages to find out if your " +
+                "request has been accepted."
           }
         }
 
@@ -107,8 +113,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
           "render the email change success page" in {
             mockIndividualAuthorised()
-            document.select("#content article p:nth-of-type(1)").text() shouldBe "We will send a letter to your principal place of" +
-              " business with an update within 15 working days."
+            messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
+              "We will send a letter to your principal place of business with an update within 15 working days."
           }
         }
       }
@@ -142,7 +148,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
         "render the email change success page" in {
           mockIndividualAuthorised()
-          document.select("#content article p:nth-of-type(1)").text() shouldBe "We will send you an update within 15 working days."
+          messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
+            "We will send you an update within 15 working days."
         }
       }
 
@@ -175,8 +182,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
         "render the email change success page" in {
           mockIndividualAuthorised()
-          document.select("#content article p:nth-of-type(1)").text() shouldBe "We will send an email within 2 working days " +
-            "telling you whether or not the request has been accepted. " +
+          messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
+            "We will send an email within 2 working days telling you whether or not the request has been accepted. " +
             "You can also go to your messages in your business tax account."
         }
       }

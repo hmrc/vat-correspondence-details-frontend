@@ -20,31 +20,30 @@ import java.net.URLEncoder
 
 import config.{FrontendAppConfig, VatHeaderCarrierForPartialsConverter}
 import javax.inject.{Inject, Singleton}
-
 import controllers.BaseController
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Request, RequestHeader}
+import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.controller.UnauthorisedAction
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials._
-import views.html.feedback.feedback_thankyou
+import views.html.feedback.{FeedbackView, FeedbackThankyouView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 //$COVERAGE-OFF$
 @Singleton
-class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
+class FeedbackController @Inject()(feedbackView: FeedbackView,
+                                   feedbackThankyouView: FeedbackThankyouView,
+                                   implicit val config: FrontendAppConfig,
                                    val wsHttp: HttpClient,
-                                   val messagesApi: MessagesApi,
+                                   override val mcc: MessagesControllerComponents,
                                    val sessionCookieCrypto: SessionCookieCrypto,
                                    val vatHeaderCarrierForPartialsConverter: VatHeaderCarrierForPartialsConverter,
-                                   val ec: ExecutionContext) extends BaseController with PartialRetriever {
+                                   implicit val ec: ExecutionContext) extends BaseController(mcc) with PartialRetriever {
   override val httpGet: HttpClient = wsHttp
   val httpPost: HttpClient = wsHttp
 
@@ -75,15 +74,15 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   private def feedbackThankYouPartialUrl(ticketId: String)(implicit request: Request[AnyContent]) =
     s"${config.feedbackFormPartialUrl}/confirmation?ticketId=${urlEncode(ticketId)}"
 
-  def show: Action[AnyContent] = UnauthorisedAction {
+  def show: Action[AnyContent] = Action {
     implicit request =>
       (request.session.get(REFERER), request.headers.get(REFERER)) match {
-        case (None, Some(ref)) => Ok(views.html.feedback.feedback(feedbackFormPartialUrl, None)).withSession(request.session + (REFERER -> ref))
-        case _ => Ok(views.html.feedback.feedback(feedbackFormPartialUrl, None))
+        case (None, Some(ref)) => Ok(feedbackView(feedbackFormPartialUrl, None)).withSession(request.session + (REFERER -> ref))
+        case _ => Ok(feedbackView(feedbackFormPartialUrl, None))
       }
   }
 
-  def submit: Action[AnyContent] = UnauthorisedAction.async {
+  def submit: Action[AnyContent] = Action.async {
     implicit request =>
       request.body.asFormUrlEncoded.map { formData =>
         httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
@@ -91,7 +90,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
           resp =>
             resp.status match {
               case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
-              case HttpStatus.BAD_REQUEST => BadRequest(views.html.feedback.feedback(feedbackFormPartialUrl, Some(Html(resp.body))))
+              case HttpStatus.BAD_REQUEST => BadRequest(feedbackView(feedbackFormPartialUrl, Some(Html(resp.body))))
               case status => Logger.error(s"Unexpected status code from feedback form: $status"); InternalServerError
             }
         }
@@ -101,11 +100,11 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  def thankyou: Action[AnyContent] = UnauthorisedAction {
+  def thankyou: Action[AnyContent] = Action {
     implicit request =>
       val ticketId = request.session.get(TICKET_ID).getOrElse("N/A")
       val referer = request.session.get(REFERER).getOrElse("/")
-      Ok(feedback_thankyou(feedbackThankYouPartialUrl(ticketId), referer)).withSession(request.session - REFERER)
+      Ok(feedbackThankyouView(feedbackThankYouPartialUrl(ticketId), referer)).withSession(request.session - REFERER)
   }
 
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")

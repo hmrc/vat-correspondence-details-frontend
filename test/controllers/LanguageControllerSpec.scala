@@ -17,15 +17,13 @@
 package controllers
 
 import play.api.http.Status
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.Play
 import play.api.mvc.Cookie
 
 class LanguageControllerSpec extends ControllerBaseSpec {
 
-
-  val controller = new LanguageController(mockConfig, messagesApi)
+  val controller = new LanguageController(mockConfig, mcc)
 
   "Calling the .switchToLanguage function" when {
 
@@ -59,7 +57,7 @@ class LanguageControllerSpec extends ControllerBaseSpec {
 
     "providing an unsupported language parameter" should {
 
-      controller.switchToLanguage("english")(FakeRequest())
+      controller.switchToLanguage("english")(request)
       lazy val result = controller.switchToLanguage("orcish")(request)
 
       "return a Redirect status (303)" in {

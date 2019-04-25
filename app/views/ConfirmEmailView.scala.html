@@ -17,9 +17,11 @@
 @import config.AppConfig
 @import uk.gov.hmrc.play.views.html.helpers.form
 
+@this(mainTemplate: MainTemplate)
+
 @(email: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main_template(title = messages("confirmEmail.title"), bodyClasses = None) {
+@mainTemplate(title = messages("confirmEmail.title")) {
 
  <a class="link-back" href='@controllers.routes.CaptureEmailController.show()'>@messages("base.back")</a>
 

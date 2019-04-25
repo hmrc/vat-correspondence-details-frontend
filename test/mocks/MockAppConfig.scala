@@ -23,7 +23,7 @@ import play.api.Mode.Mode
 import play.api.i18n.Lang
 import play.api.mvc.Call
 
-class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mode.Test) extends AppConfig {
+class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig {
   override val appName = ""
   override val signInUrl = ""
   override val contactFormServiceIdentifier = ""

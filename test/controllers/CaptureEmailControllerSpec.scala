@@ -26,6 +26,7 @@ import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.CaptureEmailView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,6 +35,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
   val testValidationEmail: String = "validation@example.com"
   val testValidEmail: String      = "test@example.com"
   val testInvalidEmail: String    = "invalidEmail"
+  val view: CaptureEmailView = injector.instanceOf[CaptureEmailView]
 
   val customerInfoResult: CustomerInformation =
     CustomerInformation(
@@ -69,10 +71,11 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
     new CaptureEmailController(
       mockAuthPredicate,
       mockInflightPPOBPredicate,
-      messagesApi,
+      mcc,
       mockVatSubscriptionService,
       mockErrorHandler,
       mockAuditingService,
+      view,
       mockConfig,
       ec
     )
@@ -216,10 +219,11 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         new CaptureEmailController(
           mockAuthPredicate,
           mockInflightPPOBPredicate,
-          messagesApi,
+          mcc,
           mockVatSubscriptionService,
           mockErrorHandler,
           mockAuditingService,
+          view,
           mockConfig,
           ec
         )

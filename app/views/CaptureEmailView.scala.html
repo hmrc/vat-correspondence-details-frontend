@@ -14,13 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.{form, errorSummary, input}
+@import uk.gov.hmrc.play.views.html.helpers.{FormWithCSRF, ErrorSummary, Input}
 @import config.AppConfig
 @import forms.EmailForm._
 
+@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
+
 @(emailForm: Form[String], emailNotChangedError: Boolean)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main_template(messages("captureEmail.title")) {
+@mainTemplate(title = messages("captureEmail.title")) {
 
   <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 

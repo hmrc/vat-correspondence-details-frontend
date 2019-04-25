@@ -18,8 +18,11 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import views.html.ConfirmEmailView
 
 class ConfirmEmailViewSpec extends ViewBaseSpec {
+
+  val injectedView: ConfirmEmailView = injector.instanceOf[ConfirmEmailView]
 
   object Selectors {
     val heading = "heading-large"
@@ -29,7 +32,7 @@ class ConfirmEmailViewSpec extends ViewBaseSpec {
   }
 
   "The Confirm Email view" should {
-    lazy val view = views.html.confirm_email(testEmail)
+    lazy val view = injectedView(testEmail)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct heading" in {
