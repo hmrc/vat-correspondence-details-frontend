@@ -66,10 +66,6 @@ class ConfirmEmailViewSpec extends ViewBaseSpec {
       }
     }
 
-    "have some body text" in {
-      document.text() contains "By confirming this change, you agree that the information you have given is complete and correct."
-    }
-
     "have a continue button" which {
 
       "has the correct text" in {

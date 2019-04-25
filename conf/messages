@@ -54,7 +54,6 @@ sessionTimeout.helpThree = using your Government Gateway ID.
 confirmEmail.title = Confirm the new email address
 confirmEmail.heading = Confirm the new email address
 confirmEmail.link = Edit email address
-confirmEmail.body = By confirming this change, you agree that the information you have given is complete and correct.
 confirmEmail.edit = Edit email address
 
 verifyEmail.title = Verify your email address
