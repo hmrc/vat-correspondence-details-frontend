@@ -54,8 +54,8 @@ object ConfigKeys {
 
   val vatSubscription: String = "vat-subscription"
 
-  val surveyUrl: String = "feedback-survey-frontend.url"
-  val surveyPath: String = "feedback-survey-frontend.path"
+  val surveyUrl: String = "feedback-frontend.url"
+  val surveyPath: String = "feedback-frontend.path"
 
   val timeoutPeriod: String = "timeout.period"
   val timeoutCountdown: String = "timeout.countdown"

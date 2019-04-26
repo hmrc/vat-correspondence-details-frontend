@@ -90,7 +90,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override val features = new Features(runModeConfiguration)
 
   private lazy val feedbackSurveyBase = getString(Keys.surveyUrl) + getString(Keys.surveyPath)
-  override lazy val feedbackSurveyUrl = s"$feedbackSurveyBase/?origin=$contactFormServiceIdentifier"
+  override lazy val feedbackSurveyUrl = s"$feedbackSurveyBase/$contactFormServiceIdentifier"
 
   private lazy val signInBaseUrl: String = getString(Keys.signInBaseUrl)
   private lazy val signInOrigin = getString("appName")
