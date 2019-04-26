@@ -20,7 +20,7 @@ import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import javax.inject.{Inject, Singleton}
-import models.customerInformation.{PPOB, UpdateEmailSuccess}
+import models.customerInformation.{ContactDetails, PPOB, UpdateEmailSuccess}
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,8 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emailVerificationService: EmailVerificationService) {
 
   private[services] def buildEmailUpdateModel(email: String, ppob: PPOB): PPOB = {
+    val existingContactDetails: ContactDetails =
+      ppob.contactDetails.getOrElse(ContactDetails(None, None, None, None, None))
     ppob.copy(
-      contactDetails = ppob.contactDetails.map(_.copy(emailAddress = Some(email), emailVerified = Some(true)))
+      contactDetails = Some(existingContactDetails.copy(emailAddress = Some(email), emailVerified = Some(true)))
     )
   }
 

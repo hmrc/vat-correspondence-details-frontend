@@ -101,23 +101,46 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
     }
   }
 
-  "calling buildEmailUpdateModel" should {
+  "calling buildEmailUpdateModel" when {
 
-    "return a CustomerInformation model with the updated email" in {
-      val expectedPPOB: PPOB = PPOB(
-        fullPPOBAddressModel,
-        Some(ContactDetails(
-          Some("01234567890"),
-          Some("07707707707"),
-          Some("0123456789"),
-          Some(testEmail),
-          Some(true)
-        )),
-        Some("www.pepsi-mac.biz")
-      )
+    "the user has existing contact details" should {
 
-      val result = service.buildEmailUpdateModel(testEmail, fullPPOBModel)
-      result shouldBe expectedPPOB
+      "return a CustomerInformation model with the updated email" in {
+        val expectedPPOB: PPOB = PPOB(
+          fullPPOBAddressModel,
+          Some(ContactDetails(
+            Some("01234567890"),
+            Some("07707707707"),
+            Some("0123456789"),
+            Some(testEmail),
+            Some(true)
+          )),
+          Some("www.pepsi-mac.biz")
+        )
+
+        val result = service.buildEmailUpdateModel(testEmail, fullPPOBModel)
+        result shouldBe expectedPPOB
+      }
+    }
+
+    "the user does not have contact details" should {
+
+      "return a CustomerInformation model with the new email" in {
+        val expectedPPOB: PPOB = PPOB(
+          minPPOBAddressModel,
+          Some(ContactDetails(
+            None,
+            None,
+            None,
+            Some(testEmail),
+            Some(true)
+          )),
+          None
+        )
+
+        val result = service.buildEmailUpdateModel(testEmail, minPPOBModel)
+        result shouldBe expectedPPOB
+      }
     }
   }
 }
