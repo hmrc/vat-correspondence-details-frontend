@@ -24,9 +24,9 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import models.User
 import models.customerInformation.UpdateEmailSuccess
-import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
+import utils.LoggerUtil.logInfo
 import views.html.ConfirmEmailView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -76,7 +76,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
         }
 
       case _ =>
-        Logger.info("[ConfirmEmailController][updateEmailAddress] no email address found in session")
+        logInfo("[ConfirmEmailController][updateEmailAddress] no email address found in session")
         Future.successful(Redirect(controllers.routes.CaptureEmailController.show()))
     }
   }

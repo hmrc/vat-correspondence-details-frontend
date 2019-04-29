@@ -20,9 +20,9 @@ import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import models.contactPreferences.ContactPreference
 import models.contactPreferences.ContactPreference._
 import models.errors.ErrorModel
-import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.LoggerUtil.{logDebug, logWarn}
 
 object ContactPreferenceHttpParser {
 
@@ -32,31 +32,23 @@ object ContactPreferenceHttpParser {
 
       response.status match {
         case Status.OK => {
-          //$COVERAGE-OFF$
-          Logger.debug("[ContactPreferencesHttpParser][read]: Status OK")
-          //$COVERAGE-ON$
+          logDebug("[ContactPreferencesHttpParser][read]: Status OK")
           response.json.validate[ContactPreference].fold(
             invalid => {
-              //$COVERAGE-OFF$
-              Logger.debug(s"[ContactPreferencesHttpParser][read]: Invalid Json - $invalid")
-              Logger.warn(s"[ContactPreferencesHttpParser][read]: Invalid Json received from Contact Preferences")
-              //$COVERAGE-ON$
+              logDebug(s"[ContactPreferencesHttpParser][read]: Invalid Json - $invalid")
+              logWarn(s"[ContactPreferencesHttpParser][read]: Invalid Json received from Contact Preferences")
               Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json received from Contact Preferences"))
             },
             valid => valid.preference.toUpperCase match {
               case `digital` | `paper` => Right(ContactPreference(valid.preference.toUpperCase()))
               case _ =>
-                //$COVERAGE-OFF$
-                Logger.warn(s"[ContactPreferencesHttpParser][read]: Invalid preference type received from Contact Preferences")
-                //$COVERAGE-ON$
+                logWarn(s"[ContactPreferencesHttpParser][read]: Invalid preference type received from Contact Preferences")
                 Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid preference type received from Contact Preferences"))
             }
           )
         }
         case status =>
-          //$COVERAGE-OFF$
-          Logger.warn(s"[ContactPreferencesHttpParser][read]: Unexpected Response, Status: $status, Response: ${response.body}")
-          //$COVERAGE-ON$
+          logWarn(s"[ContactPreferencesHttpParser][read]: Unexpected Response, Status: $status, Response: ${response.body}")
           Left(ErrorModel(status, s"Unexpected Response. Response: ${response.body}"))
       }
     }

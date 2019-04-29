@@ -21,9 +21,9 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
 import models.User
-import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.EmailVerificationService
+import utils.LoggerUtil.logWarn
 import views.html.VerifyEmailView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +53,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
         emailVerificationService.createEmailVerificationRequest(email, routes.ConfirmEmailController.updateEmailAddress().url).map{
           case Some(true) => Redirect(routes.VerifyEmailController.show())
           case Some(false) =>
-            Logger.warn(
+            logWarn(
               "[VerifyEmailController][sendVerification] - " +
                 "Unable to send email verification request. Service responded with 'already verified'"
             )

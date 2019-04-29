@@ -27,6 +27,7 @@ import play.api.mvc.Results.{Ok, Redirect}
 import services.VatSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import utils.LoggerUtil.{logDebug, logWarn}
 import views.html.errors.PPOBChangePendingView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -62,24 +63,24 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
           case Some(_) =>
             (customerInfo.approvedAndPendingPPOBAddressMatch, customerInfo.approvedAndPendingEmailAddressMatch) match {
               case (false, true) =>
-                Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
+                logWarn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight PPOB address change. Rendering graceful error page.")
                 Left(Ok(ppobChangePendingView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
               case (_, false) =>
-                Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
+                logWarn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight email address change. Redirecting to Manage VAT homepage")
                 Left(Redirect(appConfig.manageVatSubscriptionServicePath).addingToSession(inFlightContactDetailsChangeKey -> "true"))
               case (_, _) =>
-                Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
+                logWarn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight contact details change that is not PPOB or email address. Rendering standard error page.")
                 Left(errorHandler.showInternalServerError.addingToSession(inFlightContactDetailsChangeKey -> "error"))
             }
           case None =>
-            Logger.debug("[InFlightPPOBPredicate][getCustomerInfoCall] - There is no in-flight change. Redirecting user to the start of the journey.")
+            logDebug("[InFlightPPOBPredicate][getCustomerInfoCall] - There is no in-flight change. Redirecting user to the start of the journey.")
             Left(Redirect(controllers.routes.CaptureEmailController.show().url).addingToSession(inFlightContactDetailsChangeKey -> "false"))
         }
       case Left(error) =>
-        Logger.warn(s"[InFlightPPOBPredicate][getCustomerInfoCall] - The call to the GetCustomerInfo API failed. Error: ${error.message}")
+        logWarn(s"[InFlightPPOBPredicate][getCustomerInfoCall] - The call to the GetCustomerInfo API failed. Error: ${error.message}")
         Left(errorHandler.showInternalServerError)
     }
 }

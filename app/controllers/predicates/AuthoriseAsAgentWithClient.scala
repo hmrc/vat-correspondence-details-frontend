@@ -25,6 +25,7 @@ import play.api.mvc._
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
+import utils.LoggerUtil.{logDebug, logWarn}
 import views.html.errors.SessionTimeoutView
 import views.html.errors.agent.{AgentJourneyDisabledView, NotAuthorisedForClientView}
 
@@ -54,7 +55,7 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
     if (appConfig.features.agentAccessEnabled()) {
       request.session.get(SessionKeys.clientVrn) match {
         case Some(vrn) =>
-          Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
+          logDebug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
           enrolmentsAuthService.authorised(delegatedAuthRule(vrn))
             .retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
               case None ~ _ =>
@@ -65,12 +66,12 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
                 block(user)
             } recover {
               case _: NoActiveSession =>
-                Logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
+                logDebug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
                   s"rendering Session Timeout")
                 Unauthorized(sessionTimeoutView())
 
               case _: AuthorisationException =>
-                Logger.warn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
+                logWarn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
                   s"delegated authority for Client")
                 Ok(notAuthorisedForClientView(vrn))
 

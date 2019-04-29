@@ -20,9 +20,9 @@ import config.AppConfig
 import connectors.httpParsers.ResponseHttpParser.{HttpGetResult, HttpPutResult}
 import javax.inject.{Inject, Singleton}
 import models.customerInformation.{CustomerInformation, PPOB, UpdateEmailSuccess}
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import utils.LoggerUtil.{logDebug, logWarn}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,10 +43,10 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
 
     http.GET[HttpGetResult[CustomerInformation]](getCustomerInfoUrl(vrn)).map {
       case customerInfo@Right(_) =>
-        Logger.debug(s"[VatSubscriptionConnector][getCustomerInfo] successfully received customer info response")
+        logDebug(s"[VatSubscriptionConnector][getCustomerInfo] successfully received customer info response")
         customerInfo
       case httpError@Left(error) =>
-        Logger.warn("[VatSubscriptionConnector][getCustomerInfo] received error - " + error.message)
+        logWarn("[VatSubscriptionConnector][getCustomerInfo] received error - " + error.message)
         httpError
     }
   }
@@ -60,7 +60,7 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
       case result@Right(_) =>
         result
       case httpError@Left(error) =>
-        Logger.warn("[VatSubscriptionConnector][updateEmail] received error - " + error.message)
+        logWarn("[VatSubscriptionConnector][updateEmail] received error - " + error.message)
         httpError
     }
   }
