@@ -24,6 +24,8 @@ import play.api.i18n.Lang
 import play.api.mvc.Call
 
 class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mode.Test) extends AppConfig {
+
+  override def feedbackUrl(redirect: String): String = "localhost/feedback"
   override val appName = ""
   override val signInUrl = ""
   override val contactFormServiceIdentifier = ""

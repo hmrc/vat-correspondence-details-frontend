@@ -64,6 +64,7 @@ trait AppConfig extends ServicesConfig {
   val timeoutCountdown: Int
   val contactPreferencesService: String
   def contactPreferencesUrl(vrn: String): String
+  def feedbackUrl(redirect: String): String
 }
 
 @Singleton
@@ -142,4 +143,6 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
 
   override def contactPreferencesUrl(vrn: String): String = contactPreferencesService + s"/contact-preferences/vat/vrn/$vrn"
 
+  override def feedbackUrl(redirect: String): String = s"${Keys.contactFrontendService}/contact/beta-feedback?service=$contactFormServiceIdentifier" +
+    s"&backUrl=${ContinueUrl(host + redirect).encodedUrl}"
 }
