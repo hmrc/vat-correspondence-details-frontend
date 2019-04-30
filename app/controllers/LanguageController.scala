@@ -19,8 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import config.AppConfig
 import play.api.i18n.Lang
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.language.LanguageUtils
+import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
 
 @Singleton
 class LanguageController @Inject()(val appConfig: AppConfig,
@@ -32,6 +31,6 @@ class LanguageController @Inject()(val appConfig: AppConfig,
     val lang = languageMap.getOrElse(language, Lang("en"))
     val redirectURL = request.headers.get(REFERER).getOrElse(appConfig.manageVatSubscriptionServicePath)
 
-    Redirect(redirectURL).withLang(Lang.apply(lang.code)).flashing(LanguageUtils.FlashWithSwitchIndicator)
+    Redirect(redirectURL).withLang(Lang.apply(lang.code)).flashing(Flash(Map("switching-language" -> "true")))
   }
 }
