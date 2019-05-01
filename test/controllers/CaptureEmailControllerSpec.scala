@@ -76,8 +76,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       mockErrorHandler,
       mockAuditingService,
       view,
-      mockConfig,
-      ec
+      mockConfig
     )
   }
 
@@ -224,8 +223,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           mockErrorHandler,
           mockAuditingService,
           view,
-          mockConfig,
-          ec
+          mockConfig
         )
       }
 

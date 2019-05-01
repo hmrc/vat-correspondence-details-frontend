@@ -39,8 +39,9 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
                                        val auditService: AuditingService,
                                        val vatSubscriptionService: VatSubscriptionService,
                                        confirmEmailView: ConfirmEmailView,
-                                       implicit val appConfig: AppConfig,
-                                       implicit val ec: ExecutionContext) extends BaseController(mcc) {
+                                       implicit val appConfig: AppConfig) extends BaseController(mcc) {
+
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 

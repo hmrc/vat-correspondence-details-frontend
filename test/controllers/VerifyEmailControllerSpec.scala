@@ -35,8 +35,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     mockEmailVerificationService,
     mockErrorHandler,
     injector.instanceOf[VerifyEmailView],
-    mockConfig,
-    ec
+    mockConfig
   )
 
   val testVatNumber: String = "999999999"
