@@ -48,7 +48,6 @@ trait AppConfig {
   val signInContinueUrl: String
   val agentInvitationsFastTrack: String
   val govUkCommercialSoftware: String
-  val host: String
   val vatAgentClientLookupServiceUrl: String
   val vatAgentClientLookupServicePath: String
   val features: Features
@@ -63,6 +62,7 @@ trait AppConfig {
   val timeoutCountdown: Int
   val contactPreferencesService: String
   def contactPreferencesUrl(vrn: String): String
+  def feedbackUrl(redirect: String): String
 }
 
 @Singleton
@@ -117,7 +117,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override lazy val agentInvitationsFastTrack: String = sc.getString(Keys.agentInvitationsFastTrack)
   override lazy val govUkCommercialSoftware: String = sc.getString(Keys.govUkCommercialSoftware)
 
-  override lazy val host: String = sc.getString(Keys.host)
+  private lazy val host: String = sc.getString(Keys.host)
 
   override val vatAgentClientLookupServiceUrl: String = sc.getString(Keys.vatAgentClientLookupServiceUrl)
   override val vatAgentClientLookupServicePath: String = sc.getString(Keys.vatAgentClientLookupServicePath)
@@ -139,4 +139,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   }
 
   override def contactPreferencesUrl(vrn: String): String = contactPreferencesService + s"/contact-preferences/vat/vrn/$vrn"
+
+  override def feedbackUrl(redirect: String): String = s"${Keys.contactFrontendService}/contact/beta-feedback?service=$contactFormServiceIdentifier" +
+    s"&backUrl=${ContinueUrl(host + redirect).encodedUrl}"
 }

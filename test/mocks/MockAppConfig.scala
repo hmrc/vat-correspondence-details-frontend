@@ -23,7 +23,9 @@ import play.api.Mode.Mode
 import play.api.i18n.Lang
 import play.api.mvc.Call
 
-class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig {
+class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mode.Test) extends AppConfig {
+
+  override def feedbackUrl(redirect: String): String = "localhost/feedback"
   override val appName = ""
   override val signInUrl = ""
   override val contactFormServiceIdentifier = ""
@@ -40,7 +42,6 @@ class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig {
   override val unauthorisedSignOutUrl = "/sign-out"
   override val signInContinueUrl = ""
   override val agentInvitationsFastTrack: String = "/agent-invitations-frontend"
-  override val host = ""
   override val govUkCommercialSoftware: String = "https://www.gov.uk/guidance/use-software-to-submit-your-vat-returns"
   override val vatAgentClientLookupServicePath: String = ""
   override val vatAgentClientLookupServiceUrl: String = ""

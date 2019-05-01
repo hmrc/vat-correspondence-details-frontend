@@ -21,8 +21,3 @@ GET        /send-verification              controllers.VerifyEmailController.sen
 
 # email change successful
 GET        /email-address-confirmation     controllers.EmailChangeSuccessController.show
-
-# feedback
-GET        /feedback                       controllers.feedback.FeedbackController.show
-POST       /feedback                       controllers.feedback.FeedbackController.submit
-GET        /thankyou                       controllers.feedback.FeedbackController.thankyou
