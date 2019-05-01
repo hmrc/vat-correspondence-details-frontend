@@ -140,6 +140,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override def contactPreferencesUrl(vrn: String): String = contactPreferencesService + s"/contact-preferences/vat/vrn/$vrn"
 
-  override def feedbackUrl(redirect: String): String = s"${Keys.contactFrontendService}/contact/beta-feedback?service=$contactFormServiceIdentifier" +
+  override def feedbackUrl(redirect: String): String = s"$contactFrontendService/contact/beta-feedback?service=$contactFormServiceIdentifier" +
     s"&backUrl=${ContinueUrl(host + redirect).encodedUrl}"
 }
