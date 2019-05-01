@@ -41,8 +41,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
     mockAuditingService,
     mockContactPreferenceService,
     view,
-    mockConfig,
-    ec
+    mockConfig
   )
 
   "Calling the show action" when {

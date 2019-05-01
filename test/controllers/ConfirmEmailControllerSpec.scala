@@ -40,8 +40,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     mockAuditingService,
     mockVatSubscriptionService,
     injector.instanceOf[ConfirmEmailView],
-    mockConfig,
-    ec
+    mockConfig
   )
 
   val testVatNumber: String = "999999999"

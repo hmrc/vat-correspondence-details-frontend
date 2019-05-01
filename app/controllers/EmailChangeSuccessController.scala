@@ -34,8 +34,9 @@ class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
                                              auditService: AuditingService,
                                              contactPreferenceService: ContactPreferenceService,
                                              emailChangeSuccessView: EmailChangeSuccessView,
-                                             implicit val appConfig: AppConfig,
-                                             implicit val ec: ExecutionContext) extends BaseController(mcc) {
+                                             implicit val appConfig: AppConfig) extends BaseController(mcc) {
+
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def show: Action[AnyContent] = authenticate.async { implicit user =>
     if (appConfig.features.contactPreferencesEnabled()) {
