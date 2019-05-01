@@ -18,9 +18,9 @@ package connectors.httpParsers
 
 import models.errors.ErrorModel
 import models.customerInformation.UpdateEmailSuccess
-import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.LoggerUtil.{logDebug, logWarn}
 
 object UpdateEmailHttpParser {
 
@@ -31,25 +31,19 @@ object UpdateEmailHttpParser {
       response.status match {
         case OK => response.json.validate[UpdateEmailSuccess].fold(
           invalid => {
-            // $COVERAGE-OFF$
-            Logger.warn(s"[UpdateEmailHttpParser][read] - Invalid JSON: $invalid")
-            // $COVERAGE-ON$
+            logWarn(s"[UpdateEmailHttpParser][read] - Invalid JSON: $invalid")
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => {
-            // $COVERAGE-OFF$
-            Logger.debug("[UpdateEmailHttpParser][read] - Successfully parsed email update response.")
-            // $COVERAGE-ON$
+            logDebug("[UpdateEmailHttpParser][read] - Successfully parsed email update response.")
             Right(valid)
           }
         )
         case status =>
-          // $COVERAGE-OFF$
-          Logger.warn(
+          logWarn(
             s"[UpdateEmailHttpParser][read] - " +
               s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )
-          // $COVERAGE-ON$
           Left(ErrorModel(status, response.body))
       }
     }

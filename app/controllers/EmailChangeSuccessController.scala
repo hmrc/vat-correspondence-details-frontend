@@ -21,9 +21,9 @@ import audit.models.ContactPreferenceAuditModel
 import config.AppConfig
 import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.mvc._
 import services.ContactPreferenceService
+import utils.LoggerUtil.logWarn
 import views.html.EmailChangeSuccessView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +53,7 @@ class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
           Ok(emailChangeSuccessView(Some(preference.preference)))
 
         case Left(error) =>
-          Logger.warn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
+          logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
             s" Error code: ${error.status}, Error message: ${error.message}")
           Ok(emailChangeSuccessView())
 

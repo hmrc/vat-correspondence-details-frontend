@@ -18,9 +18,9 @@ package connectors.httpParsers
 
 import models.errors.ErrorModel
 import models.customerInformation.CustomerInformation
-import play.api.Logger
 import play.api.http.Status.{OK, INTERNAL_SERVER_ERROR}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.LoggerUtil.{logDebug, logWarn}
 
 object GetCustomerInfoHttpParser {
 
@@ -31,23 +31,17 @@ object GetCustomerInfoHttpParser {
       response.status match {
         case OK => response.json.validate[CustomerInformation].fold(
           invalid => {
-            // $COVERAGE-OFF$
-            Logger.warn(s"[GetCustomerInfoHttpParser][read] - Invalid JSON: $invalid")
-            // $COVERAGE-ON$
+            logWarn(s"[GetCustomerInfoHttpParser][read] - Invalid JSON: $invalid")
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => {
-            // $COVERAGE-OFF$
-            Logger.debug(s"Successfully parsed the get customer info JSON: $valid")
-            // $COVERAGE-ON$
+            logDebug(s"Successfully parsed the get customer info JSON: $valid")
             Right(valid)
           }
         )
         case status =>
-          // $COVERAGE-OFF$
-          Logger.warn(s"[GetCustomerInfoHttpParser][read]: Unexpected Response, Status $status returned,with " +
+          logWarn(s"[GetCustomerInfoHttpParser][read]: Unexpected Response, Status $status returned,with " +
             s"response: ${response.body}")
-          // $COVERAGE-ON$
           Left(ErrorModel(status, response.body))
       }
     }

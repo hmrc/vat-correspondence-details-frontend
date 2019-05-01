@@ -21,9 +21,9 @@ import connectors.httpParsers.ContactPreferenceHttpParser.ContactPreferenceReads
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import javax.inject.{Inject, Singleton}
 import models.contactPreferences.ContactPreference
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import utils.LoggerUtil.logDebug
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,9 +33,7 @@ class ContactPreferenceConnector @Inject()(val http: HttpClient,
 
   def getContactPreference(vrn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[ContactPreference]] = {
     val url: String = config.contactPreferencesUrl(vrn)
-    //$COVERAGE-OFF$
-    Logger.debug(s"[ContactPreferenceConnector][getContactPreference]: Calling contact preferences with URL - $url")
-    //$COVERAGE-ON$
+    logDebug(s"[ContactPreferenceConnector][getContactPreference]: Calling contact preferences with URL - $url")
     http.GET[HttpGetResult[ContactPreference]](url)(ContactPreferenceReads, hc, ec)
   }
 }

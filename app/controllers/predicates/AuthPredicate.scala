@@ -20,11 +20,11 @@ import javax.inject.{Inject, Singleton}
 import common.EnrolmentKeys
 import config.{AppConfig, ErrorHandler}
 import models.User
-import play.api.Logger
 import play.api.mvc._
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolments, NoActiveSession}
 import uk.gov.hmrc.auth.core.retrieve._
+import utils.LoggerUtil.{logDebug, logWarn}
 import views.html.errors.{NotSignedUpView, SessionTimeoutView}
 import views.html.errors.agent.{AgentJourneyDisabledView, UnauthorisedAgentView}
 
@@ -60,37 +60,37 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
           case (false, enrolments) => checkVatEnrolment(enrolments, block)
         }
       case _ =>
-        Logger.warn("[AuthPredicate][invokeBlock] - Missing affinity group")
+        logWarn("[AuthPredicate][invokeBlock] - Missing affinity group")
         Future.successful(errorHandler.showInternalServerError)
     } recover {
       case _: NoActiveSession =>
-        Logger.debug("[AuthPredicate][invokeBlock] - No active session, rendering Session Timeout view")
+        logDebug("[AuthPredicate][invokeBlock] - No active session, rendering Session Timeout view")
         Unauthorized(sessionTimeoutView())
 
       case _: AuthorisationException =>
-        Logger.warn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering standard error view")
+        logWarn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering standard error view")
         errorHandler.showInternalServerError
     }
   }
 
   private[AuthPredicate] def checkAgentEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
     if (enrolments.enrolments.exists(_.key == EnrolmentKeys.agentEnrolmentId)) {
-      Logger.debug("[AuthPredicate][checkAgentEnrolment] - Authenticating as agent")
+      logDebug("[AuthPredicate][checkAgentEnrolment] - Authenticating as agent")
       authenticateAsAgentWithClient.invokeBlock(request, block)
     }
     else {
-      Logger.debug(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment. Enrolments: $enrolments")
-      Logger.warn(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment.")
+      logDebug(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment. Enrolments: $enrolments")
+      logWarn(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment.")
       Future.successful(Forbidden(unauthorisedAgentView()))
     }
 
   private[AuthPredicate] def checkVatEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
     if (enrolments.enrolments.exists(_.key == EnrolmentKeys.vatEnrolmentId)) {
-      Logger.debug("[AuthPredicate][checkVatEnrolment] - Authenticated as principle")
+      logDebug("[AuthPredicate][checkVatEnrolment] - Authenticated as principle")
       block(User(enrolments))
     }
     else {
-      Logger.debug(s"[AuthPredicate][checkVatEnrolment] - Non-agent without HMRC-MTD-VAT enrolment. $enrolments")
+      logDebug(s"[AuthPredicate][checkVatEnrolment] - Non-agent without HMRC-MTD-VAT enrolment. $enrolments")
       Future.successful(Forbidden(notSignedUpView()))
     }
 }
