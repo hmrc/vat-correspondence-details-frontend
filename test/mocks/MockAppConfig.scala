@@ -42,7 +42,6 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val unauthorisedSignOutUrl = "/sign-out"
   override val signInContinueUrl = ""
   override val agentInvitationsFastTrack: String = "/agent-invitations-frontend"
-  override val host = ""
   override val govUkCommercialSoftware: String = "https://www.gov.uk/guidance/use-software-to-submit-your-vat-returns"
   override val vatAgentClientLookupServicePath: String = ""
   override val vatAgentClientLookupServiceUrl: String = ""

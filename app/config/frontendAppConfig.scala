@@ -49,7 +49,6 @@ trait AppConfig extends ServicesConfig {
   val signInContinueUrl: String
   val agentInvitationsFastTrack: String
   val govUkCommercialSoftware: String
-  val host: String
   val vatAgentClientLookupServiceUrl: String
   val vatAgentClientLookupServicePath: String
   val features: Features
@@ -120,7 +119,7 @@ class FrontendAppConfig @Inject()(val runModeConfiguration: Configuration, envir
   override lazy val agentInvitationsFastTrack: String = getString(Keys.agentInvitationsFastTrack)
   override lazy val govUkCommercialSoftware: String = getString(Keys.govUkCommercialSoftware)
 
-  override lazy val host: String = getString(Keys.host)
+  private lazy val host: String = getString(Keys.host)
 
   override val vatAgentClientLookupServiceUrl: String = getString(Keys.vatAgentClientLookupServiceUrl)
   override val vatAgentClientLookupServicePath: String = getString(Keys.vatAgentClientLookupServicePath)
