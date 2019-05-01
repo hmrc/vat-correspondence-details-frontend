@@ -17,21 +17,20 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import config.AppConfig
-import play.api.i18n.{Lang, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.language.LanguageUtils
+import play.api.i18n.Lang
+import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
 
 @Singleton
-class LanguageController @Inject()(val appConfig: AppConfig, implicit val messagesApi: MessagesApi) extends BaseController {
+class LanguageController @Inject()(val appConfig: AppConfig,
+                                   override val mcc: MessagesControllerComponents) extends BaseController(mcc) {
 
   def languageMap: Map[String, Lang] = appConfig.languageMap
 
   def switchToLanguage(language: String): Action[AnyContent] = Action { implicit request =>
-    val lang = languageMap.getOrElse(language, LanguageUtils.getCurrentLang)
+    val lang = languageMap.getOrElse(language, Lang("en"))
     val redirectURL = request.headers.get(REFERER).getOrElse(appConfig.manageVatSubscriptionServicePath)
 
-    Redirect(redirectURL).withLang(Lang.apply(lang.code)).flashing(LanguageUtils.FlashWithSwitchIndicator)
+    Redirect(redirectURL).withLang(Lang.apply(lang.code)).flashing(Flash(Map("switching-language" -> "true")))
   }
 }

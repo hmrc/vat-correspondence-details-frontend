@@ -42,6 +42,8 @@ class InflightPPOBPredicateSpec extends MockAuth {
     mockVatSubscriptionService,
     mockErrorHandler,
     messagesApi,
+    mcc,
+    ppobChangePendingView,
     mockConfig,
     ec
   )
@@ -63,7 +65,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
 
         "show the 'PPOB change pending' error page" in {
-          document.title shouldBe "We are reviewing your request"
+          messages(document.title) shouldBe "We are reviewing your request"
         }
 
         "not call the VatSubscriptionService" in {
@@ -120,7 +122,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
 
         "show the 'PPOB change pending' error page" in {
-          document.title shouldBe "We are reviewing your request"
+          messages(document.title) shouldBe "We are reviewing your request"
         }
       }
 
@@ -181,7 +183,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
 
         "show the standard error page" in {
-          document.title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+          messages(document.title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
         }
       }
 

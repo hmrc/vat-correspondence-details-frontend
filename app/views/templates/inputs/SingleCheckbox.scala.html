@@ -14,19 +14,14 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@this()
 
-@views.html.main_template(title = messages("unauthorised.title"), bodyClasses = None, feedbackOnSignOut = false) {
+@(field: Field, label: String)(implicit messages: Messages)
 
-    <h1>@messages("unauthorised.title")</h1>
+@value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
 
-    <p>@messages("unauthorised.instructions")
-        <a href="@appConfig.govUkCommercialSoftware">@messages("unauthorised.instructions2")</a>.
-    </p>
+<div class="multiple-choice">
+    <input id="@{field.name}" name="@{field.name}" type="checkbox" value="true" @if(value == "true"){ checked }>
+    <label for="@{field.name}">@label</label>
+</div>
 
-    <a href="@routes.SignOutController.signOut(feedbackOnSignOut = false)"
-       class="button"
-       role="button">
-        @messages("base.signOut")
-    </a>
-}

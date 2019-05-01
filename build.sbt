@@ -22,21 +22,22 @@ import uk.gov.hmrc.{SbtArtifactory, SbtAutoBuildPlugin}
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "4.11.0"
-val govTemplateVersion         = "5.35.0-play-25"
-val playPartialsVersion        = "6.9.0-play-25"
-val authClientVersion          = "2.20.0-play-25"
-val playUiVersion              = "7.39.0-play-25"
+val bootstrapPlayVersion       = "0.39.0"
+val govTemplateVersion         = "5.35.0-play-26"
+val playPartialsVersion        = "6.9.0-play-26"
+val authClientVersion          = "2.20.0-play-26"
+val playUiVersion              = "7.39.0-play-26"
 val playLanguageVersion        = "3.4.0"
 val playWhiteListFilterVersion = "2.0.0"
-val scalaTestPlusVersion       = "2.0.1"
-val hmrcTestVersion            = "3.8.0-play-25"
-val scalatestVersion           = "3.0.1"
+val scalaTestPlusVersion       = "3.1.2"
+val hmrcTestVersion            = "3.8.0-play-26"
+val scalatestVersion           = "3.0.7"
 val pegdownVersion             = "1.6.0"
 val jsoupVersion               = "1.10.3"
 val mockitoVersion             = "2.7.17"
 val scalaMockVersion           = "3.6.0"
-val wiremockVersion            = "2.6.0"
+val wiremockVersion            = "2.23.2"
+val playJsonJodaVersion        = "2.6.0-RC1"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
@@ -70,16 +71,17 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % bootstrapPlayVersion,
+  "uk.gov.hmrc" %% "bootstrap-play-26" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "uk.gov.hmrc" %% "auth-client" % authClientVersion,
-  "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
-  "uk.gov.hmrc" %% "play-whitelist-filter" % playWhiteListFilterVersion
+  "uk.gov.hmrc" %% "play-whitelist-filter" % playWhiteListFilterVersion,
+  "com.typesafe.play" %% "play-json-joda" % playJsonJodaVersion
 )
 
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
+  "uk.gov.hmrc" %% "bootstrap-play-26" % bootstrapPlayVersion % scope classifier "tests",
   "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
   "org.scalatest" %% "scalatest" % scalatestVersion % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
@@ -88,7 +90,7 @@ def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
-  "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope
+  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {
@@ -114,8 +116,7 @@ lazy val microservice = Project(appName, file("."))
     scalaVersion := "2.11.11",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    routesGenerator := InjectedRoutesGenerator
+    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)

@@ -17,6 +17,7 @@
 package controllers
 
 import play.api.i18n.I18nSupport
+import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-trait BaseController extends FrontendController with I18nSupport
+abstract class BaseController(val mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport

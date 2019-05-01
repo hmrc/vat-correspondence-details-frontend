@@ -26,6 +26,8 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.ConfirmEmailView
+
 import scala.concurrent.Future
 
 class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
@@ -33,17 +35,18 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
   object TestConfirmEmailController extends ConfirmEmailController(
     mockAuthPredicate,
     mockInflightPPOBPredicate,
-    messagesApi,
+    mcc,
     mockErrorHandler,
     mockAuditingService,
     mockVatSubscriptionService,
+    injector.instanceOf[ConfirmEmailView],
     mockConfig,
     ec
   )
 
   val testVatNumber: String = "999999999"
 
-  lazy val testGetRequest = FakeRequest("GET", "/confirm-email")
+  lazy val testGetRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/confirm-email")
 
   "Calling the extractEmail function in ConfirmEmailController" when {
     "there is an authenticated request from a user with an email in session" should {
@@ -96,7 +99,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
         val result = TestConfirmEmailController.show(request)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
   }
@@ -140,7 +143,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
 
@@ -153,7 +156,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
 
@@ -180,7 +183,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
   }

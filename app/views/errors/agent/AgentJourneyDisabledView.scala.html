@@ -14,13 +14,19 @@
  * limitations under the License.
  *@
 
+@this(mainTemplate: MainTemplate)
+
 @()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@views.html.main_template(title = messages("ppobChangePending.title")) {
+@mainTemplate(title = messages("agentJourneyDisabled.title"), feedbackOnSignOut = false) {
 
-  <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
+  <h1>@messages("agentJourneyDisabled.title")</h1>
+  <p>@messages("agentJourneyDisabled.summary")</p>
+  <p>@messages("agentJourneyDisabled.instructions")</p>
 
-  <h1 class="heading-large">@messages("ppobChangePending.heading")</h1>
-  <p>@messages("ppobChangePending.infoOne")</p>
-  <p>@messages("ppobChangePending.infoTwo")</p>
+  <a data-journey-click="unauthorised:sign-out:agent-journey-disabled"
+     class="button"
+     href="@controllers.routes.SignOutController.signOut(feedbackOnSignOut = false)">
+    @messages("base.signOut")
+  </a>
 }

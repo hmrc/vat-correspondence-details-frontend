@@ -17,27 +17,33 @@
 package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
-
 import common.EnrolmentKeys
 import config.{AppConfig, ErrorHandler}
 import models.User
 import play.api.Logger
-import play.api.i18n.MessagesApi
-import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
+import play.api.mvc._
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolments, NoActiveSession}
 import uk.gov.hmrc.auth.core.retrieve._
+import views.html.errors.{NotSignedUpView, SessionTimeoutView}
+import views.html.errors.agent.{AgentJourneyDisabledView, UnauthorisedAgentView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
-                              val messagesApi: MessagesApi,
+                              override val mcc: MessagesControllerComponents,
                               val errorHandler: ErrorHandler,
                               val authenticateAsAgentWithClient: AuthoriseAsAgentWithClient,
+                              sessionTimeoutView: SessionTimeoutView,
+                              agentJourneyDisabledView: AgentJourneyDisabledView,
+                              unauthorisedAgentView: UnauthorisedAgentView,
+                              notSignedUpView: NotSignedUpView,
                               implicit val appConfig: AppConfig,
-                              implicit val ec: ExecutionContext)
-  extends AuthBasePredicate with ActionBuilder[User] with ActionFunction[Request, User] {
+                              override implicit val executionContext: ExecutionContext)
+  extends AuthBasePredicate(mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] {
+
+  override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
   override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
 
@@ -49,7 +55,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
             if (appConfig.features.agentAccessEnabled()) {
               checkAgentEnrolment(enrolments, block)
             } else {
-              Future.successful(Unauthorized(views.html.errors.agent.agentJourneyDisabled()))
+              Future.successful(Unauthorized(agentJourneyDisabledView()))
             }
           case (false, enrolments) => checkVatEnrolment(enrolments, block)
         }
@@ -59,7 +65,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
     } recover {
       case _: NoActiveSession =>
         Logger.debug("[AuthPredicate][invokeBlock] - No active session, rendering Session Timeout view")
-        Unauthorized(views.html.errors.sessionTimeout())
+        Unauthorized(sessionTimeoutView())
 
       case _: AuthorisationException =>
         Logger.warn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering standard error view")
@@ -75,7 +81,7 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
     else {
       Logger.debug(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment. Enrolments: $enrolments")
       Logger.warn(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment.")
-      Future.successful(Forbidden(views.html.errors.agent.unauthorisedAgent()))
+      Future.successful(Forbidden(unauthorisedAgentView()))
     }
 
   private[AuthPredicate] def checkVatEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
@@ -85,7 +91,6 @@ class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
     }
     else {
       Logger.debug(s"[AuthPredicate][checkVatEnrolment] - Non-agent without HMRC-MTD-VAT enrolment. $enrolments")
-      Future.successful(Forbidden(views.html.errors.not_signed_up()))
+      Future.successful(Forbidden(notSignedUpView()))
     }
 }
-

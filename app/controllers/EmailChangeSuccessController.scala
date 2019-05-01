@@ -22,18 +22,20 @@ import config.AppConfig
 import controllers.predicates.AuthPredicate
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.ContactPreferenceService
+import views.html.EmailChangeSuccessView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
-                                             val messagesApi: MessagesApi,
+                                             override val mcc: MessagesControllerComponents,
                                              auditService: AuditingService,
                                              contactPreferenceService: ContactPreferenceService,
-                                             implicit val appConfig: AppConfig) extends BaseController {
+                                             emailChangeSuccessView: EmailChangeSuccessView,
+                                             implicit val appConfig: AppConfig,
+                                             implicit val ec: ExecutionContext) extends BaseController(mcc) {
 
   def show: Action[AnyContent] = authenticate.async { implicit user =>
     if (appConfig.features.contactPreferencesEnabled()) {
@@ -48,17 +50,17 @@ class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
             )
           )
 
-          Ok(views.html.email_change_success(Some(preference.preference)))
+          Ok(emailChangeSuccessView(Some(preference.preference)))
 
         case Left(error) =>
           Logger.warn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
             s" Error code: ${error.status}, Error message: ${error.message}")
-          Ok(views.html.email_change_success())
+          Ok(emailChangeSuccessView())
 
       }
 
     } else {
-      Future.successful(Ok(views.html.email_change_success()))
+      Future.successful(Ok(emailChangeSuccessView()))
     }
   }
 }

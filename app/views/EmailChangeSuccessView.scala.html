@@ -16,9 +16,11 @@
 
 @import models.contactPreferences.ContactPreference
 
+@this(mainTemplate: MainTemplate)
+
 @(preference: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@main_template(title = messages("emailChangeSuccess.title"), bodyClasses = None) {
+@mainTemplate(title = messages("emailChangeSuccess.title")) {
 
   <div class="govuk-box-highlight">
     <h1 class="heading-xlarge" data-journey="email-address:view:change-email-success">@messages("emailChangeSuccess.heading")</h1>

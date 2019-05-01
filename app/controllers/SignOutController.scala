@@ -18,12 +18,11 @@ package controllers
 
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 @Singleton
-class SignOutController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig)
-  extends BaseController {
+class SignOutController @Inject()(override val mcc: MessagesControllerComponents,
+                                  implicit val appConfig: AppConfig) extends BaseController(mcc) {
 
   def signOut(feedbackOnSignOut: Boolean): Action[AnyContent] = Action { implicit request =>
     val redirectUrl: String = if(feedbackOnSignOut) appConfig.feedbackSignOutUrl else appConfig.unauthorisedSignOutUrl

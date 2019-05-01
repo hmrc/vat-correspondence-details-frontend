@@ -19,8 +19,11 @@ package views.errors
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
+import views.html.errors.PPOBChangePendingView
 
 class PPOBChangePendingViewSpec extends ViewBaseSpec {
+
+  val injectedView: PPOBChangePendingView = injector.instanceOf[PPOBChangePendingView]
 
   object Selectors {
     val heading = "h1"
@@ -31,8 +34,7 @@ class PPOBChangePendingViewSpec extends ViewBaseSpec {
 
   "The PPOB change pending view" should {
 
-    lazy val view = views.html.errors.ppobChangePending()(request, messages, mockConfig)
-    lazy implicit val document: Document = Jsoup.parse(view.body)
+    lazy implicit val document: Document = Jsoup.parse(injectedView().body)
 
     "have the correct title" in {
       document.title shouldBe "We are reviewing your request"

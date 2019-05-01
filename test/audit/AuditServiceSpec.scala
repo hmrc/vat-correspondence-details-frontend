@@ -17,20 +17,19 @@
 package audit
 
 import audit.models.{AuditModel, ExtendedAuditModel}
-import config.FrontendAuditConnector
 import controllers.ControllerBaseSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuditServiceSpec extends ControllerBaseSpec {
 
-  lazy val mockAuditConnector: FrontendAuditConnector = mock[FrontendAuditConnector]
+  lazy val mockAuditConnector: AuditConnector = mock[AuditConnector]
   val auditingService = new AuditingService(mockConfig, mockAuditConnector)
 
   "The Auditing Service" should {

@@ -24,15 +24,17 @@ import mocks.MockEmailVerificationService
 import models.User
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
+import views.html.VerifyEmailView
 
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyEmailController extends VerifyEmailController(
     mockAuthPredicate,
     mockInflightPPOBPredicate,
-    messagesApi,
+    mcc,
     mockEmailVerificationService,
     mockErrorHandler,
+    injector.instanceOf[VerifyEmailView],
     mockConfig,
     ec
   )
@@ -187,7 +189,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       }
 
       "show the internal server error page" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
   }

@@ -23,8 +23,11 @@ import common.EnrolmentKeys
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
+import views.html.errors.agent.NotAuthorisedForClientView
 
 class NotAuthorisedForClientViewSpec extends ViewBaseSpec {
+
+  val injectedView: NotAuthorisedForClientView = injector.instanceOf[NotAuthorisedForClientView]
 
   "Rendering the unauthorised page" should {
 
@@ -42,7 +45,7 @@ class NotAuthorisedForClientViewSpec extends ViewBaseSpec {
       val button = "#content .button"
     }
 
-    lazy val view = views.html.errors.agent.notAuthorisedForClient(vrn)(request, messages, mockConfig)
+    lazy val view = injectedView(vrn)(request, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     s"have the correct document title" in {

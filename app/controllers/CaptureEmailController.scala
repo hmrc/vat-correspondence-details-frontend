@@ -23,21 +23,22 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import forms.EmailForm._
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.VatSubscriptionService
+import views.html.CaptureEmailView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
                                        val inflightCheck: InFlightPPOBPredicate,
-                                       val messagesApi: MessagesApi,
+                                       override val mcc: MessagesControllerComponents,
                                        val vatSubscriptionService: VatSubscriptionService,
                                        val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
+                                       captureEmailView: CaptureEmailView,
                                        implicit val appConfig: AppConfig,
-                                       implicit val ec: ExecutionContext) extends BaseController {
+                                       implicit val ec: ExecutionContext) extends BaseController(mcc) {
 
   def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
@@ -60,7 +61,7 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
     } yield {
       validation match {
         case Some(valEmail) =>
-          Ok(views.html.capture_email(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false))
+          Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false))
           .addingToSession(SessionKeys.validationEmailKey -> valEmail)
         case _ => errorHandler.showInternalServerError
       }
@@ -74,8 +75,8 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
     (validationEmail, prepopulationEmail) match {
       case (Some(validation), prepopulation) => emailForm(validation).bindFromRequest.fold(
         errorForm => {
-          val notChanged: Boolean = errorForm.errors.head.message == messagesApi.apply("captureEmail.error.notChanged")
-          Future.successful(BadRequest(views.html.capture_email(errorForm, notChanged)))
+          val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
+          Future.successful(BadRequest(captureEmailView(errorForm, notChanged)))
         },
         email     => {
           auditService.extendedAudit(

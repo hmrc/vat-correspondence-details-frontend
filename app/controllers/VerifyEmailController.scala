@@ -20,28 +20,28 @@ import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
-
 import models.User
 import play.api.Logger
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.EmailVerificationService
+import views.html.VerifyEmailView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
                                       val inflightCheck: InFlightPPOBPredicate,
-                                      val messagesApi: MessagesApi,
+                                      override val mcc: MessagesControllerComponents,
                                       val emailVerificationService: EmailVerificationService,
                                       val errorHandler: ErrorHandler,
+                                      verifyEmailView: VerifyEmailView,
                                       implicit val appConfig: AppConfig,
-                                      implicit val ec: ExecutionContext) extends BaseController {
+                                      implicit val ec: ExecutionContext) extends BaseController(mcc) {
 
   def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
-      case Some(email) => Future.successful(Ok(views.html.verify_email(email)))
+      case Some(email) => Future.successful(Ok(verifyEmailView(email)))
       case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
     }
   }

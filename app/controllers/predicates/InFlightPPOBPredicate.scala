@@ -17,17 +17,17 @@
 package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
-
 import common.SessionKeys.inFlightContactDetailsChangeKey
 import config.{AppConfig, ErrorHandler}
 import models.User
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import play.api.mvc.Results.{Ok, Redirect}
 import services.VatSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import views.html.errors.PPOBChangePendingView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,8 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionService,
                                       val errorHandler: ErrorHandler,
                                       val messagesApi: MessagesApi,
+                                      val mcc: MessagesControllerComponents,
+                                      ppobChangePendingView: PPOBChangePendingView,
                                       implicit val appConfig: AppConfig,
-                                      implicit val ec: ExecutionContext)
+                                      override implicit val executionContext: ExecutionContext)
   extends ActionRefiner[User, User] with I18nSupport {
 
   override def refine[A](request: User[A]): Future[Either[Result, User[A]]] = {
@@ -45,7 +47,7 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
     implicit val req: User[A] = request
 
     req.session.get(inFlightContactDetailsChangeKey) match {
-      case Some("true") => Future.successful(Left(Ok(views.html.errors.ppobChangePending())))
+      case Some("true") => Future.successful(Left(Ok(ppobChangePendingView())))
       case Some("false") => Future.successful(Right(req))
       case Some(_) => Future.successful(Left(errorHandler.showInternalServerError))
       case None => getCustomerInfoCall(req.vrn)
@@ -62,7 +64,7 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
               case (false, true) =>
                 Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight PPOB address change. Rendering graceful error page.")
-                Left(Ok(views.html.errors.ppobChangePending()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
+                Left(Ok(ppobChangePendingView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
               case (_, false) =>
                 Logger.warn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight email address change. Redirecting to Manage VAT homepage")

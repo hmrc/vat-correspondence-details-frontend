@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import _root_.services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
@@ -29,6 +29,8 @@ import utils.TestUtil
 import assets.BaseTestConstants._
 import models.User
 import play.api.mvc.Result
+import views.html.errors.{NotSignedUpView, PPOBChangePendingView, SessionTimeoutView}
+import views.html.errors.agent.{AgentJourneyDisabledView, NotAuthorisedForClientView, UnauthorisedAgentView}
 
 import scala.concurrent.Future
 
@@ -39,6 +41,13 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
     reset(mockAuthConnector)
     mockIndividualAuthorised()
   }
+
+  val sessionTimeoutView: SessionTimeoutView = injector.instanceOf[SessionTimeoutView]
+  val agentJourneyDisabledView: AgentJourneyDisabledView = injector.instanceOf[AgentJourneyDisabledView]
+  val ppobChangePendingView: PPOBChangePendingView = injector.instanceOf[PPOBChangePendingView]
+  val notAuthorisedForClientView: NotAuthorisedForClientView = injector.instanceOf[NotAuthorisedForClientView]
+  val unauthorisedAgentView: UnauthorisedAgentView = injector.instanceOf[UnauthorisedAgentView]
+  val notSignedUpView: NotSignedUpView = injector.instanceOf[NotSignedUpView]
 
   lazy val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
@@ -54,7 +63,10 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
     new AuthoriseAsAgentWithClient(
       mockEnrolmentsAuthService,
       mockErrorHandler,
-      messagesApi,
+      mcc,
+      sessionTimeoutView,
+      notAuthorisedForClientView,
+      agentJourneyDisabledView,
       mockConfig,
       ec
     )
@@ -62,9 +74,13 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
   val mockAuthPredicate: AuthPredicate =
     new AuthPredicate(
       mockEnrolmentsAuthService,
-      messagesApi,
+      mcc,
       mockErrorHandler,
       mockAuthAsAgentWithClient,
+      sessionTimeoutView,
+      agentJourneyDisabledView,
+      unauthorisedAgentView,
+      notSignedUpView,
       mockConfig,
       ec
     )
@@ -75,6 +91,8 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       mockVatSubscriptionService,
       mockErrorHandler,
       messagesApi,
+      mcc,
+      ppobChangePendingView,
       mockConfig,
       ec
     ) {

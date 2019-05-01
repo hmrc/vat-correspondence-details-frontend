@@ -18,17 +18,15 @@
 @import common.EnrolmentKeys
 @import java.net.URLEncoder
 
+@this(mainTemplate: MainTemplate)
+
 @(vrn: String)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
 @postToInvitations = @{
     s"${appConfig.agentInvitationsFastTrack}?continue=${URLEncoder.encode(appConfig.manageVatSubscriptionServicePath, "UTF-8")}"
 }
 
-@views.html.main_template(
-    title = messages("unauthorised.agentForClient.title"),
-    bodyClasses = None,
-    feedbackOnSignOut = false
-) {
+@mainTemplate(title = messages("unauthorised.agentForClient.title"), feedbackOnSignOut = false) {
 
     <h1>@messages("unauthorised.agentForClient.title")</h1>
 

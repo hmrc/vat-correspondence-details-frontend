@@ -16,10 +16,13 @@
 
 @import config.ConfigKeys
 @import helper.CSRF
+@import templates.inputs.SingleCheckbox
+
+@this(mainTemplate: MainTemplate, singleCheckbox: SingleCheckbox)
 
 @(form: Form[FeatureSwitchModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@views.html.main_template(title = "Feature switches", bodyClasses = None) {
+@mainTemplate(title = "Feature switches") {
 
   @helper.form(action = testOnly.controllers.routes.FeatureSwitchController.submitFeatureSwitch) {
     @CSRF.formField
@@ -29,11 +32,11 @@
         <legend>
           <h1 class="heading-medium">Features</h1>
         </legend>
-        @views.html.templates.inputs.singleCheckbox(form(ConfigKeys.agentAccessFeature), "Agent Access")
-        @views.html.templates.inputs.singleCheckbox(form(ConfigKeys.emailVerificationFeature), "Email Verification")
-        @views.html.templates.inputs.singleCheckbox(form(ConfigKeys.stubContactPreferencesFeature), "Stub Contact Preferences")
-        @views.html.templates.inputs.singleCheckbox(form(ConfigKeys.contactPreferencesFeature), "Contact Preferences")
-        @views.html.templates.inputs.singleCheckbox(form(ConfigKeys.languageSelectorFeature), "Language Selector")
+        @singleCheckbox(form(ConfigKeys.agentAccessFeature), "Agent Access")
+        @singleCheckbox(form(ConfigKeys.emailVerificationFeature), "Email Verification")
+        @singleCheckbox(form(ConfigKeys.stubContactPreferencesFeature), "Stub Contact Preferences")
+        @singleCheckbox(form(ConfigKeys.contactPreferencesFeature), "Contact Preferences")
+        @singleCheckbox(form(ConfigKeys.languageSelectorFeature), "Language Selector")
       </fieldset>
     </div>
 

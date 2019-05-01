@@ -15,7 +15,9 @@
  *@
 
 @import config.AppConfig
-@import helpers.accordionHelper
+@import helpers.AccordionHelper
+
+@this(mainTemplate: MainTemplate, accordionHelper: AccordionHelper)
 
 @(email: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -30,7 +32,7 @@
     </p>
 }
 
-@main_template(title = messages("verifyEmail.title"), bodyClasses = None) {
+@mainTemplate(title = messages("verifyEmail.title"), bodyClasses = None) {
 
     <h1 class="heading-large">@messages("verifyEmail.heading")</h1>
 

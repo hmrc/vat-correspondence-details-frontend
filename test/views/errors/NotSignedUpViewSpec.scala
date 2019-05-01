@@ -19,8 +19,11 @@ package views.errors
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
+import views.html.errors.NotSignedUpView
 
 class NotSignedUpViewSpec extends ViewBaseSpec {
+
+  val injectedView: NotSignedUpView = injector.instanceOf[NotSignedUpView]
 
   object Selectors {
     val heading = "#content h1"
@@ -31,8 +34,7 @@ class NotSignedUpViewSpec extends ViewBaseSpec {
 
   "Rendering the unauthorised page" should {
 
-    lazy val view = views.html.errors.not_signed_up()(request, messages, mockConfig)
-    lazy implicit val document: Document = Jsoup.parse(view.body)
+    lazy implicit val document: Document = Jsoup.parse(injectedView().body)
 
     "have the correct document title" in {
       document.title shouldBe "You can not use this service yet"
