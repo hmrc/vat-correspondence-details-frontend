@@ -122,7 +122,7 @@
   <div class="beta-banner">
     <p>
       <strong id="phase" class="phase-tag">@messages("banner.phaseName")</strong>
-      <span>@messages("banner.newService") <a id="beta-banner-feedback" href=""@appConfig.feedbackUrl(request.session.get(HeaderNames.REFERER).getOrElse("/"))"">
+      <span>@messages("banner.newService") <a id="beta-banner-feedback" href="@appConfig.feedbackUrl(request.uri)">
         @messages("banner.feedback")</a> @messages("banner.feedbackImprove")
       </span>
     </p>
