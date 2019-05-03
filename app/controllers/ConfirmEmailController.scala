@@ -24,9 +24,10 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
 import models.User
 import models.customerInformation.UpdateEmailSuccess
+import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
-import utils.LoggerUtil.logInfo
+import utils.LoggerUtil.{logInfo, logWarn}
 import views.html.ConfirmEmailView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,8 +61,8 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
         vatSubscriptionService.updateEmail(user.vrn, email) map {
           case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
             Redirect(routes.VerifyEmailController.sendVerification())
-          case Right(UpdateEmailSuccess(_)) =>
 
+          case Right(UpdateEmailSuccess(_)) =>
             auditService.extendedAudit(
               ChangedEmailAddressAuditModel(
                 user.session.get(validationEmailKey),
@@ -71,13 +72,21 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
                 user.arn
               )
             )
+            Redirect(routes.EmailChangeSuccessController.show())
+              .removingFromSession(emailKey, validationEmailKey, inFlightContactDetailsChangeKey)
 
-            Redirect(routes.EmailChangeSuccessController.show()).removingFromSession(emailKey, validationEmailKey, inFlightContactDetailsChangeKey)
-          case Left(_) => errorHandler.showInternalServerError
+          case Left(ErrorModel(CONFLICT, _)) =>
+            logWarn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
+              "already in progress. Redirecting user to manage-vat overview page.")
+            Redirect(appConfig.manageVatSubscriptionServicePath)
+              .addingToSession(inFlightContactDetailsChangeKey -> "true")
+
+          case Left(_) =>
+            errorHandler.showInternalServerError
         }
 
       case _ =>
-        logInfo("[ConfirmEmailController][updateEmailAddress] no email address found in session")
+        logInfo("[ConfirmEmailController][updateEmailAddress] - No email address found in session")
         Future.successful(Redirect(controllers.routes.CaptureEmailController.show()))
     }
   }

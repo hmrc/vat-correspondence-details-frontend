@@ -16,13 +16,14 @@
 
 package controllers
 
+import assets.BaseTestConstants.vrn
 import common.SessionKeys
 import models.User
 import models.customerInformation.UpdateEmailSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, CONFLICT}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -43,46 +44,38 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     mockConfig
   )
 
-  val testVatNumber: String = "999999999"
-
-  lazy val testGetRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/confirm-email")
+  lazy val requestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
+    request.withSession(SessionKeys.emailKey -> testEmail)
 
   "Calling the extractEmail function in ConfirmEmailController" when {
+
     "there is an authenticated request from a user with an email in session" should {
 
       "result in an email address being retrieved if there is an email" in {
-
         mockIndividualAuthorised()
+        val user = User[AnyContent](vrn, active = true, None)(requestWithEmail)
 
-        val request: FakeRequest[AnyContentAsEmpty.type] = testGetRequest.withSession(
-         SessionKeys.emailKey -> testEmail)
-
-        val user = User[AnyContent](testVatNumber, active = true, None)(request)
         TestConfirmEmailController.extractSessionEmail(user) shouldBe Some(testEmail)
       }
     }
   }
 
   "Calling the show action in ConfirmEmailController" when {
+
     "there is an email in session" should {
 
       "show the Confirm Email page" in {
-
         mockIndividualAuthorised()
-
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.show(request)
+        val result = TestConfirmEmailController.show(requestWithEmail)
 
         status(result) shouldBe Status.OK
       }
     }
 
     "there isn't an email in session" should {
+
       "take the user to enter a new email address" in {
-
         mockIndividualAuthorised()
-
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> "")
         val result = TestConfirmEmailController.show(request)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -91,12 +84,11 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     }
 
     "the user is not authorised" should {
+
       "show an internal server error" in {
-
         mockUnauthorised()
+        val result = TestConfirmEmailController.show(requestWithEmail)
 
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.show(request)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
@@ -105,66 +97,63 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
   "Calling the updateEmailAddress() action in ConfirmEmailController" when {
 
-    "there is a verified email in session and the email has been updated successfully" should {
-      "show the email changed success page" in {
+    "there is a verified email in session" when {
 
-        mockIndividualAuthorised()
-        mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess("success"))))
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress()(request)
+      "the email has been updated successfully" should {
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-address-confirmation")
+        "show the email changed success page" in {
+          mockIndividualAuthorised()
+          mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdateEmailSuccess("success"))))
+          val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
 
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-address-confirmation")
+        }
+      }
+
+      "there was a conflict returned when trying to update the email address" should {
+
+        "redirect the user to the manage-vat page " in {
+          mockIndividualAuthorised()
+          mockUpdateEmailAddress(vrn, testEmail)(
+            Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
+          val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+        }
+      }
+
+      "there was an expected error trying to update the email address" should {
+
+        "return an Internal Server Error" in {
+          mockIndividualAuthorised()
+          mockUpdateEmailAddress(vrn, testEmail)(
+            Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
+          val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        }
       }
     }
 
     "there is a non-verified email in session" should {
-      "redirect the user to the send email verification pagee" in {
 
+      "redirect the user to the send email verification page" in {
         mockIndividualAuthorised()
-        mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Right(UpdateEmailSuccess(""))))
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress()(request)
+        mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdateEmailSuccess(""))))
+        val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-verification")
-
-      }
-    }
-
-    "there is a verified email in session but email could not be updated because the user could not be found" should {
-      "throw an Internal Server Exception" in {
-
-        mockIndividualAuthorised()
-        mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(NOT_FOUND, "Couldn't find a user with VRN provided"))))
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress()(request)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
-      }
-    }
-
-    "there is a verified email in session but there was an error trying to update the email address" should {
-      "throw an Internal Server Exception" in {
-
-        mockIndividualAuthorised()
-        mockUpdateEmailAddress(testVatNumber, testEmail)(Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress()(request)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
       }
     }
 
     "there isn't an email in session" should {
+
       "take the user to the capture email address page" in {
-
         mockIndividualAuthorised()
-
-        val request = testGetRequest
         val result = TestConfirmEmailController.updateEmailAddress()(request)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -174,12 +163,10 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     }
 
     "the user is not authorised" should {
-      "show an internal server error" in {
 
+      "return an Internal Server Error" in {
         mockUnauthorised()
-
-        val request = testGetRequest.withSession(SessionKeys.emailKey -> testEmail)
-        val result = TestConfirmEmailController.updateEmailAddress()(request)
+        val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"

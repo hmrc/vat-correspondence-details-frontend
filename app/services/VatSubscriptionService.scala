@@ -48,11 +48,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     emailVerificationService.isEmailVerified(email) flatMap {
       case Some(true) =>
         this.getCustomerInfo(vrn) flatMap {
-          case Right(customerInfo) =>
-            connector.updateEmail(vrn, buildEmailUpdateModel(email, customerInfo.ppob)) map {
-              case Right(success) => Right(success)
-              case Left(error) => Left(error)
-            }
+          case Right(customerInfo) => connector.updateEmail(vrn, buildEmailUpdateModel(email, customerInfo.ppob))
           case Left(error) => Future.successful(Left(error))
         }
       case Some(false) => Future.successful(Right(UpdateEmailSuccess("")))

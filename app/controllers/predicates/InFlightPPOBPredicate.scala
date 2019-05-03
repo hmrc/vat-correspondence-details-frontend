@@ -20,7 +20,6 @@ import javax.inject.{Inject, Singleton}
 import common.SessionKeys.inFlightContactDetailsChangeKey
 import config.{AppConfig, ErrorHandler}
 import models.User
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import play.api.mvc.Results.{Ok, Redirect}
