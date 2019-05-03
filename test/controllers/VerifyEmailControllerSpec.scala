@@ -17,7 +17,6 @@
 package controllers
 
 import common.SessionKeys
-import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
 import mocks.MockEmailVerificationService
@@ -41,8 +40,6 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   val testVatNumber: String = "999999999"
   val testContinueUrl: String = "/someReturnUrl/verified"
 
-  lazy val testEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.emailKey -> testEmail)
   lazy val emptyEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(SessionKeys.emailKey -> "")
 
@@ -52,7 +49,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "there is an authenticated request from a user with an email in session" should {
 
       "result in an email address being retrieved if there is an email" in {
-        val userWithSession = User[AnyContent](testVatNumber)(testEmailSessionRequest)
+        val userWithSession = User[AnyContent](testVatNumber)(requestWithEmail)
         TestVerifyEmailController.extractSessionEmail(userWithSession) shouldBe Some(testEmail)
       }
     }
@@ -64,7 +61,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockIndividualAuthorised()
-        TestVerifyEmailController.show()(testEmailSessionRequest)
+        TestVerifyEmailController.show()(requestWithEmail)
       }
 
       "return 200 (OK)" in {
@@ -96,16 +93,12 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "the user is not authorised" should {
 
       lazy val result = {
-        mockUnauthorised()
-        TestVerifyEmailController.show()(testEmailSessionRequest)
+        mockIndividualWithoutEnrolment()
+        TestVerifyEmailController.show()(requestWithEmail)
       }
 
-      "return 500 (INTERNAL_SERVER_ERROR)" in {
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-      "show the technical difficulties page" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      "return forbidden (403)" in {
+        status(result) shouldBe Status.FORBIDDEN
       }
     }
   }
@@ -117,7 +110,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       lazy val result = {
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(Some(true))
-        TestVerifyEmailController.sendVerification()(testEmailSessionRequest)
+        TestVerifyEmailController.sendVerification()(requestWithEmail)
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -134,7 +127,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       lazy val result = {
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(Some(false))
-        TestVerifyEmailController.sendVerification()(testEmailSessionRequest)
+        TestVerifyEmailController.sendVerification()(requestWithEmail)
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -152,7 +145,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       lazy val result = {
         mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(None)
-        TestVerifyEmailController.sendVerification()(testEmailSessionRequest)
+        TestVerifyEmailController.sendVerification()(requestWithEmail)
       }
 
       "return 500 (INTERNAL_SERVER_ERROR)" in {
@@ -179,16 +172,12 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "the user is not authorised" should {
 
       lazy val result = {
-        mockUnauthorised()
-        TestVerifyEmailController.sendVerification()(testEmailSessionRequest)
+        mockIndividualWithoutEnrolment()
+        TestVerifyEmailController.sendVerification()(requestWithEmail)
       }
 
-      "return 500 (INTERNAL_SERVER_ERROR)" in {
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-      "show the internal server error page" in {
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+      "return forbidden (403)" in {
+        status(result) shouldBe Status.FORBIDDEN
       }
     }
   }

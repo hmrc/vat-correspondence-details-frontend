@@ -168,7 +168,6 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
   def mockMissingBearerToken()(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.failed(MissingBearerToken()))
 
-  def mockUnauthorised()(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockAuthorisationException()(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.failed(InsufficientEnrolments()))
-
 }

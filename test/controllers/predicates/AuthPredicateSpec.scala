@@ -73,13 +73,13 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
           }
 
-          "an unauthorised result is returned from Auth" should {
+          "an authorisation exception is returned from Auth" should {
 
             mockConfig.features.agentAccessEnabled(true)
             lazy val result = await(target(fakeRequestWithClientsVRN))
 
             "return Internal Server Error (500)" in {
-              mockUnauthorised()
+              mockAuthorisationException()
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
 

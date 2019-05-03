@@ -17,15 +17,13 @@
 package controllers
 
 import assets.BaseTestConstants.vrn
-import common.SessionKeys
 import models.User
 import models.customerInformation.UpdateEmailSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, CONFLICT}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty}
-import play.api.test.FakeRequest
+import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import views.html.ConfirmEmailView
 
@@ -43,9 +41,6 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     injector.instanceOf[ConfirmEmailView],
     mockConfig
   )
-
-  lazy val requestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.emailKey -> testEmail)
 
   "Calling the extractEmail function in ConfirmEmailController" when {
 
@@ -85,12 +80,11 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
     "the user is not authorised" should {
 
-      "show an internal server error" in {
-        mockUnauthorised()
+      "return forbidden (403)" in {
+        mockIndividualWithoutEnrolment()
         val result = TestConfirmEmailController.show(requestWithEmail)
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        status(result) shouldBe Status.FORBIDDEN
       }
     }
   }
@@ -124,7 +118,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         }
       }
 
-      "there was an expected error trying to update the email address" should {
+      "there was an unexpected error trying to update the email address" should {
 
         "return an Internal Server Error" in {
           mockIndividualAuthorised()
@@ -158,18 +152,16 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
-
       }
     }
 
     "the user is not authorised" should {
 
-      "return an Internal Server Error" in {
-        mockUnauthorised()
+      "return forbidden (403)" in {
+        mockIndividualWithoutEnrolment()
         val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+        status(result) shouldBe Status.FORBIDDEN
       }
     }
   }
