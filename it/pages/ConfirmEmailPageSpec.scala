@@ -150,7 +150,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             When("The update email address route is called")
 
             And("a successful email update response is stubbed")
-            EmailVerificationStub.stubEmailVerified
+            EmailVerificationStub.stubEmailVerified(email)
 
             And("a successful customer information response is stubbed")
             VatSubscriptionStub.stubCustomerInfo
@@ -172,7 +172,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             When("The update email address route is called")
 
             And("a successful email update response is stubbed")
-            EmailVerificationStub.stubEmailVerified
+            EmailVerificationStub.stubEmailVerified(email)
 
             And("a successful customer information response is stubbed")
             VatSubscriptionStub.stubCustomerInfo
@@ -246,7 +246,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
           When("The update email address route is called")
 
           And("a successful email update response is stubbed")
-          EmailVerificationStub.stubEmailVerified
+          EmailVerificationStub.stubEmailVerified(email)
 
           And("a successful vat subscription response is stubbed")
           VatSubscriptionStub.stubUpdateEmail

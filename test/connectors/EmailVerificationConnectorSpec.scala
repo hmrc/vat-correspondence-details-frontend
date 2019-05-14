@@ -24,12 +24,6 @@ class EmailVerificationConnectorSpec extends ControllerBaseSpec {
   lazy val connector = new EmailVerificationConnector(mock[HttpClient], mockConfig)
 
   "EmailVerificationConnector" should {
-
-    "generate the correct verify check URL" in {
-      connector.checkVerifiedEmailUrl("scala@gmail.com") shouldBe
-        "mockEmailBaseUrl/email-verification/verified-email-addresses/scala@gmail.com"
-    }
-
     "generate the correct verification request URL" in {
       connector.createEmailVerificationRequestUrl shouldBe "mockEmailBaseUrl/email-verification/verification-requests"
     }

@@ -39,7 +39,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
     "the email is verified" should {
 
       "return an EmailVerified response" in new Test {
-        override def setupStubs(): StubMapping = EmailVerificationStub.stubEmailVerified
+        override def setupStubs(): StubMapping = EmailVerificationStub.stubEmailVerified("scala@gmail.com")
         setupStubs()
         val expected = Right(EmailVerified)
         val result: GetEmailVerificationStateResponse = await(connector.getEmailVerificationState("scala@gmail.com"))
