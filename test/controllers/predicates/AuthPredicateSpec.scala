@@ -16,6 +16,7 @@
 
 package controllers.predicates
 
+import assets.BaseTestConstants.internalServerErrorTitle
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -84,7 +85,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "render the Unauthorised page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
             }
           }
         }

@@ -16,6 +16,7 @@
 
 package pages
 
+import assets.BaseITConstants.internalServerErrorTitle
 import common.SessionKeys
 import helpers.SessionCookieCrumbler
 import play.api.http.Status
@@ -87,7 +88,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, we are experiencing technical difficulties - 500")
+            pageTitle(internalServerErrorTitle)
           )
         }
       }
@@ -229,7 +230,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
             result should have(
               httpStatus(Status.INTERNAL_SERVER_ERROR),
-              pageTitle("Sorry, we are experiencing technical difficulties - 500")
+              pageTitle(internalServerErrorTitle)
             )
           }
         }
