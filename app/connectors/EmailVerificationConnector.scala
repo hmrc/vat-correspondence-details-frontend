@@ -33,15 +33,14 @@ class EmailVerificationConnector @Inject()(http: HttpClient,
                                            appConfig: AppConfig)(
                                            implicit ec: ExecutionContext) {
 
-  private[connectors] def checkVerifiedEmailUrl(email: String): String =
-    s"${appConfig.emailVerificationBaseUrl}/email-verification/verified-email-addresses/$email"
+  private val checkVerifiedEmailUrl: String = s"${appConfig.emailVerificationBaseUrl}/email-verification/verified-email-check"
 
   private[connectors] lazy val createEmailVerificationRequestUrl: String =
     s"${appConfig.emailVerificationBaseUrl}/email-verification/verification-requests"
 
   def getEmailVerificationState(emailAddress: String)
                                (implicit hc: HeaderCarrier): Future[GetEmailVerificationStateResponse] =
-    http.GET[GetEmailVerificationStateResponse](checkVerifiedEmailUrl(emailAddress))
+    http.POST[JsObject, GetEmailVerificationStateResponse](checkVerifiedEmailUrl, Json.obj(EmailKey -> emailAddress))
 
   def createEmailVerificationRequest(emailAddress: String, continueUrl: String)
                                     (implicit hc: HeaderCarrier): Future[CreateEmailVerificationRequestResponse] = {

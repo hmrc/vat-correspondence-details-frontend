@@ -23,16 +23,19 @@ import play.api.libs.json.{JsValue, Json}
 
 object EmailVerificationStub extends WireMockMethods {
 
-  private val emailVerificationStateUri = "/email-verification/verified-email-addresses/(.+)"
+  private val emailVerificationStateUri = "/email-verification/verified-email-check"
   private val emailVerificationRequestUri = "/email-verification/verification-requests"
 
-  def stubEmailVerified: StubMapping = when(method = GET, uri = emailVerificationStateUri)
-    .thenReturn(status = OK, body = emailVerifiedResponseJson)
+  def stubEmailVerified(emailAddress: String): StubMapping =
+    when(
+      method = POST, uri = emailVerificationStateUri,
+      body = Some(Json.obj("email" -> emailAddress).toString)
+    ).thenReturn(status = OK, body = emailVerifiedResponseJson)
 
-  def stubEmailNotVerified: StubMapping = when(method = GET, uri = emailVerificationStateUri)
+  def stubEmailNotVerified: StubMapping = when(method = POST, uri = emailVerificationStateUri)
     .thenReturn(status = NOT_FOUND, body = emailVerificationNotFoundJson)
 
-  def stubEmailVerifiedError: StubMapping = when(method = GET, uri = emailVerificationStateUri)
+  def stubEmailVerifiedError: StubMapping = when(method = POST, uri = emailVerificationStateUri)
     .thenReturn(status = INTERNAL_SERVER_ERROR, body = internalServerErrorJson)
 
   def stubVerificationRequestSent: StubMapping = when(method = POST, uri = emailVerificationRequestUri)
