@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.BaseTestConstants.vrn
+import assets.BaseTestConstants._
 import models.User
 import models.customerInformation.UpdateEmailSuccess
 import models.errors.ErrorModel
@@ -127,7 +127,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
           val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
         }
       }
     }

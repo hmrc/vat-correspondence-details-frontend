@@ -21,6 +21,7 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
+import assets.BaseTestConstants.internalServerErrorTitle
 
 import scala.concurrent.Future
 
@@ -83,7 +84,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
         }
 
         "render the Internal Server Error page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
         }
       }
 
@@ -98,7 +99,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
         }
 
         "page title is correct" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
         }
       }
     }

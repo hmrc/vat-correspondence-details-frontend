@@ -16,6 +16,7 @@
 
 package controllers.predicates
 
+import assets.BaseTestConstants.internalServerErrorTitle
 import assets.CustomerInfoConstants._
 import common.SessionKeys.inFlightContactDetailsChangeKey
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
@@ -183,7 +184,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
 
         "show the standard error page" in {
-          messages(document.title) shouldBe "Sorry, we are experiencing technical difficulties - 500"
+          messages(document.title) shouldBe internalServerErrorTitle
         }
       }
 

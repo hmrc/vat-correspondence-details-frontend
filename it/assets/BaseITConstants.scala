@@ -16,16 +16,8 @@
 
 package assets
 
-import common.EnrolmentKeys
-import play.api.http.Status
-import uk.gov.hmrc.auth.core.Enrolment
+object BaseITConstants {
 
-object BaseTestConstants {
-
-  val arn = "ABCD12345678901"
-  val vrn: String = "999999999"
-  val testMtdVatEnrolment: Enrolment = Enrolment(EnrolmentKeys.vatEnrolmentId).withIdentifier(EnrolmentKeys.vatIdentifierId, vrn)
-  val formBundle = "XA1234567"
   val internalServerErrorTitle = "There is a problem with the service - VAT reporting through software - GOV.UK"
 
 }

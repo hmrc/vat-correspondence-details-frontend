@@ -16,6 +16,7 @@
 
 package pages
 
+import assets.BaseITConstants.internalServerErrorTitle
 import common.SessionKeys
 import forms.EmailForm
 import helpers.SessionCookieCrumbler
@@ -63,7 +64,7 @@ class CaptureEmailPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, we are experiencing technical difficulties - 500")
+            pageTitle(internalServerErrorTitle)
           )
         }
       }
@@ -80,7 +81,7 @@ class CaptureEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500")
+          pageTitle(internalServerErrorTitle)
         )
       }
     }
