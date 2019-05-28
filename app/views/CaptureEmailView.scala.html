@@ -22,7 +22,7 @@
 
 @(emailForm: Form[String], emailNotChangedError: Boolean)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(title = messages("captureEmail.title")) {
+@mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
 
   <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 

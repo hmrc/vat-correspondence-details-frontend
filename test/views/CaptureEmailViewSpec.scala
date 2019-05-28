@@ -80,8 +80,23 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     }
 
     "the form has the email unchanged error" should {
-      lazy val view = injectedView(emailForm("").bind(Map("email" -> "")), emailNotChangedError = true)
+      lazy val view = injectedView(emailForm(testEmail).bind(Map("email" -> testEmail)), emailNotChangedError = true)
       lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have the correct document title" in {
+        document.title shouldBe "Error: What is the email address?"
+      }
+
+      "have a form error box" which {
+
+        "has the correct error message" in {
+          elementText("#email-error-summary") shouldBe "Enter a different email address"
+        }
+      }
+
+      "have the correct error notification text above the input box" in {
+        elementText(".error-notification") shouldBe "Enter a different email address"
+      }
 
       "display the error summary" in {
         element(Selectors.errorSummary).text() shouldBe "There is a problem"
@@ -91,18 +106,6 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         element(Selectors.emailFormGroup).attr("data-journey") shouldBe "email-address:form-error:unchanged"
       }
     }
-
-    "the form has any other error" should {
-      lazy val view = injectedView(emailForm("").bind(Map("email" -> "invalid")), emailNotChangedError = false)
-      lazy implicit val document: Document = Jsoup.parse(view.body)
-
-      "display the error summary" in {
-        element(Selectors.errorSummary).text() shouldBe "There is a problem"
-      }
-
-      "display no GA tag" in {
-        element(Selectors.emailFormGroup).attr("data-journey") shouldBe empty
-      }
-    }
   }
 }
+
