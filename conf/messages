@@ -38,11 +38,12 @@ agentJourneyDisabled.summary = Agents cannot change their client’s corresponde
 agentJourneyDisabled.instructions = If your client needs to change their correspondence details, they need to sign in using their own Government Gateway details.
 
 captureEmail.title = What is the email address?
-captureEmail.hint = For example, me@me.com
+captureEmail.hint = For example, name@example.com
 captureEmail.error.exceedsMaxLength = Email address must be 132 characters or less
 captureEmail.error.invalid = Enter a valid email address
 captureEmail.error.empty = Enter your email address
 captureEmail.error.notChanged = Enter a different email address
+captureEmail.onlyAddEmail = Only complete this field if you have been told to do so by HMRC.
 
 sessionTimeout.title = Your session has timed out
 sessionTimeout.helpOne = To manage your VAT account, you will have to

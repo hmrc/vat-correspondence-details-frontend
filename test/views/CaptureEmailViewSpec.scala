@@ -35,52 +35,78 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val continueButton = "button"
     val errorSummary = "#error-summary-heading"
     val emailFormGroup = "#content > article > form > div:nth-child(1)"
+    val onlyAddEmail = "#content > article > p"
   }
 
   "Rendering the capture email page" when {
 
-    "the form has no errors" should {
-      lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail), emailNotChangedError = false)
-      lazy implicit val document: Document = Jsoup.parse(view.body)
+    "the form has no errors" when {
 
-      "have the correct document title" in {
-        document.title shouldBe "What is the email address?"
-      }
+      "the user already has an email address in ETMP" should {
+        lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail),
+          emailNotChangedError = false, currentEmail = testEmail)
+        lazy implicit val document: Document = Jsoup.parse(view.body)
 
-      "have a back link" which {
-
-        "should have the correct text" in {
-          elementText(Selectors.backLink) shouldBe "Back"
+        "have the correct document title" in {
+          document.title shouldBe "What is the email address?"
         }
 
-        "should have the correct back link" in {
-          element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
+        "have a back link" which {
+
+          "should have the correct text" in {
+            elementText(Selectors.backLink) shouldBe "Back"
+          }
+
+          "should have the correct back link" in {
+            element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
+          }
+        }
+
+        "have the correct page heading" in {
+          elementText(Selectors.pageHeading) shouldBe "What is the email address?"
+        }
+
+        "have the correct hint text" in {
+          elementText(Selectors.hintText) shouldBe "For example, name@example.com"
+        }
+
+        "have the email form with the correct form action" in {
+          element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/" +
+            "correspondence/change-email-address"
+        }
+
+        "have the email text field with the pre-populated value" in {
+          element(Selectors.emailField).attr("value") shouldBe "test@email.co.uk"
+        }
+
+        "not have the section about adding email address because the user has an email" in {
+          elementExtinct(Selectors.onlyAddEmail)
+        }
+
+        "have the continue button" in {
+          elementText(Selectors.continueButton) shouldBe "Continue"
         }
       }
 
-      "have the correct page heading" in {
-        elementText(Selectors.pageHeading) shouldBe "What is the email address?"
-      }
+      "the user has no email address in ETMP" should {
+        lazy val view: Html = injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = "")
+        lazy implicit val document: Document = Jsoup.parse(view.body)
 
-      "have the correct hint text" in {
-        elementText(Selectors.hintText) shouldBe "For example, me@me.com"
-      }
+        "have the email text field with no pre-populated value" in {
+          element(Selectors.emailField).attr("value") shouldBe ""
+        }
 
-      "have the email form with the correct form action" in {
-        element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/correspondence/change-email-address"
-      }
+        "have a paragraph about adding email address because the user has an email" in {
+          elementText(Selectors.onlyAddEmail) shouldBe "Only complete this field if you " +
+            "have been told to do so by HMRC."
+        }
 
-      "have the email text field with the pre-populated value" in {
-        element(Selectors.emailField).attr("value") shouldBe "test@email.co.uk"
-      }
-
-      "have the continue button" in {
-        elementText(Selectors.continueButton) shouldBe "Continue"
       }
     }
 
     "the form has the email unchanged error" should {
-      lazy val view = injectedView(emailForm(testEmail).bind(Map("email" -> testEmail)), emailNotChangedError = true)
+      lazy val view = injectedView(emailForm(testEmail).bind(Map("email" -> testEmail)),
+        emailNotChangedError = true, currentEmail = testEmail)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {
@@ -104,6 +130,10 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
       "display the GA tag" in {
         element(Selectors.emailFormGroup).attr("data-journey") shouldBe "email-address:form-error:unchanged"
+      }
+
+      "not have the section about adding email address because the user has an email" in {
+        elementExtinct(Selectors.onlyAddEmail)
       }
     }
   }
