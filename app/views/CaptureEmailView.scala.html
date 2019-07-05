@@ -20,7 +20,7 @@
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
 
-@(emailForm: Form[String], emailNotChangedError: Boolean)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(emailForm: Form[String], emailNotChangedError: Boolean, emailIsSet: Boolean)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
 
@@ -48,5 +48,14 @@
     <div class="form-group">
       <button class="button" type="submit">@messages("common.continue")</button>
     </div>
+  }
+
+  @if(emailIsSet){
+      <details>
+      <summary role="button"><span class="summary"></span>@messages("captureEmail.removeEmail.title")</summary>
+          <div class="panel panel-border-narrow">
+              <p><a href="@appConfig.contactHmrcUrl">@messages("captureEmail.removeEmail.contactUs")</a> @messages("captureEmail.removeEmail.description")</p>
+          </div>
+      </details>
   }
 }

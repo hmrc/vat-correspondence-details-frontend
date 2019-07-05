@@ -61,6 +61,7 @@ trait AppConfig {
   val timeoutPeriod: Int
   val timeoutCountdown: Int
   val contactPreferencesService: String
+  val contactHmrcUrl: String
   def contactPreferencesUrl(vrn: String): String
   def feedbackUrl(redirect: String): String
 }
@@ -129,6 +130,9 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override lazy val timeoutPeriod: Int = sc.getInt(Keys.timeoutPeriod)
   override lazy val timeoutCountdown: Int = sc.getInt(Keys.timeoutCountdown)
+
+
+  override val contactHmrcUrl: String = sc.getString(Keys.contactHmrc)
 
   override lazy val contactPreferencesService: String = {
     if(features.stubContactPreferences()){
