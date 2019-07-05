@@ -77,8 +77,7 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
 
             }
         case _ =>
-          //TODO redirect to VALCUFE with query string for redirectURL
-          Future.successful(errorHandler.showInternalServerError)
+          Future.successful(Redirect(appConfig.vatAgentClientLookupServicePath))
       }
     } else {
       Future.successful(Unauthorized(agentJourneyDisabledView()))
