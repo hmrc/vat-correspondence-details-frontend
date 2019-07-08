@@ -62,7 +62,7 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
     } yield {
       validation match {
         case Some(valEmail) =>
-          Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false, validation.isDefined))
+          Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false, valEmail, validation.isDefined))
           .addingToSession(SessionKeys.validationEmailKey -> valEmail)
         case _ => errorHandler.showInternalServerError
       }
@@ -74,10 +74,11 @@ class CaptureEmailController @Inject()(val authenticate: AuthPredicate,
     val prepopulationEmail: Option[String] = user.session.get(SessionKeys.emailKey)
 
     (validationEmail, prepopulationEmail) match {
-      case (Some(validation), prepopulation) => emailForm(validation).bindFromRequest.fold(
+      case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
         errorForm => {
           val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
-          Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validationEmail.isDefined)))
+          Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation, validationEmail.isDefined)))
+
         },
         email     => {
           auditService.extendedAudit(

@@ -20,7 +20,7 @@
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
 
-@(emailForm: Form[String], emailNotChangedError: Boolean, emailIsSet: Boolean)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, emailIsSet: Boolean)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
 
@@ -29,6 +29,10 @@
   @errorSummary(messages("common.error.heading"), emailForm, forceDivToAppear = false)
 
   <h1 class="heading-large">@messages("captureEmail.title")</h1>
+
+  @if(currentEmail == ""){
+    <p>@messages("captureEmail.onlyAddEmail")</p>
+  }
 
   @form(action = controllers.routes.CaptureEmailController.submit) {
     <div class="form-group" @if(emailNotChangedError){data-journey="email-address:form-error:unchanged"}>

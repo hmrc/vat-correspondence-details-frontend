@@ -39,7 +39,8 @@ agentJourneyDisabled.summary = Ni all asiantau newid manylion gohebu eu cleienti
 agentJourneyDisabled.instructions = Os oes angen i’ch cleient newid ei fanylion gohebu, bydd angen iddo fewngofnodi gan ddefnyddio’i fanylion ei hun ar gyfer Porth y Llywodraeth.
 
 captureEmail.title = Beth yw’r cyfeiriad e-bost?
-captureEmail.hint = Er enghraifft, fi@fi.com
+captureEmail.hint = Er enghraifft, enw@enghraifft.com
+captureEmail.onlyAddEmail = Dylech ond lenwi’r maes hwn os yw CThEM wedi rhoi gwybod i chi am wneud hynny.
 captureEmail.error.exceedsMaxLength = Mae’n rhaid i’r cyfeiriad e-bost fod yn 132 o gymeriadau neu lai
 captureEmail.error.invalid = Nodwch gyfeiriad e-bost dilys
 captureEmail.error.empty = Nodwch eich cyfeiriad e-bost

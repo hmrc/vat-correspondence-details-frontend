@@ -38,14 +38,17 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val removeEmail = "summary"
     val removeEmailDesc = ".panel-border-narrow"
     val removeEmailLink = ".panel-border-narrow a"
+    val onlyAddEmail = "#content > article > p"
   }
 
   "Rendering the capture email page" when {
 
-    "the user has an email set" when {
+    "the form has no errors" when {
 
-      "the form has no errors" should {
-        lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail), emailNotChangedError = false, emailIsSet = true)
+      "the user already has an email address in ETMP" should {
+        lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail),
+          emailNotChangedError = false, currentEmail = testEmail, emailIsSet = true)
+
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
@@ -68,15 +71,20 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         }
 
         "have the correct hint text" in {
-          elementText(Selectors.hintText) shouldBe "For example, me@me.com"
+          elementText(Selectors.hintText) shouldBe "For example, name@example.com"
         }
 
         "have the email form with the correct form action" in {
-          element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/correspondence/change-email-address"
+          element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/" +
+            "correspondence/change-email-address"
         }
 
         "have the email text field with the pre-populated value" in {
           element(Selectors.emailField).attr("value") shouldBe "test@email.co.uk"
+        }
+
+        "not have the section about adding email address because the user has an email" in {
+          elementExtinct(Selectors.onlyAddEmail)
         }
 
         "have the continue button" in {
@@ -98,78 +106,56 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         }
       }
 
-      "the form has the email unchanged error" should {
-        lazy val view = injectedView(emailForm(testEmail).bind(Map("email" -> testEmail)), emailNotChangedError = true, emailIsSet = false)
+      "the user has no email address in ETMP" should {
+        lazy val view: Html = injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = "", emailIsSet = false)
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
-        "have the correct document title" in {
-          document.title shouldBe "Error: What is the email address?"
+        "have the email text field with no pre-populated value" in {
+          element(Selectors.emailField).attr("value") shouldBe ""
         }
 
-        "have a form error box" which {
-
-          "has the correct error message" in {
-            elementText("#email-error-summary") shouldBe "Enter a different email address"
-          }
-        }
-
-        "have the correct error notification text above the input box" in {
-          elementText(".error-notification") shouldBe "Enter a different email address"
-        }
-
-        "display the error summary" in {
-          element(Selectors.errorSummary).text() shouldBe "There is a problem"
-        }
-
-        "display the GA tag" in {
-          element(Selectors.emailFormGroup).attr("data-journey") shouldBe "email-address:form-error:unchanged"
-        }
-      }
-    }
-
-    "the user has no email set" when {
-      "the form has no errors" should {
-        lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail), emailNotChangedError = false, emailIsSet = false)
-        lazy implicit val document: Document = Jsoup.parse(view.body)
-
-        "have the correct document title" in {
-          document.title shouldBe "What is the email address?"
-        }
-
-        "have a back link" which {
-
-          "should have the correct text" in {
-            elementText(Selectors.backLink) shouldBe "Back"
-          }
-
-          "should have the correct back link" in {
-            element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
-          }
-        }
-
-        "have the correct page heading" in {
-          elementText(Selectors.pageHeading) shouldBe "What is the email address?"
-        }
-
-        "have the correct hint text" in {
-          elementText(Selectors.hintText) shouldBe "For example, me@me.com"
-        }
-
-        "have the email form with the correct form action" in {
-          element(Selectors.form).attr("action") shouldBe "/vat-through-software/account/correspondence/change-email-address"
-        }
-
-        "have the email text field with the pre-populated value" in {
-          element(Selectors.emailField).attr("value") shouldBe "test@email.co.uk"
-        }
-
-        "have the continue button" in {
-          elementText(Selectors.continueButton) shouldBe "Continue"
+        "have a paragraph about adding email address because the user has an email" in {
+          elementText(Selectors.onlyAddEmail) shouldBe "Only complete this field if you " +
+            "have been told to do so by HMRC."
         }
 
         "not have the progressive disclosure to remove an email address" in {
           elementExtinct(Selectors.removeEmail)
         }
+
+      }
+    }
+
+    "the form has the email unchanged error" should {
+      lazy val view = injectedView(emailForm(testEmail).bind(Map("email" -> testEmail)),
+        emailNotChangedError = true, currentEmail = testEmail, emailIsSet = true)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have the correct document title" in {
+        document.title shouldBe "Error: What is the email address?"
+      }
+
+      "have a form error box" which {
+
+        "has the correct error message" in {
+          elementText("#email-error-summary") shouldBe "Enter a different email address"
+        }
+      }
+
+      "have the correct error notification text above the input box" in {
+        elementText(".error-notification") shouldBe "Enter a different email address"
+      }
+
+      "display the error summary" in {
+        element(Selectors.errorSummary).text() shouldBe "There is a problem"
+      }
+
+      "display the GA tag" in {
+        element(Selectors.emailFormGroup).attr("data-journey") shouldBe "email-address:form-error:unchanged"
+      }
+
+      "not have the section about adding email address because the user has an email" in {
+        elementExtinct(Selectors.onlyAddEmail)
       }
     }
   }
