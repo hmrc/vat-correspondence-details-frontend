@@ -44,7 +44,7 @@ captureEmail.error.empty = Enter your email address
 captureEmail.error.notChanged = Enter a different email address
 captureEmail.removeEmail.title = I would like to remove my email address
 captureEmail.removeEmail.contactUs = Contact us (opens in a new tab)
-captureEmail.removeEmail.description = to remove your email address
+captureEmail.removeEmail.description = to remove your email address.
 captureEmail.onlyAddEmail = Only complete this field if you have been told to do so by HMRC.
 
 sessionTimeout.title = Your session has timed out
