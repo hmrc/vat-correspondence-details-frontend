@@ -21,7 +21,7 @@ import audit.AuditingService
 import audit.models.ChangedEmailAddressAuditModel
 import common.SessionKeys.{emailKey, inFlightContactDetailsChangeKey, validationEmailKey}
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
+import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
 import models.User
 import models.customerInformation.UpdateEmailSuccess
 import models.errors.ErrorModel
@@ -33,18 +33,18 @@ import views.html.ConfirmEmailView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
+class ConfirmEmailController @Inject()(val authComps: AuthPredicateComponents,
                                        val inflightCheck: InFlightPPOBPredicate,
                                        override val mcc: MessagesControllerComponents,
                                        val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
                                        val vatSubscriptionService: VatSubscriptionService,
                                        confirmEmailView: ConfirmEmailView,
-                                       implicit val appConfig: AppConfig) extends BaseController(mcc) {
+                                       implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
+  def show: Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
@@ -54,7 +54,7 @@ class ConfirmEmailController @Inject()(val authenticate: AuthPredicate,
     }
   }
 
-  def updateEmailAddress(): Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
+  def updateEmailAddress(): Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
