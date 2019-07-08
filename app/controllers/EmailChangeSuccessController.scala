@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.ContactPreferenceAuditModel
 import config.AppConfig
-import controllers.predicates.AuthPredicate
+import controllers.predicates.{AuthPredicate, AuthPredicateComponents}
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.ContactPreferenceService
@@ -29,16 +29,16 @@ import views.html.EmailChangeSuccessView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailChangeSuccessController @Inject()(val authenticate: AuthPredicate,
+class EmailChangeSuccessController @Inject()(val authComps: AuthPredicateComponents,
                                              override val mcc: MessagesControllerComponents,
                                              auditService: AuditingService,
                                              contactPreferenceService: ContactPreferenceService,
                                              emailChangeSuccessView: EmailChangeSuccessView,
-                                             implicit val appConfig: AppConfig) extends BaseController(mcc) {
+                                             implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = authenticate.async { implicit user =>
+  def show: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
     if (appConfig.features.contactPreferencesEnabled()) {
 
       contactPreferenceService.getContactPreference(user.vrn) map {

@@ -16,81 +16,70 @@
 
 package controllers.predicates
 
-import javax.inject.{Inject, Singleton}
 import common.EnrolmentKeys
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import models.User
 import play.api.mvc._
-import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolments, NoActiveSession}
 import uk.gov.hmrc.auth.core.retrieve._
 import utils.LoggerUtil.{logDebug, logWarn}
-import views.html.errors.{NotSignedUpView, SessionTimeoutView}
-import views.html.errors.agent.{AgentJourneyDisabledView, UnauthorisedAgentView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class AuthPredicate @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
-                              override val mcc: MessagesControllerComponents,
-                              val errorHandler: ErrorHandler,
-                              val authenticateAsAgentWithClient: AuthoriseAsAgentWithClient,
-                              sessionTimeoutView: SessionTimeoutView,
-                              agentJourneyDisabledView: AgentJourneyDisabledView,
-                              unauthorisedAgentView: UnauthorisedAgentView,
-                              notSignedUpView: NotSignedUpView,
-                              implicit val appConfig: AppConfig,
-                              override implicit val executionContext: ExecutionContext)
-  extends AuthBasePredicate(mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] {
+class AuthPredicate(authComps: AuthPredicateComponents,
+                    allowsAgents: Boolean)
+  extends AuthBasePredicate(authComps.mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+
+  implicit val appConfig: AppConfig = authComps.appConfig
+  implicit val executionContext: ExecutionContext = authComps.executionContext
 
   override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
 
     implicit val req: Request[A] = request
-    enrolmentsAuthService.authorised().retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
+
+    authComps.enrolmentsAuthService.authorised().retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
       case Some(affinityGroup) ~ allEnrolments =>
         (isAgent(affinityGroup), allEnrolments) match {
           case (true, enrolments) =>
-            if (appConfig.features.agentAccessEnabled()) {
+            if (appConfig.features.agentAccessEnabled() && allowsAgents) {
               checkAgentEnrolment(enrolments, block)
             } else {
-              Future.successful(Unauthorized(agentJourneyDisabledView()))
+              Future.successful(Unauthorized(authComps.agentJourneyDisabledView()))
             }
           case (false, enrolments) => checkVatEnrolment(enrolments, block)
         }
       case _ =>
         logWarn("[AuthPredicate][invokeBlock] - Missing affinity group")
-        Future.successful(errorHandler.showInternalServerError)
+        Future.successful(authComps.errorHandler.showInternalServerError)
     } recover {
       case _: NoActiveSession =>
         logDebug("[AuthPredicate][invokeBlock] - No active session, rendering Session Timeout view")
-        Unauthorized(sessionTimeoutView())
+        Unauthorized(authComps.sessionTimeoutView())
 
       case _: AuthorisationException =>
         logWarn("[AuthPredicate][invokeBlock] - Unauthorised exception, rendering standard error view")
-        errorHandler.showInternalServerError
+        authComps.errorHandler.showInternalServerError
     }
   }
 
   private[AuthPredicate] def checkAgentEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
     if (enrolments.enrolments.exists(_.key == EnrolmentKeys.agentEnrolmentId)) {
       logDebug("[AuthPredicate][checkAgentEnrolment] - Authenticating as agent")
-      authenticateAsAgentWithClient.invokeBlock(request, block)
-    }
-    else {
+      authComps.authenticateAsAgentWithClient.invokeBlock(request, block)
+    } else {
       logDebug(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment. Enrolments: $enrolments")
       logWarn(s"[AuthPredicate][checkAgentEnrolment] - Agent without HMRC-AS-AGENT enrolment.")
-      Future.successful(Forbidden(unauthorisedAgentView()))
+      Future.successful(Forbidden(authComps.unauthorisedAgentView()))
     }
 
   private[AuthPredicate] def checkVatEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
     if (enrolments.enrolments.exists(_.key == EnrolmentKeys.vatEnrolmentId)) {
       logDebug("[AuthPredicate][checkVatEnrolment] - Authenticated as principle")
       block(User(enrolments))
-    }
-    else {
+    } else {
       logDebug(s"[AuthPredicate][checkVatEnrolment] - Non-agent without HMRC-MTD-VAT enrolment. $enrolments")
-      Future.successful(Forbidden(notSignedUpView()))
+      Future.successful(Forbidden(authComps.notSignedUpView()))
     }
 }

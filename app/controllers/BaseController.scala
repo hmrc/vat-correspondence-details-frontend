@@ -16,8 +16,14 @@
 
 package controllers
 
+import controllers.predicates.{AuthPredicate, AuthPredicateComponents}
 import play.api.i18n.I18nSupport
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-abstract class BaseController(val mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport
+abstract class BaseController(val mcc: MessagesControllerComponents,
+                              authComps: AuthPredicateComponents) extends FrontendController(mcc) with I18nSupport {
+
+  val allowAgentPredicate = new AuthPredicate(authComps, allowsAgents = true)
+  val blockAgentPredicate = new AuthPredicate(authComps, allowsAgents = false)
+}

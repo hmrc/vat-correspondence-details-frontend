@@ -19,10 +19,11 @@ package controllers
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 @Singleton
-class SignOutController @Inject()(override val mcc: MessagesControllerComponents,
-                                  implicit val appConfig: AppConfig) extends BaseController(mcc) {
+class SignOutController @Inject()(val mcc: MessagesControllerComponents,
+                                  implicit val appConfig: AppConfig) extends FrontendController(mcc) {
 
   def signOut(feedbackOnSignOut: Boolean): Action[AnyContent] = Action { implicit request =>
     val redirectUrl: String = if(feedbackOnSignOut) appConfig.feedbackSignOutUrl else appConfig.unauthorisedSignOutUrl

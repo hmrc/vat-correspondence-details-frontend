@@ -17,97 +17,127 @@
 package controllers.predicates
 
 import assets.BaseTestConstants.internalServerErrorTitle
+import common.SessionKeys
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
+import play.api.test.FakeRequest
 import utils.MaterializerSupport
 
 import scala.concurrent.Future
 
 class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
-  def target: Action[AnyContent] = mockAuthPredicate.async {
+  val allowAgentPredicate: Action[AnyContent] = mockAuthPredicate.async {
     implicit request => Future.successful(Ok("test"))
   }
 
   "The AuthPredicateSpec" when {
 
-    "agent access is enabled" when {
+    "the user is an Agent" when {
 
-      "the user does not have affinity group" should {
+      "the Agent has an active HMRC-AS-AGENT enrolment" when {
 
-        "return ISE (500)" in {
-          mockConfig.features.agentAccessEnabled(true)
-          mockUserWithoutAffinity()
-          status(target(request)) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-      }
+        "the agent access feature is enabled" when {
 
-      "the user is an Agent" when {
-
-
-        "the Agent has an Active HMRC-AS-AGENT enrolment" when {
-
-          "a successful authorisation result is returned from Auth" should {
+          "the allowAgents parameter is set to true" should {
 
             "return OK (200)" in {
               mockConfig.features.agentAccessEnabled(true)
               mockAgentAuthorised()
-              status(target(fakeRequestWithClientsVRN)) shouldBe Status.OK
+              status(allowAgentPredicate(fakeRequestWithClientsVRN)) shouldBe Status.OK
             }
           }
 
-          "a no active session result is returned from Auth" should {
+          "the allowAgents parameter is set to false" should {
 
-            mockConfig.features.agentAccessEnabled(true)
-            lazy val result = await(target(fakeRequestWithClientsVRN))
+            val blockAgentPredicate: Action[AnyContent] =
+              new AuthPredicate(mockAuthPredicateComponents, allowsAgents = false).async {
+                implicit request => Future.successful(Ok("test"))
+              }
 
-            "return Unauthorised (401)" in {
-              mockMissingBearerToken()
+            lazy val result = await(blockAgentPredicate(fakeRequestWithClientsVRN))
+
+            "return Unauthorized (401)" in {
+              mockAgentAuthorised()
               status(result) shouldBe Status.UNAUTHORIZED
             }
 
-            "render the Unauthorised page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Your session has timed out"
+            "show the agent journey disabled page" in {
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s correspondence details yet"
             }
           }
 
-          "an authorisation exception is returned from Auth" should {
+          "the Agent does NOT have an Active HMRC-AS-AGENT enrolment" should {
 
-            mockConfig.features.agentAccessEnabled(true)
-            lazy val result = await(target(fakeRequestWithClientsVRN))
+            lazy val result = await(allowAgentPredicate(fakeRequestWithClientsVRN))
 
-            "return Internal Server Error (500)" in {
-              mockAuthorisationException()
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            "return Forbidden" in {
+              mockConfig.features.agentAccessEnabled(true)
+              mockAgentWithoutEnrolment()
+              status(result) shouldBe Status.FORBIDDEN
             }
 
-            "render the Unauthorised page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+            "render the Unauthorised Agent page" in {
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet"
             }
           }
         }
 
-        "the Agent does NOT have an Active HMRC-AS-AGENT enrolment" should {
+        "the agent access feature is disabled" should {
 
-          mockConfig.features.agentAccessEnabled(true)
-          lazy val result = await(target(fakeRequestWithClientsVRN))
+          lazy val result = await(allowAgentPredicate(fakeRequestWithClientsVRN))
 
-          "return Forbidden" in {
-            mockAgentWithoutEnrolment()
-            status(result) shouldBe Status.FORBIDDEN
+          "return Unauthorized (401)" in {
+            mockConfig.features.agentAccessEnabled(false)
+            mockAgentAuthorised()
+            status(result) shouldBe Status.UNAUTHORIZED
           }
 
-          "render the Unauthorised Agent page" in {
-            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet"
+          "show the agent journey disabled page" in {
+            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s correspondence details yet"
           }
         }
       }
 
-    }
+      "the agent does not have an affinity group" should {
 
+        "return ISE (500)" in {
+          mockUserWithoutAffinity()
+          status(allowAgentPredicate(request)) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+      }
+
+      "a no active session result is returned from Auth" should {
+
+        lazy val result = await(allowAgentPredicate(fakeRequestWithClientsVRN))
+
+        "return Unauthorised (401)" in {
+          mockMissingBearerToken()
+          status(result) shouldBe Status.UNAUTHORIZED
+        }
+
+        "render the Unauthorised page" in {
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Your session has timed out"
+        }
+      }
+
+      "an authorisation exception is returned from Auth" should {
+
+        lazy val result = await(allowAgentPredicate(fakeRequestWithClientsVRN))
+
+        "return Internal Server Error (500)" in {
+          mockAuthorisationException()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "render the Unauthorised page" in {
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+        }
+      }
+    }
 
     "the user is an Individual (Principle Entity)" when {
 
@@ -115,13 +145,13 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
         "return OK (200)" in {
           mockIndividualAuthorised()
-          status(target(request)) shouldBe Status.OK
+          status(allowAgentPredicate(request)) shouldBe Status.OK
         }
       }
 
       "they do NOT have an active HMRC-MTD-VAT enrolment" should {
 
-        lazy val result = await(target(request))
+        lazy val result = await(allowAgentPredicate(request))
 
         "return Forbidden (403)" in {
           mockIndividualWithoutEnrolment()
@@ -131,16 +161,6 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         "render the Not Signed Up page" in {
           messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet"
         }
-      }
-    }
-
-    "agent access is disabled" should {
-      "show agent journey disabled page" in {
-        mockConfig.features.agentAccessEnabled(false)
-        mockAgentAuthorised()
-        val result = target(request)
-        status(result) shouldBe Status.UNAUTHORIZED
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s correspondence details yet"
       }
     }
   }
