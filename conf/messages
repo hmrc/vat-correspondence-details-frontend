@@ -2,7 +2,6 @@ base.signOut = Sign out
 base.back = Back
 base.confirmAndContinue = Confirm and continue
 base.finish = Finish
-base.back = Back
 
 banner.newService = This is a new service – your
 banner.feedback = feedback
@@ -43,6 +42,9 @@ captureEmail.error.exceedsMaxLength = Email address must be 132 characters or le
 captureEmail.error.invalid = Enter a valid email address
 captureEmail.error.empty = Enter your email address
 captureEmail.error.notChanged = Enter a different email address
+captureEmail.removeEmail.title = I would like to remove my email address
+captureEmail.removeEmail.contactUs = Contact us (opens in a new tab)
+captureEmail.removeEmail.description = to remove your email address.
 captureEmail.onlyAddEmail = Only complete this field if you have been told to do so by HMRC.
 
 sessionTimeout.title = Your session has timed out

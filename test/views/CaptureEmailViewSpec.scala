@@ -35,6 +35,9 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val continueButton = "button"
     val errorSummary = "#error-summary-heading"
     val emailFormGroup = "#content > article > form > div:nth-child(1)"
+    val removeEmail = "summary"
+    val removeEmailDesc = ".panel-border-narrow"
+    val removeEmailLink = ".panel-border-narrow a"
     val onlyAddEmail = "#content > article > p"
   }
 
@@ -45,6 +48,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       "the user already has an email address in ETMP" should {
         lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail),
           emailNotChangedError = false, currentEmail = testEmail)
+
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
@@ -86,6 +90,20 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         "have the continue button" in {
           elementText(Selectors.continueButton) shouldBe "Continue"
         }
+
+        "have the progressive disclosure to remove an email address" which {
+          "has the correct heading" in {
+            elementText(Selectors.removeEmail) shouldBe "I would like to remove my email address"
+          }
+
+          "has the correct description" in {
+            elementText(Selectors.removeEmailDesc) shouldBe "Contact us (opens in a new tab) to remove your email address."
+          }
+
+          "has the correct link" in {
+            element(Selectors.removeEmailLink).attr("href") shouldBe "mockRemoveEmailUrl"
+          }
+        }
       }
 
       "the user has no email address in ETMP" should {
@@ -99,6 +117,10 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         "have a paragraph about adding email address because the user has an email" in {
           elementText(Selectors.onlyAddEmail) shouldBe "Only complete this field if you " +
             "have been told to do so by HMRC."
+        }
+
+        "not have the progressive disclosure to remove an email address" in {
+          elementExtinct(Selectors.removeEmail)
         }
 
       }

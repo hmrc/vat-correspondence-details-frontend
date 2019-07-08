@@ -62,4 +62,6 @@ object ConfigKeys {
 
   val contactPreferencesService: String = "contact-preferences"
 
+  val contactHmrc: String = "contact-hmrc.url"
+
 }

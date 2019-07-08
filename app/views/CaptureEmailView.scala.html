@@ -22,35 +22,47 @@
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
+    @mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
 
-  <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
+        <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 
-  @errorSummary(messages("common.error.heading"), emailForm, forceDivToAppear = false)
+        @errorSummary(messages("common.error.heading"), emailForm, forceDivToAppear = false)
 
-  <h1 class="heading-large">@messages("captureEmail.title")</h1>
+        <h1 class="heading-large">@messages("captureEmail.title")</h1>
 
-  @if(currentEmail == ""){
-    <p>@messages("captureEmail.onlyAddEmail")</p>
-  }
+        @if(currentEmail == "") {
+            <p>@messages("captureEmail.onlyAddEmail")</p>
+        }
 
-  @form(action = controllers.routes.CaptureEmailController.submit) {
-    <div class="form-group" @if(emailNotChangedError){data-journey="email-address:form-error:unchanged"}>
-      @input(
-        emailForm("email"),
-        '_divClass       -> "form-label",
-        '_labelId        -> "label-email",
-        '_hintId         -> "label-email-hint",
-        '_label          -> messages("captureEmail.title"),
-        '_labelTextClass -> "visuallyhidden",
-        '_inputClass     -> "input--fullwidth",
-        '_maxlength      -> maxLength,
-        '_inputHint      -> messages("captureEmail.hint")
-      )
-    </div>
+        @form(action = controllers.routes.CaptureEmailController.submit) {
+            <div class="form-group" @if(emailNotChangedError) {
+                data-journey="email-address:form-error:unchanged"}>
+            @input(
+                emailForm("email"),
+                '_divClass -> "form-label",
+                '_labelId -> "label-email",
+                '_hintId -> "label-email-hint",
+                '_label -> messages("captureEmail.title"),
+                '_labelTextClass -> "visuallyhidden",
+                '_inputClass -> "input--fullwidth",
+                '_maxlength -> maxLength,
+                '_inputHint -> messages("captureEmail.hint")
+            )
+            </div>
 
-    <div class="form-group">
-      <button class="button" type="submit">@messages("common.continue")</button>
-    </div>
-  }
-}
+            <div class="form-group">
+                <button class="button" type="submit">@messages("common.continue")</button>
+            </div>
+        }
+
+        @if(!(currentEmail == "")) {
+            <div class="form-group">
+                <details>
+                    <summary role="button"><span class="summary"></span>@messages("captureEmail.removeEmail.title")</summary>
+                    <div class="panel panel-border-narrow">
+                        <a target="_blank" href="@appConfig.contactHmrcUrl">@messages("captureEmail.removeEmail.contactUs")</a> @messages("captureEmail.removeEmail.description")
+                    </div>
+                </details>
+            </div>
+        }
+    }

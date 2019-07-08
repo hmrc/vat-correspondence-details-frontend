@@ -67,4 +67,6 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val timeoutCountdown: Int = 999
   override val contactPreferencesService: String = ""
   override def contactPreferencesUrl(vrn: String): String = s"contact-preferences/vat/vrn/$vrn"
+
+  override val contactHmrcUrl: String = "mockRemoveEmailUrl"
 }
