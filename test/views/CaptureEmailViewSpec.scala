@@ -97,7 +97,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
           }
 
           "has the correct description" in {
-            elementText(Selectors.removeEmailDesc) shouldBe "Contact us (opens in a new tab) to remove your email address"
+            elementText(Selectors.removeEmailDesc) shouldBe "Contact us (opens in a new tab) to remove your email address."
           }
 
           "has the correct link" in {

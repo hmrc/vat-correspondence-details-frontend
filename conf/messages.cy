@@ -1,7 +1,7 @@
+base.signOut = Allgofnodi
 base.back = Yn ôl
 base.confirmAndContinue = Cadarnhau ac yn eich blaen
 base.finish = Gorffen
-base.back = Yn ôl
 
 banner.newService = Gwasanaeth newydd yw hwn – bydd eich
 banner.feedback = adborth
