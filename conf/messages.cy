@@ -1,4 +1,3 @@
-base.signOut = Allgofnodi
 base.back = Yn ôl
 base.confirmAndContinue = Cadarnhau ac yn eich blaen
 base.finish = Gorffen
@@ -45,6 +44,9 @@ captureEmail.error.exceedsMaxLength = Mae’n rhaid i’r cyfeiriad e-bost fod y
 captureEmail.error.invalid = Nodwch gyfeiriad e-bost dilys
 captureEmail.error.empty = Nodwch eich cyfeiriad e-bost
 captureEmail.error.notChanged = Nodwch gyfeiriad e-bost gwahanol
+captureEmail.removeEmail.title = Hoffwn ddileu fy nghyfeiriad e-bost
+captureEmail.removeEmail.contactUs = Cysylltwch â ni (yn agor tab newydd)
+captureEmail.removeEmail.description = i ddileu eich cyfeiriad e-bost.
 
 sessionTimeout.title = Mae’ch sesiwn wedi’i therfynu
 sessionTimeout.helpOne = I reoli’ch cyfrif TAW, bydd yn rhaid i chi
