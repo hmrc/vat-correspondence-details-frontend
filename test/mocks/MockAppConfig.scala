@@ -44,7 +44,6 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val agentInvitationsFastTrack: String = "/agent-invitations-frontend"
   override val govUkCommercialSoftware: String = "https://www.gov.uk/guidance/use-software-to-submit-your-vat-returns"
   override val vatAgentClientLookupServicePath: String = ""
-  override val vatAgentClientLookupServiceUrl: String = ""
   override val features: Features = new Features(runModeConfiguration)
   override val emailVerificationBaseUrl: String = "mockEmailBaseUrl"
   override val manageVatSubscriptionServiceUrl: String = ""

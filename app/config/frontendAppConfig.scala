@@ -48,7 +48,6 @@ trait AppConfig {
   val signInContinueUrl: String
   val agentInvitationsFastTrack: String
   val govUkCommercialSoftware: String
-  val vatAgentClientLookupServiceUrl: String
   val vatAgentClientLookupServicePath: String
   val features: Features
   val emailVerificationBaseUrl: String
@@ -119,8 +118,9 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   private lazy val host: String = sc.getString(Keys.host)
 
-  override val vatAgentClientLookupServiceUrl: String = sc.getString(Keys.vatAgentClientLookupServiceUrl)
-  override val vatAgentClientLookupServicePath: String = sc.getString(Keys.vatAgentClientLookupServicePath)
+  private val vatAgentClientLookupServiceUrl: String = sc.getString(Keys.vatAgentClientLookupServiceUrl)
+  override val vatAgentClientLookupServicePath: String =
+    vatAgentClientLookupServiceUrl + sc.getString(Keys.vatAgentClientLookupServicePath)
   override val vatSubscriptionHost: String = sc.baseUrl(Keys.vatSubscription)
 
   override val manageVatSubscriptionServiceUrl: String = sc.getString(Keys.manageVatSubscriptionServiceUrl)

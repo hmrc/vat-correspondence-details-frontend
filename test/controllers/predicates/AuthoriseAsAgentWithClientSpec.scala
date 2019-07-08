@@ -16,12 +16,13 @@
 
 package controllers.predicates
 
+import assets.BaseTestConstants.internalServerErrorTitle
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
-import assets.BaseTestConstants.internalServerErrorTitle
+import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
@@ -91,20 +92,21 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       "there is no client VRN in session" should {
 
         mockConfig.features.agentAccessEnabled(true)
+        mockAgentAuthorised()
         lazy val result = await(target(request))
 
-        "show a 500 page" in {
-          mockAgentAuthorised()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
         }
 
-        "page title is correct" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+        "redirect to the agent client lookup service" in {
+          redirectLocation(result) shouldBe Some(mockConfig.vatAgentClientLookupServicePath)
         }
       }
     }
 
     "agent access is disabled" should {
+
       mockConfig.features.agentAccessEnabled(false)
       mockAgentAuthorised()
       val result = target(request)
