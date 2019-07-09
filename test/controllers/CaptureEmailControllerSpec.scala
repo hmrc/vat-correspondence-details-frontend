@@ -69,7 +69,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
     setup(result)
 
     new CaptureEmailController(
-      mockAuthPredicate,
+      mockAuthPredicateComponents,
       mockInflightPPOBPredicate,
       mcc,
       mockVatSubscriptionService,
@@ -216,7 +216,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         setup(Right(customerInfoResult))
         new CaptureEmailController(
-          mockAuthPredicate,
+          mockAuthPredicateComponents,
           mockInflightPPOBPredicate,
           mcc,
           mockVatSubscriptionService,

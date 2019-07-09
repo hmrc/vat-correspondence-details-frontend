@@ -63,6 +63,7 @@ trait AppConfig {
   val contactHmrcUrl: String
   def contactPreferencesUrl(vrn: String): String
   def feedbackUrl(redirect: String): String
+  val agentBlockedUrls: Seq[String]
 }
 
 @Singleton
@@ -146,4 +147,13 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override def feedbackUrl(redirect: String): String = s"$contactFrontendService/contact/beta-feedback?service=$contactFormServiceIdentifier" +
     s"&backUrl=${ContinueUrl(host + redirect).encodedUrl}"
+
+  override val agentBlockedUrls: Seq[String] = Seq(
+    controllers.routes.CaptureEmailController.show().url,
+    controllers.routes.ConfirmEmailController.show().url,
+    controllers.routes.ConfirmEmailController.updateEmailAddress().url,
+    controllers.routes.VerifyEmailController.show().url,
+    controllers.routes.VerifyEmailController.sendVerification().url,
+    controllers.routes.EmailChangeSuccessController.show().url
+  ).map(route => "/vat-through-software/account/correspondence" + route)
 }

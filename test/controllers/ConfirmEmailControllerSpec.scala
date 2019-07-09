@@ -32,7 +32,7 @@ import scala.concurrent.Future
 class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
   object TestConfirmEmailController extends ConfirmEmailController(
-    mockAuthPredicate,
+    mockAuthPredicateComponents,
     mockInflightPPOBPredicate,
     mcc,
     mockErrorHandler,
