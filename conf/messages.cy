@@ -54,8 +54,8 @@ sessionTimeout.helpOne = I reoli’ch cyfrif TAW, bydd yn rhaid i chi
 sessionTimeout.helpTwo = fewngofnodi
 sessionTimeout.helpThree = gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
 
-confirmEmail.title = Cadarnhau'r cyfeiriad e-bost newydd
-confirmEmail.heading = Cadarnhau'r cyfeiriad e-bost newydd
+confirmEmail.title = Cadarnhau’r cyfeiriad e-bost newydd
+confirmEmail.heading = Cadarnhau’r cyfeiriad e-bost newydd
 confirmEmail.link = Golygu’r cyfeiriad e-bost
 confirmEmail.body = Drwy gadarnhau’r newid hwn, rydych yn cytuno bod yr wybodaeth a roesoch yn gyflawn ac yn gywir.
 confirmEmail.edit = Golygu’r cyfeiriad e-bost
