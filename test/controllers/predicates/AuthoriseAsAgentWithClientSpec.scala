@@ -36,87 +36,70 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
 
   "The AuthoriseAsAgentWithClientSpec" when {
 
-    "the agent access is enabled" when {
-      "the agent is authorised with a Client VRN in session" should {
+    "the agent is authorised with a Client VRN in session" should {
 
-        "return 200" in {
-          mockConfig.features.agentAccessEnabled(true)
-
-          mockAgentAuthorised()
-          val result = target(fakeRequestWithClientsVRN)
-          status(result) shouldBe Status.OK
-        }
-      }
-
-      "the agent is not authenticated" should {
-
-        "return 401 (Unauthorised)" in {
-          mockConfig.features.agentAccessEnabled(true)
-
-          mockMissingBearerToken()
-          val result = target(fakeRequestWithClientsVRN)
-          status(result) shouldBe Status.UNAUTHORIZED
-        }
-      }
-
-      "the agent is not authorised" should {
-
+      "return 200" in {
         mockConfig.features.agentAccessEnabled(true)
-        lazy val result = target(fakeRequestWithClientsVRN)
 
-        "return 200" in {
-          mockAuthorisationException()
-          status(result) shouldBe Status.OK
-        }
-
-        "page title is correct" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You are not authorised for this client"
-        }
-      }
-
-      "the agent has no enrolments" should {
-
-        mockConfig.features.agentAccessEnabled(true)
-        lazy val result = await(target(fakeRequestWithClientsVRN))
-
-        "return Internal Server Error (500)" in {
-          mockAgentWithoutAffinity()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-        "render the Internal Server Error page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
-        }
-      }
-
-      "there is no client VRN in session" should {
-
-        mockConfig.features.agentAccessEnabled(true)
         mockAgentAuthorised()
-        lazy val result = await(target(request))
-
-        "return 303" in {
-          status(result) shouldBe Status.SEE_OTHER
-        }
-
-        "redirect to the agent client lookup service" in {
-          redirectLocation(result) shouldBe Some(mockConfig.vatAgentClientLookupServicePath)
-        }
+        val result = target(fakeRequestWithClientsVRN)
+        status(result) shouldBe Status.OK
       }
     }
 
-    "agent access is disabled" should {
+    "the agent is not authenticated" should {
 
-      mockConfig.features.agentAccessEnabled(false)
-      mockAgentAuthorised()
-      val result = target(request)
+      "return 401 (Unauthorised)" in {
+        mockConfig.features.agentAccessEnabled(true)
 
-      "return unauthorised" in {
+        mockMissingBearerToken()
+        val result = target(fakeRequestWithClientsVRN)
         status(result) shouldBe Status.UNAUTHORIZED
       }
+    }
 
-      "show the correct title" in {
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s correspondence details yet"
+    "the agent is not authorised" should {
+
+      mockConfig.features.agentAccessEnabled(true)
+      lazy val result = target(fakeRequestWithClientsVRN)
+
+      "return 200" in {
+        mockAuthorisationException()
+        status(result) shouldBe Status.OK
+      }
+
+      "page title is correct" in {
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You are not authorised for this client"
+      }
+    }
+
+    "the agent has no enrolments" should {
+
+      mockConfig.features.agentAccessEnabled(true)
+      lazy val result = await(target(fakeRequestWithClientsVRN))
+
+      "return Internal Server Error (500)" in {
+        mockAgentWithoutAffinity()
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "render the Internal Server Error page" in {
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+      }
+    }
+
+    "there is no client VRN in session" should {
+
+      mockConfig.features.agentAccessEnabled(true)
+      mockAgentAuthorised()
+      lazy val result = await(target(request))
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the agent client lookup service" in {
+        redirectLocation(result) shouldBe Some(mockConfig.vatAgentClientLookupServicePath)
       }
     }
   }

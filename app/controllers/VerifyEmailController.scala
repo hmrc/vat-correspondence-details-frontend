@@ -18,7 +18,7 @@ package controllers
 
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthPredicate, InFlightPPOBPredicate}
+import controllers.predicates.{AuthPredicate, AuthPredicateComponents, InFlightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,17 +29,17 @@ import views.html.VerifyEmailView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
+class VerifyEmailController @Inject()(val authComps: AuthPredicateComponents,
                                       val inflightCheck: InFlightPPOBPredicate,
                                       override val mcc: MessagesControllerComponents,
                                       val emailVerificationService: EmailVerificationService,
                                       val errorHandler: ErrorHandler,
                                       verifyEmailView: VerifyEmailView,
-                                      implicit val appConfig: AppConfig) extends BaseController(mcc) {
+                                      implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (authenticate andThen inflightCheck).async { implicit user =>
+  def show: Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) => Future.successful(Ok(verifyEmailView(email)))
@@ -47,7 +47,7 @@ class VerifyEmailController @Inject()(val authenticate: AuthPredicate,
     }
   }
 
-  def sendVerification: Action[AnyContent] = authenticate.async { implicit user =>
+  def sendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>

@@ -28,7 +28,7 @@ import views.html.VerifyEmailView
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyEmailController extends VerifyEmailController(
-    mockAuthPredicate,
+    mockAuthPredicateComponents,
     mockInflightPPOBPredicate,
     mcc,
     mockEmailVerificationService,

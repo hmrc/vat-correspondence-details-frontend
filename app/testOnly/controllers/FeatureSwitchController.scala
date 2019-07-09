@@ -19,14 +19,14 @@ package testOnly.controllers
 import config.AppConfig
 import forms.FeatureSwitchForm
 import javax.inject.Inject
-import controllers.BaseController
 import models.FeatureSwitchModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import testOnly.views.html.FeatureSwitch
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-class FeatureSwitchController @Inject()(override val mcc: MessagesControllerComponents,
+class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
                                         featureSwitchView: FeatureSwitch,
-                                        implicit val appConfig: AppConfig) extends BaseController(mcc) {
+                                        implicit val appConfig: AppConfig) extends FrontendController(mcc) {
 
   def featureSwitch: Action[AnyContent] = Action { implicit request =>
     Ok(featureSwitchView(FeatureSwitchForm.form.fill(

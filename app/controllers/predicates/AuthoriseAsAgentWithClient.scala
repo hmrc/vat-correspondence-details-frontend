@@ -52,35 +52,31 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
   override def invokeBlock[A](request: Request[A], block: User[A] => Future[Result]): Future[Result] = {
     implicit val req: Request[A] = request
 
-    if (appConfig.features.agentAccessEnabled()) {
-      request.session.get(SessionKeys.clientVrn) match {
-        case Some(vrn) =>
-          logDebug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
-          enrolmentsAuthService.authorised(delegatedAuthRule(vrn))
-            .retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
-              case None ~ _ =>
-                Future.successful(errorHandler.showInternalServerError)
-              case _ ~ allEnrolments =>
-                val agent = Agent(allEnrolments)
-                val user = User(vrn, active = true, Some(agent.arn))
-                block(user)
-            } recover {
-              case _: NoActiveSession =>
-                logDebug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
-                  s"rendering Session Timeout")
-                Unauthorized(sessionTimeoutView())
+    request.session.get(SessionKeys.clientVrn) match {
+      case Some(vrn) =>
+        logDebug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
+        enrolmentsAuthService.authorised(delegatedAuthRule(vrn))
+          .retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
+            case None ~ _ =>
+              Future.successful(errorHandler.showInternalServerError)
+            case _ ~ allEnrolments =>
+              val agent = Agent(allEnrolments)
+              val user = User(vrn, active = true, Some(agent.arn))
+              block(user)
+          } recover {
+            case _: NoActiveSession =>
+              logDebug("[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
+                "rendering Session Timeout")
+              Unauthorized(sessionTimeoutView())
 
-              case _: AuthorisationException =>
-                logWarn(s"[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
-                  s"delegated authority for Client")
-                Ok(notAuthorisedForClientView(vrn))
+            case _: AuthorisationException =>
+              logWarn("[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
+                "delegated authority for Client")
+              Ok(notAuthorisedForClientView(vrn))
 
-            }
-        case _ =>
-          Future.successful(Redirect(appConfig.vatAgentClientLookupServicePath))
-      }
-    } else {
-      Future.successful(Unauthorized(agentJourneyDisabledView()))
+          }
+      case _ =>
+        Future.successful(Redirect(appConfig.vatAgentClientLookupServicePath))
     }
   }
 }

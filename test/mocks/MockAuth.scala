@@ -71,18 +71,22 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       ec
     )
 
+  val mockAuthPredicateComponents = new AuthPredicateComponents(
+    mockEnrolmentsAuthService,
+    mcc,
+    mockErrorHandler,
+    mockAuthAsAgentWithClient,
+    sessionTimeoutView,
+    agentJourneyDisabledView,
+    unauthorisedAgentView,
+    notSignedUpView,
+    mockConfig,
+    ec
+  )
+
   val mockAuthPredicate: AuthPredicate =
     new AuthPredicate(
-      mockEnrolmentsAuthService,
-      mcc,
-      mockErrorHandler,
-      mockAuthAsAgentWithClient,
-      sessionTimeoutView,
-      agentJourneyDisabledView,
-      unauthorisedAgentView,
-      notSignedUpView,
-      mockConfig,
-      ec
+      mockAuthPredicateComponents, allowsAgents = true
     )
 
   val mockInflightPPOBPredicate: InFlightPPOBPredicate = {
