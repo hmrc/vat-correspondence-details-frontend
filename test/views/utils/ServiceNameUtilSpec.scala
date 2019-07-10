@@ -25,7 +25,7 @@ class ServiceNameUtilSpec extends TestUtil {
     "given a User who is an Agent" should {
 
       s"return the agent service name Update your client’s VAT details" in {
-        ServiceNameUtil.generateHeader(agent,messages) shouldBe "Update your client’s VAT details"
+        ServiceNameUtil.generateHeader(agent,messages) shouldBe "Your client’s VAT details"
       }
     }
 
