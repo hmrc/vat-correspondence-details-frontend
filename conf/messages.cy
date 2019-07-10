@@ -12,7 +12,7 @@ feedback.title = Adborth
 feedbackThanks.title = Diolch
 
 common.clientService = Cyfrif Treth Busnes
-common.agentService = Diweddaru manylion TAW eich cleient
+common.agentService = Manylion TAW eich cleient
 common.continue = Yn eich blaen
 common.error.heading = Mae problem wedi codi
 
