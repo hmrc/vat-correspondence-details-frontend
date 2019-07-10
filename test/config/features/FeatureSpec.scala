@@ -54,4 +54,16 @@ class FeatureSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
       features.emailVerificationEnabled() shouldBe false
     }
   }
+
+  "The Change Website Feature" should {
+
+    "return its current state" in {
+      features.changeWebsiteEnabled() shouldBe false
+    }
+
+    "switch to a new state" in {
+      features.changeWebsiteEnabled(false)
+      features.changeWebsiteEnabled() shouldBe false
+    }
+  }
 }
