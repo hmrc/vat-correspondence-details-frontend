@@ -35,7 +35,8 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
         emailVerification = appConfig.features.emailVerificationEnabled(),
         stubContactPreferences = appConfig.features.stubContactPreferences(),
         contactPreferences = appConfig.features.contactPreferencesEnabled(),
-        languageSelector = appConfig.features.languageSelectorEnabled()
+        languageSelector = appConfig.features.languageSelectorEnabled(),
+        changeWebsite = appConfig.features.changeWebsiteEnabled()
       )
     )))
   }
@@ -53,6 +54,7 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
     appConfig.features.stubContactPreferences(model.stubContactPreferences)
     appConfig.features.contactPreferencesEnabled(model.contactPreferences)
     appConfig.features.languageSelectorEnabled(model.languageSelector)
+    appConfig.features.changeWebsiteEnabled(model.changeWebsite)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 }

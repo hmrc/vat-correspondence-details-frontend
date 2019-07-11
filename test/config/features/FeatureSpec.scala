@@ -29,6 +29,7 @@ class FeatureSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     super.beforeEach()
     features.agentAccessEnabled(true)
     features.emailVerificationEnabled(true)
+    features.changeWebsiteEnabled(true)
   }
 
   "The Agent Access Feature" should {
@@ -52,6 +53,18 @@ class FeatureSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     "switch to a new state" in {
       features.emailVerificationEnabled(false)
       features.emailVerificationEnabled() shouldBe false
+    }
+  }
+
+  "The Change Website Feature" should {
+
+    "return its current state" in {
+      features.changeWebsiteEnabled() shouldBe true
+    }
+
+    "switch to a new state" in {
+      features.changeWebsiteEnabled(false)
+      features.changeWebsiteEnabled() shouldBe false
     }
   }
 }

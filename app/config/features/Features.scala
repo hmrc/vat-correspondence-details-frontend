@@ -27,5 +27,6 @@ class Features @Inject()(config: Configuration) {
   val stubContactPreferences = new Feature(ConfigKeys.stubContactPreferencesFeature, config)
   val contactPreferencesEnabled = new Feature(ConfigKeys.contactPreferencesFeature, config)
   val languageSelectorEnabled = new Feature(ConfigKeys.languageSelectorFeature, config)
+  val changeWebsiteEnabled = new Feature(ConfigKeys.changeWebsiteFeature, config)
 
 }

@@ -28,7 +28,8 @@ object FeatureSwitchForm {
       ConfigKeys.emailVerificationFeature -> boolean,
       ConfigKeys.stubContactPreferencesFeature -> boolean,
       ConfigKeys.contactPreferencesFeature -> boolean,
-      ConfigKeys.languageSelectorFeature -> boolean
+      ConfigKeys.languageSelectorFeature -> boolean,
+      ConfigKeys.changeWebsiteFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }
