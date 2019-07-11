@@ -25,3 +25,7 @@ GET         /email-address-confirmation        controllers.EmailChangeSuccessCon
 # capture website
 GET         /new-website-address               controllers.CaptureWebsiteController.show
 POST        /new-website-address               controllers.CaptureWebsiteController.submit
+
+# confirm website
+GET         /confirm-website                   controllers.ConfirmWebsiteController.show
+POST        /confirm-website                   controllers.ConfirmWebsiteController.updateWebsite

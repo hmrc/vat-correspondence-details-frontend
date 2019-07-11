@@ -61,6 +61,10 @@ confirmEmail.heading = Confirm the new email address
 confirmEmail.link = Edit email address
 confirmEmail.edit = Edit email address
 
+confirmWebsite.title = What is the new website address?
+confirmWebsite.heading = What is the new website address?
+confirmWebsite.hint = For example, www.abc.co...
+
 verifyEmail.title = Verify your email address
 verifyEmail.heading = Verify your email address
 verifyEmail.lineOne = We’ve sent an email to {0}. Click on the link in the email to verify your email address.
