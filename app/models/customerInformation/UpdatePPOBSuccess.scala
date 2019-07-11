@@ -18,8 +18,8 @@ package models.customerInformation
 
 import play.api.libs.json.{Format, Json}
 
-case class UpdateEmailSuccess(formBundle: String)
+case class UpdatePPOBSuccess(formBundle: String)
 
-object UpdateEmailSuccess {
-  implicit val format: Format[UpdateEmailSuccess] = Json.format[UpdateEmailSuccess]
+object UpdatePPOBSuccess {
+  implicit val format: Format[UpdatePPOBSuccess] = Json.format[UpdatePPOBSuccess]
 }

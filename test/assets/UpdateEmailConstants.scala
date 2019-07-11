@@ -15,9 +15,9 @@
  */
 
 package assets
-import models.customerInformation.UpdateEmailSuccess
+import models.customerInformation.UpdatePPOBSuccess
 
 object UpdateEmailConstants {
   val formBundle = "XA1234567"
-  val updateEmailSuccess = UpdateEmailSuccess(formBundle)
+  val updateEmailSuccess = UpdatePPOBSuccess(formBundle)
 }

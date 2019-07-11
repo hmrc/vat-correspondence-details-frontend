@@ -18,7 +18,7 @@ package connectors
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
+import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import helpers.IntegrationBaseSpec
 import models.customerInformation._
 import models.errors.ErrorModel
@@ -112,17 +112,17 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
     }
   }
 
-  "Calling updateEmail" when {
+  "Calling updatePPOB" when {
 
     "valid JSON is returned by the endpoint" should {
 
       "return an UpdateEmailSuccess model" in new Test {
-        override def setupStubs(): StubMapping = VatSubscriptionStub.stubUpdateEmail
+        override def setupStubs(): StubMapping = VatSubscriptionStub.stubUpdatePPOB
 
         setupStubs()
 
-        val expected = Right(UpdateEmailSuccess("success"))
-        val result: UpdateEmailResponse = await(connector.updateEmail(testVrn, testPPOB))
+        val expected = Right(UpdatePPOBSuccess("success"))
+        val result: UpdatePPOBResponse = await(connector.updatePPOB(testVrn, testPPOB))
 
         result shouldBe expected
       }
@@ -131,12 +131,12 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
     "the endpoint returns an unexpected status" should {
 
       "return an error model" in new Test {
-        override def setupStubs(): StubMapping = VatSubscriptionStub.stubUpdateEmailError
+        override def setupStubs(): StubMapping = VatSubscriptionStub.stubUpdatePPOBError
 
         setupStubs()
 
         val expected = Left(ErrorModel(INTERNAL_SERVER_ERROR, """{"fail":"nope"}"""))
-        val result: UpdateEmailResponse = await(connector.updateEmail(testVrn, testPPOB))
+        val result: UpdatePPOBResponse = await(connector.updatePPOB(testVrn, testPPOB))
 
         result shouldBe expected
       }

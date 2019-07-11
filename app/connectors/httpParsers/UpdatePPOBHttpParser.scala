@@ -17,31 +17,31 @@
 package connectors.httpParsers
 
 import models.errors.ErrorModel
-import models.customerInformation.UpdateEmailSuccess
+import models.customerInformation.UpdatePPOBSuccess
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil.{logDebug, logWarn}
 
-object UpdateEmailHttpParser {
+object UpdatePPOBHttpParser {
 
-  type UpdateEmailResponse = Either[ErrorModel, UpdateEmailSuccess]
+  type UpdatePPOBResponse = Either[ErrorModel, UpdatePPOBSuccess]
 
-  implicit object UpdateEmailReads extends HttpReads[UpdateEmailResponse] {
-    override def read(method: String, url: String, response: HttpResponse): UpdateEmailResponse = {
+  implicit object UpdatePPOBReads extends HttpReads[UpdatePPOBResponse] {
+    override def read(method: String, url: String, response: HttpResponse): UpdatePPOBResponse = {
       response.status match {
-        case OK => response.json.validate[UpdateEmailSuccess].fold(
+        case OK => response.json.validate[UpdatePPOBSuccess].fold(
           invalid => {
-            logWarn(s"[UpdateEmailHttpParser][read] - Invalid JSON: $invalid")
+            logWarn(s"[UpdatePPOBHttpParser][read] - Invalid JSON: $invalid")
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => {
-            logDebug("[UpdateEmailHttpParser][read] - Successfully parsed email update response.")
+            logDebug("[UpdatePPOBHttpParser][read] - Successfully parsed update response.")
             Right(valid)
           }
         )
         case status =>
           logWarn(
-            s"[UpdateEmailHttpParser][read] - " +
+            s"[UpdatePPOBHttpParser][read] - " +
               s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )
           Left(ErrorModel(status, response.body))

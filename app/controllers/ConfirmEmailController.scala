@@ -23,7 +23,7 @@ import common.SessionKeys.{emailKey, inFlightContactDetailsChangeKey, validation
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
 import models.User
-import models.customerInformation.UpdateEmailSuccess
+import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
@@ -59,10 +59,10 @@ class ConfirmEmailController @Inject()(val authComps: AuthPredicateComponents,
     extractSessionEmail(user) match {
       case Some(email) =>
         vatSubscriptionService.updateEmail(user.vrn, email) map {
-          case Right(UpdateEmailSuccess(message)) if message.isEmpty =>
+          case Right(UpdatePPOBSuccess(message)) if message.isEmpty =>
             Redirect(routes.VerifyEmailController.sendVerification())
 
-          case Right(UpdateEmailSuccess(_)) =>
+          case Right(UpdatePPOBSuccess(_)) =>
             auditService.extendedAudit(
               ChangedEmailAddressAuditModel(
                 user.session.get(validationEmailKey),
