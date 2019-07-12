@@ -18,9 +18,9 @@ package services
 
 import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
+import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import javax.inject.{Inject, Singleton}
-import models.customerInformation.{ContactDetails, PPOB, UpdateEmailSuccess}
+import models.customerInformation.{ContactDetails, PPOB, UpdatePPOBSuccess}
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
@@ -38,21 +38,30 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     )
   }
 
+  private[services] def buildWebsiteUpdateModel(website: String, ppob: PPOB): PPOB =
+    ppob.copy(websiteAddress = Some(website))
+
   def getCustomerInfo(vrn: String)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetCustomerInfoResponse] =
     connector.getCustomerInfo(vrn)
 
   def updateEmail(vrn: String, email: String)
-                 (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[UpdateEmailResponse] = {
+                 (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[UpdatePPOBResponse] =
 
     emailVerificationService.isEmailVerified(email) flatMap {
       case Some(true) =>
         this.getCustomerInfo(vrn) flatMap {
-          case Right(customerInfo) => connector.updateEmail(vrn, buildEmailUpdateModel(email, customerInfo.ppob))
+          case Right(customerInfo) => connector.updatePPOB(vrn, buildEmailUpdateModel(email, customerInfo.ppob))
           case Left(error) => Future.successful(Left(error))
         }
-      case Some(false) => Future.successful(Right(UpdateEmailSuccess("")))
+      case Some(false) => Future.successful(Right(UpdatePPOBSuccess("")))
       case None => Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address")))
     }
-  }
+
+  def updateWebsite(vrn: String, website: String)
+                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdatePPOBResponse] =
+    connector.getCustomerInfo(vrn).flatMap {
+      case Right(customerInfo) => connector.updatePPOB(vrn, buildWebsiteUpdateModel(website, customerInfo.ppob))
+      case Left(error) => Future.successful(Left(error))
+    }
 }

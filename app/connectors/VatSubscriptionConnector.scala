@@ -19,7 +19,7 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.ResponseHttpParser.{HttpGetResult, HttpPutResult}
 import javax.inject.{Inject, Singleton}
-import models.customerInformation.{CustomerInformation, PPOB, UpdateEmailSuccess}
+import models.customerInformation.{CustomerInformation, PPOB, UpdatePPOBSuccess}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.LoggerUtil.{logDebug, logWarn}
@@ -33,8 +33,8 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
   private[connectors] def getCustomerInfoUrl(vrn: String): String =
     s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/full-information"
 
-  private[connectors] def updateEmailUrl(vrn: String): String =
-    s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/email-address"
+  private[connectors] def updatePPOBUrl(vrn: String): String =
+    s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/ppob"
 
   def getCustomerInfo(vrn: String)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[CustomerInformation]] = {
@@ -51,16 +51,16 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
     }
   }
 
-  def updateEmail(vrn: String, ppob: PPOB)
-                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpPutResult[UpdateEmailSuccess]] = {
+  def updatePPOB(vrn: String, ppob: PPOB)
+                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpPutResult[UpdatePPOBSuccess]] = {
 
-    import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailReads
+    import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads
 
-    http.PUT[PPOB, HttpPutResult[UpdateEmailSuccess]](updateEmailUrl(vrn), ppob).map {
+    http.PUT[PPOB, HttpPutResult[UpdatePPOBSuccess]](updatePPOBUrl(vrn), ppob).map {
       case result@Right(_) =>
         result
       case httpError@Left(error) =>
-        logWarn("[VatSubscriptionConnector][updateEmail] received error - " + error.message)
+        logWarn("[VatSubscriptionConnector][updatePPOB] received error - " + error.message)
         httpError
     }
   }

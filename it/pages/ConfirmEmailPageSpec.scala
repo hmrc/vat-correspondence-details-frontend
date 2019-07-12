@@ -157,7 +157,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             VatSubscriptionStub.stubCustomerInfo
 
             And("a successful vat subscription response is stubbed")
-            VatSubscriptionStub.stubUpdateEmail
+            VatSubscriptionStub.stubUpdatePPOB
             val result = show
 
             result should have(
@@ -179,7 +179,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             VatSubscriptionStub.stubCustomerInfo
 
             And("a successful vat subscription response is stubbed")
-            VatSubscriptionStub.stubUpdateEmail
+            VatSubscriptionStub.stubUpdatePPOB
             val result = show
 
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.emailKey) shouldBe None
@@ -203,7 +203,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             VatSubscriptionStub.stubCustomerInfo
 
             And("a successful vat subscription response is stubbed")
-            VatSubscriptionStub.stubUpdateEmailNoMessage
+            VatSubscriptionStub.stubUpdatePPOBNoMessage
             val result = show
 
             result should have(
@@ -250,7 +250,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
           EmailVerificationStub.stubEmailVerified(email)
 
           And("a successful vat subscription response is stubbed")
-          VatSubscriptionStub.stubUpdateEmail
+          VatSubscriptionStub.stubUpdatePPOB
           val result = show
 
           result should have(

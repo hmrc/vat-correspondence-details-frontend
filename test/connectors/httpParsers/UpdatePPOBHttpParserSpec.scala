@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailReads._
+import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads._
 import assets.UpdateEmailConstants._
 import models.errors.ErrorModel
 import org.scalatest.EitherValues
@@ -26,7 +26,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
 
-class UpdateEmailHttpParserSpec extends UnitSpec with EitherValues {
+class UpdatePPOBHttpParserSpec extends UnitSpec with EitherValues {
 
   "read" when {
     "the response status is OK" should {

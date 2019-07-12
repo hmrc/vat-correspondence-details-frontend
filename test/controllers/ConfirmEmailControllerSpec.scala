@@ -18,7 +18,7 @@ package controllers
 
 import assets.BaseTestConstants._
 import models.User
-import models.customerInformation.UpdateEmailSuccess
+import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -97,7 +97,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
         "show the email changed success page" in {
           mockIndividualAuthorised()
-          mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdateEmailSuccess("success"))))
+          mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdatePPOBSuccess("success"))))
           val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
 
           status(result) shouldBe Status.SEE_OTHER
@@ -136,7 +136,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       "redirect the user to the send email verification page" in {
         mockIndividualAuthorised()
-        mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdateEmailSuccess(""))))
+        mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdatePPOBSuccess(""))))
         val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
 
         status(result) shouldBe Status.SEE_OTHER

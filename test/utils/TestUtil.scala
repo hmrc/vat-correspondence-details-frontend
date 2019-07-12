@@ -50,6 +50,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   lazy val mockErrorHandler: ErrorHandler = new ErrorHandler(messagesApi, injector.instanceOf[StandardErrorView], mockConfig)
 
   val testEmail = "test@email.co.uk"
+  val testWebsiteAddress = "www.ice-cream.com"
 
   implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   lazy val requestWithEmail: FakeRequest[AnyContentAsEmpty.type] =

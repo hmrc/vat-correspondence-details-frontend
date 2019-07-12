@@ -61,10 +61,10 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       "return the model" in {
         mockGetEmailVerificationState(testEmail)(Future(Some(true)))
         mockGetCustomerInfoSuccessResponse()
-        mockUpdateEmailSuccessResponse()
+        mockUpdatePPOBSuccessResponse()
 
         val result = await(service.updateEmail(testVrn, testEmail))
-        result shouldBe Right(UpdateEmailSuccess("success"))
+        result shouldBe Right(UpdatePPOBSuccess("success"))
       }
     }
 
@@ -73,7 +73,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       "return the error" in {
         mockGetEmailVerificationState(testEmail)(Future(Some(true)))
         mockGetCustomerInfoSuccessResponse()
-        mockUpdateEmailFailureResponse()
+        mockUpdatePPOBFailureResponse()
 
         val result = await(service.updateEmail(testVrn, testEmail))
         result shouldBe Left(invalidJsonError)
@@ -86,7 +86,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         mockGetEmailVerificationState(testEmail)(Future(Some(false)))
 
         val result = await(service.updateEmail(testVrn, testEmail))
-        result shouldBe Right(UpdateEmailSuccess(""))
+        result shouldBe Right(UpdatePPOBSuccess(""))
       }
     }
 
@@ -101,11 +101,43 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
     }
   }
 
+  "calling updateWebsite" when {
+
+    "the update is successful" should {
+
+      "return the success model" in {
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdatePPOBSuccessResponse()
+        val result = await(service.updateWebsite(testVrn, testWebsiteAddress))
+        result shouldBe Right(UpdatePPOBSuccess("success"))
+      }
+    }
+
+    "the VatSubscriptionConnector returns an error for the getCustomerInfo call" should {
+
+      "return the error" in {
+        mockGetCustomerInfoFailureResponse()
+        val result = await(service.updateWebsite(testVrn, testWebsiteAddress))
+        result shouldBe Left(invalidJsonError)
+      }
+    }
+
+    "the VatSubscriptionConnector returns an error for the updatePPOB call" should {
+
+      "return the error" in {
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdatePPOBFailureResponse()
+        val result = await(service.updateWebsite(testVrn, testWebsiteAddress))
+        result shouldBe Left(invalidJsonError)
+      }
+    }
+  }
+
   "calling buildEmailUpdateModel" when {
 
     "the user has existing contact details" should {
 
-      "return a CustomerInformation model with the updated email" in {
+      "return a PPOB model with the updated email" in {
         val expectedPPOB: PPOB = PPOB(
           fullPPOBAddressModel,
           Some(ContactDetails(
@@ -125,7 +157,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
 
     "the user does not have contact details" should {
 
-      "return a CustomerInformation model with the new email" in {
+      "return a PPOB model with the new email" in {
         val expectedPPOB: PPOB = PPOB(
           minPPOBAddressModel,
           Some(ContactDetails(
@@ -141,6 +173,20 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         val result = service.buildEmailUpdateModel(testEmail, minPPOBModel)
         result shouldBe expectedPPOB
       }
+    }
+  }
+
+  "calling buildWebsiteUpdateModel" should {
+
+    "return a PPOB model with the updated website address" in {
+
+      val expectedPPOB: PPOB = PPOB(
+        minPPOBAddressModel,
+        None,
+        Some(testWebsiteAddress)
+      )
+      val result = service.buildWebsiteUpdateModel(testWebsiteAddress, minPPOBModel)
+      result shouldBe expectedPPOB
     }
   }
 }

@@ -24,7 +24,7 @@ import play.api.libs.json.{JsObject, Json}
 object VatSubscriptionStub extends WireMockMethods {
 
   private val getCustomerInfoUri: String = "/vat-subscription/([0-9]+)/full-information"
-  private val updateEmailUri: String = "/vat-subscription/([0-9]+)/email-address"
+  private val updatePPOBUri: String = "/vat-subscription/([0-9]+)/ppob"
 
   def stubCustomerInfo: StubMapping = {
     when(method = GET, uri = getCustomerInfoUri)
@@ -36,14 +36,14 @@ object VatSubscriptionStub extends WireMockMethods {
       .thenReturn(status = OK, body = emptyCustomerInfo)
   }
 
-  def stubUpdateEmail: StubMapping = {
-    when(method = PUT, uri = updateEmailUri)
-      .thenReturn(status = OK, body = updateEmailJson)
+  def stubUpdatePPOB: StubMapping = {
+    when(method = PUT, uri = updatePPOBUri)
+      .thenReturn(status = OK, body = updatePPOBJson)
   }
 
-  def stubUpdateEmailNoMessage: StubMapping = {
-    when(method = PUT, uri = updateEmailUri)
-      .thenReturn(status = OK, body = updateEmailEmptyResponse)
+  def stubUpdatePPOBNoMessage: StubMapping = {
+    when(method = PUT, uri = updatePPOBUri)
+      .thenReturn(status = OK, body = updatePPOBEmptyResponse)
   }
 
   def stubCustomerInfoError: StubMapping = {
@@ -51,8 +51,8 @@ object VatSubscriptionStub extends WireMockMethods {
       .thenReturn(status = INTERNAL_SERVER_ERROR, body = Json.obj("fail" -> "nope"))
   }
 
-  def stubUpdateEmailError: StubMapping = {
-    when(method = PUT, uri = updateEmailUri)
+  def stubUpdatePPOBError: StubMapping = {
+    when(method = PUT, uri = updatePPOBUri)
       .thenReturn(status = INTERNAL_SERVER_ERROR, body = Json.obj("fail" -> "nope"))
   }
 
@@ -81,11 +81,11 @@ object VatSubscriptionStub extends WireMockMethods {
     )
   )
 
-  val updateEmailJson: JsObject = Json.obj(
+  val updatePPOBJson: JsObject = Json.obj(
     "formBundle" -> "success"
   )
 
-  val updateEmailEmptyResponse: JsObject = Json.obj(
+  val updatePPOBEmptyResponse: JsObject = Json.obj(
     "formBundle" -> ""
   )
 }
