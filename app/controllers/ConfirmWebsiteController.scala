@@ -39,7 +39,7 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = blockAgentPredicate { implicit user =>
+  def show: Action[AnyContent] = allowAgentPredicate { implicit user =>
 
     if(appConfig.features.changeWebsiteEnabled()) {
       extractSessionWebsite(user) match {
