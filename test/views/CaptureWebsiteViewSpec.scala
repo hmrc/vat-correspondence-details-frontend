@@ -35,6 +35,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
     val continueButton = "button"
     val errorSummary = "#error-summary-heading"
     val websiteFormGroup = "#content > article > form > div:nth-child(1)"
+    val removeWebsite = "#remove-website"
   }
 
   "Rendering the capture website page" when {
@@ -82,6 +83,10 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           elementText(Selectors.continueButton) shouldBe "Continue"
         }
 
+        "show the remove website link" in {
+          elementText(Selectors.removeWebsite) shouldBe "Remove website address"
+        }
+
       }
 
       "the user has no website in ETMP" should {
@@ -90,6 +95,10 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
 
         "have the website text field with no pre-populated value" in {
           element(Selectors.websiteField).attr("value") shouldBe ""
+        }
+
+        "not show the remove website link" in {
+          elementExtinct(Selectors.removeWebsite)
         }
       }
     }

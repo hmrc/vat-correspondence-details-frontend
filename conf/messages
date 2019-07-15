@@ -61,8 +61,8 @@ confirmEmail.heading = Confirm the new email address
 confirmEmail.link = Edit email address
 confirmEmail.edit = Edit email address
 
-confirmWebsite.title = What is the new website address?
-confirmWebsite.heading = What is the new website address?
+confirmWebsite.title = What's the website address?
+confirmWebsite.heading = What's the website address?
 confirmWebsite.hint = For example, www.abc.co...
 
 verifyEmail.title = Verify your email address

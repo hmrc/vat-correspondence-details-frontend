@@ -85,6 +85,19 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    "the changeWebsite feature is disabled" should {
+
+      "present the server error page" in {
+        mockConfig.features.changeWebsiteEnabled(false)
+        mockIndividualAuthorised()
+
+        val result = TestConfirmWebsiteController.show(request)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        mockConfig.features.changeWebsiteEnabled(true)
+      }
+    }
   }
 
   "Calling the updateWebsite() action in ConfirmWebsiteController" when {
@@ -149,6 +162,19 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         val result = TestConfirmWebsiteController.updateWebsite()(requestWithWebsite)
 
         status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+
+    "the changeWebsite feature is disabled" should {
+
+      "present the server error page" in {
+        mockConfig.features.changeWebsiteEnabled(false)
+        mockIndividualAuthorised()
+
+        val result = TestConfirmWebsiteController.updateWebsite()(request)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        mockConfig.features.changeWebsiteEnabled(true)
       }
     }
   }

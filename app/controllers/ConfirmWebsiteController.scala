@@ -41,34 +41,42 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
 
   def show: Action[AnyContent] = blockAgentPredicate { implicit user =>
 
-    extractSessionWebsite(user) match {
-      case Some(website) =>
-        Ok(confirmWebsiteView(website))
-      case _ =>
-        Redirect(controllers.routes.CaptureWebsiteController.show())
+    if(appConfig.features.changeWebsiteEnabled()) {
+      extractSessionWebsite(user) match {
+        case Some(website) =>
+          Ok(confirmWebsiteView(website))
+        case _ =>
+          Redirect(controllers.routes.CaptureWebsiteController.show())
+      }
+    } else {
+      errorHandler.showInternalServerError
     }
   }
 
-  def updateWebsite(): Action[AnyContent] = blockAgentPredicate.async { implicit user =>
+  def updateWebsite(): Action[AnyContent] = allowAgentPredicate.async { implicit user =>
 
-    extractSessionWebsite(user) match {
-      case Some(website) =>
-        vatSubscriptionService.updateWebsite(user.vrn, website) map {
-          case Right(_) =>
-            Redirect(routes.ConfirmWebsiteController.show())
-              .removingFromSession(websiteKey, validationWebsiteKey)
+    if(appConfig.features.changeWebsiteEnabled()) {
+      extractSessionWebsite(user) match {
+        case Some(website) =>
+          vatSubscriptionService.updateWebsite(user.vrn, website) map {
+            case Right(_) =>
+              Redirect(routes.ConfirmWebsiteController.show())
+                .removingFromSession(websiteKey, validationWebsiteKey)
 
-          case Left(ErrorModel(CONFLICT, _)) =>
-            logWarn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
-              "already in progress. Redirecting user to manage-vat overview page.")
-            Redirect(appConfig.manageVatSubscriptionServicePath)
+            case Left(ErrorModel(CONFLICT, _)) =>
+              logWarn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
+                "already in progress. Redirecting user to manage-vat overview page.")
+              Redirect(appConfig.manageVatSubscriptionServicePath)
 
-          case Left(_) =>
-            errorHandler.showInternalServerError
-        }
+            case Left(_) =>
+              errorHandler.showInternalServerError
+          }
 
-      case _ =>
-        Future.successful(Redirect(controllers.routes.CaptureWebsiteController.show()))
+        case _ =>
+          Future.successful(Redirect(controllers.routes.CaptureWebsiteController.show()))
+      }
+    } else {
+      Future.successful(errorHandler.showInternalServerError)
     }
   }
 
