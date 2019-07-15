@@ -108,7 +108,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       "return the success model" in {
         mockGetCustomerInfoSuccessResponse()
         mockUpdatePPOBSuccessResponse()
-        val result = await(service.updateWebsite(testVrn, testWebsiteAddress))
+        val result = await(service.updateWebsite(testVrn, testWebsite))
         result shouldBe Right(UpdatePPOBSuccess("success"))
       }
     }
@@ -117,7 +117,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
 
       "return the error" in {
         mockGetCustomerInfoFailureResponse()
-        val result = await(service.updateWebsite(testVrn, testWebsiteAddress))
+        val result = await(service.updateWebsite(testVrn, testWebsite))
         result shouldBe Left(invalidJsonError)
       }
     }
@@ -127,7 +127,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       "return the error" in {
         mockGetCustomerInfoSuccessResponse()
         mockUpdatePPOBFailureResponse()
-        val result = await(service.updateWebsite(testVrn, testWebsiteAddress))
+        val result = await(service.updateWebsite(testVrn, testWebsite))
         result shouldBe Left(invalidJsonError)
       }
     }
@@ -183,9 +183,9 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       val expectedPPOB: PPOB = PPOB(
         minPPOBAddressModel,
         None,
-        Some(testWebsiteAddress)
+        Some(testWebsite)
       )
-      val result = service.buildWebsiteUpdateModel(testWebsiteAddress, minPPOBModel)
+      val result = service.buildWebsiteUpdateModel(testWebsite, minPPOBModel)
       result shouldBe expectedPPOB
     }
   }

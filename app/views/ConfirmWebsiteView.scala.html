@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package common
+@import config.AppConfig
+@import uk.gov.hmrc.play.views.html.helpers.form
 
-object SessionKeys {
-  val clientVrn: String = "CLIENT_VRN"
-  val emailKey = "Email"
-  val validationEmailKey = "validationEmail"
-  val websiteKey = "Website"
-  val validationWebsiteKey = "validationWebsite"
-  val inFlightContactDetailsChangeKey = "inFlightContactDetailsChange"
+@this(mainTemplate: MainTemplate)
+
+@(website: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@mainTemplate(title = messages("confirmWebsite.title")) {
+
+ <a class="link-back" href=''>@messages("base.back")</a>
+
+ <h1 class="heading-large">@messages("confirmWebsite.heading")</h1>
+
+ <h2 class="lede">@website</h2>
+
+ <a href='@controllers.routes.ConfirmWebsiteController.updateWebsite().url' role="button" tabindex="0" class="button">
+  @messages("base.confirmAndContinue")</a>
 }
