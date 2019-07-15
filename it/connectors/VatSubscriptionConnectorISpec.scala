@@ -69,28 +69,7 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
 
         setupStubs()
 
-        val expected = Right(CustomerInformation(
-          PPOB(
-            PPOBAddress(
-              "firstLine",
-              None,
-              None,
-              None,
-              None,
-              None,
-              "codeOfMyCountry"
-            ),
-            Some(ContactDetails(
-              None,
-              None,
-              None,
-              Some("testemail@test.com"),
-              None
-            )),
-            Some("www.pepsi-mac.biz")
-          ),
-          None
-        ))
+        val expected = Right(CustomerInformation(testPPOB, None, None, None, None, None))
         val result: GetCustomerInfoResponse = await(connector.getCustomerInfo("123456789"))
 
         result shouldBe expected

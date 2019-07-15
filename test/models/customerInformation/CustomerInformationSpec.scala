@@ -37,19 +37,6 @@ class CustomerInformationSpec extends UnitSpec {
       }
     }
 
-    "parse to JSON" when {
-
-      "all fields are present" in {
-        val result = Json.toJson(fullCustomerInfoModel)
-        result shouldBe fullCustomerInfoJson
-      }
-
-      "the minimum number of fields are present" in {
-        val result = Json.toJson(minCustomerInfoModel)
-        result shouldBe minCustomerInfoJson
-      }
-    }
-
     "approvedAndPendingEmailAddressMatch" when {
 
       "pending email and approved email are not present" should {
@@ -66,7 +53,8 @@ class CustomerInformationSpec extends UnitSpec {
               Some(ContactDetails(None, None, None, None, None)),
               None
             ))
-          ))
+          )),
+          None, None, None, None
         )
 
         "return true" in {
@@ -88,7 +76,8 @@ class CustomerInformationSpec extends UnitSpec {
               Some(ContactDetails(None, None, None, Some("different email"), None)),
               None
             ))
-          ))
+          )),
+          None, None, None, None
         )
 
         "return false" in {
@@ -110,7 +99,8 @@ class CustomerInformationSpec extends UnitSpec {
               Some(ContactDetails(None, None, None, Some("email"), None)),
               None
             ))
-          ))
+          )),
+          None, None, None, None
         )
 
         "return true" in {
@@ -135,7 +125,8 @@ class CustomerInformationSpec extends UnitSpec {
               None,
               None
             ))
-          ))
+          )),
+          None, None, None, None
         )
 
         "return false" in {
@@ -157,12 +148,50 @@ class CustomerInformationSpec extends UnitSpec {
               None,
               None
             ))
-          ))
+          )),
+          None, None, None, None
         )
 
         "return true" in {
           model.approvedAndPendingPPOBAddressMatch shouldBe true
         }
+      }
+    }
+  }
+
+  "Calling .entityName" when {
+
+    "the model contains a trading name" should {
+
+      "return the trading name" in {
+        val result: Option[String] = fullCustomerInfoModel.entityName
+        result shouldBe Some("PepsiMac")
+      }
+    }
+
+    "the model does not contain a trading name or organisation name" should {
+
+      "return the first and last name" in {
+        val customerInfoSpecific = fullCustomerInfoModel.copy(tradingName = None, organisationName = None)
+        val result: Option[String] = customerInfoSpecific.entityName
+        result shouldBe Some("Pepsi Mac")
+      }
+    }
+
+    "the model does not contain a trading name, first name or last name" should {
+
+      "return the organisation name" in {
+        val customerInfoSpecific = fullCustomerInfoModel.copy(tradingName = None, firstName = None, lastName = None)
+        val result: Option[String] = customerInfoSpecific.entityName
+        result shouldBe Some("PepsiMac Ltd")
+      }
+    }
+
+    "the model does not contains a trading name, organisation name, or individual names" should {
+
+      "return None" in {
+        val result: Option[String] = minCustomerInfoModel.entityName
+        result shouldBe None
       }
     }
   }
