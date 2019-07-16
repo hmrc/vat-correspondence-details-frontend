@@ -20,7 +20,7 @@ import audit.AuditingService
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
-import forms.WebsiteForm._
+import forms.WebsiteForm.websiteForm
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
@@ -41,12 +41,30 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def show: Action[AnyContent] = (allowAgentPredicate andThen inflightCheck).async { implicit user =>
-    if(appConfig.features.changeWebsiteEnabled()) {
-      val currentWebsite = "example.com"
-      Future.successful(Ok(captureWebsiteView(websiteForm(currentWebsite).fill(currentWebsite),
-        currentWebsite = currentWebsite, websiteNotChangedError = false)))
-    } else {
-      Future.successful(errorHandler.showInternalServerError)
+    val validationWebsite: Future[Option[String]] = user.session.get(SessionKeys.validationWebsiteKey) match {
+      case Some(website) => Future.successful(Some(website))
+      case _ =>
+        vatSubscriptionService.getCustomerInfo(user.vrn) map {
+          case Right(details) => Some(details.ppob.websiteAddress.getOrElse(""))
+          case _ => None
+        }
+    }
+
+    val prepopulationWebsite: Future[String] = validationWebsite map { validation =>
+      user.session.get(SessionKeys.prepopulationWebsiteKey)
+        .getOrElse(validation.getOrElse(""))
+    }
+
+    for {
+      validation <- validationWebsite
+      prepopulation <- prepopulationWebsite
+    } yield {
+      validation match {
+        case Some(valWebsite) =>
+          Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulation), false, valWebsite))
+            .addingToSession(SessionKeys.validationWebsiteKey -> valWebsite)
+        case _ => errorHandler.showInternalServerError
+      }
     }
   }
 
@@ -62,7 +80,7 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
         },
         website     => {
           Future.successful(Redirect(controllers.routes.ConfirmWebsiteController.show())
-            .addingToSession(SessionKeys.websiteKey -> website))
+            .addingToSession(SessionKeys.prepopulationWebsiteKey -> website))
         }
       )
       case None => Future.successful(errorHandler.showInternalServerError)

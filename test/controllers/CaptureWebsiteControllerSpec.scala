@@ -17,23 +17,33 @@
 package controllers
 
 import common.SessionKeys
+import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
+import models.customerInformation.{ContactDetails, CustomerInformation, PPOB, PPOBAddress}
+import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.CaptureWebsiteView
+import assets.CustomerInfoConstants.fullCustomerInfoModel
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
   val testValidationWebsite: String = "https://www.current~valid~website.com"
   val testValidWebsite: String      = "https://www.new~valid~website.com"
   val testInvalidWebsite: String    = "invalid@£$%^&website"
+
   val view: CaptureWebsiteView = injector.instanceOf[CaptureWebsiteView]
 
-  def setup(): Any = {
+  def setup(result: GetCustomerInfoResponse): Any =
+    when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(result))
 
-  }
-
-  def target(): CaptureWebsiteController = {
-    setup()
+  def target(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)): CaptureWebsiteController = {
+    setup(result)
 
     new CaptureWebsiteController(
       mockAuthPredicateComponents,
@@ -47,14 +57,19 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
     )
   }
 
+
   "Calling the show action" when {
 
     "a user is enrolled with a valid enrolment" when {
 
-      lazy val result = target().show(request)
-      lazy val document = Jsoup.parse(bodyOf(result))
+      "the user's current website is retrieved from session" should {
 
-      "there user has a website registered on ETMP" should {
+        lazy val result = target().show(request.withSession(
+          common.SessionKeys.validationWebsiteKey -> testValidationWebsite)
+        )
+
+        lazy val document = Jsoup.parse(bodyOf(result))
+
         "return 200" in {
           status(result) shouldBe Status.OK
         }
@@ -64,11 +79,82 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
           charset(result) shouldBe Some("utf-8")
         }
 
-        "prepopulate the form with the validation website" in {
-          document.select("input").attr("value") shouldBe "example.com"
+        "prepopulate the form with the user's current website" in {
+          document.select("#website").attr("value") shouldBe testValidationWebsite
+        }
+
+        "not call the VatSubscription service" in {
+          verify(mockVatSubscriptionService, never())
+            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
+        }
+
+      }
+    }
+
+    "the previous form value is retrieved from session" should {
+
+      lazy val result = target().show(request.withSession(
+        common.SessionKeys.validationWebsiteKey -> testValidationWebsite,
+        common.SessionKeys.prepopulationWebsiteKey -> testValidWebsite)
+      )
+      lazy val document = Jsoup.parse(bodyOf(result))
+
+      "return 200" in {
+        status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+
+      "prepopulate the form with the previously entered form value" in {
+        document.select("#website").attr("value") shouldBe testValidWebsite
+      }
+
+      "not call the VatSubscription service" in {
+        verify(mockVatSubscriptionService, never())
+          .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
+      }
+    }
+
+    "there is no website in session" when {
+
+      "the customerInfo call succeeds" should {
+
+        lazy val result = target().show(request)
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 200" in {
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "prepopulate the form with the customerInfo result" in {
+          document.select("#website").attr("value") shouldBe "www.pepsi-mac.biz"
         }
       }
 
+      "the customerInfo call fails" should {
+
+        lazy val result = target(Left(ErrorModel(
+          Status.INTERNAL_SERVER_ERROR,
+          "error"
+        ))).show(request)
+
+        "return 500" in {
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+      }
     }
 
     "a user is does not have a valid enrolment" should {
@@ -85,7 +171,6 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
         charset(result) shouldBe Some("utf-8")
       }
     }
-
 
     "a user is not logged in" should {
 
@@ -121,7 +206,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
           }
 
           "add the new website to the session" in {
-            session(result).get(SessionKeys.websiteKey) shouldBe Some(testValidWebsite)
+            session(result).get(SessionKeys.prepopulationWebsiteKey) shouldBe Some(testValidWebsite)
           }
         }
 
