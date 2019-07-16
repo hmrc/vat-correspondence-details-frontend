@@ -29,3 +29,6 @@ POST        /new-website-address               controllers.CaptureWebsiteControl
 # confirm website
 GET         /confirm-new-website-address       controllers.ConfirmWebsiteController.show
 POST        /confirm-new-website-address       controllers.ConfirmWebsiteController.updateWebsite
+
+# website change successful
+GET         /website-address-confirmation      controllers.WebsiteChangeSuccessController.show

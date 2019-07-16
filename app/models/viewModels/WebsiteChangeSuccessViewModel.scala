@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package common
+package models.viewModels
 
-object SessionKeys {
-  val clientVrn: String = "CLIENT_VRN"
-  val emailKey = "Email"
-  val validationEmailKey = "validationEmail"
-  val prepopulationWebsiteKey = "vatCorrespondencePrepoulationWebsite"
-  val validationWebsiteKey = "validationWebsite"
-  val inFlightContactDetailsChangeKey = "inFlightContactDetailsChange"
-  val websiteChangeSuccessful = "vatCorrespondenceWebsiteChangeSuccessful"
-  val verifiedAgentEmail: String = "verifiedAgentEmail"
-}
+case class WebsiteChangeSuccessViewModel(businessName: Option[String],
+                                         preference: Option[String],
+                                         removeWebsite: Boolean,
+                                         agentEmail: Option[String])
