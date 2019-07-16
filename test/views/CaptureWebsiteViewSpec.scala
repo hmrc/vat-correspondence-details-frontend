@@ -87,6 +87,9 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           elementText(Selectors.removeWebsite) shouldBe "Remove website address"
         }
 
+        "have the correct remove website link" in {
+          element(Selectors.removeWebsite).attr("href") shouldBe controllers.routes.ConfirmRemoveWebsiteController.removeWebsiteAddress().url
+        }
       }
 
       "the user has no website in ETMP" should {

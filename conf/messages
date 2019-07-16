@@ -71,6 +71,10 @@ confirmWebsite.title = What's the website address?
 confirmWebsite.heading = What's the website address?
 confirmWebsite.hint = For example, www.abc.co...
 
+confirmWebsiteRemove.title = Confirm you want to remove the website address
+confirmWebsiteRemove.heading = Confirm you want to remove the website address: {0}
+confirmWebsiteRemove.cancel = Cancel
+
 verifyEmail.title = Verify your email address
 verifyEmail.heading = Verify your email address
 verifyEmail.lineOne = We’ve sent an email to {0}. Click on the link in the email to verify your email address.

@@ -32,3 +32,7 @@ POST        /confirm-new-website-address       controllers.ConfirmWebsiteControl
 
 # website change successful
 GET         /website-address-confirmation      controllers.WebsiteChangeSuccessController.show
+
+# remove website address
+GET         /remove-website-address            controllers.ConfirmRemoveWebsiteController.show
+POST        /remove-website-address            controllers.ConfirmRemoveWebsiteController.removeWebsiteAddress
