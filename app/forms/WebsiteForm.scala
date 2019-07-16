@@ -23,10 +23,22 @@ import uk.gov.hmrc.play.mappers.StopOnFirstFail.constraint
 
 object WebsiteForm {
 
-  val maxLength: Int = 138
+  val maxLength: Int = 132
 
+  val websiteRegex: String =
+    """^(((HTTP|http)(S|s)?\:\/\/((WWW|www)\.)?)|((
+      |WWW|www)\.))?[a-zA-Z0-9\[_~\:\/?#\]@!&'()*+,
+      |;=% ]+\.[a-zA-Z]{2,5}(\.[a-zA-Z]{2,5})?(\:[0-9]
+      |{1,5})?(\/[a-zA-Z0-9_-]+(\/)?)*$""".stripMargin
 
   def websiteForm(website: String): Form[String] = Form(
-    "website" -> text
+    "website" -> text.verifying(
+      StopOnFirstFail(
+        constraint[String]("captureWebsite.error.empty", _.length != 0),
+        constraint[String]("captureWebsite.error.notChanged", _.toLowerCase != website.toLowerCase),
+        constraint[String]("captureWebsite.error.exceedsMaxLength", _.length <= maxLength),
+        constraint[String]("captureWebsite.error.invalid", _.matches(websiteRegex))
+      )
+    )
   )
 }

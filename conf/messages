@@ -56,6 +56,10 @@ captureEmail.onlyAddEmail = Only complete this field if you have been told to do
 captureWebsite.title = What’s the website address?
 captureWebsite.hint = For example, www.abc.co...
 captureWebsite.removeWebsite.linkText = Remove website address
+captureWebsite.error.exceedsMaxLength = Enter a maximum of 132 characters
+captureWebsite.error.invalid = Enter a website address in the correct format, like www.example.co.uk
+captureWebsite.error.empty = Enter a website address
+captureWebsite.error.notChanged = Enter a new website address
 
 sessionTimeout.title = Your session has timed out
 sessionTimeout.helpOne = To manage your VAT account, you will have to
