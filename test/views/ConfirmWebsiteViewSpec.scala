@@ -25,18 +25,23 @@ class ConfirmWebsiteViewSpec extends ViewBaseSpec {
   val injectedView: ConfirmWebsiteView = injector.instanceOf[ConfirmWebsiteView]
 
   object Selectors {
-    val heading = "heading-large"
+    val heading = "h1"
     val backLink = "#content > article > a"
     val continueButton = ".button"
     val editLink = "#content > article > p:nth-child(5) > a"
+    val newWebsite = "#content > article > p"
   }
 
   "The Confirm Website view" should {
     lazy val view = injectedView(testWebsite)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
+    "have the correct title" in {
+      document.title shouldBe "Confirm the website address"
+    }
+
     "have the correct heading" in {
-      document.getElementsByClass(Selectors.heading).text() shouldBe "Confirm the website address"
+      elementText(Selectors.heading) shouldBe "Confirm the website address"
     }
 
     "have a back link" which {
@@ -51,7 +56,7 @@ class ConfirmWebsiteViewSpec extends ViewBaseSpec {
     }
 
     "have the website address the user provided" in {
-      document.text() contains testWebsite
+      elementText(Selectors.newWebsite) shouldBe "The new website address is " + testWebsite
     }
 
     "have a link to edit website address" which {

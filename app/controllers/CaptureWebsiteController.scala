@@ -52,10 +52,9 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
 
   def submit: Action[AnyContent] = (allowAgentPredicate andThen inflightCheck).async { implicit user =>
     val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey)
-    val prepopulationWebsite: Option[String] = user.session.get(SessionKeys.websiteKey)
 
-    (validationWebsite, prepopulationWebsite) match {
-      case (Some(validation), _) => websiteForm(validation).bindFromRequest.fold(
+    validationWebsite match {
+      case Some(validation) => websiteForm(validation).bindFromRequest.fold(
         errorForm => {
           val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureWebsite.error.notChanged")
           Future.successful(BadRequest(captureWebsiteView(errorForm, notChanged, validation)))
@@ -66,7 +65,7 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
             .addingToSession(SessionKeys.websiteKey -> website))
         }
       )
-      case (None, _) => Future.successful(errorHandler.showInternalServerError)
+      case None => Future.successful(errorHandler.showInternalServerError)
     }
   }
 

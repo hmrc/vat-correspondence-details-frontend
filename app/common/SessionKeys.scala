@@ -22,6 +22,7 @@ object SessionKeys {
   val validationEmailKey = "validationEmail"
   val prepopulationWebsiteKey = "vatCorrespondencePrepoulationWebsite"
   val validationWebsiteKey = "validationWebsite"
+  val websiteKey = "Website"
   val inFlightContactDetailsChangeKey = "inFlightContactDetailsChange"
   val websiteChangeSuccessful = "vatCorrespondenceWebsiteChangeSuccessful"
   val verifiedAgentEmail: String = "verifiedAgentEmail"

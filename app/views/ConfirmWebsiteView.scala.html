@@ -27,9 +27,9 @@
 
  <h1 class="heading-large">@messages("confirmWebsite.heading")</h1>
 
- <h2 class="lede">@messages("confirmWebsite.heading", website)</h2>
+ <p>@messages("confirmWebsite.p1", website)</p>
 
- <p><a href="@controllers.routes.CaptureWebsiteController.show().url">Change the website address</a></p>
+ <p><a href="@controllers.routes.CaptureWebsiteController.show().url">@messages("confirmWebsite.change")</a></p>
 
  <a href='@controllers.routes.ConfirmWebsiteController.updateWebsite().url' role="button" tabindex="0" class="button">
   @messages("base.confirmAndContinue")</a>
