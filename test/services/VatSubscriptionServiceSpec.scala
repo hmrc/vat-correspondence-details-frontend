@@ -176,16 +176,33 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
     }
   }
 
-  "calling buildWebsiteUpdateModel" should {
+  "calling buildWebsiteUpdateModel" when {
 
-    "return a PPOB model with the updated website address" in {
+    "the website address is not empty" should {
+
+      "return a PPOB model with the updated website address" in {
+
+        val expectedPPOB: PPOB = PPOB(
+          minPPOBAddressModel,
+          None,
+          Some(testWebsite)
+        )
+        val result = service.buildWebsiteUpdateModel(testWebsite, minPPOBModel)
+        result shouldBe expectedPPOB
+      }
+    }
+  }
+
+  "the website address is empty" should {
+
+    "return a PPOB model with the website address field set to None" in {
 
       val expectedPPOB: PPOB = PPOB(
-        minPPOBAddressModel,
-        None,
-        Some(testWebsite)
+        fullPPOBAddressModel,
+        Some(fullContactDetailsModel),
+        None
       )
-      val result = service.buildWebsiteUpdateModel(testWebsite, minPPOBModel)
+      val result = service.buildWebsiteUpdateModel("", fullPPOBModel)
       result shouldBe expectedPPOB
     }
   }
