@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package common
+@this()
 
-object SessionKeys {
-  val clientVrn: String = "CLIENT_VRN"
-  val emailKey = "Email"
-  val validationEmailKey = "validationEmail"
-  val prepopulationWebsiteKey = "vatCorrespondencePrepoulationWebsite"
-  val validationWebsiteKey = "validationWebsite"
-  val inFlightContactDetailsChangeKey = "inFlightContactDetailsChange"
-  val websiteChangeSuccessful = "vatCorrespondenceWebsiteChangeSuccessful"
-  val verifiedAgentEmail: String = "verifiedAgentEmail"
-}
+@(clientName: Option[String])(implicit messages: Messages)
+
+<p>
+  @messages("common.agent.updateClient1")
+  @clientName.fold(
+    <span>{messages("common.agent.yourClient")}</span>
+  )(
+    entityName => <strong class="bold">{entityName}</strong>
+  )
+  @messages("common.agent.updateClient2")
+</p>

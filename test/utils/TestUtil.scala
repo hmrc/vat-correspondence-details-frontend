@@ -58,7 +58,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
     request.withSession(SessionKeys.emailKey -> testEmail)
 
   lazy val requestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.websiteKey -> testWebsite)
+    request.withSession(SessionKeys.prepopulationWebsiteKey -> testWebsite)
 
   lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.clientVrn -> vrn)

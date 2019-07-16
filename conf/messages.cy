@@ -15,6 +15,9 @@ common.clientService = Cyfrif Treth Busnes
 common.agentService = Manylion TAW eich cleient
 common.continue = Yn eich blaen
 common.error.heading = Mae problem wedi codi
+common.whatHappensNext = Yr hyn sy’n digwydd nesaf
+common.helpOne.apiFailure = Byddwn yn anfon diweddariad atoch cyn pen 15 diwrnod gwaith.
+common.changeClient = Newid cleient
 
 standardError.title = Mae problem gyda’r gwasanaeth – Rhoi gwybod am TAW drwy feddalwedd – GOV.UK
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
@@ -73,12 +76,10 @@ verifyEmail.accordion.lineThree = Os byddwn yn ei anfon eto, ni fydd unrhyw gysy
 
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
 emailChangeSuccess.heading = Mae’r cyfeiriad e-bost newydd wedi dod i law
-emailChangeSuccess.headingTwo = Yr hyn sy’n digwydd nesaf
 emailChangeSuccess.helpOne = Byddwn yn anfon e-bost cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a yw’r cais wedi’i dderbyn ai peidio. Gallwch hefyd fynd i’ch negeseuon yn eich Cyfrif Treth Busnes.
 emailChangeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
 emailChangeSuccess.helpOne.digitalPreference = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd fynd i’ch negeseuon diogel CThEM i weld a yw’ch cais wedi’i dderbyn.
 emailChangeSuccess.helpOne.paperPreference = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
-emailChangeSuccess.helpOne.apiFailure = Byddwn yn anfon diweddariad atoch cyn pen 15 diwrnod gwaith.
 
 ppobChangePending.title = Rydym wrthi’n adolygu’ch cais
 ppobChangePending.heading = Mae gennych newid ar y gweill yn barod

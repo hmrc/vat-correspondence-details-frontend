@@ -17,10 +17,14 @@
 package models.customerInformation
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Reads, Writes}
+import play.api.libs.json.{JsPath, Reads}
 
 case class CustomerInformation(ppob: PPOB,
-                               pendingChanges: Option[PendingChanges]) {
+                               pendingChanges: Option[PendingChanges],
+                               firstName: Option[String],
+                               lastName: Option[String],
+                               organisationName: Option[String],
+                               tradingName: Option[String]) {
 
   val approvedAndPendingPPOBAddressMatch: Boolean =
     ppob.address equals pendingChanges.flatMap(_.ppob.map(_.address)).getOrElse("")
@@ -35,20 +39,30 @@ case class CustomerInformation(ppob: PPOB,
     } yield emailAddress
     approvedEmail equals pendingEmail
   }
+
+  def entityName: Option[String] =
+    (firstName, lastName, tradingName, organisationName) match {
+      case (Some(first), Some(last), None, None) => Some(s"$first $last")
+      case (None, None, None, orgName) => orgName
+      case _ => tradingName
+    }
 }
 
 object CustomerInformation {
 
   private val ppobPath = JsPath \ "ppob"
   private val pendingChangesPath = JsPath \ "pendingChanges"
+  private val firstNamePath = JsPath \ "customerDetails" \ "firstName"
+  private val lastNamePath = JsPath \ "customerDetails" \ "lastName"
+  private val organisationNamePath = JsPath \ "customerDetails" \ "organisationName"
+  private val tradingNamePath = JsPath \ "customerDetails" \ "tradingName"
 
   implicit val reads: Reads[CustomerInformation] = (
     ppobPath.read[PPOB] and
-    pendingChangesPath.readNullable[PendingChanges].orElse(Reads.pure(None))
+    pendingChangesPath.readNullable[PendingChanges].orElse(Reads.pure(None)) and
+    firstNamePath.readNullable[String].orElse(Reads.pure(None)) and
+    lastNamePath.readNullable[String].orElse(Reads.pure(None)) and
+    organisationNamePath.readNullable[String].orElse(Reads.pure(None)) and
+    tradingNamePath.readNullable[String].orElse(Reads.pure(None))
   )(CustomerInformation.apply _)
-
-  implicit val writes: Writes[CustomerInformation] = (
-    ppobPath.write[PPOB] and
-    pendingChangesPath.writeNullable[PendingChanges]
-  )(unlift(CustomerInformation.unapply))
 }

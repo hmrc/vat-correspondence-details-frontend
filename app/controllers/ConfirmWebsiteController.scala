@@ -16,7 +16,7 @@
 
 package controllers
 
-import common.SessionKeys.{websiteKey, validationWebsiteKey, inFlightContactDetailsChangeKey}
+import common.SessionKeys.{prepopulationWebsiteKey, validationWebsiteKey, inFlightContactDetailsChangeKey}
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicateComponents
 import javax.inject.{Inject, Singleton}
@@ -60,8 +60,7 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
         case Some(website) =>
           vatSubscriptionService.updateWebsite(user.vrn, website) map {
             case Right(_) =>
-              Redirect(routes.ConfirmWebsiteController.show())
-                .removingFromSession(websiteKey, validationWebsiteKey)
+              Redirect(routes.ConfirmWebsiteController.show()).removingFromSession(validationWebsiteKey)
 
             case Left(ErrorModel(CONFLICT, _)) =>
               logWarn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
@@ -81,6 +80,6 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
   }
 
   private[controllers] def extractSessionWebsite(user: User[AnyContent]): Option[String] = {
-    user.session.get(websiteKey).filter(_.nonEmpty)
+    user.session.get(prepopulationWebsiteKey).filter(_.nonEmpty)
   }
 }

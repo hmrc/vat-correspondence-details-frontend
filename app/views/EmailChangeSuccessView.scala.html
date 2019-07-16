@@ -26,7 +26,7 @@
     <h1 class="heading-xlarge" data-journey="email-address:view:change-email-success">@messages("emailChangeSuccess.heading")</h1>
   </div>
 
-  <h2 class="heading-medium">@messages("emailChangeSuccess.headingTwo")</h2>
+  <h2 class="heading-medium">@messages("common.whatHappensNext")</h2>
 
   @if(appConfig.features.contactPreferencesEnabled()) {
 
@@ -39,7 +39,7 @@
         <p id="preference-message">@messages("emailChangeSuccess.helpOne.paperPreference")</p>
       }
       case _ => {
-        <p>@messages("emailChangeSuccess.helpOne.apiFailure")</p>
+        <p>@messages("common.helpOne.apiFailure")</p>
       }
     }
 

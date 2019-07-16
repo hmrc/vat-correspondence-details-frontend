@@ -16,9 +16,9 @@
 
 package controllers
 
+import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import models.customerInformation._
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -33,39 +33,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
   val testValidationEmail: String = "validation@example.com"
-  val testValidEmail: String      = "test@example.com"
+  val testValidEmail: String      = "pepsimac@gmail.com"
   val testInvalidEmail: String    = "invalidEmail"
   val view: CaptureEmailView = injector.instanceOf[CaptureEmailView]
-
-  val customerInfoResult: CustomerInformation =
-    CustomerInformation(
-      PPOB(
-        PPOBAddress(
-          "address line 1",
-          None,
-          None,
-          None,
-          None,
-          None,
-          "en"
-        ),
-        Some(ContactDetails(
-          None,
-          None,
-          None,
-          Some("test@example.com"),
-          None
-        )),
-        None
-      ),
-      None
-    )
 
   def setup(result: GetCustomerInfoResponse): Any =
     when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
     .thenReturn(Future.successful(result))
 
-  def target(result: GetCustomerInfoResponse = Right(customerInfoResult)): CaptureEmailController = {
+  def target(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)): CaptureEmailController = {
     setup(result)
 
     new CaptureEmailController(
@@ -84,7 +60,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user is enrolled with a valid enrolment" when {
 
-      "there is a email in session" when {
+      "there is an email in session" when {
 
         "the validation email is retrieved from session" should {
 
@@ -156,7 +132,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           }
 
           "prepopulate the form with the customerInfo result" in {
-            document.select("input").attr("value") shouldBe "test@example.com"
+            document.select("input").attr("value") shouldBe testValidEmail
           }
         }
 
@@ -214,7 +190,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       lazy val inflightTarget = {
 
-        setup(Right(customerInfoResult))
+        setup(Right(fullCustomerInfoModel))
         new CaptureEmailController(
           mockAuthPredicateComponents,
           mockInflightPPOBPredicate,
