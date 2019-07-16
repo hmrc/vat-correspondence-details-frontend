@@ -39,7 +39,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
   }
 
   private[services] def buildWebsiteUpdateModel(website: String, ppob: PPOB): PPOB =
-    ppob.copy(websiteAddress = Some(website))
+    if(website.nonEmpty) ppob.copy(websiteAddress = Some(website)) else ppob.copy(websiteAddress = None)
 
   def getCustomerInfo(vrn: String)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetCustomerInfoResponse] =
