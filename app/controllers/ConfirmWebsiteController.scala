@@ -41,15 +41,11 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
 
   def show: Action[AnyContent] = allowAgentPredicate { implicit user =>
 
-    if(appConfig.features.changeWebsiteEnabled()) {
-      extractSessionWebsite(user) match {
-        case Some(website) =>
-          Ok(confirmWebsiteView(website))
-        case _ =>
-          Redirect(controllers.routes.CaptureWebsiteController.show())
-      }
-    } else {
-      errorHandler.showInternalServerError
+    extractSessionWebsite(user) match {
+      case Some(website) =>
+        Ok(confirmWebsiteView(website))
+      case _ =>
+        Redirect(controllers.routes.CaptureWebsiteController.show())
     }
   }
 
@@ -60,7 +56,7 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
         case Some(website) =>
           vatSubscriptionService.updateWebsite(user.vrn, website) map {
             case Right(_) =>
-              Redirect(routes.ConfirmWebsiteController.show()).removingFromSession(validationWebsiteKey)
+              Redirect(routes.WebsiteChangeSuccessController.show()).removingFromSession(validationWebsiteKey)
 
             case Left(ErrorModel(CONFLICT, _)) =>
               logWarn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
