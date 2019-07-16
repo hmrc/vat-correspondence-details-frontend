@@ -67,9 +67,10 @@ confirmEmail.heading = Confirm the new email address
 confirmEmail.link = Edit email address
 confirmEmail.edit = Edit email address
 
-confirmWebsite.title = What's the website address?
-confirmWebsite.heading = What's the website address?
-confirmWebsite.hint = For example, www.abc.co...
+confirmWebsite.title = Confirm the website address
+confirmWebsite.heading = Confirm the website address
+confirmWebsite.p1 = The new website address is {0}
+confirmWebsite.change = Change the website address
 
 confirmWebsiteRemove.title = Confirm you want to remove the website address
 confirmWebsiteRemove.heading = Confirm you want to remove the website address: {0}
