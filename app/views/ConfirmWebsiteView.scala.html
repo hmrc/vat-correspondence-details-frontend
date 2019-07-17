@@ -23,11 +23,13 @@
 
 @mainTemplate(title = messages("confirmWebsite.title")) {
 
- <a class="link-back" href=''>@messages("base.back")</a>
+ <a class="link-back" href="@controllers.routes.CaptureWebsiteController.show().url">@messages("base.back")</a>
 
  <h1 class="heading-large">@messages("confirmWebsite.heading")</h1>
 
- <h2 class="lede">@website</h2>
+ <p>@messages("confirmWebsite.p1", website)</p>
+
+ <p><a href="@controllers.routes.CaptureWebsiteController.show().url">@messages("confirmWebsite.change")</a></p>
 
  <a href='@controllers.routes.ConfirmWebsiteController.updateWebsite().url' role="button" tabindex="0" class="button">
   @messages("base.confirmAndContinue")</a>

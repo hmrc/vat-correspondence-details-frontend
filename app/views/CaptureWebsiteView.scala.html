@@ -16,10 +16,11 @@
 
 @import uk.gov.hmrc.play.views.html.helpers.{FormWithCSRF, ErrorSummary, Input}
 @import config.AppConfig
+@import forms.WebsiteForm._
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
 
-@(websiteForm: Form[String], currentWebsite: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(websiteForm: Form[String], websiteNotChangedError: Boolean, currentWebsite: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
     @mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title")) else messages("captureWebsite.title")) {
 

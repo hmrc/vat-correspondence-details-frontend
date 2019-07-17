@@ -17,7 +17,6 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.AttemptedEmailAddressAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
@@ -44,12 +43,30 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
   def show: Action[AnyContent] = (allowAgentPredicate andThen inflightCheck).async { implicit user =>
     if(appConfig.features.changeWebsiteEnabled()) {
       val currentWebsite = "example.com"
-      Future.successful(Ok(captureWebsiteView(websiteForm(currentWebsite).fill(currentWebsite), currentWebsite = currentWebsite)))
+      Future.successful(Ok(captureWebsiteView(websiteForm(currentWebsite).fill(currentWebsite),
+        currentWebsite = currentWebsite, websiteNotChangedError = false)))
     } else {
       Future.successful(errorHandler.showInternalServerError)
     }
   }
 
-  def submit: Action[AnyContent] = ???
+  def submit: Action[AnyContent] = (allowAgentPredicate andThen inflightCheck).async { implicit user =>
+    val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey)
+
+    validationWebsite match {
+      case Some(validation) => websiteForm(validation).bindFromRequest.fold(
+        errorForm => {
+          val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureWebsite.error.notChanged")
+          Future.successful(BadRequest(captureWebsiteView(errorForm, notChanged, validation)))
+
+        },
+        website     => {
+          Future.successful(Redirect(controllers.routes.ConfirmWebsiteController.show())
+            .addingToSession(SessionKeys.websiteKey -> website))
+        }
+      )
+      case None => Future.successful(errorHandler.showInternalServerError)
+    }
+  }
 
 }
