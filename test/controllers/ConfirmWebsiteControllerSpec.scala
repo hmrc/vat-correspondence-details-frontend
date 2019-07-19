@@ -72,7 +72,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         val result = TestConfirmWebsiteController.show(request)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/new-website-address")
+        redirectLocation(result) shouldBe Some(controllers.routes.CaptureWebsiteController.show().url)
       }
     }
 
@@ -94,7 +94,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
         val result = TestConfirmWebsiteController.show(request)
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.SEE_OTHER
         mockConfig.features.changeWebsiteEnabled(true)
       }
     }
@@ -103,19 +103,18 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
   "Calling the updateWebsite() action in ConfirmWebsiteController" when {
 
     "there is a website in session" when {
-        //TODO uncomment this test when confirmation has been added
-//      "the website has been updated successfully" should {
-//
-//        "show the website changed success page" in {
-//          mockIndividualAuthorised()
-//          mockUpdateWebsite(vrn, testWebsite)(Future(Right(UpdatePPOBSuccess("success"))))
-//          val result = TestConfirmWebsiteController.updateWebsite()(requestWithWebsite)
-//
-//          status(result) shouldBe Status.SEE_OTHER
-//          redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/" +
-//            "new-website-address-confirmation")
-//        }
-//      }
+      "the website has been updated successfully" should {
+
+        "show the website changed success page" in {
+          mockIndividualAuthorised()
+
+          mockUpdateWebsite(vrn, testWebsite)(Future(Right(UpdatePPOBSuccess("success"))))
+          val result = TestConfirmWebsiteController.updateWebsite()(requestWithWebsite)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.WebsiteChangeSuccessController.show().url)
+        }
+      }
 
       "there was a conflict returned when trying to update the website" should {
 
@@ -151,7 +150,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         val result = TestConfirmWebsiteController.updateWebsite()(request)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/new-website-address")
+        redirectLocation(result) shouldBe Some(controllers.routes.CaptureWebsiteController.show().url)
       }
     }
 
