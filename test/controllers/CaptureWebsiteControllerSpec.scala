@@ -32,10 +32,10 @@ import assets.CustomerInfoConstants.fullCustomerInfoModel
 import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
+  val testValidationWebsite: String = "https://www.current~valid~website.com"
+  val testValidWebsite: String      = "https://www.new~valid~website.com"
+  val testInvalidWebsite: String    = "invalid@£$%^&website"
 
-  val testValidationWebsite: String = "https://www.current-valid-website.com"
-  val testValidWebsite: String = "https://www.new-valid-website.com"
-  val testInvalidWebsite: String = "invalid@£$%^&website"
   val view: CaptureWebsiteView = injector.instanceOf[CaptureWebsiteView]
 
   def setup(result: GetCustomerInfoResponse): Any =
@@ -210,21 +210,21 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
           }
         }
 
-//        "the form is unsuccessfully submitted" should {
-//
-//          lazy val result = target().submit(request
-//            .withFormUrlEncodedBody("website" -> testInvalidWebsite)
-//            .withSession(common.SessionKeys.validationWebsiteKey -> testValidationWebsite))
-//
-//          "reload the page with errors" in {
-//            status(result) shouldBe Status.BAD_REQUEST
-//          }
-//
-//          "return HTML" in {
-//            contentType(result) shouldBe Some("text/html")
-//            charset(result) shouldBe Some("utf-8")
-//          }
-//        }
+        "the form is unsuccessfully submitted" should {
+
+          lazy val result = target().submit(request
+            .withFormUrlEncodedBody("website" -> testInvalidWebsite)
+            .withSession(common.SessionKeys.validationWebsiteKey -> testValidationWebsite))
+
+          "reload the page with errors" in {
+            status(result) shouldBe Status.BAD_REQUEST
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+        }
       }
 
       "there is no website in session" when {
