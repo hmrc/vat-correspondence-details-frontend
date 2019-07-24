@@ -76,7 +76,7 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
             }
           case None =>
             logDebug("[InFlightPPOBPredicate][getCustomerInfoCall] - There is no in-flight change. Redirecting user to the start of the journey.")
-            Left(Redirect(controllers.routes.CaptureEmailController.show().url).addingToSession(inFlightContactDetailsChangeKey -> "false"))
+            Left(Redirect(controllers.email.routes.CaptureEmailController.show().url).addingToSession(inFlightContactDetailsChangeKey -> "false"))
         }
       case Left(error) =>
         logWarn(s"[InFlightPPOBPredicate][getCustomerInfoCall] - The call to the GetCustomerInfo API failed. Error: ${error.message}")

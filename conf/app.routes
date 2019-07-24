@@ -6,33 +6,33 @@ GET         /language/:lang                    controllers.LanguageController.sw
 GET         /sign-out                          controllers.SignOutController.signOut(feedbackOnSignOut: Boolean)
 
 # capture email address
-GET         /change-email-address              controllers.CaptureEmailController.show
-POST        /change-email-address              controllers.CaptureEmailController.submit
+GET         /change-email-address              controllers.email.CaptureEmailController.show
+POST        /change-email-address              controllers.email.CaptureEmailController.submit
 
 # confirm email address
-GET         /confirm-email-address             controllers.ConfirmEmailController.show
-GET         /update-email-address              controllers.ConfirmEmailController.updateEmailAddress
+GET         /confirm-email-address             controllers.email.ConfirmEmailController.show
+GET         /update-email-address              controllers.email.ConfirmEmailController.updateEmailAddress
 
 # verify email address
-GET         /verify-email-address              controllers.VerifyEmailController.show
+GET         /verify-email-address              controllers.email.VerifyEmailController.show
 
 # link to send email verification
-GET         /send-verification                 controllers.VerifyEmailController.sendVerification
+GET         /send-verification                 controllers.email.VerifyEmailController.sendVerification
 
 # email change successful
-GET         /email-address-confirmation        controllers.EmailChangeSuccessController.show
+GET         /email-address-confirmation        controllers.email.EmailChangeSuccessController.show
 
 # capture website
-GET         /new-website-address               controllers.CaptureWebsiteController.show
-POST        /new-website-address               controllers.CaptureWebsiteController.submit
+GET         /new-website-address               controllers.website.CaptureWebsiteController.show
+POST        /new-website-address               controllers.website.CaptureWebsiteController.submit
 
 # confirm website
-GET         /confirm-new-website-address       controllers.ConfirmWebsiteController.show
-POST        /confirm-new-website-address       controllers.ConfirmWebsiteController.updateWebsite
+GET         /confirm-new-website-address       controllers.website.ConfirmWebsiteController.show
+POST        /confirm-new-website-address       controllers.website.ConfirmWebsiteController.updateWebsite
 
 # website change successful
-GET         /website-address-confirmation      controllers.WebsiteChangeSuccessController.show
+GET         /website-address-confirmation      controllers.website.WebsiteChangeSuccessController.show
 
 # remove website address
-GET         /remove-website-address            controllers.ConfirmRemoveWebsiteController.show
-POST        /remove-website-address            controllers.ConfirmRemoveWebsiteController.removeWebsiteAddress
+GET         /remove-website-address            controllers.website.ConfirmRemoveWebsiteController.show
+POST        /remove-website-address            controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
