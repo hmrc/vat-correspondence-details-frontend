@@ -20,11 +20,12 @@ import audit.AuditingService
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
-import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
+import controllers.predicates.AuthPredicateComponents
 import forms.WebsiteForm.websiteForm
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
+import views.html.errors.NotFoundView
 import views.html.website.CaptureWebsiteView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,35 +37,40 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
                                          val errorHandler: ErrorHandler,
                                          val auditService: AuditingService,
                                          captureWebsiteView: CaptureWebsiteView,
+                                         notFoundView: NotFoundView,
                                          implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def show: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
-    val validationWebsite: Future[Option[String]] = user.session.get(SessionKeys.validationWebsiteKey) match {
-      case Some(website) => Future.successful(Some(website))
-      case _ =>
-        vatSubscriptionService.getCustomerInfo(user.vrn) map {
-          case Right(details) => Some(details.ppob.websiteAddress.getOrElse(""))
-          case _ => None
-        }
-    }
-
-    val prepopulationWebsite: Future[String] = validationWebsite map { validation =>
-      user.session.get(SessionKeys.prepopulationWebsiteKey)
-        .getOrElse(validation.getOrElse(""))
-    }
-
-    for {
-      validation <- validationWebsite
-      prepopulation <- prepopulationWebsite
-    } yield {
-      validation match {
-        case Some(valWebsite) =>
-          Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulation), websiteNotChangedError = false, valWebsite))
-            .addingToSession(SessionKeys.validationWebsiteKey -> valWebsite)
-        case _ => errorHandler.showInternalServerError
+    if(appConfig.features.changeWebsiteEnabled()) {
+      val validationWebsite: Future[Option[String]] = user.session.get(SessionKeys.validationWebsiteKey) match {
+        case Some(website) => Future.successful(Some(website))
+        case _ =>
+          vatSubscriptionService.getCustomerInfo(user.vrn) map {
+            case Right(details) => Some(details.ppob.websiteAddress.getOrElse(""))
+            case _ => None
+          }
       }
+
+      val prepopulationWebsite: Future[String] = validationWebsite map { validation =>
+        user.session.get(SessionKeys.prepopulationWebsiteKey)
+          .getOrElse(validation.getOrElse(""))
+      }
+
+      for {
+        validation <- validationWebsite
+        prepopulation <- prepopulationWebsite
+      } yield {
+        validation match {
+          case Some(valWebsite) =>
+            Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulation), websiteNotChangedError = false, valWebsite))
+              .addingToSession(SessionKeys.validationWebsiteKey -> valWebsite)
+          case _ => errorHandler.showInternalServerError
+        }
+      }
+    } else {
+      Future.successful(NotFound(notFoundView()))
     }
   }
 
@@ -86,5 +92,4 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
       case None => Future.successful(errorHandler.showInternalServerError)
     }
   }
-
 }

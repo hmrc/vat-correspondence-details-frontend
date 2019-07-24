@@ -27,6 +27,7 @@ import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.errors.NotFoundView
 import views.html.website.CaptureWebsiteView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,8 +36,6 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
   val testValidationWebsite: String = "https://www.current~valid~website.com"
   val testValidWebsite: String      = "https://www.new~valid~website.com"
   val testInvalidWebsite: String    = "invalid@£$%^&website"
-
-  val view: CaptureWebsiteView = injector.instanceOf[CaptureWebsiteView]
 
   def setup(result: GetCustomerInfoResponse): Any =
     when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
@@ -51,7 +50,8 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
       mockVatSubscriptionService,
       mockErrorHandler,
       mockAuditingService,
-      view,
+      injector.instanceOf[CaptureWebsiteView],
+      injector.instanceOf[NotFoundView],
       mockConfig
     )
   }
