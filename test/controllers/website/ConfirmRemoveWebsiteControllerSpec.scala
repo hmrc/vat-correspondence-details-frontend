@@ -16,44 +16,38 @@
 
 package controllers.website
 
-import assets.BaseTestConstants._
+import assets.BaseTestConstants.vrn
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import models.User
-import models.customerInformation.UpdatePPOBSuccess
-import models.errors.ErrorModel
-import org.jsoup.Jsoup
 import play.api.http.Status
-import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.website.ConfirmRemoveWebsiteView
 
-import scala.concurrent.Future
-
 class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
 
-  object TestConfirmRemoveWebsiteController extends ConfirmRemoveWebsiteController(
+  lazy val controller = new ConfirmRemoveWebsiteController(
     mockAuthPredicateComponents,
-    mockInflightPPOBPredicate,
     mcc,
     mockErrorHandler,
     mockVatSubscriptionService,
     injector.instanceOf[ConfirmRemoveWebsiteView],
     mockConfig
   )
-  lazy val requestWithValidationWebsiteKey: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.validationWebsiteKey-> testWebsite)
 
-  "Calling the extractWebsite function in ConfirmWebsiteController" when {
+  lazy val requestWithValidationWebsiteKey: FakeRequest[AnyContentAsEmpty.type] =
+    request.withSession(SessionKeys.validationWebsiteKey -> testWebsite)
+
+  "Calling the extractWebsite function in ConfirmRemoveWebsiteController" when {
 
     "there is an authenticated request from a user with an website address in session" should {
 
       "result in an website address being retrieved if there is an website" in {
         val user = User[AnyContent](vrn, active = true, None)(requestWithValidationWebsiteKey)
 
-        TestConfirmRemoveWebsiteController.extractSessionWebsiteAddress(user) shouldBe Some(testWebsite)
+        controller.extractSessionWebsiteAddress(user) shouldBe Some(testWebsite)
       }
     }
   }
@@ -62,28 +56,32 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
 
     "there is an website address in session" should {
 
-      "show the Confirm website page" in {
-        val result = TestConfirmRemoveWebsiteController.show(requestWithValidationWebsiteKey)
-
+      "return 200" in {
+        val result = controller.show(requestWithValidationWebsiteKey)
         status(result) shouldBe Status.OK
       }
     }
 
-    "there isn't an website address in session" should {
+    "there isn't a website address in session" should {
 
-      "take the user to enter a new website address" in {
-        val result = TestConfirmRemoveWebsiteController.show(request)
+      lazy val result = controller.show(request)
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+      }
+
+      "redirect to the capture website page" in {
+        redirectLocation(result) shouldBe Some(routes.CaptureWebsiteController.show().url)
       }
     }
 
     "the user is not authorised" should {
 
-      "return forbidden (403)" in {
-        mockIndividualWithoutEnrolment()
-        val result = TestConfirmRemoveWebsiteController.show(requestWithValidationWebsiteKey)
+      "return 403" in {
+        val result = {
+          mockIndividualWithoutEnrolment()
+          controller.show(requestWithValidationWebsiteKey)
+        }
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -92,59 +90,43 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
 
   "Calling the removeWebsiteAddress() action in ConfirmWebsiteController" when {
 
-    "there is a verified website address in session" when {
+    "there is a validation website address in session" should {
 
-      "the website has been updated successfully" should {
+      lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsiteKey)
 
-        "show the website address changed success page" in {
-          mockUpdateWebsite(vrn, "")(Future(Right(UpdatePPOBSuccess("success"))))
-          val result = TestConfirmRemoveWebsiteController.removeWebsiteAddress()(requestWithValidationWebsiteKey)
-//TODO update the test to redirect it to the correct address
-//          status(result) shouldBe Status.SEE_OTHER
-//          redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/remove-website-address")
-        }
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
       }
 
-      "there was a conflict returned when trying to update the website address" should {
-
-        "redirect the user to the manage-vat page " in {
-          mockUpdateWebsite(vrn, "")(
-            Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          val result = TestConfirmRemoveWebsiteController.removeWebsiteAddress()(requestWithValidationWebsiteKey)
-
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
-        }
+      "redirect to the updateWebsite() action in ConfirmWebsiteController" in {
+        redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.updateWebsite().url)
       }
 
-      "there was an unexpected error trying to update the website address" should {
-
-        "return an Internal Server Error" in {
-          mockUpdateWebsite(vrn, "")(
-            Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify website address"))))
-          val result = TestConfirmRemoveWebsiteController.removeWebsiteAddress()(requestWithValidationWebsiteKey)
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
-        }
+      "add a blank value to the prepopulation session key" in {
+        session(result).get(SessionKeys.prepopulationWebsiteKey) shouldBe Some("")
       }
     }
 
-    "there isn't an website address in session" should {
+    "there isn't a validation website address in session" should {
 
-      "take the user to the capture website page" in {
-        val result = TestConfirmRemoveWebsiteController.removeWebsiteAddress()(request)
+      lazy val result = controller.removeWebsiteAddress()(request)
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+      }
+
+      "redirect to the capture website page" in {
+        redirectLocation(result) shouldBe Some(routes.CaptureWebsiteController.show().url)
       }
     }
 
     "the user is not authorised" should {
 
-      "return forbidden (403)" in {
-        mockIndividualWithoutEnrolment()
-        val result = TestConfirmRemoveWebsiteController.removeWebsiteAddress()(requestWithValidationWebsiteKey)
+      "return 403" in {
+        val result = {
+          mockIndividualWithoutEnrolment()
+          controller.removeWebsiteAddress()(requestWithValidationWebsiteKey)
+        }
 
         status(result) shouldBe Status.FORBIDDEN
       }

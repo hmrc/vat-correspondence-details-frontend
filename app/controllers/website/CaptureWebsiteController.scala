@@ -31,7 +31,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
-                                         val inflightCheck: InFlightPPOBPredicate,
                                          override val mcc: MessagesControllerComponents,
                                          val vatSubscriptionService: VatSubscriptionService,
                                          val errorHandler: ErrorHandler,
@@ -41,7 +40,7 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (allowAgentPredicate andThen inflightCheck).async { implicit user =>
+  def show: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
     val validationWebsite: Future[Option[String]] = user.session.get(SessionKeys.validationWebsiteKey) match {
       case Some(website) => Future.successful(Some(website))
       case _ =>
@@ -69,7 +68,7 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
     }
   }
 
-  def submit: Action[AnyContent] = (allowAgentPredicate andThen inflightCheck).async { implicit user =>
+  def submit: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
     val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey)
 
     validationWebsite match {

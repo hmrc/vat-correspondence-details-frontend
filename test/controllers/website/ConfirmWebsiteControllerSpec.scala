@@ -18,13 +18,11 @@ package controllers.website
 
 import assets.BaseTestConstants._
 import controllers.ControllerBaseSpec
-import models.User
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
-import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import views.html.website.ConfirmWebsiteView
 
@@ -32,7 +30,7 @@ import scala.concurrent.Future
 
 class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
-  object TestConfirmWebsiteController extends ConfirmWebsiteController(
+  val controller = new ConfirmWebsiteController(
     mockAuthPredicateComponents,
     mcc,
     mockErrorHandler,
@@ -41,26 +39,13 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
     mockConfig
   )
 
-  "Calling the extractWebsite function in ConfirmWebsiteController" when {
-
-    "there is an authenticated request from a user with a website in session" should {
-
-      "result in a website being retrieved" in {
-        mockIndividualAuthorised()
-        val user = User[AnyContent](vrn, active = true, None)(requestWithWebsite)
-
-        TestConfirmWebsiteController.extractSessionWebsite(user) shouldBe Some(testWebsite)
-      }
-    }
-  }
-
   "Calling the show action in ConfirmWebsiteController" when {
 
     "there is a website in session" should {
 
       "show the Confirm Website page" in {
         mockIndividualAuthorised()
-        val result = TestConfirmWebsiteController.show(requestWithWebsite)
+        val result = controller.show(requestWithWebsite)
 
         status(result) shouldBe Status.OK
       }
@@ -70,7 +55,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "take the user to enter a new website" in {
         mockIndividualAuthorised()
-        val result = TestConfirmWebsiteController.show(request)
+        val result = controller.show(request)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
@@ -81,7 +66,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = TestConfirmWebsiteController.show(requestWithWebsite)
+        val result = controller.show(requestWithWebsite)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -93,7 +78,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         mockConfig.features.changeWebsiteEnabled(false)
         mockIndividualAuthorised()
 
-        val result = TestConfirmWebsiteController.show(request)
+        val result = controller.show(request)
 
         status(result) shouldBe Status.SEE_OTHER
         mockConfig.features.changeWebsiteEnabled(true)
@@ -110,7 +95,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
 
           mockUpdateWebsite(vrn, testWebsite)(Future(Right(UpdatePPOBSuccess("success"))))
-          val result = TestConfirmWebsiteController.updateWebsite()(requestWithWebsite)
+          val result = controller.updateWebsite()(requestWithWebsite)
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.website.routes.WebsiteChangeSuccessController.show().url)
@@ -123,7 +108,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateWebsite(vrn, testWebsite)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          val result = TestConfirmWebsiteController.updateWebsite()(requestWithWebsite)
+          val result = controller.updateWebsite()(requestWithWebsite)
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
@@ -136,7 +121,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateWebsite(vrn, testWebsite)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify website"))))
-          val result = TestConfirmWebsiteController.updateWebsite()(requestWithWebsite)
+          val result = controller.updateWebsite()(requestWithWebsite)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
@@ -148,7 +133,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "take the user to the capture website page" in {
         mockIndividualAuthorised()
-        val result = TestConfirmWebsiteController.updateWebsite()(request)
+        val result = controller.updateWebsite()(request)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
@@ -159,22 +144,9 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = TestConfirmWebsiteController.updateWebsite()(requestWithWebsite)
+        val result = controller.updateWebsite()(requestWithWebsite)
 
         status(result) shouldBe Status.FORBIDDEN
-      }
-    }
-
-    "the changeWebsite feature is disabled" should {
-
-      "present the server error page" in {
-        mockConfig.features.changeWebsiteEnabled(false)
-        mockIndividualAuthorised()
-
-        val result = TestConfirmWebsiteController.updateWebsite()(request)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        mockConfig.features.changeWebsiteEnabled(true)
       }
     }
   }

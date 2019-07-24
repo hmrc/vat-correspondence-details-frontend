@@ -50,6 +50,8 @@
             </div>
         }
         @if(currentWebsite != ""){
-            <p><a id="remove-website" href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>@messages("captureWebsite.removeWebsite.linkText")</a></p>
+            <p><a id="remove-website" href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>
+              @messages("captureWebsite.removeWebsite.linkText")
+            </a></p>
         }
     }

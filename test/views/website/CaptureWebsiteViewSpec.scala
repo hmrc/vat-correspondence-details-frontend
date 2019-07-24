@@ -91,7 +91,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
 
         "have the correct remove website link" in {
           element(Selectors.removeWebsite).attr("href") shouldBe
-            controllers.website.routes.ConfirmRemoveWebsiteController.removeWebsiteAddress().url
+            controllers.website.routes.ConfirmRemoveWebsiteController.show().url
         }
       }
 

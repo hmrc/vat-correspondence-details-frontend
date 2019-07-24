@@ -51,7 +51,7 @@ class WebsiteChangeSuccessController @Inject()(mcc: MessagesControllerComponents
                         else {contactPreferenceService.getContactPreference(user.vrn)}
         } yield {
           val viewModel = constructViewModel(customerDetails, preference, website, user.session.get(verifiedAgentEmail))
-          Ok(websiteChangeSuccessView(viewModel))
+          Ok(websiteChangeSuccessView(viewModel)).removingFromSession(prepopulationWebsiteKey)
         }
       case _ => Future.successful(Redirect(routes.CaptureWebsiteController.show().url))
     }

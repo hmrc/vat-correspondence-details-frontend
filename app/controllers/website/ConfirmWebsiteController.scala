@@ -16,12 +16,11 @@
 
 package controllers.website
 
-import common.SessionKeys.{prepopulationWebsiteKey, validationWebsiteKey}
+import common.SessionKeys.{prepopulationWebsiteKey, validationWebsiteKey, websiteChangeSuccessful}
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicateComponents
 import controllers.BaseController
 import javax.inject.{Inject, Singleton}
-import models.User
 import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
@@ -42,7 +41,7 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
 
   def show: Action[AnyContent] = allowAgentPredicate { implicit user =>
 
-    extractSessionWebsite(user) match {
+    user.session.get(prepopulationWebsiteKey).filter(_.nonEmpty) match {
       case Some(website) =>
         Ok(confirmWebsiteView(website))
       case _ =>
@@ -52,31 +51,25 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
 
   def updateWebsite(): Action[AnyContent] = allowAgentPredicate.async { implicit user =>
 
-    if(appConfig.features.changeWebsiteEnabled()) {
-      extractSessionWebsite(user) match {
-        case Some(website) =>
-          vatSubscriptionService.updateWebsite(user.vrn, website) map {
-            case Right(_) =>
-              Redirect(routes.WebsiteChangeSuccessController.show()).removingFromSession(validationWebsiteKey)
+    user.session.get(prepopulationWebsiteKey) match {
+      case Some(website) =>
+        vatSubscriptionService.updateWebsite(user.vrn, website) map {
+          case Right(_) =>
+            Redirect(routes.WebsiteChangeSuccessController.show())
+              .addingToSession(websiteChangeSuccessful -> "true")
+              .removingFromSession(validationWebsiteKey)
 
-            case Left(ErrorModel(CONFLICT, _)) =>
-              logWarn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
-                "already in progress. Redirecting user to manage-vat overview page.")
-              Redirect(appConfig.manageVatSubscriptionServicePath)
+          case Left(ErrorModel(CONFLICT, _)) =>
+            logWarn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
+              "already in progress. Redirecting user to manage-vat overview page.")
+            Redirect(appConfig.manageVatSubscriptionServicePath)
 
-            case Left(_) =>
-              errorHandler.showInternalServerError
-          }
+          case Left(_) =>
+            errorHandler.showInternalServerError
+        }
 
-        case _ =>
-          Future.successful(Redirect(routes.CaptureWebsiteController.show()))
-      }
-    } else {
-      Future.successful(errorHandler.showInternalServerError)
+      case _ =>
+        Future.successful(Redirect(routes.CaptureWebsiteController.show()))
     }
-  }
-
-  private[controllers] def extractSessionWebsite(user: User[AnyContent]): Option[String] = {
-    user.session.get(prepopulationWebsiteKey).filter(_.nonEmpty)
   }
 }

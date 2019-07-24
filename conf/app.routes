@@ -28,11 +28,11 @@ POST        /new-website-address               controllers.website.CaptureWebsit
 
 # confirm website
 GET         /confirm-new-website-address       controllers.website.ConfirmWebsiteController.show
-POST        /confirm-new-website-address       controllers.website.ConfirmWebsiteController.updateWebsite
+GET         /update-website-address            controllers.website.ConfirmWebsiteController.updateWebsite
 
 # website change successful
 GET         /website-address-confirmation      controllers.website.WebsiteChangeSuccessController.show
 
 # remove website address
 GET         /remove-website-address            controllers.website.ConfirmRemoveWebsiteController.show
-POST        /remove-website-address            controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
+GET         /update-remove-website-address     controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress

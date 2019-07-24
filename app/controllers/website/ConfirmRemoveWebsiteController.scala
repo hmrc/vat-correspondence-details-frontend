@@ -16,24 +16,20 @@
 
 package controllers.website
 
-import common.SessionKeys.{inFlightContactDetailsChangeKey, prepopulationWebsiteKey, validationWebsiteKey, websiteChangeSuccessful}
+import common.SessionKeys.{validationWebsiteKey, prepopulationWebsiteKey}
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
 import javax.inject.{Inject, Singleton}
 import models.User
-import models.customerInformation.UpdatePPOBSuccess
-import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
-import utils.LoggerUtil.{logInfo, logWarn}
 import views.html.website.ConfirmRemoveWebsiteView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmRemoveWebsiteController @Inject()(val authComps: AuthPredicateComponents,
-                                               val inflightCheck: InFlightPPOBPredicate,
                                                override val mcc: MessagesControllerComponents,
                                                val errorHandler: ErrorHandler,
                                                val vatSubscriptionService: VatSubscriptionService,
@@ -41,46 +37,28 @@ class ConfirmRemoveWebsiteController @Inject()(val authComps: AuthPredicateCompo
                                                implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
 
   implicit val ec: ExecutionContext = mcc.executionContext
-  def show: Action[AnyContent] = (allowAgentPredicate andThen inflightCheck).async { implicit user =>
+
+  def show: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
 
     extractSessionWebsiteAddress(user) match {
       case Some(website) =>
-        Future.successful(Ok(confirmRemoveWebsite(website))
-          .addingToSession(prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true")
-        )
-
+        Future.successful(Ok(confirmRemoveWebsite(website)))
       case _ =>
         Future.successful(Redirect(routes.CaptureWebsiteController.show()))
       }
   }
-  def removeWebsiteAddress(): Action[AnyContent] = (allowAgentPredicate andThen inflightCheck).async { implicit user =>
+
+  def removeWebsiteAddress(): Action[AnyContent] = allowAgentPredicate.async { implicit user =>
 
     extractSessionWebsiteAddress(user) match {
-      case Some(website) =>
-        vatSubscriptionService.updateWebsite(user.vrn, "") map {
-
-          case Right(UpdatePPOBSuccess(_)) =>
-            //TODO Redirect to the Website address confirmation page
-              Ok("")
-              .removingFromSession(validationWebsiteKey, inFlightContactDetailsChangeKey)
-
-          case Left(ErrorModel(CONFLICT, _)) =>
-            logWarn("[ConfirmWebsiteController][updateWebsiteAddress] - There is an website address update request " +
-              "already in progress. Redirecting user to manage-vat overview page.")
-            Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "true")
-
-          case Left(_) =>
-            errorHandler.showInternalServerError
-        }
-
+      case Some(_) =>
+        Future.successful(Redirect(routes.ConfirmWebsiteController.updateWebsite())
+          .addingToSession(prepopulationWebsiteKey -> ""))
       case _ =>
-        logInfo("[ConfirmWebsiteController][updateWebsiteAddress] - No website address found in session")
         Future.successful(Redirect(routes.CaptureWebsiteController.show()))
     }
   }
 
-  private[controllers] def extractSessionWebsiteAddress(user: User[AnyContent]): Option[String] = {
+  private[controllers] def extractSessionWebsiteAddress(user: User[AnyContent]): Option[String] =
     user.session.get(validationWebsiteKey).filter(_.nonEmpty)
-  }
 }

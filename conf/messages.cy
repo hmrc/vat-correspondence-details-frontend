@@ -23,6 +23,10 @@ standardError.title = Mae problem gyda’r gwasanaeth – Rhoi gwybod am TAW drw
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 standardError.message = Rhowch gynnig arall arni yn nes ymlaen.
 
+notFound.title = Heb ddod o hyd i’r dudalen
+notFound.heading = Ni ellir dod o hyd i’r dudalen hon
+notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
+
 unauthorised.agentForClient.title = Nid ydych wedi’ch awdurdodi ar gyfer y cleient hwn
 unauthorised.agentForClient.useThisService = I ddefnyddio’r gwasanaeth hwn, mae angen i’ch cleient
 unauthorised.agentForClient.authoriseForClient = eich awdurdodi fel ei asiant

@@ -47,7 +47,6 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
     new CaptureWebsiteController(
       mockAuthPredicateComponents,
-      mockInflightPPOBPredicate,
       mcc,
       mockVatSubscriptionService,
       mockErrorHandler,
