@@ -27,8 +27,8 @@ class AgentJourneyDisabledViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "h1"
-    val summary = "p:nth-child(3)"
-    val instructions = "p:nth-child(4)"
+    val summary = "p:nth-child(2)"
+    val instructions = "p:nth-child(3)"
     val signOutButton = ".button"
   }
   "Rendering the agent journey disabled page" should {
