@@ -39,24 +39,13 @@
   }
 }
 
-@mainContentWithGA = {
-  <noscript>
-    <iframe src='https://www.googletagmanager.com/ns.html?id=GTM-TSFTCWZ'
-            height='0'
-            width='0'
-            style='display:none;visibility:hidden'>
-    </iframe>
-  </noscript>
-  @mainContent
-}
-
 @govukWrapper(appConfig = appConfig,
               title = title,
               mainClass = mainClass,
               bodyClasses = bodyClasses,
               sidebar = sidebarContent,
               contentHeader = contentHeader,
-              mainBody = article(mainContentWithGA),
+              mainBody = article(mainContent),
               serviceInfoContent = serviceInfoContent,
               scriptElem = scriptElem,
               serviceName = serviceName,

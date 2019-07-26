@@ -29,7 +29,7 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec {
     val heading = ".heading-large"
     val backLink = "#content > article > a"
     val continueButton = ".button"
-    val cancelLink = ".content__body > p:nth-child(4) > a:nth-child(1)"
+    val cancelLink = ".content__body > p:nth-child(3) > a:nth-child(1)"
   }
 
   "The Confirm Website view" should {

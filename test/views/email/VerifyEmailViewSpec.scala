@@ -29,7 +29,7 @@ class VerifyEmailViewSpec extends ViewBaseSpec {
     val heading = "heading-large"
     val firstParagraph = "#content article p"
     val secondParagraph = "#content article p:nth-of-type(2)"
-    val captureYourEmailPageLink = "#content > article > p:nth-child(4) > a"
+    val captureYourEmailPageLink = "#content > article > p:nth-child(3) > a"
     val accordionSpan = "#content span"
     val accordionText = ".panel.panel-border-narrow"
     val accordionGaTag = "#content > article > details > div > p > a"
