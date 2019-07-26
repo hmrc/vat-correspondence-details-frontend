@@ -24,6 +24,10 @@ standardError.title = There is a problem with the service - VAT reporting throug
 standardError.heading = Sorry, there is a problem with the service
 standardError.message = Try again later.
 
+notFound.title = Page not found
+notFound.heading = This page cannot be found
+notFound.message = Please check that you have entered the correct web address.
+
 unauthorised.agentForClient.title = You are not authorised for this client
 unauthorised.agentForClient.useThisService = To use this service, your client needs to
 unauthorised.agentForClient.authoriseForClient = authorise you as their agent

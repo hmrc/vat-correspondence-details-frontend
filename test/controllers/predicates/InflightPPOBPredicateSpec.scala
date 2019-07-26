@@ -159,7 +159,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
 
         "redirect the user to the capture email address page" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.CaptureEmailController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
         }
 
         "add the inflight indicator 'false' to session" in {
