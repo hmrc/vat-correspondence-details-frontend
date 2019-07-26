@@ -18,8 +18,7 @@ package helpers
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Matchers, TestSuite}
+import org.scalatest.BeforeAndAfterAll
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.data.Form
 import play.api.http.HeaderNames
@@ -29,9 +28,7 @@ import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.{Application, Environment, Mode}
 import stubs.AuthStub
 
-trait IntegrationBaseSpec extends TestSuite with CustomMatchers
-  with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WireMockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually {
+trait IntegrationBaseSpec extends CustomMatchers with GuiceOneServerPerSuite with WireMockHelper with BeforeAndAfterAll {
 
   val mockHost: String = WireMockHelper.host
   val mockPort: String = WireMockHelper.wireMockPort.toString
