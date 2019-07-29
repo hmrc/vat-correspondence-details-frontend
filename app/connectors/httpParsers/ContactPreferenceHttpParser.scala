@@ -31,7 +31,7 @@ object ContactPreferenceHttpParser {
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[ContactPreference] = {
 
       response.status match {
-        case Status.OK => {
+        case Status.OK =>
           logDebug("[ContactPreferencesHttpParser][read]: Status OK")
           response.json.validate[ContactPreference].fold(
             invalid => {
@@ -46,7 +46,6 @@ object ContactPreferenceHttpParser {
                 Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid preference type received from Contact Preferences"))
             }
           )
-        }
         case status =>
           logWarn(s"[ContactPreferencesHttpParser][read]: Unexpected Response, Status: $status, Response: ${response.body}")
           Left(ErrorModel(status, s"Unexpected Response. Response: ${response.body}"))
