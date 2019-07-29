@@ -22,7 +22,7 @@ import config.{AppConfig, ErrorHandler}
 import models.User
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
-import play.api.mvc.Results.{Ok, Redirect}
+import play.api.mvc.Results.{Ok, Redirect, Conflict}
 import services.VatSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -47,7 +47,7 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
     implicit val req: User[A] = request
 
     req.session.get(inFlightContactDetailsChangeKey) match {
-      case Some("true") => Future.successful(Left(Ok(ppobChangePendingView())))
+      case Some("true") => Future.successful(Left(Conflict(ppobChangePendingView())))
       case Some("false") => Future.successful(Right(req))
       case Some(_) => Future.successful(Left(errorHandler.showInternalServerError))
       case None => getCustomerInfoCall(req.vrn)
@@ -59,12 +59,12 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
     vatSubscriptionService.getCustomerInfo(vrn).map {
       case Right(customerInfo) =>
         customerInfo.pendingChanges match {
-          case Some(_) =>
+          case Some(changes) if changes.ppob.isDefined =>
             (customerInfo.pendingPPOBAddress, customerInfo.pendingEmailAddress) match {
               case (true, false) =>
                 logWarn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight PPOB address change. Rendering graceful error page.")
-                Left(Ok(ppobChangePendingView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
+                Left(Conflict(ppobChangePendingView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
               case (_, true) =>
                 logWarn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight email address change. Redirecting to Manage VAT homepage")
@@ -74,8 +74,8 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
                   "There is an in-flight contact details change that is not PPOB or email address. Rendering standard error page.")
                 Left(errorHandler.showInternalServerError.addingToSession(inFlightContactDetailsChangeKey -> "error"))
             }
-          case None =>
-            logDebug("[InFlightPPOBPredicate][getCustomerInfoCall] - There is no in-flight change. Redirecting user to the start of the journey.")
+          case _ =>
+            logDebug("[InFlightPPOBPredicate][getCustomerInfoCall] - There are no in-flight PPOB changes. Redirecting user to the start of the journey.")
             Left(Redirect(controllers.email.routes.CaptureEmailController.show().url).addingToSession(inFlightContactDetailsChangeKey -> "false"))
         }
       case Left(error) =>

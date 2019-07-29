@@ -22,6 +22,7 @@ import common.SessionKeys.inFlightContactDetailsChangeKey
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import mocks.MockAuth
 import models.User
+import models.customerInformation.PendingChanges
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -61,8 +62,8 @@ class InflightPPOBPredicateSpec extends MockAuth {
         lazy val result = await(inflightPPOBPredicate.refine(userWithSession("true"))).left.get
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        "return 200" in {
-          status(result) shouldBe Status.OK
+        "return 409" in {
+          status(result) shouldBe Status.CONFLICT
         }
 
         "show the 'PPOB change pending' error page" in {
@@ -114,8 +115,8 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        "return 200" in {
-          status(result) shouldBe Status.OK
+        "return 409" in {
+          status(result) shouldBe Status.CONFLICT
         }
 
         "add the inflight indicator 'true' to session" in {
@@ -167,7 +168,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
       }
 
-      "the user has no inflight PPOB or email change" should {
+      "the user has another PPOB change pending that is not address or email" should {
 
         lazy val result = {
           setup(Right(customerInfoPendingWebsiteModel))
@@ -185,6 +186,26 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
         "show the standard error page" in {
           messages(document.title) shouldBe internalServerErrorTitle
+        }
+      }
+
+      "the user has a non-PPOB change pending" should {
+
+        lazy val result = {
+          setup(Right(minCustomerInfoModel.copy(pendingChanges = Some(PendingChanges(None)))))
+          await(inflightPPOBPredicate.refine(user)).left.get
+        }
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to the capture email address page" in {
+          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+        }
+
+        "add the inflight indicator 'false' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("false")
         }
       }
 
