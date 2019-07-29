@@ -77,7 +77,7 @@ class VerifyEmailViewSpec extends ViewBaseSpec {
       "have a GA tag with the correct tag" in {
         element(Selectors.accordionGaTag).attr("data-journey-click") shouldBe "email-address:resend:verify-email"
       }
-      
+
       "have a link element which calls the send email controller action" in {
         element(Selectors.accordionLink).attr("href") shouldBe
           controllers.email.routes.VerifyEmailController.sendVerification().url

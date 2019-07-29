@@ -17,10 +17,15 @@
 package models.customerInformation
 
 import assets.CustomerInfoConstants._
-import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
 class CustomerInformationSpec extends UnitSpec {
+
+  val modelNoPending = CustomerInformation(PPOB(
+    minPPOBAddressModel,
+    None,
+    None
+  ), None, None, None, None, None)
 
   "CustomerInformation" should {
 
@@ -37,28 +42,35 @@ class CustomerInformationSpec extends UnitSpec {
       }
     }
 
-    "approvedAndPendingEmailAddressMatch" when {
+    "pendingEmailAddress" when {
+
+      "there are no pending changes" should {
+
+        "return false" in {
+          modelNoPending.pendingEmailAddress shouldBe false
+        }
+      }
 
       "pending email and approved email are not present" should {
 
         val model = CustomerInformation(
           PPOB(
             minPPOBAddressModel,
-            Some(ContactDetails(None, None, None, None, None)),
+            None,
             None
           ),
           Some(PendingChanges(
             Some(PPOB(
               minPPOBAddressModel,
-              Some(ContactDetails(None, None, None, None, None)),
+              None,
               None
             ))
           )),
           None, None, None, None
         )
 
-        "return true" in {
-          model.approvedAndPendingEmailAddressMatch shouldBe true
+        "return false" in {
+          model.pendingEmailAddress shouldBe false
         }
       }
 
@@ -80,8 +92,8 @@ class CustomerInformationSpec extends UnitSpec {
           None, None, None, None
         )
 
-        "return false" in {
-          model.approvedAndPendingEmailAddressMatch shouldBe false
+        "return true" in {
+          model.pendingEmailAddress shouldBe true
         }
       }
 
@@ -103,13 +115,20 @@ class CustomerInformationSpec extends UnitSpec {
           None, None, None, None
         )
 
-        "return true" in {
-          model.approvedAndPendingEmailAddressMatch shouldBe true
+        "return false" in {
+          model.pendingEmailAddress shouldBe false
         }
       }
     }
 
-    "approvedAndPendingPPOBAddressMatch" when {
+    "pendingPPOBAddress" when {
+
+      "there are no pending changes" should {
+
+        "return false" in {
+          modelNoPending.pendingPPOBAddress shouldBe false
+        }
+      }
 
       "pending PPOB does not match approved PPOB" should {
 
@@ -129,8 +148,8 @@ class CustomerInformationSpec extends UnitSpec {
           None, None, None, None
         )
 
-        "return false" in {
-          model.approvedAndPendingPPOBAddressMatch shouldBe false
+        "return true" in {
+          model.pendingPPOBAddress shouldBe true
         }
       }
 
@@ -152,8 +171,8 @@ class CustomerInformationSpec extends UnitSpec {
           None, None, None, None
         )
 
-        "return true" in {
-          model.approvedAndPendingPPOBAddressMatch shouldBe true
+        "return false" in {
+          model.pendingPPOBAddress shouldBe false
         }
       }
     }
