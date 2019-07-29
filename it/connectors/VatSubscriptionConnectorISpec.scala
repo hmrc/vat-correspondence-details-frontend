@@ -57,7 +57,7 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
       Some("testemail@test.com"),
       None
     )),
-    Some("www.pepsi-mac.biz")
+    Some("www.pepsi.biz")
   )
 
   "Calling getCustomerInfo" when {

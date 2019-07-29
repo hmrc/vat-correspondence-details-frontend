@@ -58,7 +58,7 @@ class CaptureEmailPageSpec extends BasePageISpec {
           given.user.isAuthenticated
 
           And("a success response for Customer Details is stubbed")
-          VatSubscriptionStub.stubCustomerInfoNoEmailJson
+          VatSubscriptionStub.stubCustomerInfoInvalidJson
 
           When("the Capture email page is called")
           val result = show

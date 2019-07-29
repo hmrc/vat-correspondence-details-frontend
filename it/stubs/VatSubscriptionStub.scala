@@ -31,7 +31,7 @@ object VatSubscriptionStub extends WireMockMethods {
       .thenReturn(status = OK, body = customerInfoJson)
   }
 
-  def stubCustomerInfoNoEmailJson: StubMapping = {
+  def stubCustomerInfoInvalidJson: StubMapping = {
     when(method = GET, uri = getCustomerInfoUri)
       .thenReturn(status = OK, body = emptyCustomerInfo)
   }
@@ -65,21 +65,11 @@ object VatSubscriptionStub extends WireMockMethods {
       "contactDetails" -> Json.obj(
         "emailAddress" -> "testemail@test.com"
       ),
-      "websiteAddress" -> "www.pepsi-mac.biz"
+      "websiteAddress" -> "www.pepsi.biz"
     )
   )
 
   val emptyCustomerInfo: JsObject = Json.obj("xxx" -> "xxx")
-
-  val customerInfoNoEmailJson: JsObject = Json.obj(
-    "ppob" -> Json.obj(
-      "address" -> Json.obj(
-        "line1" -> "firstLine",
-        "countryCode" -> "codeOfMyCountry"
-      ),
-      "websiteAddress" -> "www.pepsi-mac.biz"
-    )
-  )
 
   val updatePPOBJson: JsObject = Json.obj(
     "formBundle" -> "success"
