@@ -26,10 +26,17 @@ case class CustomerInformation(ppob: PPOB,
                                organisationName: Option[String],
                                tradingName: Option[String]) {
 
-  val approvedAndPendingPPOBAddressMatch: Boolean =
-    ppob.address equals pendingChanges.flatMap(_.ppob.map(_.address)).getOrElse("")
+  val pendingPPOBAddress: Boolean = {
+    val approvedAddress: PPOBAddress = ppob.address
+    val pendingAddress: Option[PPOBAddress] = pendingChanges.flatMap(_.ppob.map(_.address))
 
-  val approvedAndPendingEmailAddressMatch: Boolean = {
+    (approvedAddress, pendingAddress) match {
+      case (address, Some(pending)) if !address.equals(pending) => true
+      case _ => false
+    }
+  }
+
+  val pendingEmailAddress: Boolean = {
     val approvedEmail: Option[String] = ppob.contactDetails.flatMap(_.emailAddress)
     val pendingEmail: Option[String] = for {
       pendingChanges <- pendingChanges
@@ -37,7 +44,11 @@ case class CustomerInformation(ppob: PPOB,
       contactDetails <- ppob.contactDetails
       emailAddress <- contactDetails.emailAddress
     } yield emailAddress
-    approvedEmail equals pendingEmail
+
+    (approvedEmail, pendingEmail) match {
+      case (Some(approved), Some(pending)) if !approved.equals(pending) => true
+      case _ => false
+    }
   }
 
   def entityName: Option[String] =

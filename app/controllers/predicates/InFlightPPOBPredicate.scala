@@ -60,12 +60,12 @@ class InFlightPPOBPredicate @Inject()(vatSubscriptionService: VatSubscriptionSer
       case Right(customerInfo) =>
         customerInfo.pendingChanges match {
           case Some(_) =>
-            (customerInfo.approvedAndPendingPPOBAddressMatch, customerInfo.approvedAndPendingEmailAddressMatch) match {
-              case (false, true) =>
+            (customerInfo.pendingPPOBAddress, customerInfo.pendingEmailAddress) match {
+              case (true, false) =>
                 logWarn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight PPOB address change. Rendering graceful error page.")
                 Left(Ok(ppobChangePendingView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
-              case (_, false) =>
+              case (_, true) =>
                 logWarn("[InFlightPPOBPredicate][getCustomerInfoCall] - " +
                   "There is an in-flight email address change. Redirecting to Manage VAT homepage")
                 Left(Redirect(appConfig.manageVatSubscriptionServicePath).addingToSession(inFlightContactDetailsChangeKey -> "true"))
