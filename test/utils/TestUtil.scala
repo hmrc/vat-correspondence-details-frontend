@@ -40,6 +40,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
     mockConfig.features.contactPreferencesEnabled(false)
     mockConfig.features.languageSelectorEnabled(true)
     mockConfig.features.changeWebsiteEnabled(true)
+    mockConfig.features.agentAccessEnabled(true)
   }
 
   lazy val injector: Injector = app.injector

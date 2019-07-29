@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class WebsiteChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
 
-  def controller: WebsiteChangeSuccessController = new WebsiteChangeSuccessController(
+  val controller: WebsiteChangeSuccessController = new WebsiteChangeSuccessController(
     mcc,
     mockAuthPredicateComponents,
     injector.instanceOf[WebsiteChangeSuccessView],
@@ -46,12 +46,12 @@ class WebsiteChangeSuccessControllerSpec extends ControllerBaseSpec with MockCon
 
       "the user is a principal entity" should {
 
-        lazy val result: Future[Result] = controller.show(
-          request.withSession(prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true")
-        )
+        lazy val result: Future[Result] = {
+          getMockContactPreference("999999999")(Future.successful(Right(ContactPreference("DIGITAL"))))
+          controller.show(request.withSession(prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"))
+        }
 
         "return 200" in {
-          getMockContactPreference("999999999")(Future.successful(Right(ContactPreference("DIGITAL"))))
           status(result) shouldBe Status.OK
         }
 
@@ -62,13 +62,15 @@ class WebsiteChangeSuccessControllerSpec extends ControllerBaseSpec with MockCon
 
       "the user is an agent" should {
 
-        lazy val result: Future[Result] = controller.show(
-          request.withSession(prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", clientVrn -> "999999999")
-        )
-
-        "return 200" in {
+        lazy val result: Future[Result] = {
           mockAgentAuthorised()
           mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
+          controller.show(
+            request.withSession(prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", clientVrn -> "999999999")
+          )
+        }
+
+        "return 200" in {
           status(result) shouldBe Status.OK
         }
 
