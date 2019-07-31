@@ -18,7 +18,7 @@ package controllers.email
 
 import audit.AuditingService
 import audit.models.ChangedEmailAddressAuditModel
-import common.SessionKeys.{emailKey, inFlightContactDetailsChangeKey, validationEmailKey}
+import common.SessionKeys.{prepopulationEmailKey, inFlightContactDetailsChangeKey, validationEmailKey}
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
 import controllers.BaseController
@@ -74,7 +74,7 @@ class ConfirmEmailController @Inject()(val authComps: AuthPredicateComponents,
               )
             )
             Redirect(routes.EmailChangeSuccessController.show())
-              .removingFromSession(emailKey, validationEmailKey, inFlightContactDetailsChangeKey)
+              .removingFromSession(prepopulationEmailKey, validationEmailKey, inFlightContactDetailsChangeKey)
 
           case Left(ErrorModel(CONFLICT, _)) =>
             logWarn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
@@ -93,6 +93,6 @@ class ConfirmEmailController @Inject()(val authComps: AuthPredicateComponents,
   }
 
   private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {
-    user.session.get(emailKey).filter(_.nonEmpty)
+    user.session.get(prepopulationEmailKey).filter(_.nonEmpty)
   }
 }

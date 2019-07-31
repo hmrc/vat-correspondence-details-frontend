@@ -92,7 +92,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
           lazy val result = target().show(request.withSession(
               common.SessionKeys.validationEmailKey -> testValidationEmail,
-              common.SessionKeys.emailKey -> testValidEmail)
+              common.SessionKeys.prepopulationEmailKey -> testValidEmail)
           )
           lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -235,7 +235,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           }
 
           "add the new email to the session" in {
-            session(result).get(SessionKeys.emailKey) shouldBe Some(testValidEmail)
+            session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidEmail)
           }
         }
 

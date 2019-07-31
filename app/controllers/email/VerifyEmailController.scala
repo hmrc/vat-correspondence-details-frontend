@@ -69,6 +69,6 @@ class VerifyEmailController @Inject()(val authComps: AuthPredicateComponents,
   }
 
   private[controllers] def extractSessionEmail(user: User[AnyContent]): Option[String] = {
-    user.session.get(SessionKeys.emailKey).filter(_.nonEmpty).orElse(None)
+    user.session.get(SessionKeys.prepopulationEmailKey).filter(_.nonEmpty).orElse(None)
   }
 }
