@@ -42,7 +42,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   val testContinueUrl: String = "/someReturnUrl/verified"
 
   lazy val emptyEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.emailKey -> "")
+    request.withSession(SessionKeys.prepopulationEmailKey -> "")
 
 
   "Calling the extractSessionEmail function in VerifyEmailController" when {

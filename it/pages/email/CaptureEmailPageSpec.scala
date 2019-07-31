@@ -159,7 +159,7 @@ class CaptureEmailPageSpec extends BasePageISpec {
           When("a valid email is submitted")
           val res = submit(newEmail)
 
-          SessionCookieCrumbler.getSessionMap(res).get(SessionKeys.emailKey) shouldBe Some(newEmail)
+          SessionCookieCrumbler.getSessionMap(res).get(SessionKeys.prepopulationEmailKey) shouldBe Some(newEmail)
         }
       }
     }

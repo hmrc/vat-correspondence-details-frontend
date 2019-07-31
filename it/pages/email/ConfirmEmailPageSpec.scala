@@ -183,7 +183,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             VatSubscriptionStub.stubUpdatePPOB
             val result = show
 
-            SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.emailKey) shouldBe None
+            SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.prepopulationEmailKey) shouldBe None
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.validationEmailKey) shouldBe None
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe None
           }

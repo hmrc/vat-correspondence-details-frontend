@@ -53,7 +53,7 @@ class CaptureEmailController @Inject()(val authComps: AuthPredicateComponents,
     }
 
     val prepopulationEmail: Future[String] = validationEmail map { validation =>
-      user.session.get(SessionKeys.emailKey)
+      user.session.get(SessionKeys.prepopulationEmailKey)
         .getOrElse(validation.getOrElse(""))
     }
 
@@ -72,7 +72,7 @@ class CaptureEmailController @Inject()(val authComps: AuthPredicateComponents,
 
   def submit: Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
     val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
-    val prepopulationEmail: Option[String] = user.session.get(SessionKeys.emailKey)
+    val prepopulationEmail: Option[String] = user.session.get(SessionKeys.prepopulationEmailKey)
 
     (validationEmail, prepopulationEmail) match {
       case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
@@ -92,7 +92,7 @@ class CaptureEmailController @Inject()(val authComps: AuthPredicateComponents,
             )
           )
           Future.successful(Redirect(routes.ConfirmEmailController.show())
-            .addingToSession(SessionKeys.emailKey -> email))
+            .addingToSession(SessionKeys.prepopulationEmailKey -> email))
         }
       )
       case (None, _) => Future.successful(errorHandler.showInternalServerError)

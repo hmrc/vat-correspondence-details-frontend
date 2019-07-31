@@ -18,11 +18,19 @@ package common
 
 object SessionKeys {
   val clientVrn: String = "CLIENT_VRN"
-  val emailKey = "Email"
-  val validationEmailKey = "validationEmail"
-  val prepopulationWebsiteKey = "vatCorrespondencePrepopulationWebsite"
-  val validationWebsiteKey = "vatCorrespondenceValidationWebsite"
-  val inFlightContactDetailsChangeKey = "inFlightContactDetailsChange"
-  val websiteChangeSuccessful = "vatCorrespondenceWebsiteChangeSuccessful"
+  val inFlightContactDetailsChangeKey: String = "inFlightContactDetailsChange"
   val verifiedAgentEmail: String = "verifiedAgentEmail"
+
+  val validationEmailKey: String = "vatCorrespondenceValidationEmail"
+  val prepopulationEmailKey: String = "vatCorrespondencePrepopulationEmail"
+
+  val validationWebsiteKey: String = "vatCorrespondenceValidationWebsite"
+  val prepopulationWebsiteKey: String = "vatCorrespondencePrepopulationWebsite"
+  val websiteChangeSuccessful: String = "vatCorrespondenceWebsiteChangeSuccessful"
+
+  val validationMobileKey: String = "vatCorrespondenceValidationMobile"
+  val prepopulationMobileKey: String = "vatCorrespondencePrepopulationMobile"
+  val validationLandlineKey: String = "vatCorrespondenceValidationLandline"
+  val prepopulationLandlineKey: String = "vatCorrespondencePrepopulationLandline"
+  val phoneNumberChangeSuccessful: String = "vatCorrespondencePhoneNumberChangeSuccessful"
 }

@@ -53,7 +53,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
         "a digital preference is retrieved" should {
           lazy val result = TestController.show(request.withSession(
-            emailKey -> "myemail@gmail.com",
+            prepopulationEmailKey -> "myemail@gmail.com",
             validationEmailKey -> "anotheremail@gmail.com"
           ))
 
@@ -88,7 +88,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         "a paper preference is retrieved" should {
 
           lazy val result = TestController.show(request.withSession(
-            emailKey -> "myemail@gmail.com",
+            prepopulationEmailKey -> "myemail@gmail.com",
             validationEmailKey -> "anotheremail@gmail.com"
           ))
 
@@ -139,7 +139,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         }
 
         "remove the email session key from the session" in {
-          session(result).get(emailKey) shouldBe None
+          session(result).get(prepopulationEmailKey) shouldBe None
         }
 
         "remove the validation email session key from the session" in {
@@ -156,7 +156,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
       "the contact preference feature switch is disabled" should {
 
         lazy val result = TestController.show(request.withSession(
-          emailKey -> "myemail@gmail.com",
+          prepopulationEmailKey -> "myemail@gmail.com",
           validationEmailKey -> "anotheremail@gmail.com"
         ))
         lazy val document = Jsoup.parse(bodyOf(result))
@@ -173,7 +173,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         }
 
         "remove the email session key from the session" in {
-          session(result).get(emailKey) shouldBe None
+          session(result).get(prepopulationEmailKey) shouldBe None
         }
 
         "remove the validation email session key from the session" in {
