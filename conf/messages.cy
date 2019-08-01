@@ -41,9 +41,9 @@ unauthorised.agent.title = Ni allwch ddefnyddio’r gwasanaeth hwn eto
 unauthorised.agent.instructions = I ddefnyddio’r gwasanaeth hwn, bydd angen i chi
 unauthorised.agent.instructions2 = agor cyfrif gwasanaethau asiantau
 
-agentJourneyDisabled.title = Ni allwch newid manylion gohebu eich cleient eto
-agentJourneyDisabled.summary = Ni all asiantau newid manylion gohebu eu cleientiaid eto.
-agentJourneyDisabled.instructions = Os oes angen i’ch cleient newid ei fanylion gohebu, bydd angen iddo fewngofnodi gan ddefnyddio’i fanylion ei hun ar gyfer Porth y Llywodraeth.
+agentJourneyDisabled.title = Ni allwch newid cyfeiriad e-bost eich cleient eto
+agentJourneyDisabled.summary = Ni all asiantau newid cyfeiriad e-bost eu cleientiaid eto.
+agentJourneyDisabled.instructions = Os oes angen i’ch cleient newid ei gyfeiriad e-bost, bydd angen iddo fewngofnodi gan ddefnyddio’i fanylion ei hun ar gyfer Porth y Llywodraeth.
 
 captureEmail.title = Beth yw’r cyfeiriad e-bost?
 captureEmail.hint = Er enghraifft, enw@enghraifft.com

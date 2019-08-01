@@ -108,7 +108,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.UNAUTHORIZED),
-          pageTitle("You cannot change your client’s correspondence details yet")
+          pageTitle("You cannot change your client’s email address yet")
         )
       }
     }
@@ -275,7 +275,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.UNAUTHORIZED),
-          pageTitle("You cannot change your client’s correspondence details yet")
+          pageTitle("You cannot change your client’s email address yet")
         )
       }
     }

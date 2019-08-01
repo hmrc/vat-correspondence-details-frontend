@@ -36,20 +36,20 @@ class AgentJourneyDisabledViewSpec extends ViewBaseSpec {
     lazy implicit val document: Document = Jsoup.parse(injectedView().body)
 
     "have the correct document title" in {
-      document.title shouldBe "You cannot change your client’s correspondence details yet"
+      document.title shouldBe "You cannot change your client’s email address yet"
     }
 
     "have a the correct page heading" in {
-      elementText(Selectors.heading) shouldBe "You cannot change your client’s correspondence details yet"
+      elementText(Selectors.heading) shouldBe "You cannot change your client’s email address yet"
     }
 
     "have the correct summary message on the page" in {
-      elementText(Selectors.summary) shouldBe "Agents cannot change their client’s correspondence details yet."
+      elementText(Selectors.summary) shouldBe "Agents cannot change their client’s email address yet."
     }
 
     "have the correct instructions on the page" in {
-      elementText(Selectors.instructions) shouldBe "If your client needs to change their correspondence details, " +
-        "they need to sign in using their own Government Gateway details."
+      elementText(Selectors.instructions) shouldBe "If your client needs to change their email address, they need to sign in using " +
+        "their own Government Gateway details."
     }
 
     "have a sign out button" in {
