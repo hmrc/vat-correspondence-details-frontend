@@ -56,6 +56,9 @@ object VatSubscriptionStub extends WireMockMethods {
       .thenReturn(status = INTERNAL_SERVER_ERROR, body = Json.obj("fail" -> "nope"))
   }
 
+  val currentLandline = "01952123456"
+  val currentMobile = "07890123456"
+
   val customerInfoJson: JsObject = Json.obj(
     "ppob" -> Json.obj(
       "address" -> Json.obj(
@@ -63,7 +66,9 @@ object VatSubscriptionStub extends WireMockMethods {
         "countryCode" -> "codeOfMyCountry"
       ),
       "contactDetails" -> Json.obj(
-        "emailAddress" -> "testemail@test.com"
+        "emailAddress" -> "testemail@test.com",
+        "primaryPhoneNumber" -> currentLandline,
+        "mobileNumber" -> currentMobile
       ),
       "websiteAddress" -> "www.pepsi.biz"
     )
