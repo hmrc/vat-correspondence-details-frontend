@@ -66,7 +66,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "show the agent journey disabled page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s correspondence details yet"
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet"
             }
           }
 
@@ -97,7 +97,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
           }
 
           "show the agent journey disabled page" in {
-            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s correspondence details yet"
+            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet"
           }
         }
       }
