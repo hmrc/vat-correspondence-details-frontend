@@ -21,5 +21,4 @@ case class FeatureSwitchModel(agentAccess: Boolean,
                               stubContactPreferences: Boolean,
                               contactPreferences: Boolean,
                               languageSelector: Boolean,
-                              changeWebsite: Boolean
-                             )
+                              changeContactDetails: Boolean)

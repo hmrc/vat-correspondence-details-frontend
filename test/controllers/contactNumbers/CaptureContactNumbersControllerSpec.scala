@@ -29,6 +29,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.contactNumbers.CaptureContactNumbersView
+import views.html.errors.NotFoundView
 
 import scala.concurrent.ExecutionContext
 
@@ -40,6 +41,7 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
     mockVatSubscriptionService,
     mockErrorHandler,
     injector.instanceOf[CaptureContactNumbersView],
+    injector.instanceOf[NotFoundView],
     mockConfig
   )
 
@@ -177,6 +179,23 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
       "return 401" in {
         mockMissingBearerToken()
         status(result) shouldBe Status.UNAUTHORIZED
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+    }
+
+    "the contact details feature switch is disabled" should {
+
+      lazy val result = {
+        mockConfig.features.changeContactDetailsEnabled(false)
+        controller.show(request)
+      }
+
+      "return 404" in {
+        status(result) shouldBe Status.NOT_FOUND
       }
 
       "return HTML" in {

@@ -26,6 +26,7 @@ import models.customerInformation.ContactNumbers
 import play.api.mvc._
 import services.VatSubscriptionService
 import views.html.contactNumbers.CaptureContactNumbersView
+import views.html.errors.NotFoundView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,49 +36,55 @@ class CaptureContactNumbersController @Inject()(val authComps: AuthPredicateComp
                                                 val vatSubscriptionService: VatSubscriptionService,
                                                 val errorHandler: ErrorHandler,
                                                 captureContactNumbersView: CaptureContactNumbersView,
+                                                notFoundView: NotFoundView,
                                                 implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def show: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
 
-    val validationNumbers: Future[(Option[String], Option[String])] =
-      (user.session.get(SessionKeys.validationLandlineKey), user.session.get(SessionKeys.validationMobileKey)) match {
-      case (Some(landline), Some(mobile)) => Future.successful(Some(landline), Some(mobile))
-      case _ =>
-        vatSubscriptionService.getCustomerInfo(user.vrn).map {
-          case Right(details) => (
-            Some(details.ppob.contactDetails.flatMap(_.phoneNumber).getOrElse("")),
-            Some(details.ppob.contactDetails.flatMap(_.mobileNumber).getOrElse(""))
-          )
-          case _ => (None, None)
+    if(appConfig.features.changeContactDetailsEnabled()) {
+
+      val validationNumbers: Future[(Option[String], Option[String])] =
+        (user.session.get(SessionKeys.validationLandlineKey), user.session.get(SessionKeys.validationMobileKey)) match {
+          case (Some(landline), Some(mobile)) => Future.successful(Some(landline), Some(mobile))
+          case _ =>
+            vatSubscriptionService.getCustomerInfo(user.vrn).map {
+              case Right(details) => (
+                Some(details.ppob.contactDetails.flatMap(_.phoneNumber).getOrElse("")),
+                Some(details.ppob.contactDetails.flatMap(_.mobileNumber).getOrElse(""))
+              )
+              case _ => (None, None)
+            }
         }
-    }
 
-    val prepopulationLandline: Future[String] = validationNumbers map { validationNumbers =>
-      user.session.get(SessionKeys.prepopulationLandlineKey).getOrElse(validationNumbers._1.getOrElse(""))
-    }
-
-    val prepopulationMobile: Future[String] = validationNumbers map { validationNumbers =>
-      user.session.get(SessionKeys.prepopulationMobileKey).getOrElse(validationNumbers._2.getOrElse(""))
-    }
-
-    for {
-      validationLandline    <- validationNumbers map {numbers => numbers._1}
-      validationMobile      <- validationNumbers map {numbers => numbers._2}
-      prepopulationLandline <- prepopulationLandline
-      prepopulationMobile   <- prepopulationMobile
-    } yield {
-      (validationLandline, validationMobile) match {
-        case (Some(valLandline), Some(valMobile)) =>
-          Ok(captureContactNumbersView(contactNumbersForm(valLandline, valMobile).fill(
-            ContactNumbers(Some(prepopulationLandline), Some(prepopulationMobile))
-          ))).addingToSession(
-            SessionKeys.validationLandlineKey -> valLandline,
-            SessionKeys.validationMobileKey -> valMobile
-          )
-        case _ => errorHandler.showInternalServerError
+      val prepopulationLandline: Future[String] = validationNumbers map { validationNumbers =>
+        user.session.get(SessionKeys.prepopulationLandlineKey).getOrElse(validationNumbers._1.getOrElse(""))
       }
+
+      val prepopulationMobile: Future[String] = validationNumbers map { validationNumbers =>
+        user.session.get(SessionKeys.prepopulationMobileKey).getOrElse(validationNumbers._2.getOrElse(""))
+      }
+
+      for {
+        validationLandline <- validationNumbers map { numbers => numbers._1 }
+        validationMobile <- validationNumbers map { numbers => numbers._2 }
+        prepopulationLandline <- prepopulationLandline
+        prepopulationMobile <- prepopulationMobile
+      } yield {
+        (validationLandline, validationMobile) match {
+          case (Some(valLandline), Some(valMobile)) =>
+            Ok(captureContactNumbersView(contactNumbersForm(valLandline, valMobile).fill(
+              ContactNumbers(Some(prepopulationLandline), Some(prepopulationMobile))
+            ))).addingToSession(
+              SessionKeys.validationLandlineKey -> valLandline,
+              SessionKeys.validationMobileKey -> valMobile
+            )
+          case _ => errorHandler.showInternalServerError
+        }
+      }
+    } else {
+      Future.successful(NotFound(notFoundView()))
     }
   }
 

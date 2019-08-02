@@ -29,7 +29,7 @@ object FeatureSwitchForm {
       ConfigKeys.stubContactPreferencesFeature -> boolean,
       ConfigKeys.contactPreferencesFeature -> boolean,
       ConfigKeys.languageSelectorFeature -> boolean,
-      ConfigKeys.changeWebsiteFeature -> boolean
+      ConfigKeys.changeContactDetailsFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }
