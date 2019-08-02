@@ -187,6 +187,24 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
       }
     }
 
+    "a user is an agent" should {
+
+      lazy val result = {
+        mockAgentAuthorised()
+        mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+        controller.show(fakeRequestWithClientsVRN)
+      }
+
+      "return 200" in {
+        status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+    }
+
     "the contact details feature switch is disabled" should {
 
       lazy val result = {
