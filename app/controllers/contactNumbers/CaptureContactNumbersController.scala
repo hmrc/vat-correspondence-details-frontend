@@ -67,8 +67,7 @@ class CaptureContactNumbersController @Inject()(val authComps: AuthPredicateComp
       }
 
       for {
-        validationLandline <- validationNumbers map { numbers => numbers._1 }
-        validationMobile <- validationNumbers map { numbers => numbers._2 }
+        (validationLandline, validationMobile) <- validationNumbers
         prepopulationLandline <- prepopulationLandline
         prepopulationMobile <- prepopulationMobile
       } yield {
@@ -94,8 +93,8 @@ class CaptureContactNumbersController @Inject()(val authComps: AuthPredicateComp
     val validationMobile: Option[String] = user.session.get(SessionKeys.validationMobileKey)
     val prepopulationMobile: Option[String] = user.session.get(SessionKeys.prepopulationMobileKey)
 
-    (validationLandline, prepopulationLandline, validationMobile, prepopulationMobile) match {
-      case (Some(validationLand), Some(_), Some(validationMob), Some(_)) =>
+    (validationLandline, validationMobile) match {
+      case (Some(validationLand), Some(validationMob)) =>
         contactNumbersForm(validationLand, validationMob).bindFromRequest.fold(
           errorForm => {
             BadRequest(captureContactNumbersView(errorForm))

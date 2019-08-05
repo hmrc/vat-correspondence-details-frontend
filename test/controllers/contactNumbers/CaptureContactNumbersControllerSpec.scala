@@ -85,7 +85,7 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
 
     "the previous form value is retrieved from session" should {
 
-      lazy val result = controller.show(requestWithContactNumbers)
+      lazy val result = controller.show(requestWithAllContactNumbers)
       lazy val document = Jsoup.parse(bodyOf(result))
 
       "return 200" in {
