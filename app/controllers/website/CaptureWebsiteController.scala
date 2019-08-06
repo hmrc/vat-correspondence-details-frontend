@@ -43,7 +43,7 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def show: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
-    if(appConfig.features.changeWebsiteEnabled()) {
+    if(appConfig.features.changeContactDetailsEnabled()) {
       val validationWebsite: Future[Option[String]] = user.session.get(SessionKeys.validationWebsiteKey) match {
         case Some(website) => Future.successful(Some(website))
         case _ =>

@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-case class FeatureSwitchModel(agentAccess: Boolean,
-                              emailVerification: Boolean,
-                              stubContactPreferences: Boolean,
-                              contactPreferences: Boolean,
-                              languageSelector: Boolean,
-                              changeContactDetails: Boolean)
+import play.api.data.Form
+import play.api.data.Forms._
+import models.customerInformation.ContactNumbers
+
+object ContactNumbersForm {
+
+  def contactNumbersForm(currentLandline: String, currentMobile: String): Form[ContactNumbers] = Form(
+    mapping(
+      "landlineNumber" -> optional(text),
+      "mobileNumber"   -> optional(text)
+    )(ContactNumbers.apply)(ContactNumbers.unapply)
+  )
+}

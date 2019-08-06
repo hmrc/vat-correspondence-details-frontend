@@ -39,7 +39,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
     super.beforeEach()
     mockConfig.features.contactPreferencesEnabled(false)
     mockConfig.features.languageSelectorEnabled(true)
-    mockConfig.features.changeWebsiteEnabled(true)
+    mockConfig.features.changeContactDetailsEnabled(true)
     mockConfig.features.agentAccessEnabled(true)
   }
 
@@ -54,6 +54,9 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   val testEmail = "test@email.co.uk"
   val testWebsite = "https://www.test-website.co.uk"
 
+  val testLandline = "012345678910"
+  val testMobile = "019876543210"
+
   implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   lazy val requestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(SessionKeys.prepopulationEmailKey -> testEmail)
@@ -61,8 +64,19 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   lazy val requestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(SessionKeys.prepopulationWebsiteKey -> testWebsite)
 
+  lazy val requestWithPhoneNumbers: FakeRequest[AnyContentAsEmpty.type] =
+    request.withSession(SessionKeys.prepopulationLandlineKey -> testLandline, SessionKeys.prepopulationMobileKey -> testMobile)
+
+
   lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.clientVrn -> vrn)
+
+  lazy val requestWithAllContactNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+    SessionKeys.validationLandlineKey -> testValidationLandline,
+    SessionKeys.prepopulationLandlineKey -> testPrepopLandline,
+    SessionKeys.validationMobileKey -> testValidationMobile,
+    SessionKeys.prepopulationMobileKey -> testPrepopMobile
+  )
 
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)
   lazy val agent: User[AnyContentAsEmpty.type] =

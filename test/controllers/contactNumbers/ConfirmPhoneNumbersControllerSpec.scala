@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.website
+package controllers.contactNumbers
 
 import assets.BaseTestConstants._
 import controllers.ControllerBaseSpec
@@ -24,41 +24,41 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
-import views.html.website.ConfirmWebsiteView
+import views.html.contactNumbers.ConfirmPhoneNumbersView
 
 import scala.concurrent.Future
 
-class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
+class ConfirmPhoneNumbersControllerSpec extends ControllerBaseSpec  {
 
-  val controller = new ConfirmWebsiteController(
+  val controller = new ConfirmPhoneNumbersController(
     mockAuthPredicateComponents,
     mcc,
     mockErrorHandler,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmWebsiteView],
+    injector.instanceOf[ConfirmPhoneNumbersView],
     mockConfig
   )
 
-  "Calling the show action in ConfirmWebsiteController" when {
+  "Calling the show action in ConfirmPhoneNumbersController" when {
 
-    "there is a website in session" should {
+    "there are phone numbers in session" should {
 
-      "show the Confirm Website page" in {
+      "show the Confirm Phone Numbers page" in {
         mockIndividualAuthorised()
-        val result = controller.show(requestWithWebsite)
+        val result = controller.show(requestWithPhoneNumbers)
 
         status(result) shouldBe Status.OK
       }
     }
 
-    "there isn't a website in session" should {
+    "there isn't a phone number in session" should {
 
-      "take the user to enter a new website" in {
+      "take the user to enter a new phone number" in {
         mockIndividualAuthorised()
         val result = controller.show(request)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.ConfirmPhoneNumbersController.show().url)
       }
     }
 
@@ -66,62 +66,49 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.show(requestWithWebsite)
+        val result = controller.show(requestWithPhoneNumbers)
 
         status(result) shouldBe Status.FORBIDDEN
       }
     }
-
-    "the change contact details feature is disabled" should {
-
-      "present the server error page" in {
-        mockConfig.features.changeContactDetailsEnabled(false)
-        mockIndividualAuthorised()
-
-        val result = controller.show(request)
-
-        status(result) shouldBe Status.SEE_OTHER
-        mockConfig.features.changeContactDetailsEnabled(true)
-      }
-    }
   }
 
-  "Calling the updateWebsite() action in ConfirmWebsiteController" when {
+  "Calling the updatePhoneNumbers() action in ConfirmPhoneNumbersController" when {
 
-    "there is a website in session" when {
-      "the website has been updated successfully" should {
+    "there is a phone number in session" when {
+      "the phone numbers have been updated successfully" should {
 
-        "show the website changed success page" in {
+        "show the phone numbers changed success page" in {
           mockIndividualAuthorised()
 
-          mockUpdateWebsite(vrn, testWebsite)(Future(Right(UpdatePPOBSuccess("success"))))
-          val result = controller.updateWebsite()(requestWithWebsite)
+          mockUpdatePhoneNumbers(vrn, Some(testLandline), Some(testMobile))(Future(Right(UpdatePPOBSuccess("success"))))
+          val result = controller.updatePhoneNumbers()(requestWithPhoneNumbers)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.website.routes.WebsiteChangeSuccessController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.ConfirmPhoneNumbersController.show().url)
         }
       }
 
-      "there was a conflict returned when trying to update the website" should {
+      "there was a conflict returned when trying to update the phone numbers" should {
 
         "redirect the user to the manage-vat page " in {
           mockIndividualAuthorised()
-          mockUpdateWebsite(vrn, testWebsite)(
+          mockUpdatePhoneNumbers(vrn, Some(testLandline), Some(testMobile))(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          val result = controller.updateWebsite()(requestWithWebsite)
+          val result = controller.updatePhoneNumbers()(requestWithPhoneNumbers)
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
         }
       }
 
-      "there was an unexpected error trying to update the website" should {
+      "there was an unexpected error trying to update the phone numbers" should {
 
         "return an Internal Server Error" in {
           mockIndividualAuthorised()
-          mockUpdateWebsite(vrn, testWebsite)(
-            Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify website"))))
-          val result = controller.updateWebsite()(requestWithWebsite)
+          mockUpdatePhoneNumbers(vrn, Some(testLandline), Some(testMobile))(
+            Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify phone numbers"))))
+          val result = controller.updatePhoneNumbers()(requestWithPhoneNumbers)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
@@ -129,14 +116,14 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       }
     }
 
-    "there isn't a website in session" should {
+    "there isn't a phone number in session" should {
 
-      "take the user to the capture website page" in {
+      "take the user to the capture phone numbers page" in {
         mockIndividualAuthorised()
-        val result = controller.updateWebsite()(request)
+        val result = controller.updatePhoneNumbers()(request)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.ConfirmPhoneNumbersController.show().url)
       }
     }
 
@@ -144,7 +131,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.updateWebsite()(requestWithWebsite)
+        val result = controller.updatePhoneNumbers()(requestWithPhoneNumbers)
 
         status(result) shouldBe Status.FORBIDDEN
       }

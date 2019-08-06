@@ -65,6 +65,11 @@ captureWebsite.error.invalid = Enter a website address in the correct format, li
 captureWebsite.error.empty = Enter a website address
 captureWebsite.error.notChanged = Enter a new website address
 
+captureContactNumbers.title = Change telephone numbers
+captureContactNumbers.instructions = Include the country code for international telephone numbers, for example ''+44''.
+captureContactNumbers.landlineNumber = Landline number
+captureContactNumbers.mobileNumber = Mobile number
+
 sessionTimeout.title = Your session has timed out
 sessionTimeout.helpOne = To manage your VAT account, you will have to
 sessionTimeout.helpTwo = sign in
@@ -114,3 +119,11 @@ ppobChangePending.title = We are reviewing your request
 ppobChangePending.heading = You already have a change pending
 ppobChangePending.infoOne = You have already requested to change the principal place of business. While this change is pending you are unable to change your email address.
 ppobChangePending.infoTwo = We will usually update your details within 2 working days.
+
+confirmPhoneNumbers.notProvided = Not provided
+confirmPhoneNumbers.numberRemoved = Number removed
+confirmPhoneNumbers.title = Confirm telephone number changes
+confirmPhoneNumbers.heading = Confirm telephone number changes
+confirmPhoneNumbers.landline = Landline
+confirmPhoneNumbers.mobile = Mobile
+confirmPhoneNumbers.edit = Change telephone numbers

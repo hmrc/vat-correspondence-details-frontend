@@ -206,4 +206,29 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       result shouldBe expectedPPOB
     }
   }
+
+  "calling updatePhoneNumbers" when {
+
+    "both phone numbers have been verified and the phone number update has been successful" should {
+
+      "return the model" in {
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdatePPOBSuccessResponse()
+
+        val result = await(service.updatePhoneNumbers(testVrn, Some(testLandline), Some(testMobile)))
+        result shouldBe Right(UpdatePPOBSuccess("success"))
+      }
+    }
+
+    "the VatSubscriptionConnector returns an error" should {
+
+      "return the error" in {
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdatePPOBFailureResponse()
+
+        val result = await(service.updatePhoneNumbers(testVrn, Some(testLandline), Some(testMobile)))
+        result shouldBe Left(invalidJsonError)
+      }
+    }
+  }
 }
