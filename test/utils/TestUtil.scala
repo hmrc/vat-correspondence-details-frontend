@@ -39,7 +39,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
     super.beforeEach()
     mockConfig.features.contactPreferencesEnabled(false)
     mockConfig.features.languageSelectorEnabled(true)
-    mockConfig.features.changeWebsiteEnabled(true)
+    mockConfig.features.changeContactDetailsEnabled(true)
     mockConfig.features.agentAccessEnabled(true)
   }
 
@@ -63,6 +63,13 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
 
   lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.clientVrn -> vrn)
+
+  lazy val requestWithAllContactNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+    SessionKeys.validationLandlineKey -> testValidationLandline,
+    SessionKeys.prepopulationLandlineKey -> testPrepopLandline,
+    SessionKeys.validationMobileKey -> testValidationMobile,
+    SessionKeys.prepopulationMobileKey -> testPrepopMobile
+  )
 
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)
   lazy val agent: User[AnyContentAsEmpty.type] =

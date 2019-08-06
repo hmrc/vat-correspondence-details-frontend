@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.customerInformation
 
-case class FeatureSwitchModel(agentAccess: Boolean,
-                              emailVerification: Boolean,
-                              stubContactPreferences: Boolean,
-                              contactPreferences: Boolean,
-                              languageSelector: Boolean,
-                              changeContactDetails: Boolean)
+case class ContactNumbers(landlineNumber: Option[String],
+                          mobileNumber: Option[String])

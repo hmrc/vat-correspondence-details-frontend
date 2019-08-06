@@ -28,4 +28,8 @@ object BaseTestConstants {
   val formBundle = "XA1234567"
   val internalServerErrorTitle = "There is a problem with the service - VAT reporting through software - GOV.UK"
 
+  val testValidationLandline: String = "01952123456"
+  val testPrepopLandline: String = "01952654321"
+  val testValidationMobile: String = "07890123456"
+  val testPrepopMobile: String = "07890654321"
 }

@@ -72,16 +72,16 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       }
     }
 
-    "the changeWebsite feature is disabled" should {
+    "the change contact details feature is disabled" should {
 
       "present the server error page" in {
-        mockConfig.features.changeWebsiteEnabled(false)
+        mockConfig.features.changeContactDetailsEnabled(false)
         mockIndividualAuthorised()
 
         val result = controller.show(request)
 
         status(result) shouldBe Status.SEE_OTHER
-        mockConfig.features.changeWebsiteEnabled(true)
+        mockConfig.features.changeContactDetailsEnabled(true)
       }
     }
   }

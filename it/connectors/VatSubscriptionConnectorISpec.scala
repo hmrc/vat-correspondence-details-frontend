@@ -51,8 +51,8 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
       "codeOfMyCountry"
     ),
     Some(ContactDetails(
-      None,
-      None,
+      Some(VatSubscriptionStub.currentLandline),
+      Some(VatSubscriptionStub.currentMobile),
       None,
       Some("testemail@test.com"),
       None

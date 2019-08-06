@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-case class FeatureSwitchModel(agentAccess: Boolean,
-                              emailVerification: Boolean,
-                              stubContactPreferences: Boolean,
-                              contactPreferences: Boolean,
-                              languageSelector: Boolean,
-                              changeContactDetails: Boolean)
+import forms.ContactNumbersForm._
+import models.customerInformation.ContactNumbers
+import utils.TestUtil
+
+class ContactNumbersFormSpec extends TestUtil {
+
+  "The contact numbers form" should {
+
+    val testLandline = "01952123456"
+    val testMobile = "07890123456"
+
+    "be able to be constructed given a landline and mobile" in {
+      val actual = contactNumbersForm("", "").bind(Map("landlineNumber" -> testLandline, "mobileNumber" -> testMobile))
+      actual.value shouldBe Some(ContactNumbers(Some(testLandline), Some(testMobile)))
+    }
+  }
+}
