@@ -45,6 +45,16 @@ trait ViewBaseSpec extends TestUtil with GuiceOneAppPerSuite {
     }
   }
 
+  def elementExists(cssSelector: String)(implicit document: Document): Assertion = {
+    val elements = document.select(cssSelector)
+
+    if (elements.size > 0) {
+      succeed
+    } else {
+      fail(s"Element with selector '$cssSelector' was not found!")
+    }
+  }
+
   def element(cssSelector: String)(implicit document: Document): Element = {
     val elements = document.select(cssSelector)
 

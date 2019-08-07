@@ -119,3 +119,11 @@ ppobChangePending.title = We are reviewing your request
 ppobChangePending.heading = You already have a change pending
 ppobChangePending.infoOne = You have already requested to change the principal place of business. While this change is pending you are unable to change your email address.
 ppobChangePending.infoTwo = We will usually update your details within 2 working days.
+
+confirmPhoneNumbers.notProvided = Not provided
+confirmPhoneNumbers.numberRemoved = Number removed
+confirmPhoneNumbers.title = Confirm telephone number changes
+confirmPhoneNumbers.heading = Confirm telephone number changes
+confirmPhoneNumbers.landline = Landline
+confirmPhoneNumbers.mobile = Mobile
+confirmPhoneNumbers.edit = Change telephone numbers

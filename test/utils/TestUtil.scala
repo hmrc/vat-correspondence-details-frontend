@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import views.html.errors.StandardErrorView
+import assets.BaseTestConstants._
 
 trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport with BeforeAndAfterEach {
 
@@ -60,6 +61,10 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
 
   lazy val requestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(SessionKeys.prepopulationWebsiteKey -> testWebsite)
+
+  lazy val requestWithPhoneNumbers: FakeRequest[AnyContentAsEmpty.type] =
+    request.withSession(SessionKeys.prepopulationLandlineKey -> testPrepopLandline, SessionKeys.prepopulationMobileKey -> testPrepopMobile)
+
 
   lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.clientVrn -> vrn)

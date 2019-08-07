@@ -24,6 +24,7 @@ import models.errors.ErrorModel
 import utils.TestUtil
 
 import scala.concurrent.Future
+import assets.BaseTestConstants._
 
 class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnector with MockEmailVerificationService {
 
@@ -193,6 +194,49 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
     }
   }
 
+  "calling buildPhoneNumbersUpdateModel" when {
+
+    "the user has existing contact details" should {
+
+      "return a PPOB model with the updated phone numbers" in {
+        val expectedPPOB: PPOB = PPOB(
+          fullPPOBAddressModel,
+          Some(ContactDetails(
+            Some(testPrepopLandline),
+            Some(testPrepopMobile),
+            Some("0123456789"),
+            Some("pepsimac@gmail.com"),
+            Some(true)
+          )),
+          Some("www.pepsi-mac.biz")
+        )
+
+        val result = service.buildPhoneNumbersUpdateModel(Some(testPrepopLandline), Some(testPrepopMobile), fullPPOBModel)
+        result shouldBe expectedPPOB
+      }
+    }
+
+    "the user does not have contact details" should {
+
+      "return a PPOB model with the phone numbers" in {
+        val expectedPPOB: PPOB = PPOB(
+          minPPOBAddressModel,
+          Some(ContactDetails(
+            Some(testPrepopLandline),
+            Some(testPrepopMobile),
+            None,
+            None,
+            None
+          )),
+          None
+        )
+
+        val result = service.buildPhoneNumbersUpdateModel(Some(testPrepopLandline), Some(testPrepopMobile), minPPOBModel)
+        result shouldBe expectedPPOB
+      }
+    }
+  }
+
   "the website address is empty" should {
 
     "return a PPOB model with the website address field set to None" in {
@@ -204,6 +248,31 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       )
       val result = service.buildWebsiteUpdateModel("", fullPPOBModel)
       result shouldBe expectedPPOB
+    }
+  }
+
+  "calling updatePhoneNumbers" when {
+
+    "both phone numbers have been verified and the phone number update has been successful" should {
+
+      "return the model" in {
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdatePPOBSuccessResponse()
+
+        val result = await(service.updateContactNumbers(testVrn, Some(testPrepopLandline), Some(testPrepopMobile)))
+        result shouldBe Right(UpdatePPOBSuccess("success"))
+      }
+    }
+
+    "the VatSubscriptionConnector returns an error" should {
+
+      "return the error" in {
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdatePPOBFailureResponse()
+
+        val result = await(service.updateContactNumbers(testVrn, Some(testPrepopLandline), Some(testPrepopMobile)))
+        result shouldBe Left(invalidJsonError)
+      }
     }
   }
 }
