@@ -51,6 +51,14 @@ trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {
     )(ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[ExecutionContext])) thenReturn response
 
+  def mockUpdatePhoneNumbers(vrn: String, landline: Option[String], mobile: Option[String])(response: Future[UpdatePPOBResponse]): Unit =
+    when(mockVatSubscriptionService.updateContactNumbers(
+      ArgumentMatchers.eq(vrn),
+      ArgumentMatchers.eq(landline),
+      ArgumentMatchers.eq(mobile)
+    )(ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[ExecutionContext])) thenReturn response
+
   def mockGetCustomerInfo(vrn: String)(response: Future[GetCustomerInfoResponse]): Unit =
     when(mockVatSubscriptionService.getCustomerInfo(
       ArgumentMatchers.eq(vrn)

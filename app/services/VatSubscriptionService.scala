@@ -38,8 +38,18 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     )
   }
 
+  private[services] def buildPhoneNumbersUpdateModel(landline: Option[String], mobile: Option[String], ppob: PPOB): PPOB = {
+    val existingContactDetails: ContactDetails =
+      ppob.contactDetails.getOrElse(ContactDetails(None, None, None, None, None))
+    ppob.copy(
+      contactDetails = Some(existingContactDetails.copy(phoneNumber = landline, mobileNumber = mobile))
+    )
+  }
+
   private[services] def buildWebsiteUpdateModel(website: String, ppob: PPOB): PPOB =
     if(website.nonEmpty) ppob.copy(websiteAddress = Some(website)) else ppob.copy(websiteAddress = None)
+
+
 
   def getCustomerInfo(vrn: String)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetCustomerInfoResponse] =
@@ -62,6 +72,14 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdatePPOBResponse] =
     connector.getCustomerInfo(vrn).flatMap {
       case Right(customerInfo) => connector.updatePPOB(vrn, buildWebsiteUpdateModel(website, customerInfo.ppob))
+      case Left(error) => Future.successful(Left(error))
+    }
+
+  def updateContactNumbers(vrn: String, landline: Option[String], mobile: Option[String])
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdatePPOBResponse] =
+    connector.getCustomerInfo(vrn).flatMap {
+      case Right(customerInfo) =>
+        connector.updatePPOB(vrn, buildPhoneNumbersUpdateModel(landline, mobile, customerInfo.ppob))
       case Left(error) => Future.successful(Left(error))
     }
 }
