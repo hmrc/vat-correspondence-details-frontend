@@ -19,14 +19,34 @@ package controllers
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.EnrolmentsAuthService
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SignOutController @Inject()(val mcc: MessagesControllerComponents,
-                                  implicit val appConfig: AppConfig) extends FrontendController(mcc) {
+                                  enrolmentsAuthService: EnrolmentsAuthService)
+                                 (implicit val appConfig: AppConfig) extends FrontendController(mcc) {
 
-  def signOut(feedbackOnSignOut: Boolean): Action[AnyContent] = Action { implicit request =>
-    val redirectUrl: String = if(feedbackOnSignOut) appConfig.feedbackSignOutUrl else appConfig.unauthorisedSignOutUrl
-    Redirect(redirectUrl)
+  implicit val ec: ExecutionContext = mcc.executionContext
+
+  def signOut(feedbackOnSignOut: Boolean): Action[AnyContent] = Action.async { implicit request =>
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+
+    if(feedbackOnSignOut) {
+      enrolmentsAuthService.authorised.retrieve(Retrievals.affinityGroup) {
+        case Some(AffinityGroup.Agent) => Future.successful("VATCA")
+        case _ => Future.successful("VATC")
+      }.map(contactFormIdentifier => Redirect(appConfig.feedbackSignOutUrl(contactFormIdentifier)))
+    } else {
+      Future.successful(Redirect(appConfig.unauthorisedSignOutUrl))
+    }
   }
 }
