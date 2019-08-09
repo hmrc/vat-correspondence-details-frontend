@@ -249,21 +249,20 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
           }
         }
 
-        //TODO implement when form validation is present
         "the form is submitted with errors" should {
 
-//          lazy val result = controller.submit(requestWithContactNumbers
-//            .withFormUrlEncodedBody("landlineNumber" -> , "mobileNumber" -> )
-//          )
-//
-//          "return 400" in {
-//            status(result) shouldBe Status.BAD_REQUEST
-//          }
-//
-//          "return HTML" in {
-//            contentType(result) shouldBe Some("text/html")
-//            charset(result) shouldBe Some("utf-8")
-//          }
+          lazy val result = controller.submit(requestWithAllContactNumbers
+            .withFormUrlEncodedBody("landlineNumber" -> "", "mobileNumber" -> "")
+          )
+
+          "return 400" in {
+            status(result) shouldBe Status.BAD_REQUEST
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
         }
       }
 

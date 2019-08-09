@@ -70,11 +70,27 @@ class CaptureContactNumbersViewSpec extends ViewBaseSpec {
       }
     }
 
-    //TODO implement as part of the form validation task
     "there are errors in the form" should {
-//
-//      val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile).bind())
-//      implicit val document: Document = Jsoup.parse(view.body)
+      val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile).withError("landlineNumber", "Enter a different phone number"))
+      implicit val document: Document = Jsoup.parse(view.body)
+      "have the correct document title" in {
+        document.title shouldBe "Error: Change telephone numbers"
+      }
+
+      "have a form error box" which {
+
+        "has the correct error message" in {
+          elementText("#landlineNumber-error-summary") shouldBe "Enter a different phone number"
+        }
+      }
+
+      "have the correct error notification text above the input box" in {
+        elementText(".error-notification") shouldBe "Enter a different phone number"
+      }
+
+      "display the error summary" in {
+        element("#error-summary-heading").text() shouldBe "There is a problem"
+      }
     }
   }
 }

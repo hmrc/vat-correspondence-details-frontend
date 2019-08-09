@@ -16,16 +16,54 @@
 
 package forms
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil
+import models.customerInformation.ContactNumbers
 import play.api.data.Form
 import play.api.data.Forms._
-import models.customerInformation.ContactNumbers
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
+import uk.gov.hmrc.play.mappers.StopOnFirstFail.constraint
+import utils.LoggerUtil.logWarn
 
 object ContactNumbersForm {
 
+  private val phoneNumberUtil: PhoneNumberUtil = PhoneNumberUtil.getInstance()
+
   def contactNumbersForm(currentLandline: String, currentMobile: String): Form[ContactNumbers] = Form(
     mapping(
-      "landlineNumber" -> optional(text),
-      "mobileNumber"   -> optional(text)
-    )(ContactNumbers.apply)(ContactNumbers.unapply)
+        "landlineNumber" -> optional(text).verifying(
+            StopOnFirstFail(
+            constraint[Option[String]]("captureContactNumbers.error.empty", _.forall(_.length != 0)),
+            constraint[Option[String]]("captureContactNumbers.error.invalid", _.fold(true)(phoneNumberFormatIsValid))
+          )
+        ),
+        "mobileNumber" -> optional(text).verifying(
+          StopOnFirstFail(
+            constraint[Option[String]]("captureContactNumbers.error.empty", _.forall(_.length != 0)),
+            constraint[Option[String]]("captureContactNumbers.error.invalid", _.fold(true)(phoneNumberFormatIsValid))
+          )
+        )
+    )(ContactNumbers.apply)(ContactNumbers.unapply).verifying(contactNumbersConstraint)
   )
+
+  private def phoneNumberFormatIsValid(phoneNumber: String): Boolean = {
+    try {
+      val defaultRegion = if (!phoneNumber.startsWith("+")) "GB" else ""
+      phoneNumberUtil.isValidNumber(phoneNumberUtil.parse(phoneNumber, defaultRegion))
+    } catch {
+      case e: Exception =>
+        logWarn("[ContactNumbersForm][phoneNumberFormatIsValid] - Couldn't parse provided phone number")
+        false
+    }
+  }
+
+  private val contactNumbersConstraint: Constraint[ContactNumbers] = Constraint("constraints.contactNumbersCheck")({
+    form =>
+      if (form.landlineNumber.isDefined || form.mobileNumber.isDefined) {
+        Valid
+      } else {
+        Valid
+        Invalid(Seq(ValidationError("captureContactNumbers.error.noEntry")))
+      }
+  })
 }
