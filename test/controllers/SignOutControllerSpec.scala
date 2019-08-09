@@ -16,38 +16,71 @@
 
 package controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status
+import play.api.mvc.Result
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
+
+import scala.concurrent.Future
 
 
 class SignOutControllerSpec extends ControllerBaseSpec {
 
-  val controller = new SignOutController(mcc, mockConfig)
+  val controller = new SignOutController(mcc, mockEnrolmentsAuthService)
 
-  "Navigating to the sign out page" when {
+  def mockAuth(authResult: Option[AffinityGroup]): Any =
+    when(mockAuthConnector.authorise(any(), any[Retrieval[Option[AffinityGroup]]]())(any(), any()))
+      .thenReturn(authResult)
 
-    "feedback on sign-out is enabled" should {
+  "The .signOut action" when {
 
-      "return 303" in {
-        val result = controller.signOut(feedbackOnSignOut = true)(request)
-        status(result) shouldBe Status.SEE_OTHER
+    "feedback on sign-out is enabled" when {
+
+      "the user is an agent" should {
+
+        lazy val result: Future[Result] = {
+          mockAuth(Some(AffinityGroup.Agent))
+          controller.signOut(feedbackOnSignOut = true)(request)
+        }
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect to the correct survey url" in {
+          redirectLocation(result) shouldBe Some(mockConfig.feedbackSignOutUrl("VATCA"))
+        }
       }
 
-      "redirect to the correct location" in {
-        val result = controller.signOut(feedbackOnSignOut = true)(request)
-        redirectLocation(result) shouldBe Some(mockConfig.feedbackSignOutUrl)
+      "the user is a principal entity" should {
+
+        lazy val result: Future[Result] = {
+          mockAuth(Some(AffinityGroup.Individual))
+          controller.signOut(feedbackOnSignOut = true)(request)
+        }
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect to the correct survey url" in {
+          redirectLocation(result) shouldBe Some(mockConfig.feedbackSignOutUrl("VATC"))
+        }
       }
     }
 
     "feedback on sign-out is disabled" should {
 
+      lazy val result: Future[Result] = controller.signOut(feedbackOnSignOut = false)(request)
+
       "return 303" in {
-        val result = controller.signOut(feedbackOnSignOut = false)(request)
         status(result) shouldBe Status.SEE_OTHER
       }
 
-      "redirect to the correct location" in {
-        val result = controller.signOut(feedbackOnSignOut = false)(request)
+      "redirect to the unauthorised sign out URL" in {
         redirectLocation(result) shouldBe Some(mockConfig.unauthorisedSignOutUrl)
       }
     }
