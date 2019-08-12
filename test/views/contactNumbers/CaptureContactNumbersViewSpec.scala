@@ -17,6 +17,7 @@
 package views.contactNumbers
 
 import assets.BaseTestConstants.{testValidationLandline, testValidationMobile}
+import controllers.contactNumbers.routes
 import forms.ContactNumbersForm.contactNumbersForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -63,9 +64,8 @@ class CaptureContactNumbersViewSpec extends ViewBaseSpec {
           elementText(".button") shouldBe "Continue"
         }
 
-        //TODO implement as part of wiring up task
         "has the correct link location" in {
-
+          element("form").attr("action") shouldBe routes.CaptureContactNumbersController.submit().url
         }
       }
     }

@@ -99,9 +99,8 @@ class CaptureContactNumbersController @Inject()(val authComps: AuthPredicateComp
           errorForm => {
             BadRequest(captureContactNumbersView(errorForm))
           },
-          //TODO: direct this to ConfirmContactNumbersController.show()
           contactDetails => {
-            Redirect(routes.CaptureContactNumbersController.show()).addingToSession(
+            Redirect(routes.ConfirmContactNumbersController.show()).addingToSession(
               SessionKeys.prepopulationLandlineKey -> contactDetails.landlineNumber.getOrElse(""),
               SessionKeys.prepopulationMobileKey -> contactDetails.mobileNumber.getOrElse("")
             )

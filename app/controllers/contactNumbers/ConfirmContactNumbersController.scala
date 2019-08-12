@@ -71,8 +71,9 @@ class ConfirmContactNumbersController @Inject()(val authComps: AuthPredicateComp
 
       case (landline, mobile) => vatSubscriptionService.updateContactNumbers(user.vrn, landline, mobile).map {
         case Right(UpdatePPOBSuccess(_)) =>
-          Redirect(routes.ConfirmContactNumbersController.show())
-            .removingFromSession(prepopulationLandlineKey, prepopulationMobileKey, validationMobileKey, validationLandlineKey, inFlightContactDetailsChangeKey)
+          Redirect(routes.ContactNumbersChangeSuccessController.show())
+            .removingFromSession(prepopulationLandlineKey, prepopulationMobileKey, validationMobileKey, validationLandlineKey)
+            .addingToSession(phoneNumberChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
         case Left(ErrorModel(CONFLICT, _)) =>
           logWarn("[ConfirmPhoneNumbersController][updatePhoneNumbers] - There is a contact details update request " +

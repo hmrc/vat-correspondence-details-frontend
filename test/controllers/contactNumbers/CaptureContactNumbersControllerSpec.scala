@@ -51,10 +51,7 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
 
       "the user's current landline and mobile are retrieved from session" should {
 
-        lazy val result = controller.show(request.withSession(
-          validationLandlineKey -> testValidationLandline,
-          validationMobileKey -> testValidationMobile
-        ))
+        lazy val result = controller.show(requestWithValidationPhoneNumbers)
 
         lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -229,25 +226,27 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
 
       "there are contact numbers in session" when {
 
-        //TODO: implement as part of wiring up task
         "the form is successfully submitted" should {
 
-//          lazy val result = controller.submit(requestWithContactNumbers
-//            .withFormUrlEncodedBody("landlineNumber" -> testPrepopLandline, "mobileNumber" -> testPrepopMobile)
-//          )
-//
-//          "redirect to the confirm contact numbers view" in {
-//            status(result) shouldBe Status.SEE_OTHER
-//            redirectLocation(result) shouldBe Some(routes.CaptureContactNumbersController.show().url)
-//          }
-//
-//          "add the new landline to the session" in {
-//            session(result).get(prepopulationLandlineKey) shouldBe Some(testPrepopLandline)
-//          }
-//
-//          "add the new mobile to the session" in {
-//            session(result).get(prepopulationMobileKey) shouldBe Some(testPrepopMobile)
-//          }
+          lazy val result = controller.submit(requestWithValidationPhoneNumbers
+            .withFormUrlEncodedBody("landlineNumber" -> testPrepopLandline, "mobileNumber" -> testPrepopMobile)
+          )
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the confirm contact numbers controller" in {
+            redirectLocation(result) shouldBe Some(routes.ConfirmContactNumbersController.show().url)
+          }
+
+          "add the new landline to the session" in {
+            session(result).get(prepopulationLandlineKey) shouldBe Some(testPrepopLandline)
+          }
+
+          "add the new mobile to the session" in {
+            session(result).get(prepopulationMobileKey) shouldBe Some(testPrepopMobile)
+          }
         }
 
         //TODO implement when form validation is present
