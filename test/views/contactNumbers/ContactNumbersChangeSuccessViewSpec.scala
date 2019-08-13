@@ -68,7 +68,7 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have the correct first paragraph" in {
-            elementText(Selectors.paragraphOne) shouldBe "We‘ll send you an email within 2 working days with an update," +
+            elementText(Selectors.paragraphOne) shouldBe "We’ll send you an email within 2 working days with an update," +
               " followed by a letter to your principal place of business." +
               " You can also check your HMRC secure messages for an update."
           }
@@ -89,7 +89,7 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the correct first paragraph" in {
-            elementText(Selectors.paragraphOne) shouldBe "We‘ll send a letter to your principal place of" +
+            elementText(Selectors.paragraphOne) shouldBe "We’ll send a letter to your principal place of" +
               " business with an update within 15 working days."
           }
         }
@@ -130,12 +130,12 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
         }
 
         "have the correct first paragraph" in {
-          elementText(Selectors.paragraphOne) shouldBe "We‘ll send an email to agent@example.com within 2" +
+          elementText(Selectors.paragraphOne) shouldBe "We’ll send an email to agent@example.com within 2" +
             " working days telling you whether or not the request has been accepted."
         }
 
         "have the correct second paragraph" in {
-          elementText(Selectors.paragraphTwo) shouldBe "We‘ll also contact TheBusiness with an update."
+          elementText(Selectors.paragraphTwo) shouldBe "We’ll also contact TheBusiness with an update."
         }
 
         "have a GA tag for the clicking finish button" in {
@@ -166,11 +166,11 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
         }
 
         "have the correct first paragraph" in {
-          elementText(Selectors.paragraphOne) shouldBe "We‘ll send a confirmation letter to the agency address registered with HMRC within 15 working days."
+          elementText(Selectors.paragraphOne) shouldBe "We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days."
         }
 
         "have the correct second paragraph" in {
-          elementText(Selectors.paragraphTwo) shouldBe "We‘ll also contact TheBusiness with an update."
+          elementText(Selectors.paragraphTwo) shouldBe "We’ll also contact TheBusiness with an update."
         }
       }
 
@@ -197,11 +197,11 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
         }
 
         "have the correct first paragraph" in {
-          elementText(Selectors.paragraphOne) shouldBe "We‘ll send a confirmation letter to the agency address registered with HMRC within 15 working days."
+          elementText(Selectors.paragraphOne) shouldBe "We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days."
         }
 
         "have the correct second paragraph" in {
-          elementText(Selectors.paragraphTwo) shouldBe "We‘ll also contact your client with an update."
+          elementText(Selectors.paragraphTwo) shouldBe "We’ll also contact your client with an update."
         }
 
       }
