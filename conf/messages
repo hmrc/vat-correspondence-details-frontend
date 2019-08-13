@@ -16,7 +16,7 @@ common.error.prefixTitle = Error: {0}
 common.whatHappensNext = What happens next
 common.helpOne.apiFailure = We will send you an update within 15 working days.
 common.changeClient = Change client
-common.agent.updateClient1 = We‘ll also contact
+common.agent.updateClient1 = We’ll also contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
 
@@ -109,19 +109,18 @@ emailChangeSuccess.helpOne.paperPreference = We will send a letter to your princ
 
 contactNumbersChangeSuccess.title = Request to change telephone numbers received
 contactNumbersChangeSuccess.heading = Request to change telephone numbers received
-contactNumbersChangeSuccess.helpOne = We will send an email within 2 working days telling you whether or not the request has been accepted. You can also go to your messages in your business tax account.
+contactNumbersChangeSuccess.helpOne.digitalPreference = We’ll send you an email within 2 working days with an update, followed by a letter to your principal place of business. You can also check your HMRC secure messages for an update.
+contactNumbersChangeSuccess.helpOne.paperPreference = We’ll send a letter to your principal place of business with an update within 15 working days.
+contactNumbersChangeSuccess.helpOne.digital.agent = We’ll send an email to {0} within 2 working days telling you whether or not the request has been accepted.
+contactNumbersChangeSuccess.helpOne.paper.agent = We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
 contactNumbersChangeSuccess.helpTwo = Ensure your contact details are up to date.
-contactNumbersChangeSuccess.helpOne.digitalPreference = We will send you an email within 2 working days with an update, followed by a letter to your principal place of business. You can also check your HMRC secure messages for an update.
-contactNumbersChangeSuccess.helpOne.paperPreference = We will send a letter to your principal place of business with an update within 15 working days.
-contactNumbersChangeSuccess.helpOne.digital.agent = We‘ll send an email to {0} within 2 working days telling you whether or not the request has been accepted.
-contactNumbersChangeSuccess.helpOne.paper.agent = We‘ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
 
 websiteChangeSuccess.title.change = Request to change website address received
 websiteChangeSuccess.title.remove = Request to remove website address received
-websiteChangeSuccess.helpOne.digital = We‘ll send you an email within 2 working days with an update, followed by a letter to your principal place of business. You can also check your HMRC secure messages for an update.
+websiteChangeSuccess.helpOne.digital = We’ll send you an email within 2 working days with an update, followed by a letter to your principal place of business. You can also check your HMRC secure messages for an update.
 websiteChangeSuccess.helpOne.paper = We will send a letter to your principal place of business with an update within 15 working days.
-websiteChangeSuccess.helpOne.digital.agent = We‘ll send an email to {0} within 2 working days telling you whether or not the request has been accepted.
-websiteChangeSuccess.helpOne.paper.agent = We‘ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
+websiteChangeSuccess.helpOne.digital.agent = We’ll send an email to {0} within 2 working days telling you whether or not the request has been accepted.
+websiteChangeSuccess.helpOne.paper.agent = We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
 websiteChangeSuccess.helpTwo = Make sure your contact details are up to date.
 
 ppobChangePending.title = We are reviewing your request

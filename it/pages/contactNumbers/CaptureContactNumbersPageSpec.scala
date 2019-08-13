@@ -17,6 +17,7 @@
 package pages.contactNumbers
 
 import common.SessionKeys.{validationLandlineKey, validationMobileKey}
+import controllers.contactNumbers.routes
 import forms.ContactNumbersForm.contactNumbersForm
 import helpers.SessionCookieCrumbler
 import models.customerInformation.ContactNumbers
@@ -69,40 +70,37 @@ class CaptureContactNumbersPageSpec extends BasePageISpec {
   "Calling the Capture contact numbers (.submit) route" when {
 
     def submit(data: String): WSResponse = post(
-      path, Map(validationLandlineKey -> currentLandline,
-        validationMobileKey -> currentMobile
-      ))(toFormData[ContactNumbers](
-        contactNumbersForm(currentLandline, currentMobile), ContactNumbers(Some(newLandline), Some(newMobile))
-      )
+      path, Map(validationLandlineKey -> currentLandline, validationMobileKey -> currentMobile)
+    )(toFormData[ContactNumbers](
+      contactNumbersForm(currentLandline, currentMobile), ContactNumbers(Some(newLandline), Some(newMobile)))
     )
 
     "the user is authenticated" when {
 
-      //TODO implement as part of the wiring up task
       "valid contact numbers are submitted" should {
 
-//        "redirect to the the Confirm Contact Numbers page" in {
-//
-//          given.user.isAuthenticated
-//          stubCustomerInfo
-//
-//          val result = submit(newLandline)
-//
-//          result should have(
-//            httpStatus(Status.SEE_OTHER),
-//            redirectURI()
-//          )
-//        }
-//
-//        "add the existing contact number to session" in {
-//
-//          given.user.isAuthenticated
-//          stubCustomerInfo
-//
-//          val result = submit(newLandline)
-//
-//          SessionCookieCrumbler.getSessionMap(result).get(validationMobileKey) shouldBe Some(currentMobile)
-//        }
+        "redirect to the the Confirm Contact Numbers page" in {
+
+          given.user.isAuthenticated
+          stubCustomerInfo
+
+          val result = submit(newLandline)
+
+          result should have(
+            httpStatus(Status.SEE_OTHER),
+            redirectURI(routes.ConfirmContactNumbersController.show().url)
+          )
+        }
+
+        "add the existing contact number to session" in {
+
+          given.user.isAuthenticated
+          stubCustomerInfo
+
+          val result = submit(newLandline)
+
+          SessionCookieCrumbler.getSessionMap(result).get(validationMobileKey) shouldBe Some(currentMobile)
+        }
       }
     }
   }

@@ -96,10 +96,8 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.contactNumbers.routes.ConfirmContactNumbersController.show().url)
-
+          redirectURI(controllers.contactNumbers.routes.ContactNumbersChangeSuccessController.show().url)
         )
-
       }
     }
 
@@ -116,7 +114,7 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.contactNumbers.routes.ConfirmContactNumbersController.show().url)
+          redirectURI(controllers.contactNumbers.routes.ContactNumbersChangeSuccessController.show().url)
 
         )
 
@@ -136,7 +134,7 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.contactNumbers.routes.ConfirmContactNumbersController.show().url)
+          redirectURI(controllers.contactNumbers.routes.ContactNumbersChangeSuccessController.show().url)
 
         )
 

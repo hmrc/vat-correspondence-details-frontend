@@ -21,8 +21,10 @@ import org.jsoup.nodes.Document
 import views.ViewBaseSpec
 import views.html.contactNumbers.ConfirmContactNumbersView
 import assets.BaseTestConstants._
+import controllers.contactNumbers.routes
 
 class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
+
   val injectedView: ConfirmContactNumbersView = injector.instanceOf[ConfirmContactNumbersView]
 
   object Selectors {
@@ -53,10 +55,8 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
       }
 
       "should have the correct back link" in {
-        element(Selectors.backLink).attr("href") shouldBe "#"
+        element(Selectors.backLink).attr("href") shouldBe routes.CaptureContactNumbersController.show().url
       }
-
-
     }
 
     "have the contact numbers the user provided" in {
@@ -75,7 +75,7 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
       }
 
       "has the correct link" in {
-        element(Selectors.editLink).attr("href") shouldBe "#"
+        element(Selectors.editLink).attr("href") shouldBe routes.CaptureContactNumbersController.show().url
       }
 
     }
@@ -86,6 +86,10 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
         elementText(Selectors.continueButton) shouldBe "Confirm and continue"
       }
 
+      "has the correct link" in {
+        element(Selectors.continueButton).attr("href") shouldBe
+          routes.ConfirmContactNumbersController.updateContactNumbers().url
+      }
     }
   }
 }

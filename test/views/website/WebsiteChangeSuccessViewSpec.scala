@@ -50,7 +50,7 @@ class WebsiteChangeSuccessViewSpec extends ViewBaseSpec {
 
         "have the correct first paragraph" in {
           elementText("article > p:nth-of-type(1)") shouldBe
-            "We‘ll send you an email within 2 working days with an update, followed by a letter to your principal " +
+            "We’ll send you an email within 2 working days with an update, followed by a letter to your principal " +
               "place of business. You can also check your HMRC secure messages for an update."
         }
 
@@ -111,12 +111,12 @@ class WebsiteChangeSuccessViewSpec extends ViewBaseSpec {
         implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct first paragraph" in {
-          elementText("article > p:nth-of-type(1)") shouldBe "We‘ll send an email to agent@test.com within 2 " +
+          elementText("article > p:nth-of-type(1)") shouldBe "We’ll send an email to agent@test.com within 2 " +
             "working days telling you whether or not the request has been accepted."
         }
 
         "have the correct second paragraph" in {
-          elementText("article > p:nth-of-type(2)") shouldBe "We‘ll also contact Pepsi Mac with an update."
+          elementText("article > p:nth-of-type(2)") shouldBe "We’ll also contact Pepsi Mac with an update."
         }
 
         "have a link to change client" which {
@@ -139,11 +139,11 @@ class WebsiteChangeSuccessViewSpec extends ViewBaseSpec {
 
         "have the correct first paragraph" in {
           elementText("article > p:nth-of-type(1)") shouldBe
-            "We‘ll send a confirmation letter to the agency address registered with HMRC within 15 working days."
+            "We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days."
         }
 
         "have the correct second paragraph" in {
-          elementText("article > p:nth-of-type(2)") shouldBe "We‘ll also contact your client with an update."
+          elementText("article > p:nth-of-type(2)") shouldBe "We’ll also contact your client with an update."
         }
       }
     }

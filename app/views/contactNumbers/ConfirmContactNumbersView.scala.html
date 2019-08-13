@@ -23,24 +23,29 @@
 
 @mainTemplate(title = messages("confirmPhoneNumbers.title")) {
 
-<a class="link-back" href='#'>@messages("base.back")</a>
+<a class="link-back" href="@controllers.contactNumbers.routes.CaptureContactNumbersController.show()">
+  @messages("base.back")
+</a>
 
 <h1 class="heading-large">@messages("confirmPhoneNumbers.heading")</h1>
 
 <p>
 <strong class="bold">@messages("confirmPhoneNumbers.landline")</strong>
-    : @landline
-    <br>
-    <strong class="bold">@messages("confirmPhoneNumbers.mobile")</strong>
-    : @mobile
+  : @landline
+  <br>
+  <strong class="bold">@messages("confirmPhoneNumbers.mobile")</strong>
+  : @mobile
 </p>
 
 <p>
-    <a href="#"
-       >@messages("confirmPhoneNumbers.edit")</a>
+  <a href="@controllers.contactNumbers.routes.CaptureContactNumbersController.show()">
+    @messages("confirmPhoneNumbers.edit")
+  </a>
 </p>
 
-<a href='#' role="button" tabindex="0" class="button"
-   >@messages("base.confirmAndContinue")</a>
-}
+<a href="@controllers.contactNumbers.routes.ConfirmContactNumbersController.updateContactNumbers()"
+   class="button" role="button">
+  @messages("base.confirmAndContinue")
+</a>
 
+}

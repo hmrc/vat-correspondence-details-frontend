@@ -16,7 +16,6 @@
 
 package controllers.contactNumbers
 
-import assets.BaseTestConstants._
 import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
@@ -28,6 +27,7 @@ import views.html.contactNumbers.ConfirmContactNumbersView
 
 import scala.concurrent.Future
 import assets.BaseTestConstants._
+import common.SessionKeys
 
 class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
 
@@ -46,7 +46,7 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
 
       "show the Confirm Contact Numbers page" in {
         mockIndividualAuthorised()
-        val result = controller.show(requestWithPhoneNumbers)
+        val result = controller.show(requestWithPrepopPhoneNumbers)
 
         status(result) shouldBe Status.OK
       }
@@ -67,7 +67,7 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.show(requestWithPhoneNumbers)
+        val result = controller.show(requestWithPrepopPhoneNumbers)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -77,16 +77,31 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
   "Calling the updateContactNumbers() action in ConfirmContactNumbersController" when {
 
     "there is a contact number in session" when {
+
       "the contact numbers have been updated successfully" should {
 
-        "show the contact numbers changed success page" in {
+        lazy val result = {
           mockIndividualAuthorised()
+          mockUpdatePhoneNumbers(
+            vrn, Some(testPrepopLandline), Some(testPrepopMobile))(Future(Right(UpdatePPOBSuccess("success")))
+          )
+          controller.updateContactNumbers()(requestWithPrepopPhoneNumbers)
+        }
 
-          mockUpdatePhoneNumbers(vrn, Some(testPrepopLandline), Some(testPrepopMobile))(Future(Right(UpdatePPOBSuccess("success"))))
-          val result = controller.updateContactNumbers()(requestWithPhoneNumbers)
-
+        "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.ConfirmContactNumbersController.show().url)
+        }
+
+        "redirect to the success page" in {
+          redirectLocation(result) shouldBe Some(routes.ContactNumbersChangeSuccessController.show().url)
+        }
+
+        "add the successful change key to the session" in {
+          session(result).get(SessionKeys.phoneNumberChangeSuccessful) shouldBe Some("true")
+        }
+
+        "add the inflight change key to the session" in {
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
         }
       }
 
@@ -96,7 +111,7 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdatePhoneNumbers(vrn, Some(testPrepopLandline), Some(testPrepopMobile))(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          val result = controller.updateContactNumbers()(requestWithPhoneNumbers)
+          val result = controller.updateContactNumbers()(requestWithPrepopPhoneNumbers)
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
@@ -109,7 +124,7 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdatePhoneNumbers(vrn, Some(testPrepopLandline), Some(testPrepopMobile))(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify phone numbers"))))
-          val result = controller.updateContactNumbers()(requestWithPhoneNumbers)
+          val result = controller.updateContactNumbers()(requestWithPrepopPhoneNumbers)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
@@ -132,7 +147,7 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.updateContactNumbers()(requestWithPhoneNumbers)
+        val result = controller.updateContactNumbers()(requestWithPrepopPhoneNumbers)
 
         status(result) shouldBe Status.FORBIDDEN
       }
