@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.EnrolmentsAuthService
-import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -44,7 +44,9 @@ class SignOutController @Inject()(val mcc: MessagesControllerComponents,
       enrolmentsAuthService.authorised.retrieve(Retrievals.affinityGroup) {
         case Some(AffinityGroup.Agent) => Future.successful("VATCA")
         case _ => Future.successful("VATC")
-      }.map(contactFormIdentifier => Redirect(appConfig.feedbackSignOutUrl(contactFormIdentifier)))
+      }.map(contactFormIdentifier => Redirect(appConfig.feedbackSignOutUrl(contactFormIdentifier))).recover {
+        case _: AuthorisationException => Redirect(appConfig.unauthorisedSignOutUrl)
+      }
     } else {
       Future.successful(Redirect(appConfig.unauthorisedSignOutUrl))
     }
