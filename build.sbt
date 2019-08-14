@@ -38,6 +38,7 @@ val mockitoVersion             = "2.28.2"
 val scalaMockVersion           = "3.6.0"
 val wiremockVersion            = "2.23.2"
 val playJsonJodaVersion        = "2.7.4"
+val libphonenumberVersion      = "8.10.16"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
@@ -77,7 +78,8 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "uk.gov.hmrc" %% "auth-client" % authClientVersion,
   "uk.gov.hmrc" %% "play-whitelist-filter" % playWhiteListFilterVersion,
-  "com.typesafe.play" %% "play-json-joda" % playJsonJodaVersion
+  "com.typesafe.play" %% "play-json-joda" % playJsonJodaVersion,
+  "com.googlecode.libphonenumber" % "libphonenumber" % libphonenumberVersion
 )
 
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
