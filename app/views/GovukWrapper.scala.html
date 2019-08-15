@@ -138,10 +138,11 @@
 
 @mainContentHeaderContent = {
   @if(appConfig.features.languageSelectorEnabled()) {
-    <div class="float--right">@languageSelection(
+    @languageSelection(
       appConfig.languageMap,
-      appConfig.routeToSwitchLanguage
-    )</div>
+      appConfig.routeToSwitchLanguage,
+      customClass = Some("text--right")
+    )
   }
   @if(contentHeader.isDefined) {
     @mainContentHeader(contentHeader = contentHeader.get)
