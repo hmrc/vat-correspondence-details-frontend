@@ -18,10 +18,11 @@ package controllers.email
 
 import audit.AuditingService
 import audit.models.ChangedEmailAddressAuditModel
-import common.SessionKeys.{prepopulationEmailKey, inFlightContactDetailsChangeKey, validationEmailKey}
+import common.SessionKeys.{inFlightContactDetailsChangeKey, prepopulationEmailKey, validationEmailKey}
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
+import controllers.predicates.AuthPredicateComponents
 import controllers.BaseController
+import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.User
 import models.customerInformation.UpdatePPOBSuccess
@@ -34,18 +35,18 @@ import views.html.email.ConfirmEmailView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmEmailController @Inject()(val authComps: AuthPredicateComponents,
-                                       val inflightCheck: InFlightPPOBPredicate,
-                                       override val mcc: MessagesControllerComponents,
-                                       val errorHandler: ErrorHandler,
+class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
                                        val vatSubscriptionService: VatSubscriptionService,
-                                       confirmEmailView: ConfirmEmailView,
-                                       implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                       confirmEmailView: ConfirmEmailView)
+                                      (implicit val appConfig: AppConfig,
+                                       mcc: MessagesControllerComponents,
+                                       authComps: AuthPredicateComponents,
+                                       inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
+  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
@@ -55,7 +56,7 @@ class ConfirmEmailController @Inject()(val authComps: AuthPredicateComponents,
     }
   }
 
-  def updateEmailAddress(): Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
+  def updateEmailAddress(): Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>

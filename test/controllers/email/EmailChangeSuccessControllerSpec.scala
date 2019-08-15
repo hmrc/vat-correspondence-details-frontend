@@ -37,12 +37,9 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
   val view: EmailChangeSuccessView = injector.instanceOf[EmailChangeSuccessView]
 
   object TestController extends EmailChangeSuccessController(
-    mockAuthPredicateComponents,
-    mcc,
     mockAuditingService,
     mockContactPreferenceService,
-    view,
-    mockConfig
+    view
   )
 
   "Calling the show action" when {

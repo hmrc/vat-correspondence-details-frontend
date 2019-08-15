@@ -21,6 +21,7 @@ import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
+import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.WebsiteForm.websiteForm
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
@@ -31,18 +32,19 @@ import views.html.website.CaptureWebsiteView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
-                                         override val mcc: MessagesControllerComponents,
-                                         val vatSubscriptionService: VatSubscriptionService,
+class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                          val errorHandler: ErrorHandler,
                                          val auditService: AuditingService,
                                          captureWebsiteView: CaptureWebsiteView,
-                                         notFoundView: NotFoundView,
-                                         implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                         notFoundView: NotFoundView)
+                                        (implicit val appConfig: AppConfig,
+                                         mcc: MessagesControllerComponents,
+                                         authComps: AuthPredicateComponents,
+                                         inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
     if(appConfig.features.changeContactDetailsEnabled()) {
       val validationWebsite: Future[Option[String]] = user.session.get(SessionKeys.validationWebsiteKey) match {
         case Some(website) => Future.successful(Some(website))
@@ -74,7 +76,7 @@ class CaptureWebsiteController @Inject()(val authComps: AuthPredicateComponents,
     }
   }
 
-  def submit: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
+  def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
     val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey)
 
     validationWebsite match {

@@ -20,7 +20,6 @@ import javax.inject.{Inject, Singleton}
 import common.{EnrolmentKeys, SessionKeys}
 import config.{AppConfig, ErrorHandler}
 import models.{Agent, User}
-import play.api.Logger
 import play.api.mvc._
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core._
@@ -34,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuthService,
                                            val errorHandler: ErrorHandler,
-                                           override val mcc: MessagesControllerComponents,
+                                           mcc: MessagesControllerComponents,
                                            sessionTimeoutView: SessionTimeoutView,
                                            notAuthorisedForClientView: NotAuthorisedForClientView,
                                            agentJourneyDisabledView: AgentJourneyDisabledView,

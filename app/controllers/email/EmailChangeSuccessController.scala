@@ -21,6 +21,7 @@ import audit.models.ContactPreferenceAuditModel
 import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
+import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.ContactPreferenceService
@@ -30,12 +31,13 @@ import views.html.email.EmailChangeSuccessView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailChangeSuccessController @Inject()(val authComps: AuthPredicateComponents,
-                                             override val mcc: MessagesControllerComponents,
-                                             auditService: AuditingService,
+class EmailChangeSuccessController @Inject()(auditService: AuditingService,
                                              contactPreferenceService: ContactPreferenceService,
-                                             emailChangeSuccessView: EmailChangeSuccessView,
-                                             implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                             emailChangeSuccessView: EmailChangeSuccessView)
+                                            (implicit val appConfig: AppConfig,
+                                             mcc: MessagesControllerComponents,
+                                             authComps: AuthPredicateComponents,
+                                             inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 

@@ -32,7 +32,7 @@ class CaptureWebsitePageSpec extends BasePageISpec {
 
   "Calling the Capture Website (.show) route" when {
 
-    def show: WSResponse = get(path)
+    def show: WSResponse = get(path, formatInflightChange(Some("false")))
 
     "the user is a authenticated" when {
 
@@ -68,9 +68,10 @@ class CaptureWebsitePageSpec extends BasePageISpec {
 
   "Calling the Capture Website (.submit) route" when {
 
-    def submit(data: String): WSResponse = post(
-      path, Map(validationWebsiteKey -> currentWebsite))(toFormData(WebsiteForm.websiteForm(currentWebsite), data)
-    )
+    def submit(data: String): WSResponse = post(path,
+      Map(validationWebsiteKey -> currentWebsite)
+        ++ formatInflightChange(Some("false"))
+    )(toFormData(WebsiteForm.websiteForm(currentWebsite), data))
 
     "the user is authenticated" when {
 

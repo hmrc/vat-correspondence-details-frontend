@@ -36,7 +36,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
       "there is an email in session" should {
 
-        def show: WSResponse = get(confirmEmailPath, formatEmail(Some(email)) ++ formatInflightPPOB(Some("false")))
+        def show: WSResponse = get(confirmEmailPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
 
         "render the confirm email page" in {
 
@@ -59,7 +59,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
         "render the capture email page" in {
 
-          def show: WSResponse = get(confirmEmailPath, formatInflightPPOB(Some("false")))
+          def show: WSResponse = get(confirmEmailPath, formatInflightChange(Some("false")))
 
           given.user.isAuthenticated
 
@@ -140,7 +140,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
         def show: WSResponse = get(
           updateEmailPath,
-          formatEmail(Some(email)) ++ formatValidationEmail(Some(email)) ++ formatInflightPPOB(Some("false"))
+          formatEmail(Some(email)) ++ formatValidationEmail(Some(email)) ++ formatInflightChange(Some("false"))
         )
 
         "the vat subscription service successfully updates the email" should {
@@ -239,7 +239,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
       "there is not an email in session" should {
 
-        def show: WSResponse = get(updateEmailPath, formatInflightPPOB(Some("false")))
+        def show: WSResponse = get(updateEmailPath, formatInflightChange(Some("false")))
 
         "redirect to the Capture Email controller" in {
 

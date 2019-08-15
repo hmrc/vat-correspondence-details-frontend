@@ -34,7 +34,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
       "there is an email in session" should {
 
-        def show: WSResponse = get(verifyEmailPath, formatEmail(Some(email)) ++ formatInflightPPOB(Some("false")))
+        def show: WSResponse = get(verifyEmailPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
 
         "render the verify email view" in {
 
@@ -56,7 +56,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
       "there is not an email in session" should {
 
-        def show: WSResponse = get(verifyEmailPath, formatInflightPPOB(Some("false")))
+        def show: WSResponse = get(verifyEmailPath, formatInflightChange(Some("false")))
 
         "redirect to the Capture Email Address controller" in {
 
@@ -117,7 +117,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         "redirect to the verify email page" in {
 
-          def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)) ++ formatInflightPPOB(Some("false")))
+          def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
 
           given.user.isAuthenticated
 
@@ -135,7 +135,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         "return a false from the Email Verification service" should {
 
-          def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)) ++ formatInflightPPOB(Some("false")))
+          def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
 
           "redirect to the Confirm Email controller" in {
 
@@ -156,7 +156,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         "return None from the Email Verification service" should {
 
-          def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)) ++ formatInflightPPOB(Some("false")))
+          def show: WSResponse = get(sendVerificationPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
 
           "render the internal server error page" in {
 
@@ -178,7 +178,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
       "there is not an email in session" should {
 
-        def show: WSResponse = get(sendVerificationPath, formatInflightPPOB(Some("false")))
+        def show: WSResponse = get(sendVerificationPath, formatInflightChange(Some("false")))
 
         "redirect to the Capture Email Address controller" in {
 

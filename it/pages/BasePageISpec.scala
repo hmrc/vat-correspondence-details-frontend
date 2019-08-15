@@ -30,7 +30,7 @@ trait BasePageISpec extends IntegrationBaseSpec {
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.validationEmailKey -> x))
   def formatEmail: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.prepopulationEmailKey -> x))
-  def formatInflightPPOB: Option[String] => Map[String, String] =
+  def formatInflightChange: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.inFlightContactDetailsChangeKey -> x))
 
   def httpPostAuthenticationTests(path: String, sessionVrn: Option[String] = None)(formData: Map[String, Seq[String]]): Unit =

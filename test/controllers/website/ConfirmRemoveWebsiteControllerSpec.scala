@@ -29,12 +29,9 @@ import views.html.website.ConfirmRemoveWebsiteView
 class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
 
   lazy val controller = new ConfirmRemoveWebsiteController(
-    mockAuthPredicateComponents,
-    mcc,
     mockErrorHandler,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmRemoveWebsiteView],
-    mockConfig
+    injector.instanceOf[ConfirmRemoveWebsiteView]
   )
 
   lazy val requestWithValidationWebsiteKey: FakeRequest[AnyContentAsEmpty.type] =

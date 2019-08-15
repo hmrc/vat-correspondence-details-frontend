@@ -17,13 +17,11 @@
 package controllers.predicates
 
 import assets.BaseTestConstants.internalServerErrorTitle
-import common.SessionKeys
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
-import play.api.test.FakeRequest
 import utils.MaterializerSupport
 
 import scala.concurrent.Future

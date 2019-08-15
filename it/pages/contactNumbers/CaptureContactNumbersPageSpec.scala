@@ -34,7 +34,7 @@ class CaptureContactNumbersPageSpec extends BasePageISpec {
 
   "Calling the Capture contact numbers (.show) route" when {
 
-    def show: WSResponse = get(path)
+    def show: WSResponse = get(path, formatInflightChange(Some("false")))
 
     "the user is authenticated" when {
 
@@ -69,8 +69,10 @@ class CaptureContactNumbersPageSpec extends BasePageISpec {
 
   "Calling the Capture contact numbers (.submit) route" when {
 
-    def submit(data: String): WSResponse = post(
-      path, Map(validationLandlineKey -> currentLandline, validationMobileKey -> currentMobile)
+    def submit(data: String): WSResponse = post(path, Map(
+      validationLandlineKey -> currentLandline,
+      validationMobileKey -> currentMobile) ++
+      formatInflightChange(Some("false"))
     )(toFormData[ContactNumbers](
       contactNumbersForm(currentLandline, currentMobile), ContactNumbers(Some(newLandline), Some(newMobile)))
     )

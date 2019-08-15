@@ -19,11 +19,11 @@ package views.errors
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
-import views.html.errors.PPOBChangePendingView
+import views.html.errors.InFlightChangeView
 
-class PPOBChangePendingViewSpec extends ViewBaseSpec {
+class InFlightChangeViewSpec extends ViewBaseSpec {
 
-  val injectedView: PPOBChangePendingView = injector.instanceOf[PPOBChangePendingView]
+  val injectedView: InFlightChangeView = injector.instanceOf[InFlightChangeView]
 
   object Selectors {
     val heading = "h1"

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.predicates
+package controllers.predicates.inflight
 
 import assets.BaseTestConstants.internalServerErrorTitle
 import assets.CustomerInfoConstants._
@@ -29,31 +29,29 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class InflightPPOBPredicateSpec extends MockAuth {
+class InFlightPredicateSpec extends MockAuth {
 
   def setup(result: GetCustomerInfoResponse = Right(customerInfoPendingAddressModel)): Unit =
     when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(result))
 
-  val inflightPPOBPredicate = new InFlightPPOBPredicate(
-    mockVatSubscriptionService,
-    mockErrorHandler,
-    messagesApi,
-    mcc,
-    ppobChangePendingView,
-    mockConfig,
-    ec
+  val inflightPPOBPredicate = new InFlightPredicate(
+    mockInFlightPredicateComponents,
+    "/redirect-location"
   )
 
   def userWithSession(inflightPPOBValue: String): User[AnyContentAsEmpty.type] =
     User[AnyContentAsEmpty.type]("999943620")(request.withSession(inFlightContactDetailsChangeKey -> inflightPPOBValue))
 
-  "The InFlightPPOBPredicate" when {
+  val userWithoutSession: User[AnyContentAsEmpty.type] = User("999999999")(FakeRequest())
+
+  "The InFlightPredicate" when {
 
     "there is an inflight indicator in session" when {
 
@@ -111,7 +109,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup()
-          await(inflightPPOBPredicate.refine(user)).left.get
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
         lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -132,7 +130,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup(Right(customerInfoPendingEmailModel))
-          await(inflightPPOBPredicate.refine(user)).left.get
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
 
         "return 303" in {
@@ -152,15 +150,15 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup(Right(minCustomerInfoModel))
-          await(inflightPPOBPredicate.refine(user)).left.get
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
 
         "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
         }
 
-        "redirect the user to the capture email address page" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+        "redirect the user to the predicate's redirect URL" in {
+          redirectLocation(result) shouldBe Some("/redirect-location")
         }
 
         "add the inflight indicator 'false' to session" in {
@@ -172,7 +170,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup(Right(customerInfoPendingWebsiteModel))
-          await(inflightPPOBPredicate.refine(user)).left.get
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
         lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -193,7 +191,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup(Right(minCustomerInfoModel.copy(pendingChanges = Some(PendingChanges(None)))))
-          await(inflightPPOBPredicate.refine(user)).left.get
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
 
         "return 303" in {
@@ -201,7 +199,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
         }
 
         "redirect the user to the capture email address page" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+          redirectLocation(result) shouldBe Some("/redirect-location")
         }
 
         "add the inflight indicator 'false' to session" in {
@@ -213,7 +211,7 @@ class InflightPPOBPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
-          await(inflightPPOBPredicate.refine(user)).left.get
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
 
         "return 500" in {
