@@ -33,8 +33,6 @@ import scala.concurrent.Future
 class WebsiteChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
 
   val controller: WebsiteChangeSuccessController = new WebsiteChangeSuccessController(
-    mcc,
-    mockAuthPredicateComponents,
     injector.instanceOf[WebsiteChangeSuccessView],
     mockContactPreferenceService,
     mockVatSubscriptionService

@@ -18,29 +18,32 @@ package controllers.email
 
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
-import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
+import controllers.predicates.AuthPredicateComponents
 import controllers.BaseController
+import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.EmailVerificationService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
 import utils.LoggerUtil.logWarn
 import views.html.email.VerifyEmailView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VerifyEmailController @Inject()(val authComps: AuthPredicateComponents,
-                                      val inflightCheck: InFlightPPOBPredicate,
-                                      override val mcc: MessagesControllerComponents,
-                                      val emailVerificationService: EmailVerificationService,
+class VerifyEmailController @Inject()(val emailVerificationService: EmailVerificationService,
                                       val errorHandler: ErrorHandler,
-                                      verifyEmailView: VerifyEmailView,
-                                      implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                      verifyEmailView: VerifyEmailView)
+                                     (implicit val appConfig: AppConfig,
+                                      mcc: MessagesControllerComponents,
+                                      authComps: AuthPredicateComponents,
+                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
+  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) => Future.successful(Ok(verifyEmailView(email)))
@@ -49,6 +52,8 @@ class VerifyEmailController @Inject()(val authComps: AuthPredicateComponents,
   }
 
   def sendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
+
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
 
     extractSessionEmail(user) match {
       case Some(email) =>

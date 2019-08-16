@@ -33,14 +33,10 @@ import scala.concurrent.Future
 class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
   object TestConfirmEmailController extends ConfirmEmailController(
-    mockAuthPredicateComponents,
-    mockInflightPPOBPredicate,
-    mcc,
     mockErrorHandler,
     mockAuditingService,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmEmailView],
-    mockConfig
+    injector.instanceOf[ConfirmEmailView]
   )
 
   "Calling the extractEmail function in ConfirmEmailController" when {

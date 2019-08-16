@@ -32,12 +32,9 @@ import common.SessionKeys
 class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
 
   val controller = new ConfirmContactNumbersController(
-    mockAuthPredicateComponents,
-    mcc,
     mockErrorHandler,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmContactNumbersView],
-    mockConfig
+    injector.instanceOf[ConfirmContactNumbersView]
   )
 
   "Calling the show action in ConfirmContactNumbersController" when {

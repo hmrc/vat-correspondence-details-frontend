@@ -22,6 +22,7 @@ import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
+import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.Inject
 import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
@@ -32,12 +33,13 @@ import views.html.website.WebsiteChangeSuccessView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WebsiteChangeSuccessController @Inject()(mcc: MessagesControllerComponents,
-                                               authComps: AuthPredicateComponents,
-                                               websiteChangeSuccessView: WebsiteChangeSuccessView,
+class WebsiteChangeSuccessController @Inject()(websiteChangeSuccessView: WebsiteChangeSuccessView,
                                                contactPreferenceService: ContactPreferenceService,
-                                               vatSubscriptionService: VatSubscriptionService)(
-                                               implicit appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                               vatSubscriptionService: VatSubscriptionService)
+                                              (implicit appConfig: AppConfig,
+                                               mcc: MessagesControllerComponents,
+                                               authComps: AuthPredicateComponents,
+                                               inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 

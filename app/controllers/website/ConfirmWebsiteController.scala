@@ -20,6 +20,7 @@ import common.SessionKeys.{prepopulationWebsiteKey, validationWebsiteKey, websit
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicateComponents
 import controllers.BaseController
+import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,16 +31,17 @@ import views.html.website.ConfirmWebsiteView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
-                                         override val mcc: MessagesControllerComponents,
-                                         val errorHandler: ErrorHandler,
+class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
                                          val vatSubscriptionService: VatSubscriptionService,
-                                         confirmWebsiteView: ConfirmWebsiteView,
-                                         implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                         confirmWebsiteView: ConfirmWebsiteView)
+                                        (implicit val appConfig: AppConfig,
+                                         mcc: MessagesControllerComponents,
+                                         authComps: AuthPredicateComponents,
+                                         inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = allowAgentPredicate { implicit user =>
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
 
     user.session.get(prepopulationWebsiteKey).filter(_.nonEmpty) match {
       case Some(website) =>
@@ -49,7 +51,7 @@ class ConfirmWebsiteController @Inject()(val authComps: AuthPredicateComponents,
     }
   }
 
-  def updateWebsite(): Action[AnyContent] = allowAgentPredicate.async { implicit user =>
+  def updateWebsite(): Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
 
     user.session.get(prepopulationWebsiteKey) match {
       case Some(website) =>

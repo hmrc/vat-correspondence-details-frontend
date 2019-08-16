@@ -29,13 +29,9 @@ import views.html.email.VerifyEmailView
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyEmailController extends VerifyEmailController(
-    mockAuthPredicateComponents,
-    mockInflightPPOBPredicate,
-    mcc,
     mockEmailVerificationService,
     mockErrorHandler,
-    injector.instanceOf[VerifyEmailView],
-    mockConfig
+    injector.instanceOf[VerifyEmailView]
   )
 
   val testVatNumber: String = "999999999"

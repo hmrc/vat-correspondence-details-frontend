@@ -18,11 +18,11 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(title = messages("ppobChangePending.title")) {
+@mainTemplate(title = messages("inFlightChange.title")) {
 
   <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 
-  <h1 class="heading-large">@messages("ppobChangePending.heading")</h1>
-  <p>@messages("ppobChangePending.infoOne")</p>
-  <p>@messages("ppobChangePending.infoTwo")</p>
+  <h1 class="heading-large">@messages("inFlightChange.heading")</h1>
+  <p>@messages("inFlightChange.infoOne")</p>
+  <p>@messages("inFlightChange.infoTwo")</p>
 }

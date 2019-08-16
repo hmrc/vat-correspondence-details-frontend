@@ -28,7 +28,7 @@ class ConfirmWebsitePageSpec extends BasePageISpec {
 
   "Calling the Confirm Website (.show) route" when {
 
-    def show: WSResponse = get(path, Map(prepopulationWebsiteKey -> newWebsite))
+    def show: WSResponse = get(path, Map(prepopulationWebsiteKey -> newWebsite) ++ formatInflightChange(Some("false")))
 
     "the user is a authenticated" when {
 

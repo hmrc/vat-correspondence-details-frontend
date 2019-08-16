@@ -21,7 +21,8 @@ import audit.models.AttemptedEmailAddressAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
-import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
+import controllers.predicates.AuthPredicateComponents
+import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.EmailForm._
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
@@ -31,18 +32,18 @@ import views.html.email.CaptureEmailView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CaptureEmailController @Inject()(val authComps: AuthPredicateComponents,
-                                       val inflightCheck: InFlightPPOBPredicate,
-                                       override val mcc: MessagesControllerComponents,
-                                       val vatSubscriptionService: VatSubscriptionService,
+class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                        val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
-                                       captureEmailView: CaptureEmailView,
-                                       implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                       captureEmailView: CaptureEmailView)
+                                      (implicit val appConfig: AppConfig,
+                                       mcc: MessagesControllerComponents,
+                                       authComps: AuthPredicateComponents,
+                                       inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
+  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
       case Some(email) => Future.successful(Some(email))
       case _ =>
@@ -70,7 +71,7 @@ class CaptureEmailController @Inject()(val authComps: AuthPredicateComponents,
     }
   }
 
-  def submit: Action[AnyContent] = (blockAgentPredicate andThen inflightCheck).async { implicit user =>
+  def submit: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
     val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
     val prepopulationEmail: Option[String] = user.session.get(SessionKeys.prepopulationEmailKey)
 

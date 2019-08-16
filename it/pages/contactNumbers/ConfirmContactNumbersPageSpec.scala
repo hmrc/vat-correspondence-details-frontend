@@ -31,7 +31,8 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
 
   "Calling the Confirm Phone Numbers (.show) route" when {
 
-    def show(sessionKeys: (String, String)*): WSResponse = get(path, Map(sessionKeys: _*))
+    def show(sessionKeys: (String, String)*): WSResponse =
+      get(path, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))
 
     "the user is a authenticated" when {
 
@@ -83,7 +84,8 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
   }
   "Calling the Update Phone Numbers route" when {
 
-    def show(sessionKeys: (String, String)*): WSResponse = get(path_update, Map(sessionKeys: _*))
+    def show(sessionKeys: (String, String)*): WSResponse =
+      get(path_update, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))
 
     "the landline is updated" should {
 

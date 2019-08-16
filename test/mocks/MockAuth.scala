@@ -27,9 +27,10 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import utils.TestUtil
 import assets.BaseTestConstants._
+import controllers.predicates.inflight.{InFlightPredicate, InFlightPredicateComponents}
 import models.User
 import play.api.mvc.Result
-import views.html.errors.{NotSignedUpView, PPOBChangePendingView, SessionTimeoutView}
+import views.html.errors.{InFlightChangeView, NotSignedUpView, SessionTimeoutView}
 import views.html.errors.agent.{AgentJourneyDisabledView, NotAuthorisedForClientView, UnauthorisedAgentView}
 
 import scala.concurrent.Future
@@ -44,7 +45,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
 
   val sessionTimeoutView: SessionTimeoutView = injector.instanceOf[SessionTimeoutView]
   val agentJourneyDisabledView: AgentJourneyDisabledView = injector.instanceOf[AgentJourneyDisabledView]
-  val ppobChangePendingView: PPOBChangePendingView = injector.instanceOf[PPOBChangePendingView]
+  val inFlightChangeView: InFlightChangeView = injector.instanceOf[InFlightChangeView]
   val notAuthorisedForClientView: NotAuthorisedForClientView = injector.instanceOf[NotAuthorisedForClientView]
   val unauthorisedAgentView: UnauthorisedAgentView = injector.instanceOf[UnauthorisedAgentView]
   val notSignedUpView: NotSignedUpView = injector.instanceOf[NotSignedUpView]
@@ -71,7 +72,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       ec
     )
 
-  val mockAuthPredicateComponents = new AuthPredicateComponents(
+  implicit val mockAuthPredicateComponents: AuthPredicateComponents = new AuthPredicateComponents(
     mockEnrolmentsAuthService,
     mcc,
     mockErrorHandler,
@@ -84,21 +85,26 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
     ec
   )
 
+  implicit val mockInFlightPredicateComponents: InFlightPredicateComponents = new InFlightPredicateComponents(
+    mockVatSubscriptionService,
+    mockErrorHandler,
+    messagesApi,
+    mcc,
+    inFlightChangeView,
+    mockConfig,
+    ec
+  )
+
   val mockAuthPredicate: AuthPredicate =
     new AuthPredicate(
       mockAuthPredicateComponents, allowsAgents = true
     )
 
-  val mockInflightPPOBPredicate: InFlightPPOBPredicate = {
+  val mockInflightPPOBPredicate: InFlightPredicate = {
 
-    object MockPredicate extends InFlightPPOBPredicate(
-      mockVatSubscriptionService,
-      mockErrorHandler,
-      messagesApi,
-      mcc,
-      ppobChangePendingView,
-      mockConfig,
-      ec
+    object MockPredicate extends InFlightPredicate(
+      mockInFlightPredicateComponents,
+      "/redirect-location"
     ) {
       override def refine[A](request: User[A]): Future[Either[Result, User[A]]] =
         Future.successful(Right(User(vrn)(request)))

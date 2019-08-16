@@ -16,10 +16,11 @@
 
 package controllers.website
 
-import common.SessionKeys.{validationWebsiteKey, prepopulationWebsiteKey}
+import common.SessionKeys.{prepopulationWebsiteKey, validationWebsiteKey}
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
-import controllers.predicates.{AuthPredicateComponents, InFlightPPOBPredicate}
+import controllers.predicates.AuthPredicateComponents
+import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,16 +30,17 @@ import views.html.website.ConfirmRemoveWebsiteView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmRemoveWebsiteController @Inject()(val authComps: AuthPredicateComponents,
-                                               override val mcc: MessagesControllerComponents,
-                                               val errorHandler: ErrorHandler,
+class ConfirmRemoveWebsiteController @Inject()(val errorHandler: ErrorHandler,
                                                val vatSubscriptionService: VatSubscriptionService,
-                                               confirmRemoveWebsite: ConfirmRemoveWebsiteView,
-                                               implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                               confirmRemoveWebsite: ConfirmRemoveWebsiteView)
+                                              (implicit val appConfig: AppConfig,
+                                               mcc: MessagesControllerComponents,
+                                               authComps: AuthPredicateComponents,
+                                               inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
 
     extractSessionWebsiteAddress(user) match {
       case Some(website) =>
@@ -48,7 +50,7 @@ class ConfirmRemoveWebsiteController @Inject()(val authComps: AuthPredicateCompo
       }
   }
 
-  def removeWebsiteAddress(): Action[AnyContent] = allowAgentPredicate.async { implicit user =>
+  def removeWebsiteAddress(): Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
 
     extractSessionWebsiteAddress(user) match {
       case Some(_) =>

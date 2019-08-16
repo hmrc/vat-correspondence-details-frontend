@@ -20,6 +20,7 @@ import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
+import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.ContactNumbersForm._
 import javax.inject.{Inject, Singleton}
 import models.customerInformation.ContactNumbers
@@ -31,17 +32,18 @@ import views.html.errors.NotFoundView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CaptureContactNumbersController @Inject()(val authComps: AuthPredicateComponents,
-                                                override val mcc: MessagesControllerComponents,
-                                                val vatSubscriptionService: VatSubscriptionService,
+class CaptureContactNumbersController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                                 val errorHandler: ErrorHandler,
                                                 captureContactNumbersView: CaptureContactNumbersView,
-                                                notFoundView: NotFoundView,
-                                                implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                                notFoundView: NotFoundView)
+                                               (implicit val appConfig: AppConfig,
+                                                mcc: MessagesControllerComponents,
+                                                authComps: AuthPredicateComponents,
+                                                inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate).async { implicit user =>
 
     if(appConfig.features.changeContactDetailsEnabled()) {
 
@@ -87,7 +89,7 @@ class CaptureContactNumbersController @Inject()(val authComps: AuthPredicateComp
     }
   }
 
-  def submit: Action[AnyContent] = allowAgentPredicate { implicit user =>
+  def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate) { implicit user =>
     val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
     val prepopulationLandline: Option[String] = user.session.get(SessionKeys.prepopulationLandlineKey)
     val validationMobile: Option[String] = user.session.get(SessionKeys.validationMobileKey)

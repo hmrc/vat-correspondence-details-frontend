@@ -31,12 +31,9 @@ import scala.concurrent.Future
 class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
   val controller = new ConfirmWebsiteController(
-    mockAuthPredicateComponents,
-    mcc,
     mockErrorHandler,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmWebsiteView],
-    mockConfig
+    injector.instanceOf[ConfirmWebsiteView]
   )
 
   "Calling the show action in ConfirmWebsiteController" when {

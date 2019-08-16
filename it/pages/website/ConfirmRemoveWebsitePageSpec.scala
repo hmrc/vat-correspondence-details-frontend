@@ -28,7 +28,7 @@ class ConfirmRemoveWebsitePageSpec extends BasePageISpec {
 
   "Calling the Confirm Remove Website (.show) route" when {
 
-    def show: WSResponse = get(path, Map(validationWebsiteKey -> currentWebsite))
+    def show: WSResponse = get(path, Map(validationWebsiteKey -> currentWebsite) ++ formatInflightChange(Some("false")))
 
     "the user is a authenticated" when {
 

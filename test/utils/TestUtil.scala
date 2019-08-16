@@ -17,7 +17,7 @@
 package utils
 
 import scala.concurrent.ExecutionContext
-import common.SessionKeys
+import common.SessionKeys._
 import config.ErrorHandler
 import mocks.MockAppConfig
 import models.User
@@ -32,7 +32,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import views.html.errors.StandardErrorView
 import assets.BaseTestConstants._
-import common.SessionKeys.{validationLandlineKey, validationMobileKey}
 
 trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport with BeforeAndAfterEach {
 
@@ -45,7 +44,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   }
 
   lazy val injector: Injector = app.injector
-  lazy val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
+  implicit lazy val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
   implicit lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
   implicit lazy val messages: Messages = MessagesImpl(Lang("en-GB"), messagesApi)
   implicit lazy val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
@@ -55,12 +54,14 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   val testEmail = "test@email.co.uk"
   val testWebsite = "https://www.test-website.co.uk"
 
-  implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    inFlightContactDetailsChangeKey -> "false"
+  )
   lazy val requestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.prepopulationEmailKey -> testEmail)
+    request.withSession(prepopulationEmailKey -> testEmail)
 
   lazy val requestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.prepopulationWebsiteKey -> testWebsite)
+    request.withSession(prepopulationWebsiteKey -> testWebsite)
 
   lazy val requestWithValidationPhoneNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     validationLandlineKey -> testValidationLandline,
@@ -68,18 +69,18 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   )
 
   lazy val requestWithPrepopPhoneNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
-    SessionKeys.prepopulationLandlineKey -> testPrepopLandline,
-    SessionKeys.prepopulationMobileKey -> testPrepopMobile
+    prepopulationLandlineKey -> testPrepopLandline,
+    prepopulationMobileKey -> testPrepopMobile
   )
 
   lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest().withSession(SessionKeys.clientVrn -> vrn)
+    request.withSession(clientVrn -> vrn)
 
   lazy val requestWithAllContactNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
-    SessionKeys.validationLandlineKey -> testValidationLandline,
-    SessionKeys.prepopulationLandlineKey -> testPrepopLandline,
-    SessionKeys.validationMobileKey -> testValidationMobile,
-    SessionKeys.prepopulationMobileKey -> testPrepopMobile
+    validationLandlineKey -> testValidationLandline,
+    prepopulationLandlineKey -> testPrepopLandline,
+    validationMobileKey -> testValidationMobile,
+    prepopulationMobileKey -> testPrepopMobile
   )
 
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)

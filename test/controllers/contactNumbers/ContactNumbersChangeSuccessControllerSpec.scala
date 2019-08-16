@@ -33,12 +33,9 @@ import scala.concurrent.Future
 class ContactNumbersChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
 
   val controller: ContactNumbersChangeSuccessController = new ContactNumbersChangeSuccessController(
-    mockAuthPredicateComponents,
-    mcc,
     mockContactPreferenceService,
     mockVatSubscriptionService,
-    injector.instanceOf[ContactNumbersChangeSuccessView],
-    mockConfig
+    injector.instanceOf[ContactNumbersChangeSuccessView]
   )
 
   "Calling the show action" when {

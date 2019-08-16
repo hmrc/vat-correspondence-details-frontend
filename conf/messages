@@ -125,10 +125,10 @@ websiteChangeSuccess.helpOne.digital.agent = We’ll send an email to {0} within
 websiteChangeSuccess.helpOne.paper.agent = We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
 websiteChangeSuccess.helpTwo = Make sure your contact details are up to date.
 
-ppobChangePending.title = We are reviewing your request
-ppobChangePending.heading = You already have a change pending
-ppobChangePending.infoOne = You have already requested to change the principal place of business. While this change is pending you are unable to change your email address.
-ppobChangePending.infoTwo = We will usually update your details within 2 working days.
+inFlightChange.title = We are reviewing your request
+inFlightChange.heading = You already have a change pending
+inFlightChange.infoOne = You have already requested to change the principal place of business. While this change is pending you are unable to change your email address.
+inFlightChange.infoTwo = We will usually update your details within 2 working days.
 
 confirmPhoneNumbers.notProvided = Not provided
 confirmPhoneNumbers.numberRemoved = Number removed

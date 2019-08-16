@@ -16,14 +16,29 @@
 
 package controllers
 
+import controllers.predicates.inflight.{InFlightPredicate, InFlightPredicateComponents}
 import controllers.predicates.{AuthPredicate, AuthPredicateComponents}
 import play.api.i18n.I18nSupport
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-abstract class BaseController(val mcc: MessagesControllerComponents,
-                              authComps: AuthPredicateComponents) extends FrontendController(mcc) with I18nSupport {
+
+abstract class BaseController(implicit val mcc: MessagesControllerComponents,
+                              authComps: AuthPredicateComponents,
+                              inFlightComps: InFlightPredicateComponents) extends FrontendController(mcc) with I18nSupport {
 
   val allowAgentPredicate = new AuthPredicate(authComps, allowsAgents = true)
   val blockAgentPredicate = new AuthPredicate(authComps, allowsAgents = false)
+
+  val routePrefix = "/vat-through-software/account/correspondence"
+
+  val inFlightEmailPredicate = new InFlightPredicate(
+    inFlightComps, routePrefix + controllers.email.routes.CaptureEmailController.show().url
+  )
+  val inFlightWebsitePredicate = new InFlightPredicate(
+    inFlightComps, routePrefix + controllers.website.routes.CaptureWebsiteController.show().url
+  )
+  val inFlightContactNumbersPredicate = new InFlightPredicate(
+    inFlightComps, routePrefix + controllers.contactNumbers.routes.CaptureContactNumbersController.show().url
+  )
 }

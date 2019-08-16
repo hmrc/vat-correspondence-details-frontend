@@ -22,6 +22,7 @@ import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
+import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
@@ -33,12 +34,13 @@ import views.html.contactNumbers.ContactNumbersChangeSuccessView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ContactNumbersChangeSuccessController @Inject()(val authComps: AuthPredicateComponents,
-                                                      override val mcc: MessagesControllerComponents,
-                                                      contactPreferenceService: ContactPreferenceService,
+class ContactNumbersChangeSuccessController @Inject()(contactPreferenceService: ContactPreferenceService,
                                                       vatSubscriptionService: VatSubscriptionService,
-                                                      contactNumberChangeSuccessView: ContactNumbersChangeSuccessView,
-                                                      implicit val appConfig: AppConfig) extends BaseController(mcc, authComps) {
+                                                      contactNumberChangeSuccessView: ContactNumbersChangeSuccessView)
+                                                     (implicit val appConfig: AppConfig,
+                                                      mcc: MessagesControllerComponents,
+                                                      authComps: AuthPredicateComponents,
+                                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 

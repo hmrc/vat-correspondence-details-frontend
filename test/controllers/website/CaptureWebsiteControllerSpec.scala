@@ -45,14 +45,11 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
     setup(result)
 
     new CaptureWebsiteController(
-      mockAuthPredicateComponents,
-      mcc,
       mockVatSubscriptionService,
       mockErrorHandler,
       mockAuditingService,
       injector.instanceOf[CaptureWebsiteView],
-      injector.instanceOf[NotFoundView],
-      mockConfig
+      injector.instanceOf[NotFoundView]
     )
   }
 

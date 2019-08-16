@@ -36,13 +36,10 @@ import scala.concurrent.ExecutionContext
 class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 
   val controller = new CaptureContactNumbersController(
-    mockAuthPredicateComponents,
-    mcc,
     mockVatSubscriptionService,
     mockErrorHandler,
     injector.instanceOf[CaptureContactNumbersView],
-    injector.instanceOf[NotFoundView],
-    mockConfig
+    injector.instanceOf[NotFoundView]
   )
 
   "Calling the show action" when {
