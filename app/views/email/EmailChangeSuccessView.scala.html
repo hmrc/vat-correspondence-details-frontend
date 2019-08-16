@@ -28,23 +28,17 @@
 
   <h2 class="heading-medium">@messages("common.whatHappensNext")</h2>
 
-  @if(appConfig.features.contactPreferencesEnabled()) {
+  @preference match {
 
-    @preference match {
-
-      case (Some(ContactPreference.digital)) => {
-        <p id="preference-message">@messages("emailChangeSuccess.helpOne.digitalPreference")</p>
-      }
-      case (Some(ContactPreference.paper)) => {
-        <p id="preference-message">@messages("emailChangeSuccess.helpOne.paperPreference")</p>
-      }
-      case _ => {
-        <p>@messages("common.helpOne.apiFailure")</p>
-      }
+    case (Some(ContactPreference.digital)) => {
+      <p id="preference-message">@messages("emailChangeSuccess.helpOne.digitalPreference")</p>
     }
-
-  } else {
-    <p>@messages("emailChangeSuccess.helpOne")</p>
+    case (Some(ContactPreference.paper)) => {
+      <p id="preference-message">@messages("emailChangeSuccess.helpOne.paperPreference")</p>
+    }
+    case _ => {
+      <p>@messages("common.helpOne.apiFailure")</p>
+    }
   }
 
   <p>@messages("emailChangeSuccess.helpTwo")</p>

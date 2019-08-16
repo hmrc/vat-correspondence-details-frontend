@@ -31,34 +31,29 @@ class EmailChangeSuccessPageSpec extends BasePageISpec {
 
   val successEmailPath = "/email-address-confirmation"
 
-  val session: Map[String, String] = Map(SessionKeys.clientVrn -> clientVRN)
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val session: Map[String, String] = Map(SessionKeys.emailChangeSuccessful -> "true")
 
   "Calling the EmailChangeSuccessController.show method" when {
 
-    "the user is authenticated" when {
+    "the user is authenticated and has the email change successful session key" when {
 
-      "there is a user in session" should {
-        def show: WSResponse = get(successEmailPath, session)
+      def show: WSResponse = get(successEmailPath, session)
 
-        "render the success email page" in {
+      "render the success email page" in {
 
-          given.user.isAuthenticated
+        given.user.isAuthenticated
 
-          And("a successful response for an individual is stubbed")
-          ContactPreferencesStub.getContactPrefs(OK, Json.obj("preference" -> "DiGiTaL"))
+        And("a successful response for an individual is stubbed")
+        ContactPreferencesStub.getContactPrefs(OK, Json.obj("preference" -> "DiGiTaL"))
 
-          When("the Confirm email page is called")
-          val result = show
+        When("the Confirm email page is called")
+        val result = show
 
-          result should have(
-            httpStatus(Status.OK),
-            elementText("#preference-message")(Messages("emailChangeSuccess.helpOne.digitalPreference"))
-          )
-        }
-
+        result should have(
+          httpStatus(Status.OK),
+          elementText("#preference-message")(Messages("emailChangeSuccess.helpOne.digitalPreference"))
+        )
       }
     }
   }
-
 }

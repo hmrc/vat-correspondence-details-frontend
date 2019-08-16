@@ -23,6 +23,7 @@ object SessionKeys {
 
   val validationEmailKey: String = "vatCorrespondenceValidationEmail"
   val prepopulationEmailKey: String = "vatCorrespondencePrepopulationEmail"
+  val emailChangeSuccessful: String = "vatCorrespondenceEmailChangeSuccessful"
 
   val validationWebsiteKey: String = "vatCorrespondenceValidationWebsite"
   val prepopulationWebsiteKey: String = "vatCorrespondencePrepopulationWebsite"

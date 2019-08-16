@@ -37,7 +37,6 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    mockConfig.features.contactPreferencesEnabled(false)
     mockConfig.features.languageSelectorEnabled(true)
     mockConfig.features.changeContactDetailsEnabled(true)
     mockConfig.features.agentAccessEnabled(true)

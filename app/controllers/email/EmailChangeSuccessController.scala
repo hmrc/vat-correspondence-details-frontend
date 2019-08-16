@@ -18,6 +18,7 @@ package controllers.email
 
 import audit.AuditingService
 import audit.models.ContactPreferenceAuditModel
+import common.SessionKeys
 import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
@@ -42,29 +43,29 @@ class EmailChangeSuccessController @Inject()(auditService: AuditingService,
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def show: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
-    if (appConfig.features.contactPreferencesEnabled()) {
 
-      contactPreferenceService.getContactPreference(user.vrn) map {
-        case Right(preference) =>
+    user.session.get(SessionKeys.emailChangeSuccessful) match {
+      case Some("true") =>
+        contactPreferenceService.getContactPreference(user.vrn) map {
+          case Right(preference) =>
 
-          auditService.extendedAudit(
-            ContactPreferenceAuditModel(
-              user.vrn,
-              preference.preference
+            auditService.extendedAudit(
+              ContactPreferenceAuditModel(
+                user.vrn,
+                preference.preference
+              )
             )
-          )
 
-          Ok(emailChangeSuccessView(Some(preference.preference)))
+            Ok(emailChangeSuccessView(Some(preference.preference)))
 
-        case Left(error) =>
-          logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
-            s" Error code: ${error.status}, Error message: ${error.message}")
-          Ok(emailChangeSuccessView())
+          case Left(error) =>
+            logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
+              s" Error code: ${error.status}, Error message: ${error.message}")
+            Ok(emailChangeSuccessView())
 
-      }
+        }
 
-    } else {
-      Future.successful(Ok(emailChangeSuccessView()))
+      case _ => Future.successful(Redirect(routes.CaptureEmailController.show().url))
     }
   }
 }

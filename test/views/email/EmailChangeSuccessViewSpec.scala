@@ -37,88 +37,68 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
   "The Email Change Successful view" when {
 
-    "the contact preference feature switch is enabled" when {
+    "the contact preference is successfully retrieved" when {
 
-      "the contact preference is successfully retrieved" when {
+      "the contact preference is Digital" should {
 
-        "the contact preference is Digital" should {
+        lazy val view = injectedView(Some(ContactPreference.digital))(request, messages, mockConfig)
 
-          lazy val view = injectedView(Some(ContactPreference.digital))(request, messages, mockConfig)
+        lazy implicit val document: Document = Jsoup.parse(view.body)
 
-          lazy implicit val document: Document = Jsoup.parse(view.body)
-
-          "have the correct page title" in {
-            mockConfig.features.contactPreferencesEnabled(true)
-
-            elementText(Selectors.title) shouldBe "We have received the new email address"
-          }
-
-          "have the correct heading" in {
-            elementText(Selectors.pageHeading) shouldBe "We have received the new email address"
-          }
-
-          "have a GA tag for the page view" in {
-            element(Selectors.pageHeading).select("h1").attr("data-journey") shouldBe "email-address:view:change-email-success"
-          }
-
-          "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Finish"
-          }
-
-          "have a finish button which navigates to the Change of Circs overview page" in {
-            element(Selectors.button).select("a").attr("href") shouldBe "mockManageVatOverviewUrl"
-          }
-
-          "have the correct first paragraph" in {
-            elementText(Selectors.paragraphOne) shouldBe "We will send you an email within 2 working days with an update," +
-              " followed by a letter to your principal place of business." +
-              " You can also go to your HMRC secure messages to find out if your request has been accepted."
-          }
-
-          "have the correct second paragraph" in {
-            elementText(Selectors.paragraphTwo) shouldBe "Ensure your contact details are up to date."
-          }
-
-          "have a GA tag for the clicking finish button" in {
-            element(Selectors.button).select("h1").attr("data-journey") contains "email-address:confirm:finish-email-change"
-          }
-
+        "have the correct page title" in {
+          elementText(Selectors.title) shouldBe "We have received the new email address"
         }
 
-        "the contact preference is Paper" should {
-
-          lazy val view = injectedView(Some(ContactPreference.paper))
-          lazy implicit val document: Document = Jsoup.parse(view.body)
-
-          "have the correct first paragraph" in {
-            mockConfig.features.contactPreferencesEnabled(true)
-            elementText(Selectors.paragraphOne) shouldBe "We will send a letter to your principal place of" +
-              " business with an update within 15 working days."
-          }
+        "have the correct heading" in {
+          elementText(Selectors.pageHeading) shouldBe "We have received the new email address"
         }
-      }
 
-      "the contact preference is not retrieved" should {
+        "have a GA tag for the page view" in {
+          element(Selectors.pageHeading).select("h1").attr("data-journey") shouldBe "email-address:view:change-email-success"
+        }
 
-        lazy implicit val document: Document = Jsoup.parse(injectedView().body)
+        "have a finish button with the correct text" in {
+          elementText(Selectors.button) shouldBe "Finish"
+        }
+
+        "have a finish button which navigates to the Change of Circs overview page" in {
+          element(Selectors.button).select("a").attr("href") shouldBe "mockManageVatOverviewUrl"
+        }
 
         "have the correct first paragraph" in {
-          mockConfig.features.contactPreferencesEnabled(true)
-          elementText(Selectors.paragraphOne) shouldBe "We will send you an update within 15 working days."
+          elementText(Selectors.paragraphOne) shouldBe "We will send you an email within 2 working days with an update," +
+            " followed by a letter to your principal place of business." +
+            " You can also go to your HMRC secure messages to find out if your request has been accepted."
+        }
+
+        "have the correct second paragraph" in {
+          elementText(Selectors.paragraphTwo) shouldBe "Ensure your contact details are up to date."
+        }
+
+        "have a GA tag for the clicking finish button" in {
+          element(Selectors.button).select("h1").attr("data-journey") contains "email-address:confirm:finish-email-change"
+        }
+
+      }
+
+      "the contact preference is Paper" should {
+
+        lazy val view = injectedView(Some(ContactPreference.paper))
+        lazy implicit val document: Document = Jsoup.parse(view.body)
+
+        "have the correct first paragraph" in {
+          elementText(Selectors.paragraphOne) shouldBe "We will send a letter to your principal place of" +
+            " business with an update within 15 working days."
         }
       }
     }
 
-    "the contact preference feature switch is not enabled" should {
+    "the contact preference is not retrieved" should {
 
       lazy implicit val document: Document = Jsoup.parse(injectedView().body)
 
       "have the correct first paragraph" in {
-        mockConfig.features.contactPreferencesEnabled(false)
-
-        elementText(Selectors.paragraphOne) shouldBe "We will send an email within 2 working days " +
-          "telling you whether or not the request has been accepted. " +
-          "You can also go to your messages in your business tax account."
+        elementText(Selectors.paragraphOne) shouldBe "We will send you an update within 15 working days."
       }
     }
   }
