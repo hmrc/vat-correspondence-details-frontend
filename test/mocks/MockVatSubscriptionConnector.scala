@@ -20,6 +20,7 @@ import assets.CustomerInfoConstants._
 import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
+import models.User
 import models.customerInformation.{PPOB, UpdatePPOBSuccess}
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,8 +38,8 @@ trait MockVatSubscriptionConnector extends MockFactory {
   }
 
   def mockUpdatePPOBResponse(result: Future[UpdatePPOBResponse]): Unit = {
-    (connector.updatePPOB(_: String, _: PPOB)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *)
+    (connector.updatePPOB(_: String, _: PPOB)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
+      .expects(*, *, *, *, *)
       .returns(result)
   }
 
