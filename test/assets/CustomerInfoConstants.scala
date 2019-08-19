@@ -16,7 +16,7 @@
 
 package assets
 
-import models.customerInformation.{ContactDetails, CustomerInformation, PPOB, PPOBAddress, _}
+import models.customerInformation._
 import models.errors.ErrorModel
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -107,10 +107,19 @@ object CustomerInfoConstants {
     "websiteAddress" -> "www.pepsi-mac.biz"
   )
 
+  val fullUpdatePPOBJson: JsObject = fullPPOBJson ++ Json.obj("transactorOrCapacitorEmail" -> "test@test.com")
+
   val fullPPOBModel = PPOB(
     fullPPOBAddressModel,
     Some(fullContactDetailsModel),
     Some("www.pepsi-mac.biz")
+  )
+
+  val fullUpdatePPOBModel = UpdatePPOB(
+    fullPPOBAddressModel,
+    Some(fullContactDetailsModel),
+    Some("www.pepsi-mac.biz"),
+    Some("test@test.com")
   )
 
   val minPPOBJson: JsObject = Json.obj(
@@ -119,6 +128,13 @@ object CustomerInfoConstants {
 
   val minPPOBModel = PPOB(
     minPPOBAddressModel,
+    None,
+    None
+  )
+
+  val minUpdatePPOBModel = UpdatePPOB(
+    minPPOBAddressModel,
+    None,
     None,
     None
   )
