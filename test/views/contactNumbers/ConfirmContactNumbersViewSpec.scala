@@ -36,59 +36,75 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
     val newPhoneNumbersBreak = "#content > article > p > br"
   }
 
-  "The Confirm Contact Numbers view" should {
-    lazy val view = injectedView(testPrepopLandline, testPrepopMobile)
-    lazy implicit val document: Document = Jsoup.parse(view.body)
+  "The Confirm Contact Numbers view" when {
 
-    "have the correct title" in {
-      document.title shouldBe "Confirm telephone number changes"
-    }
+    "the user is  principle entity" should {
 
-    "have the correct heading" in {
-      elementText(Selectors.heading) shouldBe "Confirm telephone number changes"
-    }
+      lazy val view = injectedView(testPrepopLandline, testPrepopMobile)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    "have a back link" which {
-
-      "should have the correct text" in {
-        elementText(Selectors.backLink) shouldBe "Back"
+      "have the correct title" in {
+        document.title shouldBe "Confirm telephone number changes - Business tax account - GOV.UK"
       }
 
-      "should have the correct back link" in {
-        element(Selectors.backLink).attr("href") shouldBe routes.CaptureContactNumbersController.show().url
+      "have the correct heading" in {
+        elementText(Selectors.heading) shouldBe "Confirm telephone number changes"
+      }
+
+      "have a back link" which {
+
+        "should have the correct text" in {
+          elementText(Selectors.backLink) shouldBe "Back"
+        }
+
+        "should have the correct back link" in {
+          element(Selectors.backLink).attr("href") shouldBe routes.CaptureContactNumbersController.show().url
+        }
+      }
+
+      "have the contact numbers the user provided" in {
+        elementText(Selectors.newPhoneNumbers) shouldBe s"Landline : $testPrepopLandline Mobile : $testPrepopMobile"
+      }
+
+      "have a line break in the telephone number p tag" in {
+        elementExists(Selectors.newPhoneNumbersBreak)
+      }
+
+
+      "have a link to edit phone numbers" which {
+
+        "has the correct text" in {
+          elementText(Selectors.editLink) shouldBe "Change telephone numbers"
+        }
+
+        "has the correct link" in {
+          element(Selectors.editLink).attr("href") shouldBe routes.CaptureContactNumbersController.show().url
+        }
+
+      }
+
+      "have a continue button" which {
+
+        "has the correct text" in {
+          elementText(Selectors.continueButton) shouldBe "Confirm and continue"
+        }
+
+        "has the correct link" in {
+          element(Selectors.continueButton).attr("href") shouldBe
+            routes.ConfirmContactNumbersController.updateContactNumbers().url
+        }
       }
     }
 
-    "have the contact numbers the user provided" in {
-      elementText(Selectors.newPhoneNumbers) shouldBe s"Landline : $testPrepopLandline Mobile : $testPrepopMobile"
-    }
+    "the user is an agent" should {
 
-    "have a line break in the telephone number p tag" in {
-      elementExists(Selectors.newPhoneNumbersBreak)
-    }
+      "there are no errors in the form" should {
+        val view = injectedView(testPrepopLandline, testPrepopMobile)(agent, messages, mockConfig)
+        implicit val document: Document = Jsoup.parse(view.body)
 
-
-    "have a link to edit phone numbers" which {
-
-      "has the correct text" in {
-        elementText(Selectors.editLink) shouldBe "Change telephone numbers"
-      }
-
-      "has the correct link" in {
-        element(Selectors.editLink).attr("href") shouldBe routes.CaptureContactNumbersController.show().url
-      }
-
-    }
-
-    "have a continue button" which {
-
-      "has the correct text" in {
-        elementText(Selectors.continueButton) shouldBe "Confirm and continue"
-      }
-
-      "has the correct link" in {
-        element(Selectors.continueButton).attr("href") shouldBe
-          routes.ConfirmContactNumbersController.updateContactNumbers().url
+        "have the correct title" in {
+          document.title shouldBe "Confirm telephone number changes - Your client’s VAT details - GOV.UK"
+        }
       }
     }
   }

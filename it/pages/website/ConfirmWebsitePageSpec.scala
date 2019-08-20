@@ -42,7 +42,7 @@ class ConfirmWebsitePageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("confirmWebsite.title"))
+            pageTitle(generateDocumentTitle("confirmWebsite.title"))
           )
         }
       }

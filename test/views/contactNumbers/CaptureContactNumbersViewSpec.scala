@@ -30,66 +30,82 @@ class CaptureContactNumbersViewSpec extends ViewBaseSpec {
 
   "The Capture Contact Numbers page" when {
 
-    "there are no errors in the form" should {
+    "the user is  principle entity" when {
 
-      val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))
-      implicit val document: Document = Jsoup.parse(view.body)
+      "there are no errors in the form" should {
 
-      "have the correct title" in {
-        document.title shouldBe "Change telephone numbers"
-      }
+        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))
+        implicit val document: Document = Jsoup.parse(view.body)
 
-      "have the correct heading" in {
-        elementText("h1") shouldBe "Change telephone numbers"
-      }
-
-      "have the correct instruction paragraph" in {
-        elementText("#content > article > p") shouldBe
-          "Include the country code for international telephone numbers, for example '+44'."
-      }
-
-      "have the correct form label for landline number" in {
-        elementText("#content > article > form > fieldset > div > div:nth-child(1) > label > span") shouldBe
-          "Landline number"
-      }
-
-      "have the correct form label for mobile number" in {
-        elementText("#content > article > form > fieldset > div > div:nth-child(2) > label > span") shouldBe
-          "Mobile number"
-      }
-
-      "have a button" which {
-
-        "has the correct text" in {
-          elementText(".button") shouldBe "Continue"
+        "have the correct title" in {
+          document.title shouldBe "Change telephone numbers - Business tax account - GOV.UK"
         }
 
-        "has the correct link location" in {
-          element("form").attr("action") shouldBe routes.CaptureContactNumbersController.submit().url
+        "have the correct heading" in {
+          elementText("h1") shouldBe "Change telephone numbers"
+        }
+
+        "have the correct instruction paragraph" in {
+          elementText("#content > article > p") shouldBe
+            "Include the country code for international telephone numbers, for example '+44'."
+        }
+
+        "have the correct form label for landline number" in {
+          elementText("#content > article > form > fieldset > div > div:nth-child(1) > label > span") shouldBe
+            "Landline number"
+        }
+
+        "have the correct form label for mobile number" in {
+          elementText("#content > article > form > fieldset > div > div:nth-child(2) > label > span") shouldBe
+            "Mobile number"
+        }
+
+        "have a button" which {
+
+          "has the correct text" in {
+            elementText(".button") shouldBe "Continue"
+          }
+
+          "has the correct link location" in {
+            element("form").attr("action") shouldBe routes.CaptureContactNumbersController.submit().url
+          }
+        }
+      }
+
+      "there are errors in the form" should {
+        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile).withError("landlineNumber", "Enter a different phone number"))
+        implicit val document: Document = Jsoup.parse(view.body)
+        "have the correct document title" in {
+          document.title shouldBe "Error: Change telephone numbers - Business tax account - GOV.UK"
+        }
+
+        "have a form error box" which {
+
+          "has the correct error message" in {
+            elementText("#landlineNumber-error-summary") shouldBe "Enter a different phone number"
+          }
+        }
+
+        "have the correct error notification text above the input box" in {
+          elementText(".error-notification") shouldBe "Enter a different phone number"
+        }
+
+        "display the error summary" in {
+          element("#error-summary-heading").text() shouldBe "There is a problem"
         }
       }
     }
 
-    "there are errors in the form" should {
-      val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile).withError("landlineNumber", "Enter a different phone number"))
-      implicit val document: Document = Jsoup.parse(view.body)
-      "have the correct document title" in {
-        document.title shouldBe "Error: Change telephone numbers"
-      }
 
-      "have a form error box" which {
+    "the user is an agent" should {
 
-        "has the correct error message" in {
-          elementText("#landlineNumber-error-summary") shouldBe "Enter a different phone number"
+      "there are no errors in the form" should {
+        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))(agent, messages, mockConfig)
+        implicit val document: Document = Jsoup.parse(view.body)
+
+        "have the correct title" in {
+          document.title shouldBe "Change telephone numbers - Your client’s VAT details - GOV.UK"
         }
-      }
-
-      "have the correct error notification text above the input box" in {
-        elementText(".error-notification") shouldBe "Enter a different phone number"
-      }
-
-      "display the error summary" in {
-        element("#error-summary-heading").text() shouldBe "There is a problem"
       }
     }
   }

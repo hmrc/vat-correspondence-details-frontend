@@ -69,7 +69,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       }
 
       "page title is correct" in {
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You are not authorised for this client"
+        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You are not authorised for this client - Business tax account - GOV.UK"
       }
     }
 

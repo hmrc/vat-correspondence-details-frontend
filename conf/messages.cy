@@ -2,6 +2,7 @@ base.signOut = Allgofnodi
 base.back = Yn ôl
 base.confirmAndContinue = Cadarnhau ac yn eich blaen
 base.finish = Gorffen
+base.pageTitle = {0} - {1} - GOV.UK
 
 banner.newService = Gwasanaeth newydd yw hwn – bydd eich
 banner.feedback = adborth
@@ -19,7 +20,7 @@ common.whatHappensNext = Yr hyn sy’n digwydd nesaf
 common.helpOne.apiFailure = Byddwn yn anfon diweddariad atoch cyn pen 15 diwrnod gwaith.
 common.changeClient = Newid cleient
 
-standardError.title = Mae problem gyda’r gwasanaeth – Rhoi gwybod am TAW drwy feddalwedd – GOV.UK
+standardError.title = Mae problem gyda’r gwasanaeth 
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 standardError.message = Rhowch gynnig arall arni yn nes ymlaen.
 

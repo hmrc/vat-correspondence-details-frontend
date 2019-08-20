@@ -37,7 +37,7 @@ class WebsiteChangeSuccessViewSpec extends ViewBaseSpec {
         implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
-          document.title shouldBe "Request to change website address received"
+          document.title shouldBe "Request to change website address received - Business tax account - GOV.UK"
         }
 
         "have the correct heading" in {
@@ -77,7 +77,7 @@ class WebsiteChangeSuccessViewSpec extends ViewBaseSpec {
         implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
-          document.title shouldBe "Request to remove website address received"
+          document.title shouldBe "Request to remove website address received - Business tax account - GOV.UK"
         }
 
         "have the correct heading" in {
@@ -109,6 +109,10 @@ class WebsiteChangeSuccessViewSpec extends ViewBaseSpec {
         val model = WebsiteChangeSuccessViewModel(Some("Pepsi Mac"), None, removeWebsite = false, Some("agent@test.com"))
         lazy val view = injectedView(model)(request, messages, mockConfig, agent)
         implicit lazy val document: Document = Jsoup.parse(view.body)
+
+        "have the correct title" in {
+          document.title shouldBe "Request to change website address received - Your client’s VAT details - GOV.UK"
+        }
 
         "have the correct first paragraph" in {
           elementText("article > p:nth-of-type(1)") shouldBe "We’ll send an email to agent@test.com within 2 " +

@@ -47,7 +47,7 @@ class WebsiteChangeSuccessPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("websiteChangeSuccess.title.change"))
+            pageTitle(generateDocumentTitle("websiteChangeSuccess.title.change"))
           )
         }
       }

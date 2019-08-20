@@ -64,7 +64,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "show the agent journey disabled page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet"
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Business tax account - GOV.UK"
             }
           }
 
@@ -79,7 +79,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "render the Unauthorised Agent page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet"
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Business tax account - GOV.UK"
             }
           }
         }
@@ -95,7 +95,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
           }
 
           "show the agent journey disabled page" in {
-            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet"
+            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Business tax account - GOV.UK"
           }
         }
       }
@@ -118,7 +118,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
 
         "render the Unauthorised page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Your session has timed out"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Your session has timed out - Business tax account - GOV.UK"
         }
       }
 
@@ -157,7 +157,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
 
         "render the Not Signed Up page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Business tax account - GOV.UK"
         }
       }
     }

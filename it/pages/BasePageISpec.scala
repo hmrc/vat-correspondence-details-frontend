@@ -39,6 +39,9 @@ trait BasePageISpec extends IntegrationBaseSpec {
   def httpGetAuthenticationTests(path: String, sessionVrn: Option[String] = None): Unit =
     authenticationTests(path, get(path, formatSessionVrn(sessionVrn)))
 
+  def generateDocumentTitle(message: String): String =
+    messages("base.pageTitle",messages(message),messages("common.clientService"))
+
   private def authenticationTests(path: String, method: => WSResponse): Unit = {
 
     "the user is timed out (not authenticated)" should {

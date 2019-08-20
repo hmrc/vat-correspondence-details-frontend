@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import common.{EnrolmentKeys, SessionKeys}
 import config.{AppConfig, ErrorHandler}
 import models.{Agent, User}
+import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core._
@@ -38,7 +39,9 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
                                            notAuthorisedForClientView: NotAuthorisedForClientView,
                                            agentJourneyDisabledView: AgentJourneyDisabledView,
                                            implicit val appConfig: AppConfig,
-                                           override implicit val executionContext: ExecutionContext)
+                                           override implicit val executionContext: ExecutionContext,
+                                           override val messagesApi: MessagesApi)
+
   extends AuthBasePredicate(mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser

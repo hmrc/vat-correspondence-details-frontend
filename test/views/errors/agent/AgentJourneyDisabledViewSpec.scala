@@ -36,7 +36,7 @@ class AgentJourneyDisabledViewSpec extends ViewBaseSpec {
     lazy implicit val document: Document = Jsoup.parse(injectedView().body)
 
     "have the correct document title" in {
-      document.title shouldBe "You cannot change your client’s email address yet"
+      document.title shouldBe "You cannot change your client’s email address yet - Business tax account - GOV.UK"
     }
 
     "have a the correct page heading" in {

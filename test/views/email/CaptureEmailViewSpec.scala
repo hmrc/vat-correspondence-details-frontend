@@ -53,7 +53,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
-          document.title shouldBe "What is the email address?"
+          document.title shouldBe "What is the email address? - Business tax account - GOV.UK"
         }
 
         "have a back link" which {
@@ -133,7 +133,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {
-        document.title shouldBe "Error: What is the email address?"
+        document.title shouldBe "Error: What is the email address? - Business tax account - GOV.UK"
       }
 
       "have a form error box" which {

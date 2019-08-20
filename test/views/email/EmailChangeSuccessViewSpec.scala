@@ -46,7 +46,7 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct page title" in {
-          elementText(Selectors.title) shouldBe "We have received the new email address"
+          elementText(Selectors.title) shouldBe "We have received the new email address - Business tax account - GOV.UK"
         }
 
         "have the correct heading" in {

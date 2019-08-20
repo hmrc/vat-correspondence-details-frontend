@@ -42,7 +42,7 @@ class ConfirmRemoveWebsitePageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("confirmWebsiteRemove.title"))
+            pageTitle(generateDocumentTitle("confirmWebsiteRemove.title"))
           )
         }
       }

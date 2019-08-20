@@ -18,6 +18,6 @@ package assets
 
 object BaseITConstants {
 
-  val internalServerErrorTitle = "There is a problem with the service - VAT reporting through software - GOV.UK"
+  val internalServerErrorTitle = "There is a problem with the service"
 
 }

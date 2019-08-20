@@ -18,6 +18,7 @@ package controllers.predicates
 
 import config.{AppConfig, ErrorHandler}
 import javax.inject.{Inject, Singleton}
+import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import services.EnrolmentsAuthService
 import views.html.errors.{NotSignedUpView, SessionTimeoutView}
@@ -35,4 +36,5 @@ class AuthPredicateComponents @Inject()(val enrolmentsAuthService: EnrolmentsAut
                                         val unauthorisedAgentView: UnauthorisedAgentView,
                                         val notSignedUpView: NotSignedUpView,
                                         val appConfig: AppConfig,
-                                        val executionContext: ExecutionContext)
+                                        val executionContext: ExecutionContext,
+                                        val messagesApi: MessagesApi)
