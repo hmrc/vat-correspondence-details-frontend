@@ -48,7 +48,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
             result should have(
               httpStatus(Status.OK),
-              pageTitle(messages("verifyEmail.title"))
+              pageTitle(generateDocumentTitle("verifyEmail.title"))
             )
           }
         }
@@ -85,7 +85,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.UNAUTHORIZED),
-          pageTitle("You cannot change your client’s email address yet")
+          pageTitle(generateDocumentTitle("You cannot change your client’s email address yet"))
         )
       }
     }
@@ -103,7 +103,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.FORBIDDEN),
-          pageTitle("You can not use this service yet")
+          pageTitle(generateDocumentTitle("You can not use this service yet"))
         )
       }
     }
@@ -170,7 +170,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
             result should have(
               httpStatus(Status.INTERNAL_SERVER_ERROR),
-              pageTitle(internalServerErrorTitle)
+              pageTitle(generateDocumentTitle(internalServerErrorTitle))
             )
           }
         }
@@ -208,7 +208,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.UNAUTHORIZED),
-          pageTitle("You cannot change your client’s email address yet")
+          pageTitle(generateDocumentTitle("You cannot change your client’s email address yet"))
         )
       }
     }
@@ -226,7 +226,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.FORBIDDEN),
-          pageTitle("You can not use this service yet")
+          pageTitle(generateDocumentTitle("You can not use this service yet"))
         )
       }
     }

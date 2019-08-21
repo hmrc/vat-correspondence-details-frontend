@@ -69,7 +69,8 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       notAuthorisedForClientView,
       agentJourneyDisabledView,
       mockConfig,
-      ec
+      ec,
+      messagesApi
     )
 
   implicit val mockAuthPredicateComponents: AuthPredicateComponents = new AuthPredicateComponents(
@@ -82,7 +83,8 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
     unauthorisedAgentView,
     notSignedUpView,
     mockConfig,
-    ec
+    ec,
+    messagesApi
   )
 
   implicit val mockInFlightPredicateComponents: InFlightPredicateComponents = new InFlightPredicateComponents(

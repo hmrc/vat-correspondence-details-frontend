@@ -37,7 +37,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
     lazy implicit val document: Document = Jsoup.parse(injectedView().body)
 
     "have the correct title" in {
-      document.title shouldBe "We are reviewing your request"
+      document.title shouldBe "We are reviewing your request - Business tax account - GOV.UK"
     }
 
     "have the correct heading" in {

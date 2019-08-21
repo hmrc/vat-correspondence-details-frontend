@@ -49,8 +49,8 @@ class CaptureContactNumbersPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("captureContactNumbers.title"))
-          )
+            pageTitle(generateDocumentTitle("captureContactNumbers.title"))
+           )
         }
 
         "add the existing contact numbers to the session" in {

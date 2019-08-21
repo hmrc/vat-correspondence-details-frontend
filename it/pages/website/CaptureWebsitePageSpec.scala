@@ -48,7 +48,7 @@ class CaptureWebsitePageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("captureWebsite.title"))
+            pageTitle(generateDocumentTitle("captureWebsite.title"))
           )
         }
 

@@ -52,7 +52,7 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the correct page title" in {
-            elementText(Selectors.title) shouldBe "Request to change telephone numbers received"
+            elementText(Selectors.title) shouldBe "Request to change telephone numbers received - Business tax account - GOV.UK"
           }
 
           "have the correct heading" in {
@@ -114,7 +114,7 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct page title" in {
-          elementText(Selectors.title) shouldBe "Request to change telephone numbers received"
+          elementText(Selectors.title) shouldBe "Request to change telephone numbers received - Your client’s VAT details - GOV.UK"
         }
 
         "have the correct heading" in {
@@ -150,7 +150,7 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct page title" in {
-          elementText(Selectors.title) shouldBe "Request to change telephone numbers received"
+          elementText(Selectors.title) shouldBe "Request to change telephone numbers received - Your client’s VAT details - GOV.UK"
         }
 
         "have the correct heading" in {
@@ -181,7 +181,7 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct page title" in {
-          elementText(Selectors.title) shouldBe "Request to change telephone numbers received"
+          elementText(Selectors.title) shouldBe "Request to change telephone numbers received - Your client’s VAT details - GOV.UK"
         }
 
         "have the correct heading" in {

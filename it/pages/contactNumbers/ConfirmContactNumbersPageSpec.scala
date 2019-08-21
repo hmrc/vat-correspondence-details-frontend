@@ -46,7 +46,7 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("confirmPhoneNumbers.title"))
+            pageTitle(generateDocumentTitle("confirmPhoneNumbers.title"))
           )
         }
       }
@@ -61,7 +61,7 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("confirmPhoneNumbers.title"))
+            pageTitle(generateDocumentTitle("confirmPhoneNumbers.title"))
           )
         }
       }
@@ -76,7 +76,7 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("confirmPhoneNumbers.title"))
+            pageTitle(generateDocumentTitle("confirmPhoneNumbers.title"))
           )
         }
       }

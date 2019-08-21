@@ -19,6 +19,7 @@ package controllers.predicates
 import common.EnrolmentKeys
 import config.AppConfig
 import models.User
+import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolments, NoActiveSession}
 import uk.gov.hmrc.auth.core.retrieve._
@@ -31,6 +32,7 @@ class AuthPredicate(authComps: AuthPredicateComponents,
   extends AuthBasePredicate(authComps.mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+  override implicit val messagesApi: MessagesApi = authComps.messagesApi
 
   implicit val appConfig: AppConfig = authComps.appConfig
   implicit val executionContext: ExecutionContext = authComps.executionContext

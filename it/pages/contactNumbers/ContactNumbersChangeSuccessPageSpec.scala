@@ -46,7 +46,7 @@ class ContactNumbersChangeSuccessPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(messages("contactNumbersChangeSuccess.title"))
+            pageTitle(generateDocumentTitle("contactNumbersChangeSuccess.title"))
           )
         }
       }

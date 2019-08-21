@@ -76,6 +76,10 @@
   }
 }
 
+@pageTitle = @{
+  messages("base.pageTitle", title, navTitle)
+}
+
 @insideHeader = {
   @headerNav(
     navTitle = Some(navTitle),
@@ -163,4 +167,4 @@
   )
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(headContent, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks()), true)(content)
+@hmrcGovUkTemplate(Some(pageTitle), bodyClasses)(headContent, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks()), true)(content)

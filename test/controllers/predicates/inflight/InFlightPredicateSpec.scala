@@ -65,7 +65,7 @@ class InFlightPredicateSpec extends MockAuth {
         }
 
         "show the 'PPOB change pending' error page" in {
-          messages(document.title) shouldBe "We are reviewing your request"
+          messages(document.title) shouldBe "We are reviewing your request - Business tax account - GOV.UK"
         }
 
         "not call the VatSubscriptionService" in {
@@ -122,7 +122,7 @@ class InFlightPredicateSpec extends MockAuth {
         }
 
         "show the 'PPOB change pending' error page" in {
-          messages(document.title) shouldBe "We are reviewing your request"
+          messages(document.title) shouldBe "We are reviewing your request - Business tax account - GOV.UK"
         }
       }
 

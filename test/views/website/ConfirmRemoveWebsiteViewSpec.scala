@@ -32,44 +32,59 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec {
     val cancelLink = ".content__body > p:nth-child(3) > a:nth-child(1)"
   }
 
-  "The Confirm Website view" should {
-    lazy val view = injectedView(testWebsite)
-    lazy implicit val document: Document = Jsoup.parse(view.body)
+  "The Confirm Website view" when {
 
-    "have the correct document title" in {
-      document.title shouldBe "Confirm you want to remove the website address"
-    }
+    "the user is a priciple entity" should {
 
-    "have the correct heading" in {
-      elementText(Selectors.heading) shouldBe s"Confirm you want to remove the website address: $testWebsite"
-    }
+      lazy val view = injectedView(testWebsite)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    "have a back link" which {
-
-      "should have the correct text" in {
-        elementText(Selectors.backLink) shouldBe "Back"
+      "have the correct document title" in {
+        document.title shouldBe "Confirm you want to remove the website address - Business tax account - GOV.UK"
       }
 
-      "should have the correct back link" in {
-        element(Selectors.backLink).attr("href") shouldBe controllers.website.routes.CaptureWebsiteController.show().url
+      "have the correct heading" in {
+        elementText(Selectors.heading) shouldBe s"Confirm you want to remove the website address: $testWebsite"
+      }
+
+      "have a back link" which {
+
+        "should have the correct text" in {
+          elementText(Selectors.backLink) shouldBe "Back"
+        }
+
+        "should have the correct back link" in {
+          element(Selectors.backLink).attr("href") shouldBe controllers.website.routes.CaptureWebsiteController.show().url
+        }
+      }
+
+      "have a cancel link" which {
+
+        "has the correct text" in {
+          elementText(Selectors.cancelLink) shouldBe "Cancel"
+        }
+
+        "has the correct link" in {
+          element(Selectors.cancelLink).attr("href") shouldBe "mockManageVatOverviewUrl"
+        }
+      }
+
+      "have a continue button" which {
+
+        "has the correct text" in {
+          elementText(Selectors.continueButton) shouldBe "Confirm and continue"
+        }
       }
     }
+    "the user is an agent" should {
 
-    "have a cancel link" which {
+      "there are no errors in the form" should {
+        val view = injectedView(testWebsite)(agent, messages, mockConfig)
+        implicit val document: Document = Jsoup.parse(view.body)
 
-      "has the correct text" in {
-        elementText(Selectors.cancelLink) shouldBe "Cancel"
-      }
-
-      "has the correct link" in {
-        element(Selectors.cancelLink).attr("href") shouldBe "mockManageVatOverviewUrl"
-      }
-    }
-
-    "have a continue button" which {
-
-      "has the correct text" in {
-        elementText(Selectors.continueButton) shouldBe "Confirm and continue"
+        "have the correct title" in {
+          document.title shouldBe "Confirm you want to remove the website address - Your client’s VAT details - GOV.UK"
+        }
       }
     }
   }

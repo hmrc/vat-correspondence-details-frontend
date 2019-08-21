@@ -2,6 +2,7 @@ base.signOut = Sign out
 base.back = Back
 base.confirmAndContinue = Confirm and continue
 base.finish = Finish
+base.pageTitle = {0} - {1} - GOV.UK
 
 banner.newService = This is a new service – your
 banner.feedback = feedback
@@ -20,7 +21,7 @@ common.agent.updateClient1 = We’ll also contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
 
-standardError.title = There is a problem with the service - VAT reporting through software - GOV.UK
+standardError.title = There is a problem with the service
 standardError.heading = Sorry, there is a problem with the service
 standardError.message = Try again later.
 
