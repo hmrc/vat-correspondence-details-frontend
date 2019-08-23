@@ -18,14 +18,13 @@ package mocks
 
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{any, eq => argEq}
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.VatSubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {
   this: Suite =>
@@ -38,30 +37,17 @@ trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {
   val mockVatSubscriptionService: VatSubscriptionService = mock[VatSubscriptionService]
 
   def mockUpdateEmailAddress(vrn: String, email: String)(response: Future[UpdatePPOBResponse]): Unit =
-    when(mockVatSubscriptionService.updateEmail(
-      ArgumentMatchers.eq(vrn),
-      ArgumentMatchers.eq(email)
-    )(ArgumentMatchers.any[HeaderCarrier],
-      ArgumentMatchers.any[ExecutionContext])) thenReturn response
+    when(mockVatSubscriptionService.updateEmail(argEq(vrn), argEq(email))(any(), any(), any())) thenReturn response
 
   def mockUpdateWebsite(vrn: String, website: String)(response: Future[UpdatePPOBResponse]): Unit =
-    when(mockVatSubscriptionService.updateWebsite(
-      ArgumentMatchers.eq(vrn),
-      ArgumentMatchers.eq(website)
-    )(ArgumentMatchers.any[HeaderCarrier],
-      ArgumentMatchers.any[ExecutionContext])) thenReturn response
+    when(mockVatSubscriptionService.updateWebsite(argEq(vrn), argEq(website))(any(), any(), any())) thenReturn response
 
-  def mockUpdatePhoneNumbers(vrn: String, landline: Option[String], mobile: Option[String])(response: Future[UpdatePPOBResponse]): Unit =
+  def mockUpdatePhoneNumbers(vrn: String, landline: Option[String], mobile: Option[String])
+                            (response: Future[UpdatePPOBResponse]): Unit =
     when(mockVatSubscriptionService.updateContactNumbers(
-      ArgumentMatchers.eq(vrn),
-      ArgumentMatchers.eq(landline),
-      ArgumentMatchers.eq(mobile)
-    )(ArgumentMatchers.any[HeaderCarrier],
-      ArgumentMatchers.any[ExecutionContext])) thenReturn response
+      argEq(vrn), argEq(landline), argEq(mobile))(any(), any(), any())
+    ) thenReturn response
 
   def mockGetCustomerInfo(vrn: String)(response: Future[GetCustomerInfoResponse]): Unit =
-    when(mockVatSubscriptionService.getCustomerInfo(
-      ArgumentMatchers.eq(vrn)
-    )(ArgumentMatchers.any[HeaderCarrier],
-      ArgumentMatchers.any[ExecutionContext])) thenReturn response
+    when(mockVatSubscriptionService.getCustomerInfo(argEq(vrn))(any(), any())) thenReturn response
 }

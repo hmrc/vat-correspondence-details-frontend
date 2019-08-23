@@ -16,10 +16,12 @@
 
 package connectors
 
+import common.SessionKeys
 import config.AppConfig
 import connectors.httpParsers.ResponseHttpParser.{HttpGetResult, HttpPutResult}
 import javax.inject.{Inject, Singleton}
-import models.customerInformation.{CustomerInformation, PPOB, UpdatePPOBSuccess}
+import models.User
+import models.customerInformation.{CustomerInformation, PPOB, UpdatePPOB, UpdatePPOBSuccess}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.LoggerUtil.{logDebug, logWarn}
@@ -52,11 +54,17 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
   }
 
   def updatePPOB(vrn: String, ppob: PPOB)
-                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpPutResult[UpdatePPOBSuccess]] = {
+                (implicit hc: HeaderCarrier,
+                 ec: ExecutionContext,
+                 user: User[_]): Future[HttpPutResult[UpdatePPOBSuccess]] = {
 
     import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads
 
-    http.PUT[PPOB, HttpPutResult[UpdatePPOBSuccess]](updatePPOBUrl(vrn), ppob).map {
+    val updateModel = UpdatePPOB(
+      ppob.address, ppob.contactDetails, ppob.websiteAddress, user.session.get(SessionKeys.verifiedAgentEmail)
+    )
+
+    http.PUT[UpdatePPOB, HttpPutResult[UpdatePPOBSuccess]](updatePPOBUrl(vrn), updateModel).map {
       case result@Right(_) =>
         result
       case httpError@Left(error) =>

@@ -25,12 +25,14 @@ import utils.TestUtil
 
 import scala.concurrent.Future
 import assets.BaseTestConstants._
+import models.User
+import play.api.mvc.AnyContentAsEmpty
 
 class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnector with MockEmailVerificationService {
 
   val service = new VatSubscriptionService(connector, mockEmailVerificationService)
-
   val testVrn: String   = "123456789"
+  implicit val testUser: User[AnyContentAsEmpty.type] = user
 
   "calling getCustomerInfo" when {
 

@@ -20,6 +20,7 @@ import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import javax.inject.{Inject, Singleton}
+import models.User
 import models.customerInformation.{ContactDetails, PPOB, UpdatePPOBSuccess}
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -56,7 +57,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     connector.getCustomerInfo(vrn)
 
   def updateEmail(vrn: String, email: String)
-                 (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[UpdatePPOBResponse] =
+                 (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
 
     emailVerificationService.isEmailVerified(email) flatMap {
       case Some(true) =>
@@ -69,14 +70,14 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     }
 
   def updateWebsite(vrn: String, website: String)
-                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdatePPOBResponse] =
+                   (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
     connector.getCustomerInfo(vrn).flatMap {
       case Right(customerInfo) => connector.updatePPOB(vrn, buildWebsiteUpdateModel(website, customerInfo.ppob))
       case Left(error) => Future.successful(Left(error))
     }
 
   def updateContactNumbers(vrn: String, landline: Option[String], mobile: Option[String])
-                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdatePPOBResponse] =
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
     connector.getCustomerInfo(vrn).flatMap {
       case Right(customerInfo) =>
         connector.updatePPOB(vrn, buildPhoneNumbersUpdateModel(landline, mobile, customerInfo.ppob))
