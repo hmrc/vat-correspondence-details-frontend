@@ -9,7 +9,7 @@ banner.feedback = feedback
 banner.feedbackImprove = will help us to improve it.
 banner.phaseName = BETA
 
-common.clientService = Business tax account
+common.clientService = VAT
 common.agentService = Your client’s VAT details
 common.continue = Continue
 common.error.heading = There is a problem
