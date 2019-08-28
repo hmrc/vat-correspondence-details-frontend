@@ -31,12 +31,14 @@ class AgentJourneyDisabledViewSpec extends ViewBaseSpec {
     val instructions = "p:nth-child(3)"
     val signOutButton = ".button"
   }
+
   "Rendering the agent journey disabled page" should {
 
-    lazy implicit val document: Document = Jsoup.parse(injectedView().body)
+    lazy val view = injectedView()(agent, messages, mockConfig)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct document title" in {
-      document.title shouldBe "You cannot change your client’s email address yet - Business tax account - GOV.UK"
+      document.title shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
     }
 
     "have a the correct page heading" in {

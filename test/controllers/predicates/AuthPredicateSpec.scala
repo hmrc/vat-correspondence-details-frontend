@@ -16,7 +16,6 @@
 
 package controllers.predicates
 
-import assets.BaseTestConstants.internalServerErrorTitle
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -56,7 +55,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
                 implicit request => Future.successful(Ok("test"))
               }
 
-            lazy val result = await(blockAgentPredicate(fakeRequestWithClientsVRN))
+            lazy val result = await(blockAgentPredicate(agent))
 
             "return Unauthorized (401)" in {
               mockAgentAuthorised()
@@ -64,13 +63,13 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "show the agent journey disabled page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Business tax account - GOV.UK"
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
             }
           }
 
           "the Agent does NOT have an Active HMRC-AS-AGENT enrolment" should {
 
-            lazy val result = await(allowAgentPredicate(fakeRequestWithClientsVRN))
+            lazy val result = await(allowAgentPredicate(agent))
 
             "return Forbidden" in {
               mockConfig.features.agentAccessEnabled(true)
@@ -79,14 +78,14 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
             }
 
             "render the Unauthorised Agent page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Business tax account - GOV.UK"
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Your client’s VAT details - GOV.UK"
             }
           }
         }
 
         "the agent access feature is disabled" should {
 
-          lazy val result = await(allowAgentPredicate(fakeRequestWithClientsVRN))
+          lazy val result = await(allowAgentPredicate(agent))
 
           "return Unauthorized (401)" in {
             mockConfig.features.agentAccessEnabled(false)
@@ -95,7 +94,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
           }
 
           "show the agent journey disabled page" in {
-            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Business tax account - GOV.UK"
+            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
           }
         }
       }
@@ -110,7 +109,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
       "a no active session result is returned from Auth" should {
 
-        lazy val result = await(allowAgentPredicate(fakeRequestWithClientsVRN))
+        lazy val result = await(allowAgentPredicate(agent))
 
         "return Unauthorised (401)" in {
           mockMissingBearerToken()
@@ -118,13 +117,13 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
 
         "render the Unauthorised page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Your session has timed out - Business tax account - GOV.UK"
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Your session has timed out - Your client’s VAT details - GOV.UK"
         }
       }
 
       "an authorisation exception is returned from Auth" should {
 
-        lazy val result = await(allowAgentPredicate(fakeRequestWithClientsVRN))
+        lazy val result = await(allowAgentPredicate(agent))
 
         "return Internal Server Error (500)" in {
           mockAuthorisationException()
@@ -132,7 +131,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
 
         "render the Unauthorised page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "There is a problem with the service - Your client’s VAT details - GOV.UK"
         }
       }
     }
@@ -149,7 +148,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
       "they do NOT have an active HMRC-MTD-VAT enrolment" should {
 
-        lazy val result = await(allowAgentPredicate(request))
+        lazy val result = await(allowAgentPredicate(user))
 
         "return Forbidden (403)" in {
           mockIndividualWithoutEnrolment()

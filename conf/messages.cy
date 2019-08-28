@@ -12,8 +12,9 @@ banner.phaseName = BETA
 feedback.title = Adborth
 feedbackThanks.title = Diolch
 
-common.clientService = TAW
+common.clientService = Cyfrif Treth Busnes
 common.agentService = Manylion TAW eich cleient
+common.makingTaxDigitalForVat = TAW
 common.continue = Yn eich blaen
 common.error.heading = Mae problem wedi codi
 common.whatHappensNext = Yr hyn sy’n digwydd nesaf

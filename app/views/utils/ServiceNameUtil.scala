@@ -25,7 +25,7 @@ object ServiceNameUtil{
   def generateHeader(implicit request: Request[_], messages: Messages): String = {
     request match {
       case user: User[_] => if (user.isAgent) messages("common.agentService") else messages("common.clientService")
-      case _ => messages("common.clientService")
+      case _ => messages("common.makingTaxDigitalForVat")
     }
   }
 

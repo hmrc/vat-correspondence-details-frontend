@@ -35,7 +35,7 @@ class ConfirmWebsiteViewSpec extends ViewBaseSpec {
 
   "The Confirm Website view" when {
     "the user is a principle entity" should {
-      lazy val view = injectedView(testWebsite)
+      lazy val view = injectedView(testWebsite)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {

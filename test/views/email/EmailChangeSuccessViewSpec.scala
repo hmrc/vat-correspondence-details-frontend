@@ -41,7 +41,7 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
 
       "the contact preference is Digital" should {
 
-        lazy val view = injectedView(Some(ContactPreference.digital))(request, messages, mockConfig)
+        lazy val view = injectedView(Some(ContactPreference.digital))(user, messages, mockConfig)
 
         lazy implicit val document: Document = Jsoup.parse(view.body)
 

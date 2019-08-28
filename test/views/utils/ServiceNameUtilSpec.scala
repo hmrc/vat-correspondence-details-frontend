@@ -24,22 +24,22 @@ class ServiceNameUtilSpec extends TestUtil {
 
     "given a User who is an Agent" should {
 
-      s"return the agent service name Update your client’s VAT details" in {
-        ServiceNameUtil.generateHeader(agent,messages) shouldBe "Your client’s VAT details"
+      "return the agent service name Update your client’s VAT details" in {
+        ServiceNameUtil.generateHeader(agent, messages) shouldBe "Your client’s VAT details"
       }
     }
 
     "given a User who is not an Agent" should {
 
-      s"return the client service name Business tax account" in {
-        ServiceNameUtil.generateHeader(user,messages) shouldBe "Business tax account"
+      "return the client service name Business tax account" in {
+        ServiceNameUtil.generateHeader(user, messages) shouldBe "Business tax account"
       }
     }
 
     "NOT given a user" should {
 
-      s"return the client service name Business tax account" in {
-        ServiceNameUtil.generateHeader(request,messages) shouldBe "Business tax account"
+      "return the client service name Business tax account" in {
+        ServiceNameUtil.generateHeader(request, messages) shouldBe "VAT"
       }
     }
 

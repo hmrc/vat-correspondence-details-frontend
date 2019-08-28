@@ -47,7 +47,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
 
         "the user already has a website in ETMP" should {
           lazy val view: Html =
-            injectedView(websiteForm(testWebsite).fill(testWebsite), websiteNotChangedError = false, testWebsite)
+            injectedView(websiteForm(testWebsite).fill(testWebsite), websiteNotChangedError = false, testWebsite)(user, messages, mockConfig)
 
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
