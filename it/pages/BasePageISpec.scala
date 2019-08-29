@@ -47,7 +47,7 @@ trait BasePageISpec extends IntegrationBaseSpec {
       isAgent match {
         case Some(agent) =>
           if (agent) messages("common.agentService") else messages("common.clientService")
-        case _ => messages("common.makingTaxDigitalForVat")
+        case _ => messages("common.vat")
       }
     )
 
