@@ -34,7 +34,8 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
 
   "The PPOB change pending view" should {
 
-    lazy implicit val document: Document = Jsoup.parse(injectedView().body)
+    lazy val view = injectedView()(user, messages, mockConfig)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct title" in {
       document.title shouldBe "We are reviewing your request - Business tax account - GOV.UK"

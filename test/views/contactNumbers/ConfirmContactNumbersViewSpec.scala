@@ -40,7 +40,7 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
 
     "the user is  principle entity" should {
 
-      lazy val view = injectedView(testPrepopLandline, testPrepopMobile)
+      lazy val view = injectedView(testPrepopLandline, testPrepopMobile)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {

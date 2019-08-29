@@ -18,10 +18,12 @@ package views.errors.agent
 
 import java.net.URLEncoder
 
-import assets.BaseTestConstants.vrn
+import assets.BaseTestConstants.{arn, vrn}
 import common.EnrolmentKeys
+import models.User
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.AnyContentAsEmpty
 import views.ViewBaseSpec
 import views.html.errors.agent.NotAuthorisedForClientView
 
@@ -45,26 +47,28 @@ class NotAuthorisedForClientViewSpec extends ViewBaseSpec {
       val button = "#content .button"
     }
 
-    lazy val view = injectedView(vrn)(request, messages, mockConfig)
+    lazy val agent: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true, Some(arn))
+
+    lazy val view = injectedView(vrn)(agent, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    s"have the correct document title" in {
-      document.title shouldBe "You are not authorised for this client - Business tax account - GOV.UK"
+    "have the correct document title" in {
+      document.title shouldBe "You are not authorised for this client - Your client’s VAT details - GOV.UK"
     }
 
-    s"have a the correct page heading" in {
+    "have a the correct page heading" in {
       elementText(Selectors.pageHeading) shouldBe "You are not authorised for this client"
     }
 
-    s"have the correct instructions on the page" in {
+    "have the correct instructions on the page" in {
       elementText(Selectors.instructions) shouldBe "To use this service, your client needs to authorise you as their agent."
     }
 
-    s"have the correct content for trying again" in {
+    "have the correct content for trying again" in {
       elementText(Selectors.tryAgain) shouldBe "If you think you have entered the wrong details you can try again."
     }
 
-    s"have a link to agent client sign up" in {
+    "have a link to agent client sign up" in {
       element(Selectors.tryAgainLink).attr("href") shouldBe "mockManageVatOverviewUrl"
     }
 
@@ -101,11 +105,11 @@ class NotAuthorisedForClientViewSpec extends ViewBaseSpec {
       }
     }
 
-    s"have a Sign out button" in {
+    "have a Sign out button" in {
       elementText(Selectors.button) shouldBe "Sign out"
     }
 
-    s"have a link to sign out" in {
+    "have a link to sign out" in {
       element(Selectors.button).attr("href") shouldBe
         controllers.routes.SignOutController.signOut(feedbackOnSignOut = false).url
     }

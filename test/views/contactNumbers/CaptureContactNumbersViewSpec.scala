@@ -30,11 +30,11 @@ class CaptureContactNumbersViewSpec extends ViewBaseSpec {
 
   "The Capture Contact Numbers page" when {
 
-    "the user is  principle entity" when {
+    "the user is principle entity" when {
 
       "there are no errors in the form" should {
 
-        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))
+        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
@@ -73,7 +73,8 @@ class CaptureContactNumbersViewSpec extends ViewBaseSpec {
       }
 
       "there are errors in the form" should {
-        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile).withError("landlineNumber", "Enter a different phone number"))
+        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile)
+          .withError("landlineNumber", "Enter a different phone number"))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
         "have the correct document title" in {
           document.title shouldBe "Error: Change telephone numbers - Business tax account - GOV.UK"

@@ -48,7 +48,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
       "the user already has an email address in ETMP" should {
         lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail),
-          emailNotChangedError = false, currentEmail = testEmail)
+          emailNotChangedError = false, currentEmail = testEmail)(user, messages, mockConfig)
 
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -108,7 +108,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       }
 
       "the user has no email address in ETMP" should {
-        lazy val view: Html = injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = "")
+        lazy val view: Html = injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = "")(user, messages, mockConfig)
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the email text field with no pre-populated value" in {
@@ -129,7 +129,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
     "the form has the email unchanged error" should {
       lazy val view = injectedView(emailForm(testEmail).bind(Map("email" -> testEmail)),
-        emailNotChangedError = true, currentEmail = testEmail)
+        emailNotChangedError = true, currentEmail = testEmail)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {

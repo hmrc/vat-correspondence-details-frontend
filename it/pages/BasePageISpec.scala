@@ -26,10 +26,13 @@ trait BasePageISpec extends IntegrationBaseSpec {
 
   def formatSessionVrn: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.clientVrn -> x))
+
   def formatValidationEmail: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.validationEmailKey -> x))
+
   def formatEmail: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.prepopulationEmailKey -> x))
+
   def formatInflightChange: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.inFlightContactDetailsChangeKey -> x))
 
@@ -39,8 +42,15 @@ trait BasePageISpec extends IntegrationBaseSpec {
   def httpGetAuthenticationTests(path: String, sessionVrn: Option[String] = None): Unit =
     authenticationTests(path, get(path, formatSessionVrn(sessionVrn)))
 
-  def generateDocumentTitle(message: String): String =
-    messages("base.pageTitle",messages(message),messages("common.clientService"))
+  def generateDocumentTitle(message: String, isAgent: Option[Boolean] = Some(false)): String =
+    messages("base.pageTitle", messages(message),
+      isAgent match {
+        case Some(agent) =>
+          if (agent) messages("common.agentService") else messages("common.clientService")
+        case _ => messages("common.vat")
+      }
+    )
+
 
   private def authenticationTests(path: String, method: => WSResponse): Unit = {
 

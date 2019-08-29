@@ -98,7 +98,7 @@ class CaptureEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.UNAUTHORIZED),
-          pageTitle(generateDocumentTitle("You cannot change your client’s email address yet"))
+          elementText("h1")("You cannot change your client’s email address yet")
         )
       }
     }
@@ -114,7 +114,7 @@ class CaptureEmailPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.FORBIDDEN),
-          pageTitle(generateDocumentTitle("You can not use this service yet"))
+          pageTitle(generateDocumentTitle("You can not use this service yet", isAgent = None))
         )
       }
     }

@@ -32,7 +32,8 @@ class NotFoundViewSpec extends ViewBaseSpec {
 
   "Rendering the not found page" should {
 
-    lazy implicit val document: Document = Jsoup.parse(injectedView().body)
+    lazy val view = injectedView()(mockConfig, user, messages)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct document title" in {
       document.title shouldBe "Page not found - Business tax account - GOV.UK"
