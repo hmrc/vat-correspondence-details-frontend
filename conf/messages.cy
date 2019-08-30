@@ -91,3 +91,12 @@ inFlightPPOBChange.title = Rydym wrthi’n adolygu’ch cais
 inFlightPPOBChange.heading = Mae gennych newid ar y gweill yn barod
 inFlightPPOBChange.infoOne = Rydych wedi gwneud cais i newid y prif fan busnes yn barod. Tra bo’r newid hwn ar y gweill, ni allwch newid eich cyfeiriad e-bost.
 inFlightPPOBChange.infoTwo = Byddwn fel arfer yn diweddaru’ch manylion cyn pen 2 ddiwrnod gwaith.
+
+inFlightChange.title = Mae gennych newid ar y gweill yn barod
+inFlightChange.recentlyRequested = Gwnaethoch gais yn ddiweddar i newid {0}.
+inFlightChange.changePending = Mae’r newid hwn ar y gwell a hyd nes y caiff ei gadarnhau, ni allwch newid eich:
+inFlightChange.ppob = prif leoliad busnes
+inFlightChange.email = cyfeiriad e-bost y busnes
+inFlightChange.telephone = rhif ffôn y busnes
+inFlightChange.website = cyfeiriad we y busnes
+inFlightChange.emailAddress = cyfeiriad e-bost
