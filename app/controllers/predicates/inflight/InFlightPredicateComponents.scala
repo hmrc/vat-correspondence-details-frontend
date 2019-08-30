@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import services.VatSubscriptionService
-import views.html.errors.InFlightChangeView
+import views.html.errors.InFlightPPOBView
 
 import scala.concurrent.ExecutionContext
 
@@ -30,6 +30,6 @@ class InFlightPredicateComponents @Inject()(val vatSubscriptionService: VatSubsc
                                             val errorHandler: ErrorHandler,
                                             val messagesApi: MessagesApi,
                                             val mcc: MessagesControllerComponents,
-                                            val inFlightChangeView: InFlightChangeView,
+                                            val inFlightPPOBView: InFlightPPOBView,
                                             val appConfig: AppConfig,
                                             val ec: ExecutionContext)

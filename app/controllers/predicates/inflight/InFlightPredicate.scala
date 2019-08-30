@@ -41,7 +41,7 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
     implicit val req: User[A] = request
 
     req.session.get(inFlightContactDetailsChangeKey) match {
-      case Some("true") => Future.successful(Left(Conflict(inFlightComps.inFlightChangeView())))
+      case Some("true") => Future.successful(Left(Conflict(inFlightComps.inFlightPPOBView())))
       case Some("false") => Future.successful(Right(req))
       case Some(_) => Future.successful(Left(inFlightComps.errorHandler.showInternalServerError))
       case None => getCustomerInfoCall(req.vrn)
@@ -58,7 +58,7 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
               case (true, false) =>
                 logWarn("[InFlightBasePredicate][getCustomerInfoCall] - " +
                   "There is an in-flight PPOB address change. Rendering graceful error page.")
-                Left(Conflict(inFlightComps.inFlightChangeView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
+                Left(Conflict(inFlightComps.inFlightPPOBView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
               case (_, true) =>
                 logWarn("[InFlightBasePredicate][getCustomerInfoCall] - " +
                   "There is an in-flight email address change. Redirecting to Manage VAT homepage")
