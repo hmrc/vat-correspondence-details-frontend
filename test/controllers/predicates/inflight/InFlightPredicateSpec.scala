@@ -55,17 +55,17 @@ class InFlightPredicateSpec extends MockAuth {
 
     "there is an inflight indicator in session" when {
 
-      "the inflight indicator is set to 'true'" should {
+      "the inflight indicator is set to a change value" should {
 
-        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("true"))).left.get
+        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("ppob"))).left.get
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 409" in {
           status(result) shouldBe Status.CONFLICT
         }
 
-        "show the 'PPOB change pending' error page" in {
-          messages(document.title) shouldBe "We are reviewing your request - Business tax account - GOV.UK"
+        "show the 'change pending' error page" in {
+          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
         }
 
         "not call the VatSubscriptionService" in {
@@ -117,12 +117,12 @@ class InFlightPredicateSpec extends MockAuth {
           status(result) shouldBe Status.CONFLICT
         }
 
-        "add the inflight indicator 'true' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("true")
+        "add the inflight indicator 'ppob' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("ppob")
         }
 
-        "show the 'PPOB change pending' error page" in {
-          messages(document.title) shouldBe "We are reviewing your request - Business tax account - GOV.UK"
+        "show the 'change pending' error page" in {
+          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
         }
       }
 
@@ -132,17 +132,18 @@ class InFlightPredicateSpec extends MockAuth {
           setup(Right(customerInfoPendingEmailModel))
           await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
+        lazy val document = Jsoup.parse(bodyOf(result))
 
-        "return 303" in {
-          status(result) shouldBe Status.SEE_OTHER
+        "return 409" in {
+          status(result) shouldBe Status.CONFLICT
         }
 
-        "add the inflight indicator 'true' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("true")
+        "add the inflight indicator 'email' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("email")
         }
 
-        "redirect to 'mockManageVatOverviewUrl'" in {
-          redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+        "show the 'change pending' error page" in {
+          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
         }
       }
 

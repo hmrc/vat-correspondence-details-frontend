@@ -30,36 +30,85 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
     val paragraphOne = "article > p:nth-child(3)"
     val paragraphTwo = "article > p:nth-child(4)"
     val backLink = ".link-back"
+    def listItem(num: Int): String = s"#content > article > ul > li:nth-child($num)"
   }
 
-  "The PPOB change pending view" should {
+  "The Inflight change pending view" when {
 
-    lazy val view = injectedView()(user, messages, mockConfig)
-    lazy implicit val document: Document = Jsoup.parse(view.body)
+    "the pending change is PPOB" should {
 
-    "have the correct title" in {
-      document.title shouldBe "We are reviewing your request - Business tax account - GOV.UK"
+      lazy val view = injectedView("ppob")
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have the correct title" in {
+        document.title shouldBe "You already have a change pending - VAT - GOV.UK"
+      }
+
+      "have the correct heading" in {
+        elementText(Selectors.heading) shouldBe "You already have a change pending"
+      }
+
+      "have the correct information in the first paragraph" in {
+        elementText(Selectors.paragraphOne) shouldBe
+          "You recently requested to change the principal place of business."
+      }
+
+      "have the correct information in the second paragraph" in {
+        elementText(Selectors.paragraphTwo) shouldBe
+          "This change is pending and until this is confirmed, you cannot change your:"
+      }
+
+      "have the correct list" which {
+
+        "has the correct first item" in {
+          elementText(Selectors.listItem(1)) shouldBe "principal place of business"
+        }
+
+        "has the correct second item" in {
+          elementText(Selectors.listItem(2)) shouldBe "email address"
+        }
+      }
+
+      "have the correct text for the back link" in {
+        elementText(Selectors.backLink) shouldBe "Back"
+      }
+
+      "have the correct back link location" in {
+        element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
+      }
     }
 
-    "have the correct heading" in {
-      elementText(Selectors.heading) shouldBe "You already have a change pending"
+    "the pending change is email address" should {
+
+      lazy val view = injectedView("email")
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have the correct information in the first paragraph" in {
+        elementText(Selectors.paragraphOne) shouldBe
+          "You recently requested to change the business email address."
+      }
     }
 
-    "have the correct information in the first paragraph" in {
-      elementText(Selectors.paragraphOne) shouldBe "You have already requested to change the principal place " +
-        "of business. While this change is pending you are unable to change your email address."
+    "the pending change is telephone numbers" should {
+
+      lazy val view = injectedView("telephone")
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have the correct information in the first paragraph" in {
+        elementText(Selectors.paragraphOne) shouldBe
+          "You recently requested to change the business telephone numbers."
+      }
     }
 
-    "have the correct information in the second paragraph" in {
-      elementText(Selectors.paragraphTwo) shouldBe "We will usually update your details within 2 working days."
-    }
+    "the pending change is website address" should {
 
-    "have the correct text for the back link" in {
-      elementText(Selectors.backLink) shouldBe "Back"
-    }
+      lazy val view = injectedView("website")
+      lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    "have the correct back link location" in {
-      element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
+      "have the correct information in the first paragraph" in {
+        elementText(Selectors.paragraphOne) shouldBe
+          "You recently requested to change the business website address."
+      }
     }
   }
 }
