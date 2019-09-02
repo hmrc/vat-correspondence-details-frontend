@@ -79,13 +79,13 @@ class ConfirmContactNumbersController @Inject()(val errorHandler: ErrorHandler,
           case Right(UpdatePPOBSuccess(_)) =>
             Redirect(routes.ContactNumbersChangeSuccessController.show())
               .removingFromSession(prepopulationLandlineKey, prepopulationMobileKey, validationMobileKey, validationLandlineKey)
-              .addingToSession(phoneNumberChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
+              .addingToSession(phoneNumberChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "telephone")
 
           case Left(ErrorModel(CONFLICT, _)) =>
             logWarn("[ConfirmPhoneNumbersController][updatePhoneNumbers] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "true")
+              .addingToSession(inFlightContactDetailsChangeKey -> "telephone")
 
           case Left(_) =>
             errorHandler.showInternalServerError

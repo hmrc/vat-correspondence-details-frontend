@@ -167,7 +167,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
             )
           }
 
-          "remove the email, validationEmail and inflightPPOBKey from session" in {
+          "remove the prepopulationEmail and validationEmail from session" in {
 
             given.user.isAuthenticated
 
@@ -185,7 +185,6 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.prepopulationEmailKey) shouldBe None
             SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.validationEmailKey) shouldBe None
-            SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe None
           }
         }
 

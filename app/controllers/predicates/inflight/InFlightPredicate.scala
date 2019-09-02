@@ -41,9 +41,9 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
     implicit val req: User[A] = request
 
     req.session.get(inFlightContactDetailsChangeKey) match {
-      case Some("true") => Future.successful(Left(Conflict(inFlightComps.inFlightPPOBView())))
       case Some("false") => Future.successful(Right(req))
-      case Some(_) => Future.successful(Left(inFlightComps.errorHandler.showInternalServerError))
+      case Some("error") => Future.successful(Left(inFlightComps.errorHandler.showInternalServerError))
+      case Some(change) => Future.successful(Left(Conflict(inFlightComps.inFlightChangeView(change))))
       case None => getCustomerInfoCall(req.vrn)
     }
   }
@@ -58,12 +58,13 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
               case (true, false) =>
                 logWarn("[InFlightBasePredicate][getCustomerInfoCall] - " +
                   "There is an in-flight PPOB address change. Rendering graceful error page.")
-                Left(Conflict(inFlightComps.inFlightPPOBView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
+                Left(Conflict(inFlightComps.inFlightChangeView("ppob"))
+                  .addingToSession(inFlightContactDetailsChangeKey -> "ppob"))
               case (_, true) =>
                 logWarn("[InFlightBasePredicate][getCustomerInfoCall] - " +
-                  "There is an in-flight email address change. Redirecting to Manage VAT homepage")
-                Left(Redirect(inFlightComps.appConfig.manageVatSubscriptionServicePath)
-                  .addingToSession(inFlightContactDetailsChangeKey -> "true"))
+                  "There is an in-flight email address change. Rendering graceful error page.")
+                Left(Conflict(inFlightComps.inFlightChangeView("email"))
+                  .addingToSession(inFlightContactDetailsChangeKey -> "email"))
               case (_, _) =>
                 logWarn("[InFlightBasePredicate][getCustomerInfoCall] - There is an in-flight contact details " +
                   "change that is not PPOB or email address. Rendering standard error page.")

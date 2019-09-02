@@ -16,7 +16,7 @@
 
 package controllers.website
 
-import common.SessionKeys.{prepopulationWebsiteKey, validationWebsiteKey, websiteChangeSuccessful}
+import common.SessionKeys._
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicateComponents
 import controllers.BaseController
@@ -58,13 +58,14 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
         vatSubscriptionService.updateWebsite(user.vrn, website) map {
           case Right(_) =>
             Redirect(routes.WebsiteChangeSuccessController.show())
-              .addingToSession(websiteChangeSuccessful -> "true")
+              .addingToSession(websiteChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "website")
               .removingFromSession(validationWebsiteKey)
 
           case Left(ErrorModel(CONFLICT, _)) =>
             logWarn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
+              .addingToSession(inFlightContactDetailsChangeKey -> "website")
 
           case Left(_) =>
             errorHandler.showInternalServerError

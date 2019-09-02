@@ -87,11 +87,6 @@ emailChangeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diwedd
 emailChangeSuccess.helpOne.digitalPreference = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd fynd i’ch negeseuon diogel CThEM i weld a yw’ch cais wedi’i dderbyn.
 emailChangeSuccess.helpOne.paperPreference = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
 
-inFlightPPOBChange.title = Rydym wrthi’n adolygu’ch cais
-inFlightPPOBChange.heading = Mae gennych newid ar y gweill yn barod
-inFlightPPOBChange.infoOne = Rydych wedi gwneud cais i newid y prif fan busnes yn barod. Tra bo’r newid hwn ar y gweill, ni allwch newid eich cyfeiriad e-bost.
-inFlightPPOBChange.infoTwo = Byddwn fel arfer yn diweddaru’ch manylion cyn pen 2 ddiwrnod gwaith.
-
 inFlightChange.title = Mae gennych newid ar y gweill yn barod
 inFlightChange.recentlyRequested = Gwnaethoch gais yn ddiweddar i newid {0}.
 inFlightChange.changePending = Mae’r newid hwn ar y gwell a hyd nes y caiff ei gadarnhau, ni allwch newid eich:
