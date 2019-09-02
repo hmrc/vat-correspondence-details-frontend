@@ -17,10 +17,12 @@
 package controllers.website
 
 import assets.BaseTestConstants._
+import audit.models.ChangedWebsiteAddressAuditModel
 import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
@@ -33,7 +35,8 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
   val controller = new ConfirmWebsiteController(
     mockErrorHandler,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmWebsiteView]
+    injector.instanceOf[ConfirmWebsiteView],
+    mockAuditingService
   )
 
   "Calling the show action in ConfirmWebsiteController" when {
@@ -50,11 +53,16 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
     "there isn't a website in session" should {
 
-      "take the user to enter a new website" in {
+      lazy val result = {
         mockIndividualAuthorised()
-        val result = controller.show(request)
+        controller.show(request)
+      }
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect the user to enter a new website" in {
         redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
       }
     }
@@ -86,41 +94,61 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
   "Calling the updateWebsite() action in ConfirmWebsiteController" when {
 
     "there is a website in session" when {
+
       "the website has been updated successfully" should {
 
-        "show the website changed success page" in {
+        lazy val result = {
           mockIndividualAuthorised()
-
           mockUpdateWebsite(vrn, testWebsite)(Future(Right(UpdatePPOBSuccess("success"))))
-          val result = controller.updateWebsite()(requestWithWebsite)
+          controller.updateWebsite()(requestWithWebsite)
+        }
 
+        "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "audit the website change event" in {
+          verifyExtendedAudit(ChangedWebsiteAddressAuditModel(None, testWebsite, vrn, isAgent = false, None))
+          reset(mockAuditingService)
+        }
+
+        "redirect to the website changed success page" in {
           redirectLocation(result) shouldBe Some(controllers.website.routes.WebsiteChangeSuccessController.show().url)
         }
       }
 
       "there was a conflict returned when trying to update the website" should {
 
-        "redirect the user to the manage-vat page " in {
+        lazy val result = {
           mockIndividualAuthorised()
           mockUpdateWebsite(vrn, testWebsite)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          val result = controller.updateWebsite()(requestWithWebsite)
+          controller.updateWebsite()(requestWithWebsite)
+        }
 
+        "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to the manage-vat overview page" in {
           redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
         }
       }
 
       "there was an unexpected error trying to update the website" should {
 
-        "return an Internal Server Error" in {
+        lazy val result = {
           mockIndividualAuthorised()
           mockUpdateWebsite(vrn, testWebsite)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify website"))))
-          val result = controller.updateWebsite()(requestWithWebsite)
+          controller.updateWebsite()(requestWithWebsite)
+        }
 
+        "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "show the internal server error page" in {
           messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
         }
       }
@@ -128,11 +156,16 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
     "there isn't a website in session" should {
 
-      "take the user to the capture website page" in {
+      lazy val result = {
         mockIndividualAuthorised()
-        val result = controller.updateWebsite()(request)
+        controller.updateWebsite()(request)
+      }
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect the user to the capture website page" in {
         redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
       }
     }

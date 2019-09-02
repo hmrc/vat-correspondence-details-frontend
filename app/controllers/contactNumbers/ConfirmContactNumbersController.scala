@@ -16,6 +16,8 @@
 
 package controllers.contactNumbers
 
+import audit.AuditingService
+import audit.models.ChangedPhoneNumbersAuditModel
 import common.SessionKeys
 import common.SessionKeys._
 import config.{AppConfig, ErrorHandler}
@@ -35,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ConfirmContactNumbersController @Inject()(val errorHandler: ErrorHandler,
                                                 val vatSubscriptionService: VatSubscriptionService,
-                                                confirmContactNumbersView: ConfirmContactNumbersView)
+                                                confirmContactNumbersView: ConfirmContactNumbersView,
+                                                auditService: AuditingService)
                                                (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
@@ -70,6 +73,9 @@ class ConfirmContactNumbersController @Inject()(val errorHandler: ErrorHandler,
     implicit user =>
       val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey).filter(_.nonEmpty)
       val enteredMobile = user.session.get(SessionKeys.prepopulationMobileKey).filter(_.nonEmpty)
+      val existingLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
+      val existingMobile = user.session.get(validationMobileKey).filter(_.nonEmpty)
+
       (enteredLandline, enteredMobile) match {
         case (None, None) =>
           logInfo("[ConfirmPhoneNumbersController][updateEmailAddress] - No phone numbers found in session")
@@ -77,6 +83,17 @@ class ConfirmContactNumbersController @Inject()(val errorHandler: ErrorHandler,
 
         case (landline, mobile) => vatSubscriptionService.updateContactNumbers(user.vrn, landline, mobile).map {
           case Right(UpdatePPOBSuccess(_)) =>
+            auditService.extendedAudit(
+              ChangedPhoneNumbersAuditModel(
+                existingLandline,
+                existingMobile,
+                if(existingLandline != enteredLandline) Some(landline.getOrElse("")) else None,
+                if(existingMobile != enteredMobile) Some(mobile.getOrElse("")) else None,
+                user.vrn,
+                user.isAgent,
+                user.arn
+              )
+            )
             Redirect(routes.ContactNumbersChangeSuccessController.show())
               .removingFromSession(prepopulationLandlineKey, prepopulationMobileKey, validationMobileKey, validationLandlineKey)
               .addingToSession(phoneNumberChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "telephone")

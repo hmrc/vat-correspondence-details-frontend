@@ -17,11 +17,13 @@
 package controllers.email
 
 import assets.BaseTestConstants._
+import audit.models.ChangedEmailAddressAuditModel
 import controllers.ControllerBaseSpec
 import models.User
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.mvc.AnyContent
@@ -66,11 +68,16 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
     "there isn't an email in session" should {
 
-      "take the user to enter a new email address" in {
+      lazy val result = {
         mockIndividualAuthorised()
-        val result = TestConfirmEmailController.show(request)
+        TestConfirmEmailController.show(request)
+      }
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect the user to enter a new email address" in {
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
       }
     }
@@ -92,38 +99,58 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       "the email has been updated successfully" should {
 
-        "show the email changed success page" in {
+        lazy val result = {
           mockIndividualAuthorised()
           mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdatePPOBSuccess("success"))))
-          val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+          TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+        }
 
+        "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "audit the email change event" in {
+          verifyExtendedAudit(ChangedEmailAddressAuditModel(None, testEmail, vrn, isAgent = false, None))
+          reset(mockAuditingService)
+        }
+
+        "redirect to the email changed success page" in {
           redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-address-confirmation")
         }
       }
 
       "there was a conflict returned when trying to update the email address" should {
 
-        "redirect the user to the manage-vat page " in {
+        lazy val result = {
           mockIndividualAuthorised()
           mockUpdateEmailAddress(vrn, testEmail)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+          TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+        }
 
+        "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to the manage-vat page " in {
           redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
         }
       }
 
       "there was an unexpected error trying to update the email address" should {
 
-        "return an Internal Server Error" in {
+        lazy val result = {
           mockIndividualAuthorised()
           mockUpdateEmailAddress(vrn, testEmail)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
-          val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+          TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+        }
 
+        "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "show the internal server error page" in {
           messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
         }
       }
@@ -131,23 +158,32 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
     "there is a non-verified email in session" should {
 
-      "redirect the user to the send email verification page" in {
+      lazy val result = {
         mockIndividualAuthorised()
         mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdatePPOBSuccess(""))))
-        val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+        TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+      }
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect the user to the send email verification page" in {
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-verification")
       }
     }
 
     "there isn't an email in session" should {
-
-      "take the user to the capture email address page" in {
+      lazy val result = {
         mockIndividualAuthorised()
-        val result = TestConfirmEmailController.updateEmailAddress()(request)
+        TestConfirmEmailController.updateEmailAddress()(request)
+      }
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect the user to the capture email address page" in {
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
       }
     }

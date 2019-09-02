@@ -16,6 +16,8 @@
 
 package controllers.website
 
+import audit.AuditingService
+import audit.models.ChangedWebsiteAddressAuditModel
 import common.SessionKeys._
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicateComponents
@@ -33,7 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
                                          val vatSubscriptionService: VatSubscriptionService,
-                                         confirmWebsiteView: ConfirmWebsiteView)
+                                         confirmWebsiteView: ConfirmWebsiteView,
+                                         auditService: AuditingService)
                                         (implicit val appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
                                          authComps: AuthPredicateComponents,
@@ -57,6 +60,15 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
       case Some(website) =>
         vatSubscriptionService.updateWebsite(user.vrn, website) map {
           case Right(_) =>
+            auditService.extendedAudit(
+              ChangedWebsiteAddressAuditModel(
+                user.session.get(validationWebsiteKey),
+                website,
+                user.vrn,
+                user.isAgent,
+                user.arn
+              )
+            )
             Redirect(routes.WebsiteChangeSuccessController.show())
               .addingToSession(websiteChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "website")
               .removingFromSession(validationWebsiteKey)
