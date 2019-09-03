@@ -26,30 +26,25 @@ case class CustomerInformation(ppob: PPOB,
                                organisationName: Option[String],
                                tradingName: Option[String]) {
 
-  val pendingPPOBAddress: Boolean = {
-    val approvedAddress: PPOBAddress = ppob.address
-    val pendingAddress: Option[PPOBAddress] = pendingChanges.flatMap(_.ppob.map(_.address))
+  val approvedAddress: PPOBAddress = ppob.address
+  val pendingAddress: Option[PPOBAddress] = pendingChanges.flatMap(_.ppob.map(_.address))
 
-    (approvedAddress, pendingAddress) match {
-      case (address, Some(pending)) if !address.equals(pending) => true
-      case _ => false
-    }
-  }
+  val approvedEmail: Option[String] = ppob.contactDetails.flatMap(_.emailAddress)
+  val pendingEmail: Option[String] = pendingChanges.flatMap(_.ppob.flatMap(_.contactDetails.flatMap(_.emailAddress)))
 
-  val pendingEmailAddress: Boolean = {
-    val approvedEmail: Option[String] = ppob.contactDetails.flatMap(_.emailAddress)
-    val pendingEmail: Option[String] = for {
-      pendingChanges <- pendingChanges
-      ppob <- pendingChanges.ppob
-      contactDetails <- ppob.contactDetails
-      emailAddress <- contactDetails.emailAddress
-    } yield emailAddress
+  val approvedLandline: Option[String] = ppob.contactDetails.flatMap(_.phoneNumber)
+  val approvedMobile: Option[String] = ppob.contactDetails.flatMap(_.mobileNumber)
+  val pendingLandline: Option[String] = pendingChanges.flatMap(_.ppob.flatMap(_.contactDetails.flatMap(_.phoneNumber)))
+  val pendingMobile: Option[String] = pendingChanges.flatMap(_.ppob.flatMap(_.contactDetails.flatMap(_.mobileNumber)))
 
-    (approvedEmail, pendingEmail) match {
-      case (Some(approved), Some(pending)) if !approved.equals(pending) => true
-      case _ => false
-    }
-  }
+  val approvedWebsite: Option[String] = ppob.websiteAddress
+  val pendingWebsite: Option[String] = pendingChanges.flatMap(_.ppob.flatMap(_.websiteAddress))
+
+  val sameAddress: Boolean = pendingAddress.fold(false)(_ == approvedAddress)
+  val sameEmail: Boolean = approvedEmail == pendingEmail
+  val sameLandline: Boolean = approvedLandline == pendingLandline
+  val sameMobile: Boolean = approvedMobile == pendingMobile
+  val sameWebsite: Boolean = approvedWebsite == pendingWebsite
 
   def entityName: Option[String] =
     (firstName, lastName, tradingName, organisationName) match {

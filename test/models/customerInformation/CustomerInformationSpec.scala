@@ -21,11 +21,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class CustomerInformationSpec extends UnitSpec {
 
-  val modelNoPending = CustomerInformation(PPOB(
-    minPPOBAddressModel,
-    None,
-    None
-  ), None, None, None, None, None)
+  val modelNoPending: CustomerInformation = fullCustomerInfoModel.copy(pendingChanges = None)
 
   "CustomerInformation" should {
 
@@ -41,140 +37,60 @@ class CustomerInformationSpec extends UnitSpec {
         result shouldBe minCustomerInfoModel
       }
     }
+  }
 
-    "pendingEmailAddress" when {
+  "The sameAddress val" should {
 
-      "there are no pending changes" should {
-
-        "return false" in {
-          modelNoPending.pendingEmailAddress shouldBe false
-        }
-      }
-
-      "pending email and approved email are not present" should {
-
-        val model = CustomerInformation(
-          PPOB(
-            minPPOBAddressModel,
-            None,
-            None
-          ),
-          Some(PendingChanges(
-            Some(PPOB(
-              minPPOBAddressModel,
-              None,
-              None
-            ))
-          )),
-          None, None, None, None
-        )
-
-        "return false" in {
-          model.pendingEmailAddress shouldBe false
-        }
-      }
-
-      "pending email does not match approved email" should {
-
-        val model = CustomerInformation(
-          PPOB(
-            minPPOBAddressModel,
-            Some(ContactDetails(None, None, None, Some("email"), None)),
-            None
-          ),
-          Some(PendingChanges(
-            Some(PPOB(
-              minPPOBAddressModel,
-              Some(ContactDetails(None, None, None, Some("different email"), None)),
-              None
-            ))
-          )),
-          None, None, None, None
-        )
-
-        "return true" in {
-          model.pendingEmailAddress shouldBe true
-        }
-      }
-
-      "pending email matches approved email" should {
-
-        val model = CustomerInformation(
-          PPOB(
-            minPPOBAddressModel,
-            Some(ContactDetails(None, None, None, Some("email"), None)),
-            None
-          ),
-          Some(PendingChanges(
-            Some(PPOB(
-              minPPOBAddressModel,
-              Some(ContactDetails(None, None, None, Some("email"), None)),
-              None
-            ))
-          )),
-          None, None, None, None
-        )
-
-        "return false" in {
-          model.pendingEmailAddress shouldBe false
-        }
-      }
+    "return true when approved and pending business address are the same" in {
+      fullCustomerInfoModel.sameAddress shouldBe true
     }
 
-    "pendingPPOBAddress" when {
+    "return false when approved and pending business address are different" in {
+      modelNoPending.sameAddress shouldBe false
+    }
+  }
 
-      "there are no pending changes" should {
+  "The sameEmail val" should {
 
-        "return false" in {
-          modelNoPending.pendingPPOBAddress shouldBe false
-        }
-      }
+    "return true when approved and pending email address are the same" in {
+      fullCustomerInfoModel.sameEmail shouldBe true
+    }
 
-      "pending PPOB does not match approved PPOB" should {
+    "return false when approved and pending email address are different" in {
+      modelNoPending.sameEmail shouldBe false
+    }
+  }
 
-        val model = CustomerInformation(
-          PPOB(
-            PPOBAddress("Add", None, None, None, None, None, ""),
-            None,
-            None
-          ),
-          Some(PendingChanges(
-            Some(PPOB(
-              PPOBAddress("Address", None, None, None, None, None, ""),
-              None,
-              None
-            ))
-          )),
-          None, None, None, None
-        )
+  "The sameLandline val" should {
 
-        "return true" in {
-          model.pendingPPOBAddress shouldBe true
-        }
-      }
+    "return true when approved and pending landline numbers are the same" in {
+      fullCustomerInfoModel.sameLandline shouldBe true
+    }
 
-      "pending PPOB matches approved PPOB" should {
+    "return false when approved and pending landline numbers are different" in {
+      modelNoPending.sameLandline shouldBe false
+    }
+  }
 
-        val model = CustomerInformation(
-          PPOB(
-            minPPOBAddressModel,
-            None,
-            None
-          ),
-          Some(PendingChanges(
-            Some(PPOB(
-              minPPOBAddressModel,
-              None,
-              None
-            ))
-          )),
-          None, None, None, None
-        )
+  "The sameMobile val" should {
 
-        "return false" in {
-          model.pendingPPOBAddress shouldBe false
-        }
-      }
+    "return true when approved and pending mobile numbers are the same" in {
+      fullCustomerInfoModel.sameMobile shouldBe true
+    }
+
+    "return false when approved and pending mobile numbers are different" in {
+      modelNoPending.sameMobile shouldBe false
+    }
+  }
+
+  "The sameWebsite val" should {
+
+    "return true when approved and pending website address are the same" in {
+      fullCustomerInfoModel.sameWebsite shouldBe true
+    }
+
+    "return false when approved and pending website address are different" in {
+      modelNoPending.sameWebsite shouldBe false
     }
   }
 

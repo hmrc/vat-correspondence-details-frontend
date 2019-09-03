@@ -19,6 +19,7 @@ package controllers.predicates.inflight
 import common.SessionKeys.inFlightContactDetailsChangeKey
 import config.AppConfig
 import models.User
+import models.customerInformation.{CustomerInformation, PendingChanges}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{ActionRefiner, Result}
 import play.api.mvc.Results.{Conflict, Redirect}
@@ -42,43 +43,54 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
 
     req.session.get(inFlightContactDetailsChangeKey) match {
       case Some("false") => Future.successful(Right(req))
-      case Some("error") => Future.successful(Left(inFlightComps.errorHandler.showInternalServerError))
       case Some(change) => Future.successful(Left(Conflict(inFlightComps.inFlightChangeView(change))))
       case None => getCustomerInfoCall(req.vrn)
     }
   }
 
-  private def getCustomerInfoCall[A](vrn: String)(implicit hc: HeaderCarrier,
-                                                  request: User[A]): Future[Either[Result, User[A]]] =
+  private def getCustomerInfoCall[A](vrn: String)
+                                    (implicit hc: HeaderCarrier, request: User[A]): Future[Either[Result, User[A]]] =
     inFlightComps.vatSubscriptionService.getCustomerInfo(vrn).map {
       case Right(customerInfo) =>
         customerInfo.pendingChanges match {
           case Some(changes) if changes.ppob.isDefined =>
-            (customerInfo.pendingPPOBAddress, customerInfo.pendingEmailAddress) match {
-              case (true, false) =>
-                logWarn("[InFlightBasePredicate][getCustomerInfoCall] - " +
-                  "There is an in-flight PPOB address change. Rendering graceful error page.")
-                Left(Conflict(inFlightComps.inFlightChangeView("ppob"))
-                  .addingToSession(inFlightContactDetailsChangeKey -> "ppob"))
-              case (_, true) =>
-                logWarn("[InFlightBasePredicate][getCustomerInfoCall] - " +
-                  "There is an in-flight email address change. Rendering graceful error page.")
-                Left(Conflict(inFlightComps.inFlightChangeView("email"))
-                  .addingToSession(inFlightContactDetailsChangeKey -> "email"))
-              case (_, _) =>
-                logWarn("[InFlightBasePredicate][getCustomerInfoCall] - There is an in-flight contact details " +
-                  "change that is not PPOB or email address. Rendering standard error page.")
-                Left(inFlightComps.errorHandler.showInternalServerError
-                  .addingToSession(inFlightContactDetailsChangeKey -> "error"))
-            }
+            comparePendingAndCurrent(changes, customerInfo)
           case _ =>
-            logDebug("[InFlightBasePredicate][getCustomerInfoCall] - There are no in-flight changes. " +
+            logDebug("[InFlightPredicate][getCustomerInfoCall] - There are no in-flight changes. " +
               "Redirecting user to the start of the journey.")
             Left(Redirect(redirectURL).addingToSession(inFlightContactDetailsChangeKey -> "false"))
         }
       case Left(error) =>
-        logWarn("[InFlightBasePredicate][getCustomerInfoCall] - " +
+        logWarn("[InFlightPredicate][getCustomerInfoCall] - " +
           s"The call to the GetCustomerInfo API failed. Error: ${error.message}")
         Left(inFlightComps.errorHandler.showInternalServerError)
     }
+
+  private def comparePendingAndCurrent[A](pendingChanges: PendingChanges, customerInfo: CustomerInformation)
+                                         (implicit user: User[A]): Either[Result, User[A]] = {
+
+    def logWarnPending(changeType: String): Unit = logWarn("[InFlightPredicate][comparePendingAndCurrent] - " +
+      s"There is an in-flight $changeType change. Rendering graceful error page.")
+
+    (customerInfo.sameAddress, customerInfo.sameEmail, customerInfo.sameLandline,
+      customerInfo.sameMobile, customerInfo.sameWebsite) match {
+      case (false, _, _, _, _) =>
+        logWarnPending("PPOB address")
+        Left(Conflict(inFlightComps.inFlightChangeView("ppob"))
+          .addingToSession(inFlightContactDetailsChangeKey -> "ppob"))
+      case (_, false, _, _, _) =>
+        logWarnPending("email address")
+        Left(Conflict(inFlightComps.inFlightChangeView("email"))
+          .addingToSession(inFlightContactDetailsChangeKey -> "email"))
+      case (_, _, false, _, _) |  (_, _, _, false, _) =>
+        logWarnPending("phone number")
+        Left(Conflict(inFlightComps.inFlightChangeView("telephone"))
+          .addingToSession(inFlightContactDetailsChangeKey -> "telephone"))
+      case (_, _, _, _, false) =>
+        logWarnPending("website address")
+        Left(Conflict(inFlightComps.inFlightChangeView("website"))
+          .addingToSession(inFlightContactDetailsChangeKey -> "website"))
+      case _ => Right(user)
+    }
+  }
 }
