@@ -153,26 +153,32 @@ object CustomerInfoConstants {
   val minCustomerInfoModel = CustomerInformation(minPPOBModel, None, None, None, None, None)
 
   val customerInfoPendingAddressModel: CustomerInformation = fullCustomerInfoModel.copy(
-    pendingChanges = Some(PendingChanges(Some(PPOB(
-      minPPOBAddressModel,
-      Some(fullContactDetailsModel),
-      Some("www.pepsi-mac.biz")
+    pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
+      address = minPPOBAddressModel
     ))))
   )
 
   val customerInfoPendingEmailModel: CustomerInformation = fullCustomerInfoModel.copy(
-    pendingChanges = Some(PendingChanges(Some(PPOB(
-      fullPPOBAddressModel,
-      Some(ContactDetails(None, None, None, Some("myEmail@cool.com"), Some(false))),
-      None
+    pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
+      contactDetails = Some(fullContactDetailsModel.copy(emailAddress = Some("myEmail@cool.com")))
     ))))
   )
 
   val customerInfoPendingWebsiteModel: CustomerInformation = fullCustomerInfoModel.copy(
-    pendingChanges = Some(PendingChanges(Some(PPOB(
-      fullPPOBAddressModel,
-      Some(fullContactDetailsModel),
-      Some("new email")
+    pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
+      websiteAddress = Some("www.new-website.co.uk")
+    ))))
+  )
+
+  val customerInfoPendingLandlineModel: CustomerInformation = fullCustomerInfoModel.copy(
+    pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
+      contactDetails = Some(fullContactDetailsModel.copy(phoneNumber = Some("01610111111")))
+    ))))
+  )
+
+  val customerInfoPendingMobileModel: CustomerInformation = fullCustomerInfoModel.copy(
+    pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
+      contactDetails = Some(fullContactDetailsModel.copy(mobileNumber = Some("07777777777")))
     ))))
   )
 

@@ -87,20 +87,6 @@ class InFlightPredicateSpec extends MockAuth {
             .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
         }
       }
-
-      "the inflight indicator is set to 'error'" should {
-
-        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("error"))).left.get
-
-        "return 500" in {
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-        "not call the VatSubscriptionService" in {
-          verify(mockVatSubscriptionService, never())
-            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-        }
-      }
     }
 
     "there is no inflight indicator in session" when {
@@ -147,6 +133,69 @@ class InFlightPredicateSpec extends MockAuth {
         }
       }
 
+      "the user has an inflight landline number" should {
+
+        lazy val result = {
+          setup(Right(customerInfoPendingLandlineModel))
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+        }
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 409" in {
+          status(result) shouldBe Status.CONFLICT
+        }
+
+        "add the inflight indicator 'telephone' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("telephone")
+        }
+
+        "show the 'change pending' error page" in {
+          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+        }
+      }
+
+      "the user has an inflight mobile number" should {
+
+        lazy val result = {
+          setup(Right(customerInfoPendingMobileModel))
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+        }
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 409" in {
+          status(result) shouldBe Status.CONFLICT
+        }
+
+        "add the inflight indicator 'telephone' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("telephone")
+        }
+
+        "show the 'change pending' error page" in {
+          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+        }
+      }
+
+      "the user has an inflight website address" should {
+
+        lazy val result = {
+          setup(Right(customerInfoPendingWebsiteModel))
+          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+        }
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 409" in {
+          status(result) shouldBe Status.CONFLICT
+        }
+
+        "add the inflight indicator 'website' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("website")
+        }
+
+        "show the 'change pending' error page" in {
+          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+        }
+      }
+
       "the user has no inflight information" should {
 
         lazy val result = {
@@ -164,27 +213,6 @@ class InFlightPredicateSpec extends MockAuth {
 
         "add the inflight indicator 'false' to session" in {
           session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("false")
-        }
-      }
-
-      "the user has another PPOB change pending that is not address or email" should {
-
-        lazy val result = {
-          setup(Right(customerInfoPendingWebsiteModel))
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
-        }
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return 500" in {
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-        "add the inflight indicator 'error' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("error")
-        }
-
-        "show the standard error page" in {
-          messages(document.title) shouldBe internalServerErrorTitle
         }
       }
 
