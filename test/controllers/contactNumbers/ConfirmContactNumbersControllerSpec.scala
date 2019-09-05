@@ -20,6 +20,7 @@ import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
@@ -27,6 +28,7 @@ import views.html.contactNumbers.ConfirmContactNumbersView
 
 import scala.concurrent.Future
 import assets.BaseTestConstants._
+import audit.models.ChangedPhoneNumbersAuditModel
 import common.SessionKeys
 
 class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
@@ -34,7 +36,8 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
   val controller = new ConfirmContactNumbersController(
     mockErrorHandler,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmContactNumbersView]
+    injector.instanceOf[ConfirmContactNumbersView],
+    mockAuditingService
   )
 
   "Calling the show action in ConfirmContactNumbersController" when {
@@ -51,11 +54,16 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
 
     "there isn't a contact number in session" should {
 
-      "take the user to enter a new contact number" in {
+      lazy val result = {
         mockIndividualAuthorised()
-        val result = controller.show(request)
+        controller.show(request)
+      }
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect the user to enter a new contact number" in {
         redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.CaptureContactNumbersController.show().url)
       }
     }
@@ -89,6 +97,21 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
           status(result) shouldBe Status.SEE_OTHER
         }
 
+        "audit the change phone numbers event" in {
+          verifyExtendedAudit(
+            ChangedPhoneNumbersAuditModel(
+              None,
+              None,
+              Some(testPrepopLandline),
+              Some(testPrepopMobile),
+              vrn,
+              isAgent = false,
+              None
+            )
+          )
+          reset(mockAuditingService)
+        }
+
         "redirect to the success page" in {
           redirectLocation(result) shouldBe Some(routes.ContactNumbersChangeSuccessController.show().url)
         }
@@ -104,38 +127,52 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
 
       "there was a conflict returned when trying to update the contact numbers" should {
 
-        "redirect the user to the manage-vat page " in {
+        lazy val result = {
           mockIndividualAuthorised()
           mockUpdatePhoneNumbers(vrn, Some(testPrepopLandline), Some(testPrepopMobile))(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          val result = controller.updateContactNumbers()(requestWithPrepopPhoneNumbers)
+          controller.updateContactNumbers()(requestWithPrepopPhoneNumbers)
+        }
 
+        "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to the manage-vat overview page" in {
           redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
         }
       }
 
       "there was an unexpected error trying to update the contact numbers" should {
 
-        "return an Internal Server Error" in {
+        lazy val result = {
           mockIndividualAuthorised()
           mockUpdatePhoneNumbers(vrn, Some(testPrepopLandline), Some(testPrepopMobile))(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify phone numbers"))))
-          val result = controller.updateContactNumbers()(requestWithPrepopPhoneNumbers)
+          controller.updateContactNumbers()(requestWithPrepopPhoneNumbers)
+        }
 
+        "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "show the internal server error page" in {
           messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
         }
       }
     }
 
     "there isn't a contact number in session" should {
-
-      "take the user to the capture contact numbers page" in {
+      lazy val result = {
         mockIndividualAuthorised()
-        val result = controller.updateContactNumbers()(request)
+        controller.updateContactNumbers()(request)
+      }
 
+      "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect the user to the capture contact numbers page" in {
         redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.ConfirmContactNumbersController.show().url)
       }
     }

@@ -82,8 +82,8 @@ class ChangedEmailAddressAuditModelSpec extends UnitSpec {
     "the user does not have a current email" should {
       "have generate the correct audit information" in {
         val expectedJson: JsValue = Json.obj(
-          "vrn" -> "987654321",
           "isAgent" -> false,
+          "vrn" -> "987654321",
           "requestedEmailAddress" -> "attemptedchange@test.com"
         )
 
@@ -92,4 +92,3 @@ class ChangedEmailAddressAuditModelSpec extends UnitSpec {
     }
   }
 }
-

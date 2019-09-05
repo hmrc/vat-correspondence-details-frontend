@@ -32,4 +32,7 @@ object BaseTestConstants {
   val testPrepopLandline: String = "01952654321"
   val testValidationMobile: String = "07890123456"
   val testPrepopMobile: String = "07890654321"
+
+  val testWebsite: String = "www.test.com"
+  val testNewWebsite: String = "www.test2.com"
 }
