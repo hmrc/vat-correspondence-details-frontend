@@ -47,3 +47,6 @@ GET         /update-new-telephone-numbers         controllers.contactNumbers.Con
 
 # telephone numbers change successfull
 GET         /telephone-numbers-confirmation        controllers.contactNumbers.ContactNumbersChangeSuccessController.show
+
+# Map static resources from the /public folder to the /assets URL path
+GET        /assets/*file              controllers.Assets.at(path="/public", file)
