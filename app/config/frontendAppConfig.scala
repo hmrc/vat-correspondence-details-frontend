@@ -63,6 +63,7 @@ trait AppConfig {
   val contactHmrcUrl: String
   def contactPreferencesUrl(vrn: String): String
   def feedbackUrl(redirect: String): String
+  val accessibilityLinkUrl: String
 }
 
 @Singleton
@@ -147,4 +148,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override def feedbackUrl(redirect: String): String = s"$contactFrontendService/contact/beta-feedback?service=$contactFormServiceIdentifier" +
     s"&backUrl=${ContinueUrl(host + redirect).encodedUrl}"
+
+  override val accessibilityLinkUrl: String = sc.getString(ConfigKeys.vatSummaryFrontendServiceUrl) + sc.getString(ConfigKeys.vatSummaryAccessibilityUrl)
+
 }
