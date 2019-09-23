@@ -17,6 +17,7 @@ common.agentService = Manylion TAW eich cleient
 common.vat = TAW
 common.continue = Yn eich blaen
 common.error.heading = Mae problem wedi codi
+common.error.prefixTitle = Gwall: {0}
 common.whatHappensNext = Yr hyn sy’n digwydd nesaf
 common.helpOne.apiFailure = Byddwn yn anfon diweddariad atoch cyn pen 15 diwrnod gwaith.
 common.changeClient = Newid cleient
