@@ -24,8 +24,7 @@
   <p>@messages("agentJourneyDisabled.summary")</p>
   <p>@messages("agentJourneyDisabled.instructions")</p>
 
-  <a data-journey-click="unauthorised:sign-out:agent-journey-disabled"
-     class="button"
+  <a class="button"
      role="button"
      href="@controllers.routes.SignOutController.signOut(feedbackOnSignOut = false)">
     @messages("base.signOut")

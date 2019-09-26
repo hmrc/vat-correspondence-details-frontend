@@ -25,8 +25,7 @@
 @accordionContent = {
     <p>
         @messages("verifyEmail.accordion.lineOne")
-        <a href='@controllers.email.routes.VerifyEmailController.sendVerification().url'
-        data-journey-click="email-address:resend:verify-email">
+        <a href='@controllers.email.routes.VerifyEmailController.sendVerification().url'>
         @messages("verifyEmail.accordion.lineTwo")</a>.
         @messages("verifyEmail.accordion.lineThree")
     </p>
@@ -40,8 +39,7 @@
 
     <p>
         @messages("verifyEmail.lineTwo")
-        <a href='@controllers.email.routes.CaptureEmailController.show().url'
-           data-journey-click="email-address:edit:verify-email">@messages("verifyEmail.lineThree")</a>
+        <a href='@controllers.email.routes.CaptureEmailController.show().url'>@messages("verifyEmail.lineThree")</a>
         @messages("verifyEmail.lineFour")
     </p>
 

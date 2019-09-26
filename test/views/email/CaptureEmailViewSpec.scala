@@ -151,10 +151,6 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         element(Selectors.errorSummary).text() shouldBe "There is a problem"
       }
 
-      "display the GA tag" in {
-        element(Selectors.emailFormGroup).attr("data-journey") shouldBe "email-address:form-error:unchanged"
-      }
-
       "not have the section about adding email address because the user has an email" in {
         elementExtinct(Selectors.onlyAddEmail)
       }
