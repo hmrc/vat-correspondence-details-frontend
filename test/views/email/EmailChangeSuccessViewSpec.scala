@@ -53,10 +53,6 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
           elementText(Selectors.pageHeading) shouldBe "We have received the new email address"
         }
 
-        "have a GA tag for the page view" in {
-          element(Selectors.pageHeading).select("h1").attr("data-journey") shouldBe "email-address:view:change-email-success"
-        }
-
         "have a finish button with the correct text" in {
           elementText(Selectors.button) shouldBe "Finish"
         }
@@ -74,11 +70,6 @@ class EmailChangeSuccessViewSpec extends ViewBaseSpec {
         "have the correct second paragraph" in {
           elementText(Selectors.paragraphTwo) shouldBe "Ensure your contact details are up to date."
         }
-
-        "have a GA tag for the clicking finish button" in {
-          element(Selectors.button).select("h1").attr("data-journey") contains "email-address:confirm:finish-email-change"
-        }
-
       }
 
       "the contact preference is Paper" should {

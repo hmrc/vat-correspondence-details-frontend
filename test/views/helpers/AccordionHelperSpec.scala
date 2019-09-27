@@ -40,9 +40,5 @@ class AccordionHelperSpec extends ViewBaseSpec {
       doc.getElementsByTag("summary").text() should include(testLabel)
       doc.getElementsByTag("details").text() should include(testHtml.toString())
     }
-
-    "have a GA tag with the correct tag" in {
-      doc.getElementsByClass("summary").attr("data-journey-click") shouldBe "test-feature-help:reveal:test-page-name"
-    }
   }
 }

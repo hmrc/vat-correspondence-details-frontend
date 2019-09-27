@@ -23,7 +23,7 @@
 @mainTemplate(title = messages("emailChangeSuccess.title")) {
 
   <div class="govuk-box-highlight">
-    <h1 class="heading-xlarge" data-journey="email-address:view:change-email-success">@messages("emailChangeSuccess.heading")</h1>
+    <h1 class="heading-xlarge">@messages("emailChangeSuccess.heading")</h1>
   </div>
 
   <h2 class="heading-medium">@messages("common.whatHappensNext")</h2>
@@ -43,6 +43,5 @@
 
   <p>@messages("emailChangeSuccess.helpTwo")</p>
 
-  <a href="@appConfig.manageVatSubscriptionServicePath" role="button" tabindex="0" class="button"
-  data-journey-click="email-address:confirm:finish-email-change">@messages("base.finish")</a>
+  <a href="@appConfig.manageVatSubscriptionServicePath" role="button" tabindex="0" class="button">@messages("base.finish")</a>
 }

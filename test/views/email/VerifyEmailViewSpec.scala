@@ -58,10 +58,6 @@ class VerifyEmailViewSpec extends ViewBaseSpec {
       elementText(Selectors.secondParagraph) shouldBe "You can change your email address if it is not correct."
     }
 
-    "have a GA tag with the correct tag" in {
-      element(Selectors.captureYourEmailPageLink).attr("data-journey-click") shouldBe "email-address:edit:verify-email"
-    }
-
     "have a link element in the first paragraph that links to the Capture your email page" in {
       element(Selectors.captureYourEmailPageLink).attr("href") shouldBe
         controllers.email.routes.CaptureEmailController.show().url
@@ -76,10 +72,6 @@ class VerifyEmailViewSpec extends ViewBaseSpec {
       "have a paragraph with the correct text" in {
         elementText(Selectors.accordionText) shouldBe "Check your junk folder. If it’s not there we can" +
           " send it again. If we send it again, any previous link will stop working."
-      }
-
-      "have a GA tag with the correct tag" in {
-        element(Selectors.accordionGaTag).attr("data-journey-click") shouldBe "email-address:resend:verify-email"
       }
 
       "have a link element which calls the send email controller action" in {

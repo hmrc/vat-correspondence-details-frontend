@@ -76,11 +76,6 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
           "have the correct second paragraph" in {
             elementText(Selectors.paragraphTwo) shouldBe "Make sure your contact details are up to date."
           }
-
-          "have a GA tag for the clicking finish button" in {
-            element(Selectors.button).select("h1").attr("data-journey") contains "email-address:confirm:finish-email-change"
-          }
-
         }
 
         "the contact preference is Paper" should {
@@ -136,10 +131,6 @@ class ContactNumbersChangeSuccessViewSpec extends ViewBaseSpec {
 
         "have the correct second paragraph" in {
           elementText(Selectors.paragraphTwo) shouldBe "We’ll also contact TheBusiness with an update."
-        }
-
-        "have a GA tag for the clicking finish button" in {
-          element(Selectors.button).select("h1").attr("data-journey") contains "email-address:confirm:finish-email-change"
         }
       }
 

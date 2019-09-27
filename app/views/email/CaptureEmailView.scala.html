@@ -35,8 +35,7 @@
         }
 
         @form(action = controllers.email.routes.CaptureEmailController.submit) {
-            <div class="form-group" @if(emailNotChangedError) {
-                data-journey="email-address:form-error:unchanged"}>
+            <div class="form-group">
             @input(
                 emailForm("email"),
                 '_divClass -> "form-label",

@@ -68,20 +68,12 @@ class ConfirmEmailViewSpec extends ViewBaseSpec {
       "has the correct link" in {
         element(Selectors.editLink).attr("href") shouldBe controllers.email.routes.CaptureEmailController.show().url
       }
-
-      "has the correct GA tag" in {
-        element(Selectors.editLink).attr("data-journey-click") shouldBe "email-address:edit:confirm-email"
-      }
     }
 
     "have a continue button" which {
 
       "has the correct text" in {
         elementText(Selectors.continueButton) shouldBe "Confirm and continue"
-      }
-
-      "has the correct GA tag" in {
-        element(Selectors.continueButton).attr("data-journey-click") shouldBe "email-address:confirm:confirm-email"
       }
     }
   }
