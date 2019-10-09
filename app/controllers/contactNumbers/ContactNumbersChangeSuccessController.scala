@@ -26,17 +26,17 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
-import models.viewModels.ContactNumbersChangeSuccessViewModel
+import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
 import services.{ContactPreferenceService, VatSubscriptionService}
-import views.html.contactNumbers.ContactNumbersChangeSuccessView
+import views.html.templates.ChangeSuccessView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactNumbersChangeSuccessController @Inject()(contactPreferenceService: ContactPreferenceService,
                                                       vatSubscriptionService: VatSubscriptionService,
-                                                      contactNumberChangeSuccessView: ContactNumbersChangeSuccessView)
+                                                      changeSuccessView: ChangeSuccessView)
                                                      (implicit val appConfig: AppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       authComps: AuthPredicateComponents,
@@ -54,7 +54,7 @@ class ContactNumbersChangeSuccessController @Inject()(contactPreferenceService: 
                       else {contactPreferenceService.getContactPreference(user.vrn)}
       } yield {
         val viewModel = constructViewModel(customerDetails, preference, user.session.get(verifiedAgentEmail))
-        Ok(contactNumberChangeSuccessView(viewModel))
+        Ok(changeSuccessView(viewModel))
       }
     } else {
       Future.successful(Redirect(routes.CaptureContactNumbersController.show()))
@@ -63,9 +63,10 @@ class ContactNumbersChangeSuccessController @Inject()(contactPreferenceService: 
 
   private[controllers] def constructViewModel(customerInfoCall: GetCustomerInfoResponse,
                                               preferenceCall: HttpGetResult[ContactPreference],
-                                              agentEmail: Option[String]): ContactNumbersChangeSuccessViewModel = {
+                                              agentEmail: Option[String]): ChangeSuccessViewModel = {
     val entityName: Option[String] = customerInfoCall.fold(_ => None, details => details.entityName)
     val preference: Option[String] = preferenceCall.fold(_ => None, pref => Some(pref.preference))
-    ContactNumbersChangeSuccessViewModel(entityName, preference, agentEmail)
+    val titleMessageKey: String = "contactNumbersChangeSuccess.title"
+    ChangeSuccessViewModel(titleMessageKey, agentEmail, preference, entityName)
   }
 }
