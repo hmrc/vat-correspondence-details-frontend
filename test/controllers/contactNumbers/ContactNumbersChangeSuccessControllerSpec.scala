@@ -26,7 +26,7 @@ import org.mockito.Mockito.{times, verify}
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import views.html.templates.ChangeSuccessView
+import views.html.contactNumbers.ContactNumbersChangeSuccessView
 
 import scala.concurrent.Future
 
@@ -35,7 +35,7 @@ class ContactNumbersChangeSuccessControllerSpec extends ControllerBaseSpec with 
   val controller: ContactNumbersChangeSuccessController = new ContactNumbersChangeSuccessController(
     mockContactPreferenceService,
     mockVatSubscriptionService,
-    injector.instanceOf[ChangeSuccessView]
+    injector.instanceOf[ContactNumbersChangeSuccessView]
   )
 
   "Calling the show action" when {

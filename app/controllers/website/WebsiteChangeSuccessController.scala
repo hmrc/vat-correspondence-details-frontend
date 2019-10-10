@@ -26,14 +26,14 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.Inject
 import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
-import models.viewModels.ChangeSuccessViewModel
+import models.viewModels.WebsiteChangeSuccessViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{ContactPreferenceService, VatSubscriptionService}
-import views.html.templates.ChangeSuccessView
+import views.html.website.WebsiteChangeSuccessView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WebsiteChangeSuccessController @Inject()(changeSuccessView: ChangeSuccessView,
+class WebsiteChangeSuccessController @Inject()(websiteChangeSuccessView: WebsiteChangeSuccessView,
                                                contactPreferenceService: ContactPreferenceService,
                                                vatSubscriptionService: VatSubscriptionService)
                                               (implicit appConfig: AppConfig,
@@ -53,7 +53,7 @@ class WebsiteChangeSuccessController @Inject()(changeSuccessView: ChangeSuccessV
                         else {contactPreferenceService.getContactPreference(user.vrn)}
         } yield {
           val viewModel = constructViewModel(customerDetails, preference, website, user.session.get(verifiedAgentEmail))
-          Ok(changeSuccessView(viewModel)).removingFromSession(prepopulationWebsiteKey)
+          Ok(websiteChangeSuccessView(viewModel)).removingFromSession(prepopulationWebsiteKey)
         }
       case _ => Future.successful(Redirect(routes.CaptureWebsiteController.show().url))
     }
@@ -62,11 +62,10 @@ class WebsiteChangeSuccessController @Inject()(changeSuccessView: ChangeSuccessV
   private[controllers] def constructViewModel(customerInfoCall: GetCustomerInfoResponse,
                                               preferenceCall: HttpGetResult[ContactPreference],
                                               newWebsite: String,
-                                              agentEmail: Option[String]): ChangeSuccessViewModel = {
+                                              agentEmail: Option[String]): WebsiteChangeSuccessViewModel = {
     val entityName: Option[String] = customerInfoCall.fold(_ => None, details => details.entityName)
     val preference: Option[String] = preferenceCall.fold(_ => None, pref => Some(pref.preference))
     val removeWebsite: Boolean = newWebsite == ""
-    val titleMessageKey = if(removeWebsite) "websiteChangeSuccess.title.remove" else "websiteChangeSuccess.title.change"
-    ChangeSuccessViewModel(titleMessageKey, agentEmail, preference, entityName)
+    WebsiteChangeSuccessViewModel(entityName, preference, removeWebsite, agentEmail)
   }
 }
