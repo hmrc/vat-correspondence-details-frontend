@@ -87,7 +87,7 @@ class ContactNumbersChangeSuccessControllerSpec extends ControllerBaseSpec with 
       }
 
       "redirect the user to the capture website address page" in {
-        redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.CaptureContactNumbersController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.CaptureLandlineNumberController.show().url)
       }
     }
   }

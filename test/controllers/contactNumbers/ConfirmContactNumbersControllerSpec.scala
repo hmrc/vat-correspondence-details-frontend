@@ -64,7 +64,7 @@ class ConfirmContactNumbersControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to enter a new contact number" in {
-        redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.CaptureContactNumbersController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.CaptureLandlineNumberController.show().url)
       }
     }
 

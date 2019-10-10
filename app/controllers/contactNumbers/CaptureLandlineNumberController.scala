@@ -26,15 +26,15 @@ import javax.inject.{Inject, Singleton}
 import models.customerInformation.ContactNumbers
 import play.api.mvc._
 import services.VatSubscriptionService
-import views.html.contactNumbers.CaptureContactNumbersView
+import views.html.contactNumbers.CaptureLandlineNumberView
 import views.html.errors.NotFoundView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CaptureContactNumbersController @Inject()(val vatSubscriptionService: VatSubscriptionService,
+class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                                 val errorHandler: ErrorHandler,
-                                                captureContactNumbersView: CaptureContactNumbersView,
+                                                captureLandlineNumberView: CaptureLandlineNumberView,
                                                 notFoundView: NotFoundView)
                                                (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
@@ -75,7 +75,7 @@ class CaptureContactNumbersController @Inject()(val vatSubscriptionService: VatS
       } yield {
         (validationLandline, validationMobile) match {
           case (Some(valLandline), Some(valMobile)) =>
-            Ok(captureContactNumbersView(contactNumbersForm(valLandline, valMobile).fill(
+            Ok(captureLandlineNumberView(contactNumbersForm(valLandline, valMobile).fill(
               ContactNumbers(Some(prepopulationLandline), Some(prepopulationMobile))
             ))).addingToSession(
               SessionKeys.validationLandlineKey -> valLandline,
@@ -99,7 +99,7 @@ class CaptureContactNumbersController @Inject()(val vatSubscriptionService: VatS
       case (Some(validationLand), Some(validationMob)) =>
         contactNumbersForm(validationLand, validationMob).bindFromRequest.fold(
           errorForm => {
-            BadRequest(captureContactNumbersView(errorForm))
+            BadRequest(captureLandlineNumberView(errorForm))
           },
           contactDetails => {
             Redirect(routes.ConfirmContactNumbersController.show()).addingToSession(

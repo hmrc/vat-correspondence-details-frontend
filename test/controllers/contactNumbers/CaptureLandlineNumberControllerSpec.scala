@@ -28,25 +28,25 @@ import org.mockito.Mockito.{never, verify}
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.contactNumbers.CaptureContactNumbersView
+import views.html.contactNumbers.CaptureLandlineNumberView
 import views.html.errors.NotFoundView
 
 import scala.concurrent.ExecutionContext
 
-class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
+class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 
-  val controller = new CaptureContactNumbersController(
+  val controller = new CaptureLandlineNumberController(
     mockVatSubscriptionService,
     mockErrorHandler,
-    injector.instanceOf[CaptureContactNumbersView],
-    injector.instanceOf[NotFoundView]
+    inject[CaptureLandlineNumberView],
+    inject[NotFoundView]
   )
 
   "Calling the show action" when {
 
     "a user is enrolled with a valid enrolment" when {
 
-      "the user's current landline and mobile are retrieved from session" should {
+      "the user's current landline is retrieved from session" should {
 
         lazy val result = controller.show(requestWithValidationPhoneNumbers)
 
@@ -63,10 +63,6 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
 
         "prepopulate the form with the user's current landline" in {
           document.select("#landlineNumber").attr("value") shouldBe testValidationLandline
-        }
-
-        "prepopulate the form with the user's current mobile" in {
-          document.select("#mobileNumber").attr("value") shouldBe testValidationMobile
         }
 
         "not call the VatSubscription service" in {
@@ -93,10 +89,6 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
 
       "prepopulate the form with the previously entered landline" in {
         document.select("#landlineNumber").attr("value") shouldBe testPrepopLandline
-      }
-
-      "prepopulate the form with the previously entered mobile" in {
-        document.select("#mobileNumber").attr("value") shouldBe testPrepopMobile
       }
 
       "not call the VatSubscription service" in {
@@ -126,10 +118,6 @@ class CaptureContactNumbersControllerSpec extends ControllerBaseSpec with MockVa
 
         "prepopulate the form with the customerInfo landline result" in {
           document.select("#landlineNumber").attr("value") shouldBe "01234567890"
-        }
-
-        "prepopulate the form with the customerInfo mobile result" in {
-          document.select("#mobileNumber").attr("value") shouldBe "07707707707"
         }
       }
 
