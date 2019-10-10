@@ -19,7 +19,7 @@
 
 @this(mainTemplate: MainTemplate)
 
-@(landline: String, mobile : String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(landline: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @mainTemplate(title = messages("confirmPhoneNumbers.title")) {
 
@@ -30,11 +30,7 @@
 <h1 class="heading-large">@messages("confirmPhoneNumbers.heading")</h1>
 
 <p>
-<strong class="bold">@messages("confirmPhoneNumbers.landline")</strong>
-  : @landline
-  <br>
-  <strong class="bold">@messages("confirmPhoneNumbers.mobile")</strong>
-  : @mobile
+@messages("confirmPhoneNumbers.landline") @landline
 </p>
 
 <p>
@@ -43,7 +39,7 @@
   </a>
 </p>
 
-<a href="@controllers.contactNumbers.routes.ConfirmContactNumbersController.updateContactNumbers()"
+<a href="@controllers.contactNumbers.routes.ConfirmLandlineNumberController.updateLandlineNumber()"
    class="button" role="button">
   @messages("base.confirmAndContinue")
 </a>

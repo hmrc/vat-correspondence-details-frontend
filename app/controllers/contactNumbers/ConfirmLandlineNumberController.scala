@@ -17,7 +17,6 @@
 package controllers.contactNumbers
 
 import audit.AuditingService
-import audit.models.ChangedPhoneNumbersAuditModel
 import common.SessionKeys
 import common.SessionKeys._
 import config.{AppConfig, ErrorHandler}
@@ -30,14 +29,14 @@ import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import utils.LoggerUtil.{logInfo, logWarn}
-import views.html.contactNumbers.ConfirmContactNumbersView
+import views.html.contactNumbers.ConfirmLandlineNumberView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmContactNumbersController @Inject()(val errorHandler: ErrorHandler,
+class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
                                                 val vatSubscriptionService: VatSubscriptionService,
-                                                confirmContactNumbersView: ConfirmContactNumbersView,
+                                                confirmLandlineNumberView: ConfirmLandlineNumberView,
                                                 auditService: AuditingService)
                                                (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
@@ -49,8 +48,6 @@ class ConfirmContactNumbersController @Inject()(val errorHandler: ErrorHandler,
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate) { implicit user =>
     val prepopulationLandline = user.session.get(prepopulationLandlineKey).filter(_.nonEmpty)
     val validationLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
-    val prepopulationMobile = user.session.get(prepopulationMobileKey).filter(_.nonEmpty)
-    val validationMobile = user.session.get(validationMobileKey).filter(_.nonEmpty)
 
     def numberToShow(prepopulatedValue : Option[String], validationValue : Option[String]) : String = {
       (prepopulatedValue, validationValue) match {
@@ -60,49 +57,34 @@ class ConfirmContactNumbersController @Inject()(val errorHandler: ErrorHandler,
       }
     }
 
-    (prepopulationLandline, prepopulationMobile) match {
-      case (None, None) => Redirect(controllers.contactNumbers.routes.CaptureLandlineNumberController.show())
-      case _ => Ok(confirmContactNumbersView(
-        numberToShow(prepopulationLandline, validationLandline),
-        numberToShow(prepopulationMobile, validationMobile))
+    prepopulationLandline match {
+      case None => Redirect(controllers.contactNumbers.routes.CaptureLandlineNumberController.show())
+      case _ => Ok(confirmLandlineNumberView(
+        numberToShow(prepopulationLandline, validationLandline))
       )
     }
   }
 
-  def updateContactNumbers: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate).async {
+  def updateLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate).async {
     implicit user =>
       val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey).filter(_.nonEmpty)
-      val enteredMobile = user.session.get(SessionKeys.prepopulationMobileKey).filter(_.nonEmpty)
-      val existingLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
-      val existingMobile = user.session.get(validationMobileKey).filter(_.nonEmpty)
 
-      (enteredLandline, enteredMobile) match {
-        case (None, None) =>
-          logInfo("[ConfirmPhoneNumbersController][updateEmailAddress] - No phone numbers found in session")
-          Future.successful(Redirect(routes.ConfirmContactNumbersController.show()))
+        enteredLandline match {
+        case None =>
+          logInfo("[ConfirmLandlineNumberController][updateLandlineNumber] - No landline number found in session")
+          Future.successful(Redirect(routes.ConfirmLandlineNumberController.show()))
 
-        case (landline, mobile) => vatSubscriptionService.updateContactNumbers(user.vrn, landline, mobile).map {
+        case landline => vatSubscriptionService.updateContactNumbers(user.vrn, landline).map {
           case Right(UpdatePPOBSuccess(_)) =>
-            auditService.extendedAudit(
-              ChangedPhoneNumbersAuditModel(
-                existingLandline,
-                existingMobile,
-                if(existingLandline != enteredLandline) Some(landline.getOrElse("")) else None,
-                if(existingMobile != enteredMobile) Some(mobile.getOrElse("")) else None,
-                user.vrn,
-                user.isAgent,
-                user.arn
-              )
-            )
             Redirect(routes.ContactNumbersChangeSuccessController.show())
-              .removingFromSession(prepopulationLandlineKey, prepopulationMobileKey, validationMobileKey, validationLandlineKey)
-              .addingToSession(phoneNumberChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "telephone")
+              .removingFromSession(prepopulationLandlineKey, validationLandlineKey)
+              .addingToSession(phoneNumberChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "landline")
 
           case Left(ErrorModel(CONFLICT, _)) =>
-            logWarn("[ConfirmPhoneNumbersController][updatePhoneNumbers] - There is a contact details update request " +
+            logWarn("[ConfirmLandlineNumberController][updateLandlineNumber] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "telephone")
+              .addingToSession(inFlightContactDetailsChangeKey -> "landline")
 
           case Left(_) =>
             errorHandler.showInternalServerError

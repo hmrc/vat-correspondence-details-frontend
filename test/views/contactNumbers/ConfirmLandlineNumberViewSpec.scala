@@ -19,36 +19,35 @@ package views.contactNumbers
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
-import views.html.contactNumbers.ConfirmContactNumbersView
+import views.html.contactNumbers.ConfirmLandlineNumberView
 import assets.BaseTestConstants._
 import controllers.contactNumbers.routes
 
-class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
+class ConfirmLandlineNumberViewSpec extends ViewBaseSpec {
 
-  val injectedView: ConfirmContactNumbersView = injector.instanceOf[ConfirmContactNumbersView]
+  val injectedView: ConfirmLandlineNumberView = inject[ConfirmLandlineNumberView]
 
   object Selectors {
     val heading = "h1"
     val backLink = "#content > article > a"
     val continueButton = ".button"
     val editLink = "#content > article > p:nth-child(4) > a"
-    val newPhoneNumbers = "#content > article > p"
-    val newPhoneNumbersBreak = "#content > article > p > br"
+    val newLandlineNumber = "#content > article > p"
   }
 
-  "The Confirm Contact Numbers view" when {
+  "The Confirm Landline Number view" when {
 
     "the user is  principle entity" should {
 
-      lazy val view = injectedView(testPrepopLandline, testPrepopMobile)(user, messages, mockConfig)
+      lazy val view = injectedView(testPrepopLandline)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {
-        document.title shouldBe "Confirm telephone number changes - Business tax account - GOV.UK"
+        document.title shouldBe "Confirm the landline number - Business tax account - GOV.UK"
       }
 
       "have the correct heading" in {
-        elementText(Selectors.heading) shouldBe "Confirm telephone number changes"
+        elementText(Selectors.heading) shouldBe "Confirm the landline number"
       }
 
       "have a back link" which {
@@ -62,19 +61,14 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
         }
       }
 
-      "have the contact numbers the user provided" in {
-        elementText(Selectors.newPhoneNumbers) shouldBe s"Landline : $testPrepopLandline Mobile : $testPrepopMobile"
+      "have the landline number the user provided" in {
+        elementText(Selectors.newLandlineNumber) shouldBe s"The new landline number is $testPrepopLandline"
       }
 
-      "have a line break in the telephone number p tag" in {
-        elementExists(Selectors.newPhoneNumbersBreak)
-      }
-
-
-      "have a link to edit phone numbers" which {
+      "have a link to edit landline number" which {
 
         "has the correct text" in {
-          elementText(Selectors.editLink) shouldBe "Change telephone numbers"
+          elementText(Selectors.editLink) shouldBe "Change the landline number"
         }
 
         "has the correct link" in {
@@ -91,7 +85,7 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
 
         "has the correct link" in {
           element(Selectors.continueButton).attr("href") shouldBe
-            routes.ConfirmContactNumbersController.updateContactNumbers().url
+            routes.ConfirmLandlineNumberController.updateLandlineNumber().url
         }
       }
     }
@@ -99,11 +93,11 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
     "the user is an agent" should {
 
       "there are no errors in the form" should {
-        val view = injectedView(testPrepopLandline, testPrepopMobile)(agent, messages, mockConfig)
+        val view = injectedView(testPrepopLandline)(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
-          document.title shouldBe "Confirm telephone number changes - Your client’s VAT details - GOV.UK"
+          document.title shouldBe "Confirm the landline number - Your client’s VAT details - GOV.UK"
         }
       }
     }

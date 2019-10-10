@@ -97,7 +97,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
       }
     }
 
-    "there are no contact numbers in session" when {
+    "there is no landline number in session" when {
 
       "the customerInfo call succeeds" should {
 
@@ -222,7 +222,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
           }
 
           "redirect to the confirm contact numbers controller" in {
-            redirectLocation(result) shouldBe Some(routes.ConfirmContactNumbersController.show().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.show().url)
           }
 
           "add the new landline to the session" in {

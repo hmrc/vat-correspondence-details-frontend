@@ -78,7 +78,6 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
 
   def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate) { implicit user =>
     val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
-    val prepopulationLandline: Option[String] = user.session.get(SessionKeys.prepopulationLandlineKey)
 
     validationLandline match {
       case Some(landline) =>
@@ -86,8 +85,9 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
           errorForm => {
             BadRequest(captureLandlineNumberView(errorForm))
           },
+
           formValue => {
-            Redirect(routes.ConfirmContactNumbersController.show())
+            Redirect(routes.ConfirmLandlineNumberController.show())
               .addingToSession(SessionKeys.prepopulationLandlineKey -> formValue)
           }
         )

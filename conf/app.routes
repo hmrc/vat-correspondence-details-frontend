@@ -41,9 +41,9 @@ GET         /update-remove-website-address         controllers.website.ConfirmRe
 GET         /new-landline-number                   controllers.contactNumbers.CaptureLandlineNumberController.show
 POST        /new-landline-number                   controllers.contactNumbers.CaptureLandlineNumberController.submit
 
-# confirm phone numbers
-GET         /confirm-new-telephone-numbers        controllers.contactNumbers.ConfirmContactNumbersController.show
-GET         /update-new-telephone-numbers         controllers.contactNumbers.ConfirmContactNumbersController.updateContactNumbers
+# confirm landline number
+GET         /confirm-new-landline-number          controllers.contactNumbers.ConfirmLandlineNumberController.show
+GET         /update-new-landline-number           controllers.contactNumbers.ConfirmLandlineNumberController.updateLandlineNumber
 
 # telephone numbers change successful
 GET         /telephone-numbers-confirmation        controllers.contactNumbers.ContactNumbersChangeSuccessController.show
