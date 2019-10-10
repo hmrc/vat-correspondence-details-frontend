@@ -78,8 +78,7 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "uk.gov.hmrc" %% "auth-client" % authClientVersion,
   "uk.gov.hmrc" %% "play-whitelist-filter" % playWhiteListFilterVersion,
-  "com.typesafe.play" %% "play-json-joda" % playJsonJodaVersion,
-  "com.googlecode.libphonenumber" % "libphonenumber" % libphonenumberVersion
+  "com.typesafe.play" %% "play-json-joda" % playJsonJodaVersion
 )
 
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(

@@ -16,11 +16,10 @@
 
 package pages.contactNumbers
 
-import common.SessionKeys.{validationLandlineKey, validationMobileKey}
+import common.SessionKeys.validationLandlineKey
 import controllers.contactNumbers.routes
-import forms.ContactNumbersForm.contactNumbersForm
+import forms.LandlineNumberForm.landlineNumberForm
 import helpers.SessionCookieCrumbler
-import models.customerInformation.ContactNumbers
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.libs.ws.WSResponse
@@ -30,7 +29,6 @@ class CaptureLandlineNumberPageSpec extends BasePageISpec {
 
   val path = "/new-landline-number"
   val newLandline = "01952654321"
-  val newMobile = "07890654321"
 
   "Calling the Capture landline number (.show) route" when {
 
@@ -69,12 +67,8 @@ class CaptureLandlineNumberPageSpec extends BasePageISpec {
   "Calling the Capture landline number (.submit) route" when {
 
     def submit(data: String): WSResponse = post(path, Map(
-      validationLandlineKey -> currentLandline,
-      validationMobileKey -> currentMobile) ++
-      formatInflightChange(Some("false"))
-    )(toFormData[ContactNumbers](
-      contactNumbersForm(currentLandline, currentMobile), ContactNumbers(Some(newLandline), Some(currentMobile)))
-    )
+      validationLandlineKey -> currentLandline) ++ formatInflightChange(Some("false"))
+    )(toFormData[String](landlineNumberForm(currentLandline), newLandline))
 
     "the user is authenticated" when {
 
