@@ -26,14 +26,14 @@ import org.mockito.Mockito.{times, verify}
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import views.html.website.WebsiteChangeSuccessView
+import views.html.templates.ChangeSuccessView
 
 import scala.concurrent.Future
 
 class WebsiteChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
 
   val controller: WebsiteChangeSuccessController = new WebsiteChangeSuccessController(
-    injector.instanceOf[WebsiteChangeSuccessView],
+    injector.instanceOf[ChangeSuccessView],
     mockContactPreferenceService,
     mockVatSubscriptionService
   )

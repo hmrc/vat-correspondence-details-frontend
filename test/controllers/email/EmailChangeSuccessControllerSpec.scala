@@ -28,13 +28,13 @@ import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.email.EmailChangeSuccessView
+import views.html.templates.ChangeSuccessView
 
 import scala.concurrent.Future
 
 class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService with MockAuditingService {
 
-  val view: EmailChangeSuccessView = injector.instanceOf[EmailChangeSuccessView]
+  val view: ChangeSuccessView = injector.instanceOf[ChangeSuccessView]
 
   object TestController extends EmailChangeSuccessController(
     mockAuditingService,
@@ -74,9 +74,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
             "render the email change success page" in {
               messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
-                "We will send you an email within 2 working days with an update, followed by a letter to your " +
-                  "principal place of business. You can also go to your HMRC secure messages to find out if your " +
-                  "request has been accepted."
+                "We’ll send you an email within 2 working days with an update, followed by a letter to your " +
+                  "principal place of business. You can also check your HMRC secure messages for an update."
             }
           }
 
@@ -101,7 +100,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
             "render the email change success page" in {
               messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
-                "We will send a letter to your principal place of business with an update within 15 working days."
+                "We’ll send a letter to your principal place of business with an update within 15 working days."
             }
           }
         }
