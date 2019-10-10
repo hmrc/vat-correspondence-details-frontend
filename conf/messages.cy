@@ -82,11 +82,10 @@ verifyEmail.accordion.lineTwo = ei anfon eto
 verifyEmail.accordion.lineThree = Os byddwn yn ei anfon eto, ni fydd unrhyw gysylltiadau blaenorol yn gweithio mwyach.
 
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
-emailChangeSuccess.heading = Mae’r cyfeiriad e-bost newydd wedi dod i law
-emailChangeSuccess.helpOne = Byddwn yn anfon e-bost cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a yw’r cais wedi’i dderbyn ai peidio. Gallwch hefyd fynd i’ch negeseuon yn eich Cyfrif Treth Busnes.
-emailChangeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
-emailChangeSuccess.helpOne.digitalPreference = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd fynd i’ch negeseuon diogel CThEM i weld a yw’ch cais wedi’i dderbyn.
-emailChangeSuccess.helpOne.paperPreference = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
+
+changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEM i gael diweddariad.
+changeSuccess.helpOne.paper = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
+changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
 
 inFlightChange.title = Mae gennych newid ar y gweill yn barod
 inFlightChange.recentlyRequested = Gwnaethoch gais yn ddiweddar i newid {0}.
