@@ -22,42 +22,37 @@ import forms.ContactNumbersForm.contactNumbersForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
-import views.html.contactNumbers.CaptureContactNumbersView
+import views.html.contactNumbers.CaptureLandlineNumberView
 
-class CaptureContactNumbersViewSpec extends ViewBaseSpec {
+class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 
-  val injectedView: CaptureContactNumbersView = injector.instanceOf[CaptureContactNumbersView]
+  val injectedView: CaptureLandlineNumberView = inject[CaptureLandlineNumberView]
 
-  "The Capture Contact Numbers page" when {
+  "The Capture Contact Number page" when {
 
-    "the user is principle entity" when {
+    "the user is not an agent" when {
 
       "there are no errors in the form" should {
 
         val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
+        val fieldLabel: String = "#content > article > form > fieldset > div > label "
 
         "have the correct title" in {
-          document.title shouldBe "Change telephone numbers - Business tax account - GOV.UK"
+          document.title shouldBe "What is the landline number? - Business tax account - GOV.UK"
         }
 
         "have the correct heading" in {
-          elementText("h1") shouldBe "Change telephone numbers"
+          elementText("h1") shouldBe "What is the landline number?"
         }
 
-        "have the correct instruction paragraph" in {
-          elementText("#content > article > p") shouldBe
-            "Include the country code for international telephone numbers, for example '+44'."
+        "have the correct field hint" in {
+          elementText(s"$fieldLabel > span.form-hint") shouldBe
+            "You will need to include the country code for international telephone numbers, for example '+44'."
         }
 
-        "have the correct form label for landline number" in {
-          elementText("#content > article > form > fieldset > div > div:nth-child(1) > label > span") shouldBe
-            "Landline number"
-        }
-
-        "have the correct form label for mobile number" in {
-          elementText("#content > article > form > fieldset > div > div:nth-child(2) > label > span") shouldBe
-            "Mobile number"
+        "have the correct visually hidden text" in {
+          elementText(s"$fieldLabel > span.visuallyhidden") shouldBe "What is the landline number?"
         }
 
         "have a button" which {
@@ -67,17 +62,19 @@ class CaptureContactNumbersViewSpec extends ViewBaseSpec {
           }
 
           "has the correct link location" in {
-            element("form").attr("action") shouldBe routes.CaptureContactNumbersController.submit().url
+            element("form").attr("action") shouldBe routes.CaptureLandlineNumberController.submit().url
           }
         }
       }
 
       "there are errors in the form" should {
+
         val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile)
           .withError("landlineNumber", "Enter a different phone number"))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
+
         "have the correct document title" in {
-          document.title shouldBe "Error: Change telephone numbers - Business tax account - GOV.UK"
+          document.title shouldBe "Error: What is the landline number? - Business tax account - GOV.UK"
         }
 
         "have a form error box" which {
@@ -97,15 +94,15 @@ class CaptureContactNumbersViewSpec extends ViewBaseSpec {
       }
     }
 
-
-    "the user is an agent" should {
+    "the user is an agent" when {
 
       "there are no errors in the form" should {
+
         val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
-          document.title shouldBe "Change telephone numbers - Your client’s VAT details - GOV.UK"
+          document.title shouldBe "What is the landline number? - Your client’s VAT details - GOV.UK"
         }
       }
     }

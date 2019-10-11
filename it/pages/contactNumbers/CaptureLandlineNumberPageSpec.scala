@@ -26,13 +26,13 @@ import play.api.http.Status
 import play.api.libs.ws.WSResponse
 import stubs.VatSubscriptionStub._
 
-class CaptureContactNumbersPageSpec extends BasePageISpec {
+class CaptureLandlineNumberPageSpec extends BasePageISpec {
 
-  val path = "/new-telephone-numbers"
+  val path = "/new-landline-number"
   val newLandline = "01952654321"
   val newMobile = "07890654321"
 
-  "Calling the Capture contact numbers (.show) route" when {
+  "Calling the Capture landline number (.show) route" when {
 
     def show: WSResponse = get(path, formatInflightChange(Some("false")))
 
@@ -49,11 +49,11 @@ class CaptureContactNumbersPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("captureContactNumbers.title"))
+            pageTitle(generateDocumentTitle("captureLandline.title"))
            )
         }
 
-        "add the existing contact numbers to the session" in {
+        "add the existing landline number to session" in {
 
           given.user.isAuthenticated
           stubCustomerInfo
@@ -61,25 +61,24 @@ class CaptureContactNumbersPageSpec extends BasePageISpec {
           val result = show
 
           SessionCookieCrumbler.getSessionMap(result).get(validationLandlineKey) shouldBe Some(currentLandline)
-          SessionCookieCrumbler.getSessionMap(result).get(validationMobileKey) shouldBe Some(currentMobile)
         }
       }
     }
   }
 
-  "Calling the Capture contact numbers (.submit) route" when {
+  "Calling the Capture landline number (.submit) route" when {
 
     def submit(data: String): WSResponse = post(path, Map(
       validationLandlineKey -> currentLandline,
       validationMobileKey -> currentMobile) ++
       formatInflightChange(Some("false"))
     )(toFormData[ContactNumbers](
-      contactNumbersForm(currentLandline, currentMobile), ContactNumbers(Some(newLandline), Some(newMobile)))
+      contactNumbersForm(currentLandline, currentMobile), ContactNumbers(Some(newLandline), Some(currentMobile)))
     )
 
     "the user is authenticated" when {
 
-      "valid contact numbers are submitted" should {
+      "a valid landline number has been submitted" should {
 
         "redirect to the the Confirm Contact Numbers page" in {
 
@@ -94,14 +93,14 @@ class CaptureContactNumbersPageSpec extends BasePageISpec {
           )
         }
 
-        "add the existing contact number to session" in {
+        "add the existing landline number to session" in {
 
           given.user.isAuthenticated
           stubCustomerInfo
 
           val result = submit(newLandline)
 
-          SessionCookieCrumbler.getSessionMap(result).get(validationMobileKey) shouldBe Some(currentMobile)
+          SessionCookieCrumbler.getSessionMap(result).get(validationLandlineKey) shouldBe Some(currentLandline)
         }
       }
     }

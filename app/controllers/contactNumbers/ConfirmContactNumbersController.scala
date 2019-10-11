@@ -61,7 +61,7 @@ class ConfirmContactNumbersController @Inject()(val errorHandler: ErrorHandler,
     }
 
     (prepopulationLandline, prepopulationMobile) match {
-      case (None, None) => Redirect(controllers.contactNumbers.routes.CaptureContactNumbersController.show())
+      case (None, None) => Redirect(controllers.contactNumbers.routes.CaptureLandlineNumberController.show())
       case _ => Ok(confirmContactNumbersView(
         numberToShow(prepopulationLandline, validationLandline),
         numberToShow(prepopulationMobile, validationMobile))

@@ -30,22 +30,22 @@ POST        /new-website-address                   controllers.website.CaptureWe
 GET         /confirm-new-website-address           controllers.website.ConfirmWebsiteController.show
 GET         /update-website-address                controllers.website.ConfirmWebsiteController.updateWebsite
 
-# website change successful
+# website change successfull
 GET         /website-address-confirmation          controllers.website.WebsiteChangeSuccessController.show
 
 # remove website address
 GET         /remove-website-address                controllers.website.ConfirmRemoveWebsiteController.show
 GET         /update-remove-website-address         controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
 
-# capture telephone numbers
-GET         /new-telephone-numbers                 controllers.contactNumbers.CaptureContactNumbersController.show
-POST        /new-telephone-numbers                 controllers.contactNumbers.CaptureContactNumbersController.submit
+# capture contact numbers
+GET         /new-landline-number                   controllers.contactNumbers.CaptureLandlineNumberController.show
+POST        /new-landline-number                   controllers.contactNumbers.CaptureLandlineNumberController.submit
 
 # confirm phone numbers
 GET         /confirm-new-telephone-numbers        controllers.contactNumbers.ConfirmContactNumbersController.show
 GET         /update-new-telephone-numbers         controllers.contactNumbers.ConfirmContactNumbersController.updateContactNumbers
 
-# telephone numbers change successfull
+# telephone numbers change successful
 GET         /telephone-numbers-confirmation        controllers.contactNumbers.ContactNumbersChangeSuccessController.show
 
 # Map static resources from the /public folder to the /assets URL path

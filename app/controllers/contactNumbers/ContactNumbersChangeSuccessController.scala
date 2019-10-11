@@ -57,7 +57,7 @@ class ContactNumbersChangeSuccessController @Inject()(contactPreferenceService: 
         Ok(changeSuccessView(viewModel))
       }
     } else {
-      Future.successful(Redirect(routes.CaptureContactNumbersController.show()))
+      Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
     }
   }
 

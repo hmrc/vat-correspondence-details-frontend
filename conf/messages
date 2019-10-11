@@ -68,9 +68,9 @@ captureWebsite.error.empty = Enter a website address
 captureWebsite.error.notChanged = Enter a new website address
 captureContactNumbers.error.noEntry = You must enter either a landline or mobile phone number
 
-captureContactNumbers.title = Change telephone numbers
-captureContactNumbers.instructions = Include the country code for international telephone numbers, for example ''+44''.
-captureContactNumbers.landlineNumber = Landline number
+captureLandline.title = What is the landline number?
+captureLandline.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
+
 captureContactNumbers.mobileNumber = Mobile number
 captureContactNumbers.error.invalid = Enter a phone number in the correct format
 

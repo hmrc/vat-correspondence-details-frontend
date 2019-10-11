@@ -58,7 +58,7 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
         }
 
         "should have the correct back link" in {
-          element(Selectors.backLink).attr("href") shouldBe routes.CaptureContactNumbersController.show().url
+          element(Selectors.backLink).attr("href") shouldBe routes.CaptureLandlineNumberController.show().url
         }
       }
 
@@ -78,7 +78,7 @@ class ConfirmContactNumbersViewSpec extends ViewBaseSpec {
         }
 
         "has the correct link" in {
-          element(Selectors.editLink).attr("href") shouldBe routes.CaptureContactNumbersController.show().url
+          element(Selectors.editLink).attr("href") shouldBe routes.CaptureLandlineNumberController.show().url
         }
 
       }
