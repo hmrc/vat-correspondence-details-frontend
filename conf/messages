@@ -122,7 +122,8 @@ inFlightChange.recentlyRequested = You recently requested to change the {0}.
 inFlightChange.changePending = This change is pending and until this is confirmed, you cannot change your:
 inFlightChange.ppob = principal place of business
 inFlightChange.email = business email address
-inFlightChange.telephone = business telephone numbers
+inFlightChange.landline = business landline number
+inFlightChange.mobile = business mobile number
 inFlightChange.website = business website address
 inFlightChange.emailAddress = email address
 

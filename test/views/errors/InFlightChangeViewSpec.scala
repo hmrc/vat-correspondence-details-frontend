@@ -89,14 +89,25 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
       }
     }
 
-    "the pending change is telephone numbers" should {
+    "the pending change is landline number" should {
 
-      lazy val view = injectedView("telephone")
+      lazy val view = injectedView("landline")
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct information in the first paragraph" in {
         elementText(Selectors.paragraphOne) shouldBe
-          "You recently requested to change the business telephone numbers."
+          "You recently requested to change the business landline number."
+      }
+    }
+
+    "the pending change is mobile number" should {
+
+      lazy val view = injectedView("mobile")
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have the correct information in the first paragraph" in {
+        elementText(Selectors.paragraphOne) shouldBe
+          "You recently requested to change the business mobile number."
       }
     }
 
