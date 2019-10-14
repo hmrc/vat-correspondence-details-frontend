@@ -29,9 +29,11 @@ object SessionKeys {
   val prepopulationWebsiteKey: String = "vatCorrespondencePrepopulationWebsite"
   val websiteChangeSuccessful: String = "vatCorrespondenceWebsiteChangeSuccessful"
 
-  val validationMobileKey: String = "vatCorrespondenceValidationMobile"
-  val prepopulationMobileKey: String = "vatCorrespondencePrepopulationMobile"
   val validationLandlineKey: String = "vatCorrespondenceValidationLandline"
   val prepopulationLandlineKey: String = "vatCorrespondencePrepopulationLandline"
-  val phoneNumberChangeSuccessful: String = "vatCorrespondencePhoneNumberChangeSuccessful"
+  val landlineChangeSuccessful: String = "vatCorrespondenceLandlineChangeSuccessful"
+
+  val validationMobileKey: String = "vatCorrespondenceValidationMobile"
+  val prepopulationMobileKey: String = "vatCorrespondencePrepopulationMobile"
+  val mobileChangeSuccessful: String = "vatCorrespondenceMobileChangeSuccessful"
 }

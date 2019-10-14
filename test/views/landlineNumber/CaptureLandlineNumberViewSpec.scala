@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package views.contactNumbers
+package views.landlineNumber
 
-import assets.BaseTestConstants.{testValidationLandline, testValidationMobile}
-import controllers.contactNumbers.routes
+import assets.BaseTestConstants.testValidationLandline
+import controllers.landlineNumber.routes
 import forms.LandlineNumberForm.landlineNumberForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
-import views.html.contactNumbers.CaptureLandlineNumberView
+import views.html.landlineNumber.CaptureLandlineNumberView
 
 class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 

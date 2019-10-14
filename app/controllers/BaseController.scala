@@ -39,6 +39,6 @@ abstract class BaseController(implicit val mcc: MessagesControllerComponents,
     inFlightComps, routePrefix + controllers.website.routes.CaptureWebsiteController.show().url
   )
   val inFlightContactNumbersPredicate = new InFlightPredicate(
-    inFlightComps, routePrefix + controllers.contactNumbers.routes.CaptureLandlineNumberController.show().url
+    inFlightComps, routePrefix + controllers.landlineNumber.routes.CaptureLandlineNumberController.show().url
   )
 }

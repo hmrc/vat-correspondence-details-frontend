@@ -113,7 +113,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect to the website changed success page" in {
-          redirectLocation(result) shouldBe Some(controllers.website.routes.WebsiteChangeSuccessController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.websiteAddress().url)
         }
       }
 

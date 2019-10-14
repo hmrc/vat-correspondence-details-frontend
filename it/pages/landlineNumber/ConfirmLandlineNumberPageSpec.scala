@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pages.contactNumbers
+package pages.landlineNumber
 
 import common.SessionKeys
 import pages.BasePageISpec
@@ -67,7 +67,7 @@ class ConfirmLandlineNumberPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.contactNumbers.routes.ContactNumbersChangeSuccessController.show().url)
+          redirectURI(controllers.routes.ChangeSuccessController.landlineNumber().url)
         )
       }
     }

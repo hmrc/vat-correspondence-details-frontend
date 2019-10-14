@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.contactNumbers
+package controllers.landlineNumber
 
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
@@ -25,7 +25,7 @@ import forms.LandlineNumberForm._
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
-import views.html.contactNumbers.CaptureLandlineNumberView
+import views.html.landlineNumber.CaptureLandlineNumberView
 import views.html.errors.NotFoundView
 
 import scala.concurrent.{ExecutionContext, Future}
