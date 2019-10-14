@@ -196,7 +196,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
     }
   }
 
-  "calling buildPhoneNumbersUpdateModel" when {
+  "calling buildLandlineUpdateModel" when {
 
     "the user has existing contact details" should {
 
@@ -205,7 +205,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
           fullPPOBAddressModel,
           Some(ContactDetails(
             Some(testPrepopLandline),
-            Some(testPrepopMobile),
+            Some("07707707707"),
             Some("0123456789"),
             Some("pepsimac@gmail.com"),
             Some(true)
@@ -213,7 +213,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
           Some("www.pepsi-mac.biz")
         )
 
-        val result = service.buildPhoneNumbersUpdateModel(Some(testPrepopLandline), Some(testPrepopMobile), fullPPOBModel)
+        val result = service.buildLandlineUpdateModel(Some(testPrepopLandline), fullPPOBModel)
         result shouldBe expectedPPOB
       }
     }
@@ -225,7 +225,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
           minPPOBAddressModel,
           Some(ContactDetails(
             Some(testPrepopLandline),
-            Some(testPrepopMobile),
+            None,
             None,
             None,
             None
@@ -233,7 +233,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
           None
         )
 
-        val result = service.buildPhoneNumbersUpdateModel(Some(testPrepopLandline), Some(testPrepopMobile), minPPOBModel)
+        val result = service.buildLandlineUpdateModel(Some(testPrepopLandline), minPPOBModel)
         result shouldBe expectedPPOB
       }
     }
@@ -261,7 +261,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         mockGetCustomerInfoSuccessResponse()
         mockUpdatePPOBSuccessResponse()
 
-        val result = await(service.updateContactNumbers(testVrn, Some(testPrepopLandline), Some(testPrepopMobile)))
+        val result = await(service.updateContactNumbers(testVrn, Some(testPrepopLandline)))
         result shouldBe Right(UpdatePPOBSuccess("success"))
       }
     }
@@ -272,7 +272,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         mockGetCustomerInfoSuccessResponse()
         mockUpdatePPOBFailureResponse()
 
-        val result = await(service.updateContactNumbers(testVrn, Some(testPrepopLandline), Some(testPrepopMobile)))
+        val result = await(service.updateContactNumbers(testVrn, Some(testPrepopLandline)))
         result shouldBe Left(invalidJsonError)
       }
     }

@@ -130,8 +130,8 @@ inFlightChange.emailAddress = email address
 
 confirmPhoneNumbers.notProvided = Not provided
 confirmPhoneNumbers.numberRemoved = Number removed
-confirmPhoneNumbers.title = Confirm telephone number changes
-confirmPhoneNumbers.heading = Confirm telephone number changes
-confirmPhoneNumbers.landline = Landline
+confirmPhoneNumbers.title = Confirm the landline number
+confirmPhoneNumbers.heading = Confirm the landline number
+confirmPhoneNumbers.landline = The new landline number is
 confirmPhoneNumbers.mobile = Mobile
-confirmPhoneNumbers.edit = Change telephone numbers
+confirmPhoneNumbers.edit = Change the landline number

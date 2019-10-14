@@ -22,12 +22,11 @@ import play.api.http.Status
 import play.api.libs.ws.WSResponse
 import stubs.VatSubscriptionStub
 
-class ConfirmContactNumbersPageSpec extends BasePageISpec {
+class ConfirmLandlineNumberPageSpec extends BasePageISpec {
 
-  val path = "/confirm-new-telephone-numbers"
-  val path_update = "/update-new-telephone-numbers"
+  val path = "/confirm-new-landline-number"
+  val path_update = "/update-new-landline-number"
   val newLandline = "012345678910"
-  val newMobile = "019876543210"
 
   "Calling the Confirm Phone Numbers (.show) route" when {
 
@@ -43,36 +42,6 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
           given.user.isAuthenticated
 
           val result = show(SessionKeys.prepopulationLandlineKey -> newLandline)
-
-          result should have(
-            httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("confirmPhoneNumbers.title"))
-          )
-        }
-      }
-
-      "there is a new mobile in the session" should {
-
-        "load successfully" in {
-
-          given.user.isAuthenticated
-
-          val result = show(SessionKeys.prepopulationMobileKey -> newMobile)
-
-          result should have(
-            httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("confirmPhoneNumbers.title"))
-          )
-        }
-      }
-
-      "there is a new landline and mobile in the session" should {
-
-        "load successfully" in {
-
-          given.user.isAuthenticated
-
-          val result = show(SessionKeys.prepopulationLandlineKey -> newLandline, SessionKeys.prepopulationMobileKey -> newMobile)
 
           result should have(
             httpStatus(Status.OK),
@@ -100,46 +69,6 @@ class ConfirmContactNumbersPageSpec extends BasePageISpec {
           httpStatus(Status.SEE_OTHER),
           redirectURI(controllers.contactNumbers.routes.ContactNumbersChangeSuccessController.show().url)
         )
-      }
-    }
-
-    "the mobile is updated" should {
-
-      "redirect to the confirmation screen" in {
-
-        given.user.isAuthenticated
-
-        VatSubscriptionStub.stubCustomerInfo
-        VatSubscriptionStub.stubUpdatePPOB
-
-        val result = show(SessionKeys.prepopulationMobileKey -> newMobile)
-
-        result should have(
-          httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.contactNumbers.routes.ContactNumbersChangeSuccessController.show().url)
-
-        )
-
-      }
-    }
-
-    "the landline and mobile are updated" should {
-
-      "redirect to the confirmation screen" in {
-
-        given.user.isAuthenticated
-
-        VatSubscriptionStub.stubCustomerInfo
-        VatSubscriptionStub.stubUpdatePPOB
-
-        val result = show(SessionKeys.prepopulationLandlineKey -> newLandline, SessionKeys.prepopulationMobileKey -> newMobile)
-
-        result should have(
-          httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.contactNumbers.routes.ContactNumbersChangeSuccessController.show().url)
-
-        )
-
       }
     }
   }
