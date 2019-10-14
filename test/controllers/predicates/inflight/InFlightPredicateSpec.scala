@@ -145,8 +145,8 @@ class InFlightPredicateSpec extends MockAuth {
           status(result) shouldBe Status.CONFLICT
         }
 
-        "add the inflight indicator 'telephone' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("telephone")
+        "add the inflight indicator 'landline' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("landline")
         }
 
         "show the 'change pending' error page" in {
@@ -166,8 +166,8 @@ class InFlightPredicateSpec extends MockAuth {
           status(result) shouldBe Status.CONFLICT
         }
 
-        "add the inflight indicator 'telephone' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("telephone")
+        "add the inflight indicator 'mobile' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("mobile")
         }
 
         "show the 'change pending' error page" in {
