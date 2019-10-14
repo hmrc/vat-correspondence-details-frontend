@@ -21,9 +21,8 @@ import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
-import forms.ContactNumbersForm._
+import forms.LandlineNumberForm._
 import javax.inject.{Inject, Singleton}
-import models.customerInformation.ContactNumbers
 import play.api.mvc._
 import services.VatSubscriptionService
 import views.html.contactNumbers.CaptureLandlineNumberView
@@ -47,40 +46,28 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
 
     if(appConfig.features.changeContactDetailsEnabled()) {
 
-      val validationNumbers: Future[(Option[String], Option[String])] =
-        (user.session.get(SessionKeys.validationLandlineKey), user.session.get(SessionKeys.validationMobileKey)) match {
-          case (Some(landline), Some(mobile)) => Future.successful(Some(landline), Some(mobile))
+      val validationLandline: Future[Option[String]] =
+        user.session.get(SessionKeys.validationLandlineKey) match {
+          case Some(landline) => Future.successful(Some(landline))
           case _ =>
             vatSubscriptionService.getCustomerInfo(user.vrn).map {
-              case Right(details) => (
-                Some(details.ppob.contactDetails.flatMap(_.phoneNumber).getOrElse("")),
-                Some(details.ppob.contactDetails.flatMap(_.mobileNumber).getOrElse(""))
-              )
-              case _ => (None, None)
+              case Right(details) => Some(details.ppob.contactDetails.flatMap(_.phoneNumber).getOrElse(""))
+              case _ => None
             }
         }
 
-      val prepopulationLandline: Future[String] = validationNumbers map { validationNumbers =>
-        user.session.get(SessionKeys.prepopulationLandlineKey).getOrElse(validationNumbers._1.getOrElse(""))
-      }
-
-      val prepopulationMobile: Future[String] = validationNumbers map { validationNumbers =>
-        user.session.get(SessionKeys.prepopulationMobileKey).getOrElse(validationNumbers._2.getOrElse(""))
+      val prepopulationLandline: Future[String] = validationLandline.map { number =>
+        user.session.get(SessionKeys.prepopulationLandlineKey).getOrElse(number.getOrElse(""))
       }
 
       for {
-        (validationLandline, validationMobile) <- validationNumbers
-        prepopulationLandline <- prepopulationLandline
-        prepopulationMobile <- prepopulationMobile
+        validationLandlineResult <- validationLandline
+        prepopLandlineResult <- prepopulationLandline
       } yield {
-        (validationLandline, validationMobile) match {
-          case (Some(valLandline), Some(valMobile)) =>
-            Ok(captureLandlineNumberView(contactNumbersForm(valLandline, valMobile).fill(
-              ContactNumbers(Some(prepopulationLandline), Some(prepopulationMobile))
-            ))).addingToSession(
-              SessionKeys.validationLandlineKey -> valLandline,
-              SessionKeys.validationMobileKey -> valMobile
-            )
+        validationLandlineResult match {
+          case Some(landline) =>
+            Ok(captureLandlineNumberView(landlineNumberForm(landline).fill(prepopLandlineResult)))
+              .addingToSession(SessionKeys.validationLandlineKey -> landline)
           case _ => errorHandler.showInternalServerError
         }
       }
@@ -92,20 +79,16 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
   def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate) { implicit user =>
     val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
     val prepopulationLandline: Option[String] = user.session.get(SessionKeys.prepopulationLandlineKey)
-    val validationMobile: Option[String] = user.session.get(SessionKeys.validationMobileKey)
-    val prepopulationMobile: Option[String] = user.session.get(SessionKeys.prepopulationMobileKey)
 
-    (validationLandline, validationMobile) match {
-      case (Some(validationLand), Some(validationMob)) =>
-        contactNumbersForm(validationLand, validationMob).bindFromRequest.fold(
+    validationLandline match {
+      case Some(landline) =>
+        landlineNumberForm(landline).bindFromRequest.fold(
           errorForm => {
             BadRequest(captureLandlineNumberView(errorForm))
           },
-          contactDetails => {
-            Redirect(routes.ConfirmContactNumbersController.show()).addingToSession(
-              SessionKeys.prepopulationLandlineKey -> contactDetails.landlineNumber.getOrElse(""),
-              SessionKeys.prepopulationMobileKey -> contactDetails.mobileNumber.getOrElse("")
-            )
+          formValue => {
+            Redirect(routes.ConfirmContactNumbersController.show())
+              .addingToSession(SessionKeys.prepopulationLandlineKey -> formValue)
           }
         )
       case _ => errorHandler.showInternalServerError

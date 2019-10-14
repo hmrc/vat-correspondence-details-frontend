@@ -70,7 +70,8 @@ captureContactNumbers.error.noEntry = You must enter either a landline or mobile
 
 captureLandline.title = What is the landline number?
 captureLandline.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
-
+captureLandline.error.notChanged = You have not made any changes to the landline number
+captureLandline.error.invalid = Enter a landline number in the correct format, like 01632 960000 or 020 7946 0000
 captureContactNumbers.mobileNumber = Mobile number
 captureContactNumbers.error.invalid = Enter a phone number in the correct format
 

@@ -18,7 +18,7 @@ package views.contactNumbers
 
 import assets.BaseTestConstants.{testValidationLandline, testValidationMobile}
 import controllers.contactNumbers.routes
-import forms.ContactNumbersForm.contactNumbersForm
+import forms.LandlineNumberForm.landlineNumberForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
@@ -34,7 +34,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 
       "there are no errors in the form" should {
 
-        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))(user, messages, mockConfig)
+        val view = injectedView(landlineNumberForm(testValidationLandline))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
         val fieldLabel: String = "#content > article > form > fieldset > div > label "
 
@@ -68,8 +68,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
       }
 
       "there are errors in the form" should {
-
-        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile)
+        val view = injectedView(landlineNumberForm(testValidationLandline)
           .withError("landlineNumber", "Enter a different phone number"))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
@@ -97,8 +96,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
     "the user is an agent" when {
 
       "there are no errors in the form" should {
-
-        val view = injectedView(contactNumbersForm(testValidationLandline, testValidationMobile))(agent, messages, mockConfig)
+        val view = injectedView(landlineNumberForm(testValidationLandline))(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {

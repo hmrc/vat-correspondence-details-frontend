@@ -214,7 +214,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
         "the form is successfully submitted" should {
 
           lazy val result = controller.submit(requestWithValidationPhoneNumbers
-            .withFormUrlEncodedBody("landlineNumber" -> testPrepopLandline, "mobileNumber" -> testPrepopMobile)
+            .withFormUrlEncodedBody("landlineNumber" -> testPrepopLandline)
           )
 
           "return 303" in {
@@ -228,16 +228,12 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
           "add the new landline to the session" in {
             session(result).get(prepopulationLandlineKey) shouldBe Some(testPrepopLandline)
           }
-
-          "add the new mobile to the session" in {
-            session(result).get(prepopulationMobileKey) shouldBe Some(testPrepopMobile)
-          }
         }
 
         "the form is submitted with errors" should {
 
           lazy val result = controller.submit(requestWithAllContactNumbers
-            .withFormUrlEncodedBody("landlineNumber" -> "", "mobileNumber" -> "")
+            .withFormUrlEncodedBody("landlineNumber" -> "")
           )
 
           "return 400" in {
