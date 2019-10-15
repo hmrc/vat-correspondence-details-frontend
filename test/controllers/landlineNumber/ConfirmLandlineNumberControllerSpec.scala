@@ -90,7 +90,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         lazy val result = {
           mockIndividualAuthorised()
           mockUpdateLandlineNumber(
-            vrn, Some(testPrepopLandline))(Future(Right(UpdatePPOBSuccess("success")))
+            vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
           )
           controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
         }
@@ -99,11 +99,11 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           status(result) shouldBe Status.SEE_OTHER
         }
 
-        "audit the change phone numbers event" in {
+        "audit the change landline number event" in {
           verifyExtendedAudit(
             ChangedLandlineNumberAuditModel(
               None,
-              Some(testPrepopLandline),
+              testPrepopLandline,
               vrn,
               isAgent = false,
               None
@@ -129,7 +129,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         lazy val result = {
           mockIndividualAuthorised()
-          mockUpdateLandlineNumber(vrn, Some(testPrepopLandline))(
+          mockUpdateLandlineNumber(vrn, testPrepopLandline)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
           controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
         }
@@ -147,7 +147,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         lazy val result = {
           mockIndividualAuthorised()
-          mockUpdateLandlineNumber(vrn, Some(testPrepopLandline))(
+          mockUpdateLandlineNumber(vrn, testPrepopLandline)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify landline number"))))
           controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
         }

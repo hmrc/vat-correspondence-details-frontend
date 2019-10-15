@@ -68,7 +68,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
 
   def updateLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate).async {
     implicit user =>
-      val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey).filter(_.nonEmpty)
+      val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey)
       val existingLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
 
       enteredLandline match {
@@ -76,12 +76,12 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
           logInfo("[ConfirmLandlineNumberController][updateLandlineNumber] - No landline number found in session")
           Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
 
-        case landline => vatSubscriptionService.updateContactNumbers(user.vrn, landline).map {
+        case Some(landline) => vatSubscriptionService.updateLandlineNumber(user.vrn, landline).map {
           case Right(UpdatePPOBSuccess(_)) =>
             auditService.extendedAudit(
               ChangedLandlineNumberAuditModel(
                 existingLandline,
-                if(existingLandline != enteredLandline) Some(landline.getOrElse("")) else None,
+                landline,
                 user.vrn,
                 user.isAgent,
                 user.arn

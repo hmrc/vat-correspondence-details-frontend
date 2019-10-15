@@ -20,14 +20,14 @@ import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
 case class ChangedLandlineNumberAuditModel(currentLandlineNumber: Option[String],
-                                           requestedLandlineNumber: Option[String],
+                                           requestedLandlineNumber: String,
                                            vrn: String,
                                            isAgent: Boolean,
                                            arn: Option[String]) extends ExtendedAuditModel {
 
-  override val auditType: String = "ChangePhoneNumbers"
+  override val auditType: String = "ChangeLandlineNumber"
   override val detail: JsValue = Json.toJson(this)
-  override val transactionName: String = "change-vat-phone-numbers"
+  override val transactionName: String = "change-vat-landline-number"
 }
 
 object ChangedLandlineNumberAuditModel extends JsonObjectSugar {

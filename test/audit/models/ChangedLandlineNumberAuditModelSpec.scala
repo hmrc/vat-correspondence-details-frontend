@@ -28,7 +28,7 @@ class ChangedLandlineNumberAuditModelSpec extends UnitSpec {
 
       val model = ChangedLandlineNumberAuditModel(
         Some(testValidationLandline),
-        Some(testPrepopLandline),
+        testPrepopLandline,
         vrn,
         isAgent = false,
         None
@@ -50,7 +50,7 @@ class ChangedLandlineNumberAuditModelSpec extends UnitSpec {
 
       val model = ChangedLandlineNumberAuditModel(
         Some(testValidationLandline),
-        None,
+        "",
         vrn,
         isAgent = true,
         Some(arn)
@@ -60,7 +60,8 @@ class ChangedLandlineNumberAuditModelSpec extends UnitSpec {
         "isAgent" -> true,
         "arn" -> arn,
         "vrn" -> vrn,
-        "currentLandlineNumber" -> testValidationLandline
+        "currentLandlineNumber" -> testValidationLandline,
+        "requestedLandlineNumber" -> ""
       )
 
       "generate the correct audit detail" in {
@@ -68,11 +69,11 @@ class ChangedLandlineNumberAuditModelSpec extends UnitSpec {
       }
     }
 
-    "the user has no existing phone numbers" should {
+    "the user has no existing landline number" should {
 
       val model = ChangedLandlineNumberAuditModel(
         None,
-        Some(testPrepopLandline),
+        testPrepopLandline,
         vrn,
         isAgent = false,
         None

@@ -213,7 +213,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
           Some("www.pepsi-mac.biz")
         )
 
-        val result = service.buildLandlineUpdateModel(Some(testPrepopLandline), fullPPOBModel)
+        val result = service.buildLandlineUpdateModel(testPrepopLandline, fullPPOBModel)
         result shouldBe expectedPPOB
       }
     }
@@ -233,7 +233,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
           None
         )
 
-        val result = service.buildLandlineUpdateModel(Some(testPrepopLandline), minPPOBModel)
+        val result = service.buildLandlineUpdateModel(testPrepopLandline, minPPOBModel)
         result shouldBe expectedPPOB
       }
     }
@@ -261,7 +261,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         mockGetCustomerInfoSuccessResponse()
         mockUpdatePPOBSuccessResponse()
 
-        val result = await(service.updateContactNumbers(testVrn, Some(testPrepopLandline)))
+        val result = await(service.updateLandlineNumber(testVrn, testPrepopLandline))
         result shouldBe Right(UpdatePPOBSuccess("success"))
       }
     }
@@ -272,7 +272,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         mockGetCustomerInfoSuccessResponse()
         mockUpdatePPOBFailureResponse()
 
-        val result = await(service.updateContactNumbers(testVrn, Some(testPrepopLandline)))
+        val result = await(service.updateLandlineNumber(testVrn, testPrepopLandline))
         result shouldBe Left(invalidJsonError)
       }
     }
