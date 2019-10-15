@@ -18,7 +18,6 @@ package controllers
 
 import common.SessionKeys._
 import config.AppConfig
-import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
@@ -66,22 +65,21 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
 
   private[controllers] def renderView(changeKey: String, isRemoval: Boolean)(implicit user: User[_]): Future[Result] =
     for {
-      customerDetails <- if (user.isAgent) {vatSubscriptionService.getCustomerInfo(user.vrn)}
-      else {Future.successful(Left(ErrorModel(NO_CONTENT, "")))}
+      entityName <- if (user.isAgent) {getClientEntityName}
+      else {Future.successful(None)}
       preference <- if (user.isAgent) {Future.successful(Left(ErrorModel(NO_CONTENT, "")))}
       else {contactPreferenceService.getContactPreference(user.vrn)}
     } yield {
       val viewModel =
-        constructViewModel(customerDetails, preference, user.session.get(verifiedAgentEmail), changeKey, isRemoval)
+        constructViewModel(entityName, preference, user.session.get(verifiedAgentEmail), changeKey, isRemoval)
       Ok(changeSuccessView(viewModel))
     }
 
-  private[controllers] def constructViewModel(customerInfoCall: GetCustomerInfoResponse,
+  private[controllers] def constructViewModel(entityName: Option[String],
                                               preferenceCall: HttpGetResult[ContactPreference],
                                               agentEmail: Option[String],
                                               changeKey: String,
                                               isRemoval: Boolean): ChangeSuccessViewModel = {
-    val entityName: Option[String] = customerInfoCall.fold(_ => None, details => details.entityName)
     val preference: Option[String] = preferenceCall.fold(_ => None, pref => Some(pref.preference))
     val titleMessageKey: String = getTitleMessageKey(changeKey, isRemoval)
     ChangeSuccessViewModel(titleMessageKey, agentEmail, preference, entityName)
@@ -91,5 +89,13 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
     changeKey match {
       case `landlineChangeSuccessful` => "landlineChangeSuccess.title" + (if(isRemoval) ".remove" else ".change")
       case `websiteChangeSuccessful` => "websiteChangeSuccess.title" + (if(isRemoval) ".remove" else ".change")
+    }
+
+  private[controllers] def getClientEntityName(implicit user: User[_]): Future[Option[String]] =
+    user.session.get(mtdVatAgentClientName) match {
+      case Some(entityName) => Future.successful(Some(entityName))
+      case None => vatSubscriptionService.getCustomerInfo(user.vrn).map { result =>
+        result.fold(_ => None, details => details.entityName)
+      }
     }
 }
