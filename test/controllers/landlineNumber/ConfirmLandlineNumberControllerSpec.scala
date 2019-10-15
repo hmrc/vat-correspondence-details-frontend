@@ -17,17 +17,20 @@
 package controllers.landlineNumber
 
 import assets.BaseTestConstants._
+import audit.models.ChangedLandlineNumberAuditModel
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
 import views.html.landlineNumber.ConfirmLandlineNumberView
 
 import scala.concurrent.Future
+
 
 class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
@@ -94,6 +97,19 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "audit the change phone numbers event" in {
+          verifyExtendedAudit(
+            ChangedLandlineNumberAuditModel(
+              None,
+              Some(testPrepopLandline),
+              vrn,
+              isAgent = false,
+              None
+            )
+          )
+          reset(mockAuditingService)
         }
 
         "redirect to the success page" in {

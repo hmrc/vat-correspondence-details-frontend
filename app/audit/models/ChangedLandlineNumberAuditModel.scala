@@ -19,30 +19,26 @@ package audit.models
 import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
-case class ChangedPhoneNumbersAuditModel(currentLandlineNumber: Option[String],
-                                         currentMobileNumber: Option[String],
-                                         requestedLandlineNumber: Option[String],
-                                         requestedMobileNumber: Option[String],
-                                         vrn: String,
-                                         isAgent: Boolean,
-                                         arn: Option[String]) extends ExtendedAuditModel {
+case class ChangedLandlineNumberAuditModel(currentLandlineNumber: Option[String],
+                                           requestedLandlineNumber: Option[String],
+                                           vrn: String,
+                                           isAgent: Boolean,
+                                           arn: Option[String]) extends ExtendedAuditModel {
 
   override val auditType: String = "ChangePhoneNumbers"
   override val detail: JsValue = Json.toJson(this)
   override val transactionName: String = "change-vat-phone-numbers"
 }
 
-object ChangedPhoneNumbersAuditModel extends JsonObjectSugar {
+object ChangedLandlineNumberAuditModel extends JsonObjectSugar {
 
-  implicit val writes: Writes[ChangedPhoneNumbersAuditModel] = Writes { model =>
+  implicit val writes: Writes[ChangedLandlineNumberAuditModel] = Writes { model =>
     jsonObjNoNulls(
       "isAgent" -> model.isAgent,
       "arn" -> model.arn,
       "vrn" -> model.vrn,
       "currentLandlineNumber" -> model.currentLandlineNumber,
-      "currentMobileNumber" -> model.currentMobileNumber,
-      "requestedLandlineNumber" -> model.requestedLandlineNumber,
-      "requestedMobileNumber" -> model.requestedMobileNumber
+      "requestedLandlineNumber" -> model.requestedLandlineNumber
     )
   }
 }
