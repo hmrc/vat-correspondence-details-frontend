@@ -23,7 +23,7 @@
 
 @mainTemplate(title = messages("confirmPhoneNumbers.title")) {
 
-<a class="link-back" href="@controllers.contactNumbers.routes.CaptureLandlineNumberController.show()">
+<a class="link-back" href="@controllers.landlineNumber.routes.CaptureLandlineNumberController.show()">
   @messages("base.back")
 </a>
 
@@ -34,12 +34,12 @@
 </p>
 
 <p>
-  <a href="@controllers.contactNumbers.routes.CaptureLandlineNumberController.show()">
+  <a href="@controllers.landlineNumber.routes.CaptureLandlineNumberController.show()">
     @messages("confirmPhoneNumbers.edit")
   </a>
 </p>
 
-<a href="@controllers.contactNumbers.routes.ConfirmLandlineNumberController.updateLandlineNumber()"
+<a href="@controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber()"
    class="button" role="button">
   @messages("base.confirmAndContinue")
 </a>

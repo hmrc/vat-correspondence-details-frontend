@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.contactNumbers
+package controllers.landlineNumber
 
 import audit.AuditingService
 import common.SessionKeys
@@ -29,7 +29,7 @@ import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import utils.LoggerUtil.{logInfo, logWarn}
-import views.html.contactNumbers.ConfirmLandlineNumberView
+import views.html.landlineNumber.ConfirmLandlineNumberView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,7 +58,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
     }
 
     prepopulationLandline match {
-      case None => Redirect(controllers.contactNumbers.routes.CaptureLandlineNumberController.show())
+      case None => Redirect(routes.CaptureLandlineNumberController.show())
       case _ => Ok(confirmLandlineNumberView(
         numberToShow(prepopulationLandline, validationLandline))
       )
@@ -67,18 +67,18 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
 
   def updateLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate).async {
     implicit user =>
-      val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey).filter(_.nonEmpty)
+      val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey)
 
-        enteredLandline match {
+      enteredLandline match {
         case None =>
           logInfo("[ConfirmLandlineNumberController][updateLandlineNumber] - No landline number found in session")
-          Future.successful(Redirect(routes.ConfirmLandlineNumberController.show()))
+          Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
 
         case landline => vatSubscriptionService.updateContactNumbers(user.vrn, landline).map {
           case Right(UpdatePPOBSuccess(_)) =>
-            Redirect(routes.ContactNumbersChangeSuccessController.show())
-              .removingFromSession(prepopulationLandlineKey, validationLandlineKey)
-              .addingToSession(phoneNumberChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "landline")
+            Redirect(controllers.routes.ChangeSuccessController.landlineNumber())
+              .removingFromSession(validationLandlineKey)
+              .addingToSession(landlineChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "landline")
 
           case Left(ErrorModel(CONFLICT, _)) =>
             logWarn("[ConfirmLandlineNumberController][updateLandlineNumber] - There is a contact details update request " +

@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.contactNumbers
+package controllers.landlineNumber
 
+import assets.BaseTestConstants._
+import common.SessionKeys
 import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
-import views.html.contactNumbers.ConfirmLandlineNumberView
+import views.html.landlineNumber.ConfirmLandlineNumberView
 
 import scala.concurrent.Future
-import assets.BaseTestConstants._
-import common.SessionKeys
 
 class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
@@ -63,7 +62,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to enter a new landline number" in {
-        redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.CaptureLandlineNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
 
       }
     }
@@ -98,11 +97,11 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect to the success page" in {
-          redirectLocation(result) shouldBe Some(routes.ContactNumbersChangeSuccessController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
         }
 
         "add the successful change key to the session" in {
-          session(result).get(SessionKeys.phoneNumberChangeSuccessful) shouldBe Some("true")
+          session(result).get(SessionKeys.landlineChangeSuccessful) shouldBe Some("true")
         }
 
         "add the inflight change key to the session" in {
@@ -158,7 +157,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to the capture landline number page" in {
-        redirectLocation(result) shouldBe Some(controllers.contactNumbers.routes.ConfirmLandlineNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
       }
     }
 

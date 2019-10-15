@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package pages.contactNumbers
+package pages.landlineNumber
 
 import common.SessionKeys.validationLandlineKey
-import controllers.contactNumbers.routes
+import controllers.landlineNumber.routes
 import forms.LandlineNumberForm.landlineNumberForm
 import helpers.SessionCookieCrumbler
 import pages.BasePageISpec

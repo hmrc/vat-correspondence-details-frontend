@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.contactNumbers
+package controllers.landlineNumber
 
 import assets.CustomerInfoConstants.fullCustomerInfoModel
 import assets.BaseTestConstants._
@@ -28,7 +28,7 @@ import org.mockito.Mockito.{never, verify}
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.contactNumbers.CaptureLandlineNumberView
+import views.html.landlineNumber.CaptureLandlineNumberView
 import views.html.errors.NotFoundView
 
 import scala.concurrent.ExecutionContext

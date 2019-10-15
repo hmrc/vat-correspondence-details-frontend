@@ -31,22 +31,22 @@ GET         /confirm-new-website-address           controllers.website.ConfirmWe
 GET         /update-website-address                controllers.website.ConfirmWebsiteController.updateWebsite
 
 # website change successfull
-GET         /website-address-confirmation          controllers.website.WebsiteChangeSuccessController.show
+GET         /website-address-confirmation          controllers.ChangeSuccessController.websiteAddress
 
 # remove website address
 GET         /remove-website-address                controllers.website.ConfirmRemoveWebsiteController.show
 GET         /update-remove-website-address         controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
 
-# capture contact numbers
-GET         /new-landline-number                   controllers.contactNumbers.CaptureLandlineNumberController.show
-POST        /new-landline-number                   controllers.contactNumbers.CaptureLandlineNumberController.submit
+# capture landline number
+GET         /new-landline-number                   controllers.landlineNumber.CaptureLandlineNumberController.show
+POST        /new-landline-number                   controllers.landlineNumber.CaptureLandlineNumberController.submit
 
 # confirm landline number
-GET         /confirm-new-landline-number          controllers.contactNumbers.ConfirmLandlineNumberController.show
-GET         /update-new-landline-number           controllers.contactNumbers.ConfirmLandlineNumberController.updateLandlineNumber
+GET         /confirm-new-landline-number           controllers.landlineNumber.ConfirmLandlineNumberController.show
+GET         /update-new-landline-number            controllers.landlineNumber.ConfirmLandlineNumberController.updateLandlineNumber
 
-# telephone numbers change successful
-GET         /telephone-numbers-confirmation        controllers.contactNumbers.ContactNumbersChangeSuccessController.show
+# landline number change successful
+GET         /landline-number-confirmation          controllers.ChangeSuccessController.landlineNumber
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file              controllers.Assets.at(path="/public", file)
