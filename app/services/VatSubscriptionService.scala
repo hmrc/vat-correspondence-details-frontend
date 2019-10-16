@@ -39,11 +39,11 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     )
   }
 
-  private[services] def buildLandlineUpdateModel(landline: Option[String], ppob: PPOB): PPOB = {
+  private[services] def buildLandlineUpdateModel(landline: String, ppob: PPOB): PPOB = {
     val existingContactDetails: ContactDetails =
       ppob.contactDetails.getOrElse(ContactDetails(None, None, None, None, None))
     ppob.copy(
-      contactDetails = Some(existingContactDetails.copy(phoneNumber = landline))
+      contactDetails = Some(existingContactDetails.copy(phoneNumber = Some(landline).filter(_.nonEmpty)))
     )
   }
 
@@ -76,7 +76,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
       case Left(error) => Future.successful(Left(error))
     }
 
-  def updateContactNumbers(vrn: String, landline: Option[String])
+  def updateLandlineNumber(vrn: String, landline: String)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
     connector.getCustomerInfo(vrn).flatMap {
       case Right(customerInfo) =>

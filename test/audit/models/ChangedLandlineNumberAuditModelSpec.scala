@@ -20,17 +20,15 @@ import assets.BaseTestConstants._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class ChangedPhoneNumbersAuditModelSpec extends UnitSpec {
+class ChangedLandlineNumberAuditModelSpec extends UnitSpec {
 
-  "ChangedPhoneNumbersAuditModel" when {
+  "ChangedLandlineNumberAuditModel" when {
 
     "the user is not an agent" should {
 
-      val model = ChangedPhoneNumbersAuditModel(
+      val model = ChangedLandlineNumberAuditModel(
         Some(testValidationLandline),
-        Some(testValidationMobile),
-        Some(testPrepopLandline),
-        Some(testPrepopMobile),
+        testPrepopLandline,
         vrn,
         isAgent = false,
         None
@@ -40,9 +38,7 @@ class ChangedPhoneNumbersAuditModelSpec extends UnitSpec {
         "isAgent" -> false,
         "vrn" -> vrn,
         "currentLandlineNumber" -> testValidationLandline,
-        "currentMobileNumber" -> testValidationMobile,
-        "requestedLandlineNumber" -> testPrepopLandline,
-        "requestedMobileNumber" -> testPrepopMobile
+        "requestedLandlineNumber" -> testPrepopLandline
       )
 
       "generate the correct audit detail" in {
@@ -52,11 +48,9 @@ class ChangedPhoneNumbersAuditModelSpec extends UnitSpec {
 
     "the user is an agent" should {
 
-      val model = ChangedPhoneNumbersAuditModel(
+      val model = ChangedLandlineNumberAuditModel(
         Some(testValidationLandline),
-        None,
-        None,
-        Some(testPrepopMobile),
+        "",
         vrn,
         isAgent = true,
         Some(arn)
@@ -67,7 +61,7 @@ class ChangedPhoneNumbersAuditModelSpec extends UnitSpec {
         "arn" -> arn,
         "vrn" -> vrn,
         "currentLandlineNumber" -> testValidationLandline,
-        "requestedMobileNumber" -> testPrepopMobile
+        "requestedLandlineNumber" -> ""
       )
 
       "generate the correct audit detail" in {
@@ -75,13 +69,11 @@ class ChangedPhoneNumbersAuditModelSpec extends UnitSpec {
       }
     }
 
-    "the user has no existing phone numbers" should {
+    "the user has no existing landline number" should {
 
-      val model = ChangedPhoneNumbersAuditModel(
+      val model = ChangedLandlineNumberAuditModel(
         None,
-        None,
-        Some(testPrepopLandline),
-        None,
+        testPrepopLandline,
         vrn,
         isAgent = false,
         None

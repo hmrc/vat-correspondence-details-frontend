@@ -17,17 +17,20 @@
 package controllers.landlineNumber
 
 import assets.BaseTestConstants._
+import audit.models.ChangedLandlineNumberAuditModel
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
 import views.html.landlineNumber.ConfirmLandlineNumberView
 
 import scala.concurrent.Future
+
 
 class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
@@ -87,13 +90,26 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         lazy val result = {
           mockIndividualAuthorised()
           mockUpdateLandlineNumber(
-            vrn, Some(testPrepopLandline))(Future(Right(UpdatePPOBSuccess("success")))
+            vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
           )
           controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
         }
 
         "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "audit the change landline number event" in {
+          verifyExtendedAudit(
+            ChangedLandlineNumberAuditModel(
+              None,
+              testPrepopLandline,
+              vrn,
+              isAgent = false,
+              None
+            )
+          )
+          reset(mockAuditingService)
         }
 
         "redirect to the success page" in {
@@ -113,7 +129,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         lazy val result = {
           mockIndividualAuthorised()
-          mockUpdateLandlineNumber(vrn, Some(testPrepopLandline))(
+          mockUpdateLandlineNumber(vrn, testPrepopLandline)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
           controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
         }
@@ -131,7 +147,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         lazy val result = {
           mockIndividualAuthorised()
-          mockUpdateLandlineNumber(vrn, Some(testPrepopLandline))(
+          mockUpdateLandlineNumber(vrn, testPrepopLandline)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify landline number"))))
           controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
         }
