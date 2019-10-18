@@ -20,7 +20,7 @@
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
 
-@(websiteForm: Form[String], websiteNotChangedError: Boolean, currentWebsite: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(websiteForm: Form[String], currentWebsite: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
     @mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title")) else messages("captureWebsite.title")) {
 
@@ -45,13 +45,14 @@
             )
             </div>
 
+            @if(currentWebsite != ""){
+              <p><a id="remove-website" href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>
+                @messages("captureWebsite.removeWebsite.linkText")
+              </a></p>
+            }
+
             <div class="form-group">
                 <button class="button" type="submit">@messages("common.continue")</button>
             </div>
-        }
-        @if(currentWebsite != ""){
-            <p><a id="remove-website" href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>
-              @messages("captureWebsite.removeWebsite.linkText")
-            </a></p>
         }
     }
