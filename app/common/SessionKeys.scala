@@ -20,6 +20,7 @@ object SessionKeys {
   val clientVrn: String = "CLIENT_VRN"
   val inFlightContactDetailsChangeKey: String = "inFlightContactDetailsChange"
   val verifiedAgentEmail: String = "verifiedAgentEmail"
+  val mtdVatAgentClientName: String = "mtdVatAgentClientName"
 
   val validationEmailKey: String = "vatCorrespondenceValidationEmail"
   val prepopulationEmailKey: String = "vatCorrespondencePrepopulationEmail"

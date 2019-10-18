@@ -20,7 +20,9 @@ import assets.BaseTestConstants._
 import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys._
 import mocks.MockContactPreferenceService
+import models.User
 import models.contactPreferences.ContactPreference
+import models.errors.ErrorModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify}
 import play.api.http.Status
@@ -69,7 +71,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
         "return 200" in {
           mockAgentAuthorised()
-          getMockContactPreference("1111111111")(Future(Right(ContactPreference("DIGITAL"))))
           mockGetCustomerInfo("1111111111")(Future.successful(Right(fullCustomerInfoModel)))
           status(result) shouldBe Status.OK
         }
@@ -170,6 +171,51 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
     "the website has been removed" in {
       val result = controller.getTitleMessageKey(websiteChangeSuccessful, isRemoval = true)
       result shouldBe "websiteChangeSuccess.title.remove"
+    }
+  }
+
+  "The .getClientEntityName function" when {
+
+    "there is an entity name in session" should {
+
+      lazy val result = controller.getClientEntityName(User(vrn, arn = Some(arn))(request.withSession(
+        mtdVatAgentClientName -> "Jorip Biscuit Co"
+      )))
+
+      "return the entity name" in {
+        await(result) shouldBe Some("Jorip Biscuit Co")
+      }
+
+      "not call the VatSubscription service" in {
+        verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
+      }
+    }
+
+    "there is not an entity name in session" when {
+
+      "the call to VatSubscription is successful" should {
+
+        "return the entity name" in {
+          val result = {
+            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+            controller.getClientEntityName(User(vrn, arn = Some(arn))(request))
+          }
+
+          await(result) shouldBe Some("PepsiMac")
+        }
+      }
+
+      "the call to VatSubscription is unsuccessful" should {
+
+        "return None" in {
+          val result = {
+            mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error"))))
+            controller.getClientEntityName(User(vrn, arn = Some(arn))(request))
+          }
+
+          await(result) shouldBe None
+        }
+      }
     }
   }
 }
