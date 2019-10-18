@@ -21,21 +21,21 @@
 
 @(landline: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(title = messages("confirmPhoneNumbers.title")) {
+@mainTemplate(title = messages("confirmLandlineNumber.title")) {
 
 <a class="link-back" href="@controllers.landlineNumber.routes.CaptureLandlineNumberController.show()">
   @messages("base.back")
 </a>
 
-<h1 class="heading-large">@messages("confirmPhoneNumbers.heading")</h1>
+<h1 class="heading-large">@messages("confirmLandlineNumber.title")</h1>
 
 <p>
-@messages("confirmPhoneNumbers.landline") @landline
+@messages("confirmLandlineNumber.landline") @landline
 </p>
 
 <p>
   <a href="@controllers.landlineNumber.routes.CaptureLandlineNumberController.show()">
-    @messages("confirmPhoneNumbers.edit")
+    @messages("confirmLandlineNumber.edit")
   </a>
 </p>
 

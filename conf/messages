@@ -21,6 +21,7 @@ common.changeClient = Change client
 common.agent.updateClient1 = We’ll also contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
+common.cancel = Cancel
 
 standardError.title = There is a problem with the service
 standardError.heading = Sorry, there is a problem with the service
@@ -94,7 +95,6 @@ confirmWebsite.change = Change the website address
 
 confirmWebsiteRemove.title = Confirm you want to remove the website address
 confirmWebsiteRemove.heading = Confirm you want to remove the website address: {0}
-confirmWebsiteRemove.cancel = Cancel
 
 verifyEmail.title = Verify your email address
 verifyEmail.heading = Verify your email address
@@ -135,11 +135,11 @@ inFlightChange.emailAddress = email address
 
 confirmPhoneNumbers.notProvided = Not provided
 confirmPhoneNumbers.numberRemoved = Number removed
-confirmPhoneNumbers.title = Confirm the landline number
-confirmPhoneNumbers.heading = Confirm the landline number
-confirmPhoneNumbers.landline = The new landline number is
-confirmPhoneNumbers.mobile = Mobile
-confirmPhoneNumbers.edit = Change the landline number
+
 confirmMobile.edit = Change the mobile number
 confirmMobile.newNumber = The new mobile number is
 confirmMobile.heading = Confirm the mobile number
+
+confirmLandlineNumber.title = Confirm the landline number
+confirmLandlineNumber.landline = The new landline number is
+confirmLandlineNumber.edit = Change the landline number

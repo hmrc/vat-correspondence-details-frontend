@@ -45,7 +45,7 @@ class ConfirmLandlineNumberPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("confirmPhoneNumbers.title"))
+            pageTitle(generateDocumentTitle("confirmLandlineNumber.title"))
           )
         }
       }
