@@ -48,6 +48,10 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
     sessionGuard(landlineChangeSuccessful, prepopulationLandlineKey)
   }
 
+  def mobileNumber: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
+    sessionGuard(mobileChangeSuccessful, prepopulationMobileKey)
+  }
+
   def websiteAddress: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
     sessionGuard(websiteChangeSuccessful, prepopulationWebsiteKey)
   }
@@ -90,6 +94,7 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
   private[controllers] def getTitleMessageKey(changeKey: String, isRemoval: Boolean): String =
     changeKey match {
       case `landlineChangeSuccessful` => "landlineChangeSuccess.title" + (if(isRemoval) ".remove" else ".change")
+      case `mobileChangeSuccessful` => "mobileChangeSuccess.title" + (if(isRemoval) ".remove" else ".change")
       case `websiteChangeSuccessful` => "websiteChangeSuccess.title" + (if(isRemoval) ".remove" else ".change")
     }
 }

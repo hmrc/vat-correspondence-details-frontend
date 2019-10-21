@@ -73,6 +73,11 @@ captureLandline.hint = You will need to include the country code for internation
 captureLandline.error.notChanged = You have not made any changes to the landline number
 captureLandline.error.invalid = Enter a landline number in the correct format, like 01632 960000 or 020 7946 0000
 
+captureMobile.title = What is the mobile number?
+captureMobile.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
+captureMobile.error.notChanged = You have not made any changes to the mobile number
+captureMobile.error.invalid = Enter a mobile number in the correct format, like 07911 123456
+
 captureContactNumbers.mobileNumber = Mobile number
 captureContactNumbers.error.invalid = Enter a phone number in the correct format
 
@@ -110,6 +115,8 @@ emailChangeSuccess.title = We have received the new email address
 
 landlineChangeSuccess.title.change = Request to change landline number received
 landlineChangeSuccess.title.remove = Request to remove landline number received
+mobileChangeSuccess.title.change = Request to change mobile number received
+mobileChangeSuccess.title.remove = Request to remove mobile number received
 
 websiteChangeSuccess.title.change = Request to change website address received
 websiteChangeSuccess.title.remove = Request to remove website address received
@@ -137,3 +144,6 @@ confirmPhoneNumbers.heading = Confirm the landline number
 confirmPhoneNumbers.landline = The new landline number is
 confirmPhoneNumbers.mobile = Mobile
 confirmPhoneNumbers.edit = Change the landline number
+confirmMobile.edit = Change the mobile number
+confirmMobile.newNumber = The new mobile number is
+confirmMobile.heading = Confirm the mobile number

@@ -42,7 +42,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async { implicit user =>
 
     if(appConfig.features.changeContactDetailsEnabled()) {
 
@@ -76,7 +76,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
     }
   }
 
-  def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightContactNumbersPredicate) { implicit user =>
+  def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
     val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
 
     validationLandline match {

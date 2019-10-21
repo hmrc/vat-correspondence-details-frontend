@@ -253,9 +253,9 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
     }
   }
 
-  "calling updatePhoneNumbers" when {
+  "calling updateLandlineNumber" when {
 
-    "both phone numbers have been verified and the phone number update has been successful" should {
+    "the landline number has been verified and the update has been successful" should {
 
       "return the model" in {
         mockGetCustomerInfoSuccessResponse()
@@ -273,6 +273,31 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         mockUpdatePPOBFailureResponse()
 
         val result = await(service.updateLandlineNumber(testVrn, testPrepopLandline))
+        result shouldBe Left(invalidJsonError)
+      }
+    }
+  }
+
+  "calling updateMobileNumber" when {
+
+    "the mobile number has been verified and the update has been successful" should {
+
+      "return the model" in {
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdatePPOBSuccessResponse()
+
+        val result = await(service.updateMobileNumber(testVrn, testPrepopMobile))
+        result shouldBe Right(UpdatePPOBSuccess("success"))
+      }
+    }
+
+    "the VatSubscriptionConnector returns an error" should {
+
+      "return the error" in {
+        mockGetCustomerInfoSuccessResponse()
+        mockUpdatePPOBFailureResponse()
+
+        val result = await(service.updateMobileNumber(testVrn, testPrepopMobile))
         result shouldBe Left(invalidJsonError)
       }
     }

@@ -47,6 +47,14 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     )
   }
 
+  private[services] def buildMobileUpdateModel(mobile: String, ppob: PPOB): PPOB = {
+    val existingContactDetails: ContactDetails =
+      ppob.contactDetails.getOrElse(ContactDetails(None, None, None, None, None))
+    ppob.copy(
+      contactDetails = Some(existingContactDetails.copy(phoneNumber = Some(mobile).filter(_.nonEmpty)))
+    )
+  }
+
   private[services] def buildWebsiteUpdateModel(website: String, ppob: PPOB): PPOB =
     if(website.nonEmpty) ppob.copy(websiteAddress = Some(website)) else ppob.copy(websiteAddress = None)
 
@@ -81,6 +89,14 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     connector.getCustomerInfo(vrn).flatMap {
       case Right(customerInfo) =>
         connector.updatePPOB(vrn, buildLandlineUpdateModel(landline, customerInfo.ppob))
+      case Left(error) => Future.successful(Left(error))
+    }
+
+  def updateMobileNumber(vrn: String, mobile: String)
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
+    connector.getCustomerInfo(vrn).flatMap {
+      case Right(customerInfo) =>
+        connector.updatePPOB(vrn, buildMobileUpdateModel(mobile, customerInfo.ppob))
       case Left(error) => Future.successful(Left(error))
     }
 }

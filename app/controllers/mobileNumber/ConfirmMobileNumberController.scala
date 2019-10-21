@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.landlineNumber
+package controllers.mobileNumber
 
 import audit.AuditingService
-import audit.models.ChangedLandlineNumberAuditModel
+import audit.models.ChangedMobileNumberAuditModel
 import common.SessionKeys
 import common.SessionKeys._
 import config.{AppConfig, ErrorHandler}
@@ -30,25 +30,25 @@ import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import utils.LoggerUtil.{logInfo, logWarn}
-import views.html.landlineNumber.ConfirmLandlineNumberView
+import views.html.mobileNumber.ConfirmMobileNumberView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
-                                                val vatSubscriptionService: VatSubscriptionService,
-                                                confirmLandlineNumberView: ConfirmLandlineNumberView,
-                                                auditService: AuditingService)
-                                               (implicit val appConfig: AppConfig,
+class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
+                                              val vatSubscriptionService: VatSubscriptionService,
+                                              confirmMobileNumberView: ConfirmMobileNumberView,
+                                              auditService: AuditingService)
+                                             (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
                                                 inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
-    val prepopulationLandline = user.session.get(prepopulationLandlineKey).filter(_.nonEmpty)
-    val validationLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
+    val prepopulationMobile = user.session.get(prepopulationMobileKey).filter(_.nonEmpty)
+    val validationMobile = user.session.get(validationMobileKey).filter(_.nonEmpty)
 
     def numberToShow(prepopulatedValue : Option[String], validationValue : Option[String]) : String = {
       (prepopulatedValue, validationValue) match {
@@ -58,44 +58,44 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
       }
     }
 
-    prepopulationLandline match {
-      case None => Redirect(routes.CaptureLandlineNumberController.show())
-      case _ => Ok(confirmLandlineNumberView(
-        numberToShow(prepopulationLandline, validationLandline))
+    prepopulationMobile match {
+      case None => Redirect(routes.CaptureMobileNumberController.show())
+      case _ => Ok(confirmMobileNumberView(
+        numberToShow(prepopulationMobile, validationMobile))
       )
     }
   }
 
-  def updateLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async {
+  def updateMobileNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async {
     implicit user =>
-      val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey)
-      val existingLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
+      val enteredMobile = user.session.get(SessionKeys.prepopulationMobileKey)
+      val existingMobile = user.session.get(validationMobileKey).filter(_.nonEmpty)
 
-      enteredLandline match {
+      enteredMobile match {
         case None =>
-          logInfo("[ConfirmLandlineNumberController][updateLandlineNumber] - No landline number found in session")
-          Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
+          logInfo("[ConfirmMobileNumberController][updateMobileNumber] - No mobile number found in session")
+          Future.successful(Redirect(routes.CaptureMobileNumberController.show()))
 
-        case Some(landline) => vatSubscriptionService.updateLandlineNumber(user.vrn, landline).map {
+        case Some(mobile) => vatSubscriptionService.updateMobileNumber(user.vrn, mobile).map {
           case Right(UpdatePPOBSuccess(_)) =>
             auditService.extendedAudit(
-              ChangedLandlineNumberAuditModel(
-                existingLandline,
-                landline,
+              ChangedMobileNumberAuditModel(
+                existingMobile,
+                mobile,
                 user.vrn,
                 user.isAgent,
                 user.arn
               )
             )
-            Redirect(controllers.routes.ChangeSuccessController.landlineNumber())
-              .removingFromSession(validationLandlineKey)
-              .addingToSession(landlineChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "landline")
+            Redirect(controllers.routes.ChangeSuccessController.mobileNumber())
+              .removingFromSession(validationMobileKey)
+              .addingToSession(mobileChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "mobile")
 
           case Left(ErrorModel(CONFLICT, _)) =>
-            logWarn("[ConfirmLandlineNumberController][updateLandlineNumber] - There is a contact details update request " +
+            logWarn("[ConfirmMobileNumberController][updateMobileNumber] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "landline")
+              .addingToSession(inFlightContactDetailsChangeKey -> "mobile")
 
           case Left(_) =>
             errorHandler.showInternalServerError
