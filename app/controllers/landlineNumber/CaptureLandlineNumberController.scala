@@ -66,7 +66,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
       } yield {
         validationLandlineResult match {
           case Some(landline) =>
-            Ok(captureLandlineNumberView(landlineNumberForm(landline).fill(prepopLandlineResult)))
+            Ok(captureLandlineNumberView(landlineNumberForm(landline).fill(prepopLandlineResult), landline))
               .addingToSession(SessionKeys.validationLandlineKey -> landline)
           case _ => errorHandler.showInternalServerError
         }
@@ -83,7 +83,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
       case Some(landline) =>
         landlineNumberForm(landline).bindFromRequest.fold(
           errorForm => {
-            BadRequest(captureLandlineNumberView(errorForm))
+            BadRequest(captureLandlineNumberView(errorForm, landline))
           },
 
           formValue => {

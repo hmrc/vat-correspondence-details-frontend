@@ -19,33 +19,35 @@
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
 
-@(contactNumbersForm: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(landlineForm: Form[String], currentLandline: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @mainTemplate(
-  if(contactNumbersForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureLandline.title"))
+  if(landlineForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureLandline.title"))
   else messages("captureLandline.title")
 ) {
 
   <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 
-  @errorSummary(messages("common.error.heading"), contactNumbersForm, forceDivToAppear = false)
+  @errorSummary(messages("common.error.heading"), landlineForm, forceDivToAppear = false)
 
   <h1 class="heading-large">@messages("captureLandline.title")</h1>
 
   @form(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {
-    <fieldset>
+    <div class ="form-group">
+      @input(
+        landlineForm("landlineNumber"),
+        '_label -> messages("captureLandline.title"),
+        '_inputClass -> "form-control form-control--block",
+        '_inputHint -> messages("captureLandline.hint"),
+        '_labelTextClass -> "visuallyhidden"
+      )
+    </div>
 
-        <div class ="form-group">
-          @input(
-            contactNumbersForm("landlineNumber"),
-            '_label -> messages("captureLandline.title"),
-            '_inputClass -> "form-control form-control--block",
-            '_inputHint -> messages("captureLandline.hint"),
-            '_labelTextClass -> "visuallyhidden"
-          )
-        </div>
-
-    </fieldset>
+    @if(currentLandline != "") {
+      <p><a id="remove-landline" href='@controllers.landlineNumber.routes.ConfirmRemoveLandlineController.show().url'>
+        @messages("captureLandline.remove")
+      </a></p>
+    }
 
     <div class="form-group">
       <button class="button" type="submit">@messages("common.continue")</button>

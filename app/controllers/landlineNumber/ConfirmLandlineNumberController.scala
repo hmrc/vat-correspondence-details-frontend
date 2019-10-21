@@ -46,11 +46,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-<<<<<<< HEAD
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
-=======
-  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlinePredicate) { implicit user =>
->>>>>>> Renamed predicate/messages to be landline specific
     val prepopulationLandline = user.session.get(prepopulationLandlineKey).filter(_.nonEmpty)
     val validationLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
 
@@ -70,11 +66,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
     }
   }
 
-<<<<<<< HEAD
   def updateLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async {
-=======
-  def updateLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlinePredicate).async {
->>>>>>> Renamed predicate/messages to be landline specific
     implicit user =>
       val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey)
       val existingLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)

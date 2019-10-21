@@ -49,9 +49,9 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
     }
   }
 
-  "Calling the show action in ConfirmWebsiteController" when {
+  "Calling the show action in ConfirmRemoveWebsiteController" when {
 
-    "there is an website address in session" should {
+    "there is a website address in session" should {
 
       "return 200" in {
         val result = controller.show(requestWithValidationWebsiteKey)
@@ -85,7 +85,7 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
     }
   }
 
-  "Calling the removeWebsiteAddress() action in ConfirmWebsiteController" when {
+  "Calling the removeWebsiteAddress() action in ConfirmRemoveWebsiteController" when {
 
     "there is a validation website address in session" should {
 
