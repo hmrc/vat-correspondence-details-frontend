@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.landlineNumber
+package controllers.mobileNumber
 
 import assets.BaseTestConstants._
-import audit.models.ChangedLandlineNumberAuditModel
+import audit.models.ChangedMobileNumberAuditModel
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
@@ -27,33 +27,33 @@ import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
-import views.html.landlineNumber.ConfirmLandlineNumberView
+import views.html.mobileNumber.ConfirmMobileNumberView
 
 import scala.concurrent.Future
 
 
-class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
+class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
-  val controller = new ConfirmLandlineNumberController(
+  val controller = new ConfirmMobileNumberController(
     mockErrorHandler,
     mockVatSubscriptionService,
-    inject[ConfirmLandlineNumberView],
+    inject[ConfirmMobileNumberView],
     mockAuditingService
   )
 
-  "Calling the show action in ConfirmLandlineNumberController" when {
+  "Calling the show action in ConfirmMobileNumberController" when {
 
-    "there is a landline number in session" should {
+    "there is a mobile number in session" should {
 
-      "show the Confirm landline Number page" in {
+      "show the Confirm mobile Number page" in {
         mockIndividualAuthorised()
-        val result = controller.show(requestWithPrepopLandlineNumber)
+        val result = controller.show(requestWithPrepopMobileNumber)
 
         status(result) shouldBe Status.OK
       }
     }
 
-    "there isn't a landline number in session" should {
+    "there isn't a mobile number in session" should {
 
       lazy val result = {
         mockIndividualAuthorised()
@@ -64,8 +64,8 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.SEE_OTHER
       }
 
-      "redirect the user to enter a new landline number" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+      "redirect the user to enter a new mobile number" in {
+        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
 
       }
     }
@@ -74,36 +74,36 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.show(requestWithPrepopLandlineNumber)
+        val result = controller.show(requestWithPrepopMobileNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }
     }
   }
 
-  "Calling the updateLandlineNumber() action in ConfirmLandlineNumberController" when {
+  "Calling the updateMobileNumber() action in ConfirmMobileNumberController" when {
 
-    "there is a landline number in session" when {
+    "there is a mobile number in session" when {
 
-      "the landline number has been updated successfully" should {
+      "the mobile number has been updated successfully" should {
 
         lazy val result = {
           mockIndividualAuthorised()
-          mockUpdateLandlineNumber(
-            vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
+          mockUpdateMobileNumber(
+            vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
           )
-          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
         }
 
         "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
         }
 
-        "audit the change landline number event" in {
+        "audit the change mobile number event" in {
           verifyExtendedAudit(
-            ChangedLandlineNumberAuditModel(
+            ChangedMobileNumberAuditModel(
               None,
-              testPrepopLandline,
+              testPrepopMobile,
               vrn,
               isAgent = false,
               None
@@ -113,25 +113,25 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect to the success page" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
+          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber().url)
         }
 
         "add the successful change key to the session" in {
-          session(result).get(SessionKeys.landlineChangeSuccessful) shouldBe Some("true")
+          session(result).get(SessionKeys.mobileChangeSuccessful) shouldBe Some("true")
         }
 
         "add the inflight change key to the session" in {
-          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("landline")
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("mobile")
         }
       }
 
-      "there was a conflict returned when trying to update the landline number" should {
+      "there was a conflict returned when trying to update the mobile number" should {
 
         lazy val result = {
           mockIndividualAuthorised()
-          mockUpdateLandlineNumber(vrn, testPrepopLandline)(
+          mockUpdateMobileNumber(vrn, testPrepopMobile)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
         }
 
         "return 303" in {
@@ -143,13 +143,13 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         }
       }
 
-      "there was an unexpected error trying to update the landline number" should {
+      "there was an unexpected error trying to update the mobile number" should {
 
         lazy val result = {
           mockIndividualAuthorised()
-          mockUpdateLandlineNumber(vrn, testPrepopLandline)(
-            Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify landline number"))))
-          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+          mockUpdateMobileNumber(vrn, testPrepopMobile)(
+            Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify mobile number"))))
+          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
         }
 
         "return 500" in {
@@ -162,18 +162,18 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
       }
     }
 
-    "there isn't a landline number in session" should {
+    "there isn't a mobile number in session" should {
       lazy val result = {
         mockIndividualAuthorised()
-        controller.updateLandlineNumber()(request)
+        controller.updateMobileNumber()(request)
       }
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
       }
 
-      "redirect the user to the capture landline number page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+      "redirect the user to the capture mobile number page" in {
+        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
       }
     }
 
@@ -181,7 +181,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+        val result = controller.updateMobileNumber()(requestWithPrepopMobileNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }

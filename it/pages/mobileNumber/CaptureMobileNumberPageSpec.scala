@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package pages.landlineNumber
+package pages.mobileNumber
 
-import common.SessionKeys.validationLandlineKey
-import controllers.landlineNumber.routes
-import forms.LandlineNumberForm.landlineNumberForm
+import common.SessionKeys.validationMobileKey
+import controllers.mobileNumber.routes
+import forms.MobileNumberForm.mobileNumberForm
 import helpers.SessionCookieCrumbler
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.libs.ws.WSResponse
 import stubs.VatSubscriptionStub._
 
-class CaptureLandlineNumberPageSpec extends BasePageISpec {
+class CaptureMobileNumberPageSpec extends BasePageISpec {
 
-  val path = "/new-landline-number"
-  val newLandline = "01952654321"
+  val path = "/new-mobile-number"
+  val newMobile = "07573492831"
 
-  "Calling the Capture landline number (.show) route" when {
+  "Calling the Capture mobile number (.show) route" when {
 
     def show: WSResponse = get(path, formatInflightChange(Some("false")))
 
@@ -47,54 +47,54 @@ class CaptureLandlineNumberPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("captureLandline.title"))
+            pageTitle(generateDocumentTitle("captureMobile.title"))
            )
         }
 
-        "add the existing landline number to session" in {
+        "add the existing mobile number to session" in {
 
           given.user.isAuthenticated
           stubCustomerInfo
 
           val result = show
 
-          SessionCookieCrumbler.getSessionMap(result).get(validationLandlineKey) shouldBe Some(currentLandline)
+          SessionCookieCrumbler.getSessionMap(result).get(validationMobileKey) shouldBe Some(currentMobile)
         }
       }
     }
   }
 
-  "Calling the Capture landline number (.submit) route" when {
+  "Calling the Capture mobile number (.submit) route" when {
 
     def submit(data: String): WSResponse = post(path, Map(
-      validationLandlineKey -> currentLandline) ++ formatInflightChange(Some("false"))
-    )(toFormData[String](landlineNumberForm(currentLandline), newLandline))
+      validationMobileKey -> currentMobile) ++ formatInflightChange(Some("false"))
+    )(toFormData[String](mobileNumberForm(currentMobile), newMobile))
 
     "the user is authenticated" when {
 
-      "a valid landline number has been submitted" should {
+      "a valid mobile number has been submitted" should {
 
-        "redirect to the the Confirm Landine Number page" in {
+        "redirect to the the Confirm Mobile Number page" in {
 
           given.user.isAuthenticated
           stubCustomerInfo
 
-          val result = submit(newLandline)
+          val result = submit(newMobile)
 
           result should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(routes.ConfirmLandlineNumberController.show().url)
+            redirectURI(routes.ConfirmMobileNumberController.show().url)
           )
         }
 
-        "add the existing landline number to session" in {
+        "add the existing mobile number to session" in {
 
           given.user.isAuthenticated
           stubCustomerInfo
 
-          val result = submit(newLandline)
+          val result = submit(newMobile)
 
-          SessionCookieCrumbler.getSessionMap(result).get(validationLandlineKey) shouldBe Some(currentLandline)
+          SessionCookieCrumbler.getSessionMap(result).get(validationMobileKey) shouldBe Some(currentMobile)
         }
       }
     }

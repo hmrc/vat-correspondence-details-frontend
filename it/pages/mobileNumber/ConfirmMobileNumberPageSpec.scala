@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pages.landlineNumber
+package pages.mobileNumber
 
 import common.SessionKeys
 import pages.BasePageISpec
@@ -22,52 +22,52 @@ import play.api.http.Status
 import play.api.libs.ws.WSResponse
 import stubs.VatSubscriptionStub
 
-class ConfirmLandlineNumberPageSpec extends BasePageISpec {
+class ConfirmMobileNumberPageSpec extends BasePageISpec {
 
-  val path = "/confirm-new-landline-number"
-  val path_update = "/update-new-landline-number"
-  val newLandline = "012345678910"
+  val path = "/confirm-new-mobile-number"
+  val path_update = "/update-new-mobile-number"
+  val newMobile = "012345678910"
 
-  "Calling the Confirm Landline Number (.show) route" when {
+  "Calling the Confirm Mobile Number (.show) route" when {
 
     def show(sessionKeys: (String, String)*): WSResponse =
       get(path, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))
 
     "the user is a authenticated" when {
 
-      "there is a new landline in the session" should {
+      "there is a new mobile in the session" should {
 
         "load successfully" in {
 
           given.user.isAuthenticated
 
-          val result = show(SessionKeys.prepopulationLandlineKey -> newLandline)
+          val result = show(SessionKeys.prepopulationMobileKey -> newMobile)
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("confirmPhoneNumbers.title"))
+            pageTitle(generateDocumentTitle("confirmMobile.heading"))
           )
         }
       }
     }
   }
-  "Calling the Update Landline Number route" when {
+  "Calling the Update Mobile Number route" when {
 
     def show(sessionKeys: (String, String)*): WSResponse =
       get(path_update, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))
 
-    "the landline is updated" should {
+    "the mobile is updated" should {
 
       "redirect to the confirmation screen" in {
         given.user.isAuthenticated
         VatSubscriptionStub.stubCustomerInfo
         VatSubscriptionStub.stubUpdatePPOB
 
-        val result = show(SessionKeys.prepopulationLandlineKey -> newLandline)
+        val result = show(SessionKeys.prepopulationMobileKey -> newMobile)
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.routes.ChangeSuccessController.landlineNumber().url)
+          redirectURI(controllers.routes.ChangeSuccessController.mobileNumber().url)
         )
       }
     }

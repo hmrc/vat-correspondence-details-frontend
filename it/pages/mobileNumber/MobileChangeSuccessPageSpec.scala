@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package pages.landlineNumber
+package pages.mobileNumber
 
-import common.SessionKeys.{landlineChangeSuccessful, prepopulationLandlineKey}
+import common.SessionKeys.{mobileChangeSuccessful, prepopulationMobileKey}
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -24,13 +24,13 @@ import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.OK
 import stubs.ContactPreferencesStub
 
-class LandlineChangeSuccessPageSpec extends BasePageISpec {
+class MobileChangeSuccessPageSpec extends BasePageISpec {
 
-  val path = "/landline-number-confirmation"
+  val path = "/mobile-number-confirmation"
 
-  "Calling the landline change success route" when {
+  "Calling the mobile change success route" when {
 
-    def show: WSResponse = get(path, Map(landlineChangeSuccessful -> "true", prepopulationLandlineKey -> "0123456789"))
+    def show: WSResponse = get(path, Map(mobileChangeSuccessful -> "true", prepopulationMobileKey -> "0123456789"))
 
     "the user is authenticated" when {
 
@@ -46,7 +46,7 @@ class LandlineChangeSuccessPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("landlineChangeSuccess.title.change"))
+            pageTitle(generateDocumentTitle("mobileChangeSuccess.title.change"))
           )
         }
       }

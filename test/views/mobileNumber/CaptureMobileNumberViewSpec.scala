@@ -14,36 +14,36 @@
  * limitations under the License.
  */
 
-package views.landlineNumber
+package views.mobileNumber
 
-import assets.BaseTestConstants.testValidationLandline
-import controllers.landlineNumber.routes
-import forms.LandlineNumberForm.landlineNumberForm
+import assets.BaseTestConstants.testValidationMobile
+import controllers.mobileNumber.routes
+import forms.MobileNumberForm.mobileNumberForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
-import views.html.landlineNumber.CaptureLandlineNumberView
+import views.html.mobileNumber.CaptureMobileNumberView
 
-class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
+class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
-  val injectedView: CaptureLandlineNumberView = inject[CaptureLandlineNumberView]
+  val injectedView: CaptureMobileNumberView = inject[CaptureMobileNumberView]
 
-  "The Capture Contact Number page" when {
+  "The Capture Mobile Number page" when {
 
     "the user is not an agent" when {
 
       "there are no errors in the form" should {
 
-        val view = injectedView(landlineNumberForm(testValidationLandline))(user, messages, mockConfig)
+        val view = injectedView(mobileNumberForm(testValidationMobile))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
         val fieldLabel: String = "#content > article > form > fieldset > div > label "
 
         "have the correct title" in {
-          document.title shouldBe "What is the landline number? - Business tax account - GOV.UK"
+          document.title shouldBe "What is the mobile number? - Business tax account - GOV.UK"
         }
 
         "have the correct heading" in {
-          elementText("h1") shouldBe "What is the landline number?"
+          elementText("h1") shouldBe "What is the mobile number?"
         }
 
         "have the correct field hint" in {
@@ -52,7 +52,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct visually hidden text" in {
-          elementText(s"$fieldLabel > span.visuallyhidden") shouldBe "What is the landline number?"
+          elementText(s"$fieldLabel > span.visuallyhidden") shouldBe "What is the mobile number?"
         }
 
         "have a button" which {
@@ -62,29 +62,29 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
           }
 
           "has the correct link location" in {
-            element("form").attr("action") shouldBe routes.CaptureLandlineNumberController.submit().url
+            element("form").attr("action") shouldBe routes.CaptureMobileNumberController.submit().url
           }
         }
       }
 
       "there are errors in the form" should {
-        val view = injectedView(landlineNumberForm(testValidationLandline)
-          .withError("landlineNumber", messages("captureLandline.error.notChanged")))(user, messages, mockConfig)
+        val view = injectedView(mobileNumberForm(testValidationMobile)
+          .withError("mobileNumber", messages("captureMobile.error.notChanged")))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
-          document.title shouldBe "Error: What is the landline number? - Business tax account - GOV.UK"
+          document.title shouldBe "Error: What is the mobile number? - Business tax account - GOV.UK"
         }
 
         "have a form error box" which {
 
           "has the correct error message" in {
-            elementText("#landlineNumber-error-summary") shouldBe "You have not made any changes to the landline number"
+            elementText("#mobileNumber-error-summary") shouldBe "You have not made any changes to the mobile number"
           }
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-notification") shouldBe "You have not made any changes to the landline number"
+          elementText(".error-notification") shouldBe "You have not made any changes to the mobile number"
         }
 
         "display the error summary" in {
@@ -96,11 +96,11 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
     "the user is an agent" when {
 
       "there are no errors in the form" should {
-        val view = injectedView(landlineNumberForm(testValidationLandline))(agent, messages, mockConfig)
+        val view = injectedView(mobileNumberForm(testValidationMobile))(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
-          document.title shouldBe "What is the landline number? - Your client’s VAT details - GOV.UK"
+          document.title shouldBe "What is the mobile number? - Your client’s VAT details - GOV.UK"
         }
       }
     }
