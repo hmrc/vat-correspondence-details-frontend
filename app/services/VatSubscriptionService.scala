@@ -51,7 +51,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     val existingContactDetails: ContactDetails =
       ppob.contactDetails.getOrElse(ContactDetails(None, None, None, None, None))
     ppob.copy(
-      contactDetails = Some(existingContactDetails.copy(phoneNumber = Some(mobile).filter(_.nonEmpty)))
+      contactDetails = Some(existingContactDetails.copy(mobileNumber = Some(mobile).filter(_.nonEmpty)))
     )
   }
 
@@ -67,7 +67,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
   def updateEmail(vrn: String, email: String)
                  (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
 
-    emailVerificationService.isEmailVerified(email) flatMap {
+    emailVerificationService.isEmailVerified(email).flatMap {
       case Some(true) =>
         this.getCustomerInfo(vrn) flatMap {
           case Right(customerInfo) => connector.updatePPOB(vrn, buildEmailUpdateModel(email, customerInfo.ppob))
@@ -93,7 +93,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     }
 
   def updateMobileNumber(vrn: String, mobile: String)
-                          (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
+                        (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
     connector.getCustomerInfo(vrn).flatMap {
       case Right(customerInfo) =>
         connector.updatePPOB(vrn, buildMobileUpdateModel(mobile, customerInfo.ppob))
