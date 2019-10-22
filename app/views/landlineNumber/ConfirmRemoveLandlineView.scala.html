@@ -15,33 +15,21 @@
  *@
 
 @import config.AppConfig
-@import uk.gov.hmrc.play.views.html.helpers.form
 
 @this(mainTemplate: MainTemplate)
 
 @(landline: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(title = messages("confirmLandlineNumber.title")) {
+@mainTemplate(title = messages("confirmRemoveLandline.title")) {
 
-<a class="link-back" href="@controllers.landlineNumber.routes.CaptureLandlineNumberController.show()">
-  @messages("base.back")
-</a>
+<a class="link-back" href='@controllers.landlineNumber.routes.CaptureLandlineNumberController.show()'>@messages("base.back")</a>
 
-<h1 class="heading-large">@messages("confirmLandlineNumber.title")</h1>
+<h1 class="heading-large">@messages("confirmRemoveLandline.heading", landline)</h1>
 
 <p>
-@messages("confirmLandlineNumber.landline") @landline
+  <a href="@appConfig.manageVatSubscriptionServicePath">@messages("common.cancel")</a>
 </p>
 
-<p>
-  <a href="@controllers.landlineNumber.routes.CaptureLandlineNumberController.show()">
-    @messages("confirmLandlineNumber.edit")
-  </a>
-</p>
-
-<a href="@controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber()"
-   class="button" role="button">
-  @messages("base.confirmAndContinue")
-</a>
-
+<a href='@controllers.landlineNumber.routes.ConfirmRemoveLandlineController.removeLandlineNumber().url'
+   role="button" tabindex="0" class="button">@messages("base.confirmAndContinue")</a>
 }

@@ -66,7 +66,7 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
       } yield {
         validation match {
           case Some(valWebsite) =>
-            Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulation), websiteNotChangedError = false, valWebsite))
+            Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulation), valWebsite))
               .addingToSession(SessionKeys.validationWebsiteKey -> valWebsite)
           case _ => errorHandler.showInternalServerError
         }
@@ -82,9 +82,7 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
     validationWebsite match {
       case Some(validation) => websiteForm(validation).bindFromRequest.fold(
         errorForm => {
-          val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureWebsite.error.notChanged")
-          Future.successful(BadRequest(captureWebsiteView(errorForm, notChanged, validation)))
-
+          Future.successful(BadRequest(captureWebsiteView(errorForm, validation)))
         },
         website     => {
           Future.successful(Redirect(routes.ConfirmWebsiteController.show())

@@ -45,6 +45,10 @@ POST        /new-landline-number                   controllers.landlineNumber.Ca
 GET         /confirm-new-landline-number           controllers.landlineNumber.ConfirmLandlineNumberController.show
 GET         /update-new-landline-number            controllers.landlineNumber.ConfirmLandlineNumberController.updateLandlineNumber
 
+# remove landline number
+GET         /confirm-remove-landline-number        controllers.landlineNumber.ConfirmRemoveLandlineController.show
+GET         /update-remove-landline-number         controllers.landlineNumber.ConfirmRemoveLandlineController.removeLandlineNumber
+
 # landline number change successful
 GET         /landline-number-confirmation          controllers.ChangeSuccessController.landlineNumber
 

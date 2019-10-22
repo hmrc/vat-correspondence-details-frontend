@@ -47,7 +47,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
 
         "the user already has a website in ETMP" should {
           lazy val view: Html =
-            injectedView(websiteForm(testWebsite).fill(testWebsite), websiteNotChangedError = false, testWebsite)(user, messages, mockConfig)
+            injectedView(websiteForm(testWebsite).fill(testWebsite), testWebsite)(user, messages, mockConfig)
 
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -98,7 +98,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
         }
 
         "the user has no website in ETMP" should {
-          lazy val view: Html = injectedView(websiteForm(testWebsite), websiteNotChangedError = false, "")
+          lazy val view: Html = injectedView(websiteForm(testWebsite), "")
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the website text field with no pre-populated value" in {
@@ -114,7 +114,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
     "the user is an agent" should {
 
       "there are no errors in the form" should {
-        val view = injectedView(websiteForm(testWebsite).fill(testWebsite), websiteNotChangedError = false, testWebsite)(agent, messages, mockConfig)
+        val view = injectedView(websiteForm(testWebsite).fill(testWebsite), testWebsite)(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {

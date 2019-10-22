@@ -21,6 +21,7 @@ common.changeClient = Change client
 common.agent.updateClient1 = We’ll also contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
+common.cancel = Cancel
 
 standardError.title = There is a problem with the service
 standardError.heading = Sorry, there is a problem with the service
@@ -71,6 +72,7 @@ captureLandline.title = What is the landline number?
 captureLandline.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
 captureLandline.error.notChanged = You have not made any changes to the landline number
 captureLandline.error.invalid = Enter a landline number in the correct format, like 01632 960000 or 020 7946 0000
+captureLandline.remove = Remove landline number
 
 captureMobile.title = What is the mobile number?
 captureMobile.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
@@ -94,7 +96,6 @@ confirmWebsite.change = Change the website address
 
 confirmWebsiteRemove.title = Confirm you want to remove the website address
 confirmWebsiteRemove.heading = Confirm you want to remove the website address: {0}
-confirmWebsiteRemove.cancel = Cancel
 
 verifyEmail.title = Verify your email address
 verifyEmail.heading = Verify your email address
@@ -135,11 +136,14 @@ inFlightChange.emailAddress = email address
 
 confirmPhoneNumbers.notProvided = Not provided
 confirmPhoneNumbers.numberRemoved = Number removed
-confirmPhoneNumbers.title = Confirm the landline number
-confirmPhoneNumbers.heading = Confirm the landline number
-confirmPhoneNumbers.landline = The new landline number is
-confirmPhoneNumbers.mobile = Mobile
-confirmPhoneNumbers.edit = Change the landline number
+
 confirmMobile.edit = Change the mobile number
 confirmMobile.newNumber = The new mobile number is
 confirmMobile.heading = Confirm the mobile number
+
+confirmLandlineNumber.title = Confirm the landline number
+confirmLandlineNumber.landline = The new landline number is
+confirmLandlineNumber.edit = Change the landline number
+
+confirmRemoveLandline.title = Confirm you want to remove the landline number
+confirmRemoveLandline.heading = Confirm you want to remove the landline number: {0}
