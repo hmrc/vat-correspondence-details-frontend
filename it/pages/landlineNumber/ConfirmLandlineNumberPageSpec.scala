@@ -28,7 +28,7 @@ class ConfirmLandlineNumberPageSpec extends BasePageISpec {
   val path_update = "/update-new-landline-number"
   val newLandline = "012345678910"
 
-  "Calling the Confirm Phone Numbers (.show) route" when {
+  "Calling the Confirm Landline Number (.show) route" when {
 
     def show(sessionKeys: (String, String)*): WSResponse =
       get(path, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))
@@ -51,7 +51,7 @@ class ConfirmLandlineNumberPageSpec extends BasePageISpec {
       }
     }
   }
-  "Calling the Update Phone Numbers route" when {
+  "Calling the Update Landline Number route" when {
 
     def show(sessionKeys: (String, String)*): WSResponse =
       get(path_update, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))

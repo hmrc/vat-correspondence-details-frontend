@@ -28,7 +28,7 @@ import stubs.VatSubscriptionStub._
 class CaptureMobileNumberPageSpec extends BasePageISpec {
 
   val path = "/new-mobile-number"
-  val newMobile = "01952654321"
+  val newMobile = "07573492831"
 
   "Calling the Capture mobile number (.show) route" when {
 
@@ -74,7 +74,7 @@ class CaptureMobileNumberPageSpec extends BasePageISpec {
 
       "a valid mobile number has been submitted" should {
 
-        "redirect to the the Confirm Contact Numbers page" in {
+        "redirect to the the Confirm Mobile Number page" in {
 
           given.user.isAuthenticated
           stubCustomerInfo

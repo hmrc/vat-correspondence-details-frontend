@@ -66,7 +66,6 @@ captureWebsite.error.exceedsMaxLength = Enter a maximum of 132 characters
 captureWebsite.error.invalid = Enter a website address in the correct format, like www.example.co.uk
 captureWebsite.error.empty = Enter a website address
 captureWebsite.error.notChanged = Enter a new website address
-captureContactNumbers.error.noEntry = You must enter either a landline or mobile phone number
 
 captureLandline.title = What is the landline number?
 captureLandline.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
@@ -77,9 +76,6 @@ captureMobile.title = What is the mobile number?
 captureMobile.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
 captureMobile.error.notChanged = You have not made any changes to the mobile number
 captureMobile.error.invalid = Enter a mobile number in the correct format, like 07911 123456
-
-captureContactNumbers.mobileNumber = Mobile number
-captureContactNumbers.error.invalid = Enter a phone number in the correct format
 
 sessionTimeout.title = Your session has timed out
 sessionTimeout.helpOne = To manage your VAT account, you will have to

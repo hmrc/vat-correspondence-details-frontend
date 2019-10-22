@@ -32,7 +32,7 @@ class LandlineChangeSuccessPageSpec extends BasePageISpec {
 
     def show: WSResponse = get(path, Map(landlineChangeSuccessful -> "true", prepopulationLandlineKey -> "0123456789"))
 
-    "the user is a authenticated" when {
+    "the user is authenticated" when {
 
       "there has been a change made to one of the contact numbers, and a success response is received from Contact Prefs" should {
 

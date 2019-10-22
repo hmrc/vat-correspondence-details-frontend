@@ -69,7 +69,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
       "there are errors in the form" should {
         val view = injectedView(mobileNumberForm(testValidationMobile)
-          .withError("mobileNumber", "Enter a different phone number"))(user, messages, mockConfig)
+          .withError("mobileNumber", messages("captureMobile.error.notChanged")))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
@@ -79,12 +79,12 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         "have a form error box" which {
 
           "has the correct error message" in {
-            elementText("#mobileNumber-error-summary") shouldBe "Enter a different phone number"
+            elementText("#mobileNumber-error-summary") shouldBe "You have not made any changes to the mobile number"
           }
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-notification") shouldBe "Enter a different phone number"
+          elementText(".error-notification") shouldBe "You have not made any changes to the mobile number"
         }
 
         "display the error summary" in {

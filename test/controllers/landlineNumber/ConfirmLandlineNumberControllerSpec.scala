@@ -47,7 +47,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
       "show the Confirm landline Number page" in {
         mockIndividualAuthorised()
-        val result = controller.show(requestWithPrepopPhoneNumbers)
+        val result = controller.show(requestWithPrepopLandlineNumber)
 
         status(result) shouldBe Status.OK
       }
@@ -74,7 +74,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.show(requestWithPrepopPhoneNumbers)
+        val result = controller.show(requestWithPrepopLandlineNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -92,7 +92,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           mockUpdateLandlineNumber(
             vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
           )
-          controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
+          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
         }
 
         "return 303" in {
@@ -131,7 +131,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateLandlineNumber(vrn, testPrepopLandline)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
+          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
         }
 
         "return 303" in {
@@ -149,7 +149,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateLandlineNumber(vrn, testPrepopLandline)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify landline number"))))
-          controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
+          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
         }
 
         "return 500" in {
@@ -181,7 +181,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.updateLandlineNumber()(requestWithPrepopPhoneNumbers)
+        val result = controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }

@@ -48,7 +48,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
       "the user's current landline is retrieved from session" should {
 
-        lazy val result = controller.show(requestWithValidationPhoneNumbers)
+        lazy val result = controller.show(requestWithValidationLandlineNumber)
 
         lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -75,7 +75,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
     "the previous form value is retrieved from session" should {
 
-      lazy val result = controller.show(requestWithAllContactNumbers)
+      lazy val result = controller.show(requestWithAllLandlineNumbers)
       lazy val document = Jsoup.parse(bodyOf(result))
 
       "return 200" in {
@@ -213,7 +213,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
         "the form is successfully submitted" should {
 
-          lazy val result = controller.submit(requestWithValidationPhoneNumbers
+          lazy val result = controller.submit(requestWithValidationLandlineNumber
             .withFormUrlEncodedBody("landlineNumber" -> testPrepopLandline)
           )
 
@@ -232,7 +232,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
         "the form is submitted with errors" should {
 
-          lazy val result = controller.submit(requestWithAllContactNumbers
+          lazy val result = controller.submit(requestWithAllLandlineNumbers
             .withFormUrlEncodedBody("landlineNumber" -> "")
           )
 

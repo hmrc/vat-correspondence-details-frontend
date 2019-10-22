@@ -47,7 +47,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
       "show the Confirm mobile Number page" in {
         mockIndividualAuthorised()
-        val result = controller.show(requestWithPrepopPhoneNumbers)
+        val result = controller.show(requestWithPrepopMobileNumber)
 
         status(result) shouldBe Status.OK
       }
@@ -74,7 +74,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.show(requestWithPrepopPhoneNumbers)
+        val result = controller.show(requestWithPrepopMobileNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -92,7 +92,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           mockUpdateMobileNumber(
             vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
           )
-          controller.updateMobileNumber()(requestWithPrepopPhoneNumbers)
+          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
         }
 
         "return 303" in {
@@ -131,7 +131,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateMobileNumber(vrn, testPrepopMobile)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          controller.updateMobileNumber()(requestWithPrepopPhoneNumbers)
+          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
         }
 
         "return 303" in {
@@ -149,7 +149,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateMobileNumber(vrn, testPrepopMobile)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify mobile number"))))
-          controller.updateMobileNumber()(requestWithPrepopPhoneNumbers)
+          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
         }
 
         "return 500" in {
@@ -181,7 +181,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.updateMobileNumber()(requestWithPrepopPhoneNumbers)
+        val result = controller.updateMobileNumber()(requestWithPrepopMobileNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }

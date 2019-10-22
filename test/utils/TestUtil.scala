@@ -67,17 +67,31 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
     validationMobileKey -> testValidationMobile
   )
 
-  lazy val requestWithPrepopPhoneNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
-    prepopulationLandlineKey -> testPrepopLandline,
+  lazy val requestWithValidationLandlineNumber: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+    validationLandlineKey -> testValidationLandline
+  )
+
+  lazy val requestWithValidationMobileNumber: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+    validationMobileKey -> testValidationMobile
+  )
+
+  lazy val requestWithPrepopLandlineNumber: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+    prepopulationLandlineKey -> testPrepopLandline
+  )
+
+  lazy val requestWithPrepopMobileNumber: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     prepopulationMobileKey -> testPrepopMobile
   )
 
   lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(clientVrn -> vrn)
 
-  lazy val requestWithAllContactNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val requestWithAllLandlineNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     validationLandlineKey -> testValidationLandline,
-    prepopulationLandlineKey -> testPrepopLandline,
+    prepopulationLandlineKey -> testPrepopLandline
+  )
+
+  lazy val requestWithAllMobileNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     validationMobileKey -> testValidationMobile,
     prepopulationMobileKey -> testPrepopMobile
   )

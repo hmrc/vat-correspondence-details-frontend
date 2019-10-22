@@ -74,7 +74,7 @@ class CaptureLandlineNumberPageSpec extends BasePageISpec {
 
       "a valid landline number has been submitted" should {
 
-        "redirect to the the Confirm Contact Numbers page" in {
+        "redirect to the the Confirm Landine Number page" in {
 
           given.user.isAuthenticated
           stubCustomerInfo

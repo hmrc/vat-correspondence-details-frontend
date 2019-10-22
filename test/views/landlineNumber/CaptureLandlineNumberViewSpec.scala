@@ -69,7 +69,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 
       "there are errors in the form" should {
         val view = injectedView(landlineNumberForm(testValidationLandline)
-          .withError("landlineNumber", "Enter a different phone number"))(user, messages, mockConfig)
+          .withError("landlineNumber", messages("captureLandline.error.notChanged")))(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
@@ -79,12 +79,12 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
         "have a form error box" which {
 
           "has the correct error message" in {
-            elementText("#landlineNumber-error-summary") shouldBe "Enter a different phone number"
+            elementText("#landlineNumber-error-summary") shouldBe "You have not made any changes to the landline number"
           }
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-notification") shouldBe "Enter a different phone number"
+          elementText(".error-notification") shouldBe "You have not made any changes to the landline number"
         }
 
         "display the error summary" in {

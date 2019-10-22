@@ -48,7 +48,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
       "the user's current mobile is retrieved from session" should {
 
-        lazy val result = controller.show(requestWithValidationPhoneNumbers)
+        lazy val result = controller.show(requestWithValidationMobileNumber)
 
         lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -75,7 +75,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
     "the previous form value is retrieved from session" should {
 
-      lazy val result = controller.show(requestWithAllContactNumbers)
+      lazy val result = controller.show(requestWithAllMobileNumbers)
       lazy val document = Jsoup.parse(bodyOf(result))
 
       "return 200" in {
@@ -213,7 +213,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
         "the form is successfully submitted" should {
 
-          lazy val result = controller.submit(requestWithValidationPhoneNumbers
+          lazy val result = controller.submit(requestWithValidationMobileNumber
             .withFormUrlEncodedBody("mobileNumber" -> testPrepopMobile)
           )
 
@@ -232,7 +232,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
         "the form is submitted with errors" should {
 
-          lazy val result = controller.submit(requestWithAllContactNumbers
+          lazy val result = controller.submit(requestWithAllMobileNumbers
             .withFormUrlEncodedBody("mobileNumber" -> "")
           )
 
