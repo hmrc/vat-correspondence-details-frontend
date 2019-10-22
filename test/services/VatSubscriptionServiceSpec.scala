@@ -200,7 +200,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
 
     "the user has existing contact details" should {
 
-      "return a PPOB model with the updated phone numbers" in {
+      "return a PPOB model with the updated landline number" in {
         val expectedPPOB: PPOB = PPOB(
           fullPPOBAddressModel,
           Some(ContactDetails(
@@ -220,7 +220,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
 
     "the user does not have contact details" should {
 
-      "return a PPOB model with the phone numbers" in {
+      "return a PPOB model with the update landline number" in {
         val expectedPPOB: PPOB = PPOB(
           minPPOBAddressModel,
           Some(ContactDetails(
@@ -234,6 +234,49 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         )
 
         val result = service.buildLandlineUpdateModel(testPrepopLandline, minPPOBModel)
+        result shouldBe expectedPPOB
+      }
+    }
+  }
+
+  "calling buildMobileUpdateModel" when {
+
+    "the user has existing contact details" should {
+
+      "return a PPOB model with the updated mobile number" in {
+        val expectedPPOB: PPOB = PPOB(
+          fullPPOBAddressModel,
+          Some(ContactDetails(
+            Some("01234567890"),
+            Some(testPrepopMobile),
+            Some("0123456789"),
+            Some("pepsimac@gmail.com"),
+            Some(true)
+          )),
+          Some("www.pepsi-mac.biz")
+        )
+
+        val result = service.buildMobileUpdateModel(testPrepopMobile, fullPPOBModel)
+        result shouldBe expectedPPOB
+      }
+    }
+
+    "the user does not have contact details" should {
+
+      "return a PPOB model with the updated mobile number" in {
+        val expectedPPOB: PPOB = PPOB(
+          minPPOBAddressModel,
+          Some(ContactDetails(
+            None,
+            Some(testPrepopMobile),
+            None,
+            None,
+            None
+          )),
+          None
+        )
+
+        val result = service.buildMobileUpdateModel(testPrepopMobile, minPPOBModel)
         result shouldBe expectedPPOB
       }
     }
