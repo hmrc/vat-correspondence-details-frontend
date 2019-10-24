@@ -19,33 +19,36 @@
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
 
-@(contactNumbersForm: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(mobileNumberForm: Form[String], currentMobile: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @mainTemplate(
-  if(contactNumbersForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureMobile.title"))
+  if(mobileNumberForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureMobile.title"))
   else messages("captureMobile.title")
 ) {
 
   <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 
-  @errorSummary(messages("common.error.heading"), contactNumbersForm, forceDivToAppear = false)
+  @errorSummary(messages("common.error.heading"), mobileNumberForm, forceDivToAppear = false)
 
   <h1 class="heading-large">@messages("captureMobile.title")</h1>
 
   @form(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
-    <fieldset>
 
-        <div class ="form-group">
+    <div class ="form-group">
           @input(
-            contactNumbersForm("mobileNumber"),
+            mobileNumberForm("mobileNumber"),
             '_label -> messages("captureMobile.title"),
             '_inputClass -> "form-control form-control--block",
             '_inputHint -> messages("captureMobile.hint"),
             '_labelTextClass -> "visuallyhidden"
           )
-        </div>
+    </div>
 
-    </fieldset>
+    @if(currentMobile != "") {
+    <p><a id="remove-mobile" href='@controllers.mobileNumber.routes.ConfirmRemoveMobileController.show().url'>
+        @messages("captureMobile.remove")
+    </a></p>
+    }
 
     <div class="form-group">
       <button class="button" type="submit">@messages("common.continue")</button>
