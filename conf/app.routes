@@ -56,11 +56,15 @@ GET         /landline-number-confirmation          controllers.ChangeSuccessCont
 GET         /new-mobile-number                     controllers.mobileNumber.CaptureMobileNumberController.show
 POST        /new-mobile-number                     controllers.mobileNumber.CaptureMobileNumberController.submit
 
-# confirm landline number
+# confirm mobile number
 GET         /confirm-new-mobile-number             controllers.mobileNumber.ConfirmMobileNumberController.show
 GET         /update-new-mobile-number              controllers.mobileNumber.ConfirmMobileNumberController.updateMobileNumber
 
-# landline number change successful
+# remove mobile number
+GET         /confirm-remove-mobile-number        controllers.mobileNumber.ConfirmRemoveMobileController.show
+GET         /update-remove-mobile-number         controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
+
+# mobile number change successful
 GET         /mobile-number-confirmation            controllers.ChangeSuccessController.mobileNumber
 
 # Map static resources from the /public folder to the /assets URL path
