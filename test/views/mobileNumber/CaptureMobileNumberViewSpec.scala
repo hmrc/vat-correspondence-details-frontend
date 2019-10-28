@@ -16,7 +16,7 @@
 
 package views.mobileNumber
 
-import assets.BaseTestConstants.testValidationMobile
+import assets.BaseTestConstants.{testValidationMobile}
 import controllers.mobileNumber.routes
 import forms.MobileNumberForm.mobileNumberForm
 import org.jsoup.Jsoup
@@ -34,9 +34,9 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
       "there are no errors in the form" should {
 
-        val view = injectedView(mobileNumberForm(testValidationMobile))(user, messages, mockConfig)
+        val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
-        val fieldLabel: String = "#content > article > form > fieldset > div > label "
+        val fieldLabel: String = "#content > article > form  > div > label "
 
         "have the correct title" in {
           document.title shouldBe "What is the mobile number? - Business tax account - GOV.UK"
@@ -55,6 +55,17 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
           elementText(s"$fieldLabel > span.visuallyhidden") shouldBe "What is the mobile number?"
         }
 
+        "have a link to remove the mobile" which {
+
+          "has the correct text" in {
+            elementText("#remove-mobile") shouldBe "Remove mobile number"
+          }
+
+          "has the correct link location" in {
+            element("#remove-mobile").attr("href") shouldBe routes.ConfirmRemoveMobileController.show().url
+          }
+        }
+
         "have a button" which {
 
           "has the correct text" in {
@@ -69,7 +80,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
       "there are errors in the form" should {
         val view = injectedView(mobileNumberForm(testValidationMobile)
-          .withError("mobileNumber", messages("captureMobile.error.notChanged")))(user, messages, mockConfig)
+          .withError("mobileNumber", messages("captureMobile.error.notChanged")),testValidationMobile)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
@@ -96,7 +107,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
     "the user is an agent" when {
 
       "there are no errors in the form" should {
-        val view = injectedView(mobileNumberForm(testValidationMobile))(agent, messages, mockConfig)
+        val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {

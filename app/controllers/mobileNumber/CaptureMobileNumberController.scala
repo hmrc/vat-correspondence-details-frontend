@@ -66,7 +66,7 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
       } yield {
         validationMobileResult match {
           case Some(mobile) =>
-            Ok(captureMobileNumberView(mobileNumberForm(mobile).fill(prepopMobileResult)))
+            Ok(captureMobileNumberView(mobileNumberForm(mobile).fill(prepopMobileResult),mobile))
               .addingToSession(SessionKeys.validationMobileKey -> mobile)
           case _ => errorHandler.showInternalServerError
         }
@@ -83,7 +83,7 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
       case Some(mobile) =>
         mobileNumberForm(mobile).bindFromRequest.fold(
           errorForm => {
-            BadRequest(captureMobileNumberView(errorForm))
+            BadRequest(captureMobileNumberView(errorForm,mobile))
           },
 
           formValue => {
