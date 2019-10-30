@@ -21,6 +21,7 @@ common.error.prefixTitle = Gwall: {0}
 common.whatHappensNext = Yr hyn sy’n digwydd nesaf
 common.helpOne.apiFailure = Byddwn yn anfon diweddariad atoch cyn pen 15 diwrnod gwaith.
 common.changeClient = Newid cleient
+common.cancel = Canslo
 
 standardError.title = Mae problem gyda’r gwasanaeth 
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
@@ -59,6 +60,14 @@ captureEmail.removeEmail.title = Hoffwn ddileu fy nghyfeiriad e-bost
 captureEmail.removeEmail.contactUs = Cysylltwch â ni (yn agor tab newydd)
 captureEmail.removeEmail.description = i ddileu eich cyfeiriad e-bost.
 
+captureWebsite.title = Beth yw cyfeiriad y wefan?
+captureWebsite.hint = Er enghraifft, www.abc.co…
+captureWebsite.removeWebsite.linkText = Dileu cyfeiriad y wefan
+captureWebsite.error.exceedsMaxLength = Nodwch uchafswm o 132 o gymeriadau
+captureWebsite.error.invalid = Nodwch gyfeiriad gwefan yn y fformat cywir, fel www.enghraifft.co.uk
+captureWebsite.error.empty = Nodwch gyfeiriad gwefan
+captureWebsite.error.notChanged = Nodwch gyfeiriad gwefan newydd
+
 sessionTimeout.title = Mae’ch sesiwn wedi’i therfynu
 sessionTimeout.helpOne = I reoli’ch cyfrif TAW, bydd yn rhaid i chi
 sessionTimeout.helpTwo = fewngofnodi
@@ -69,6 +78,14 @@ confirmEmail.heading = Cadarnhau’r cyfeiriad e-bost newydd
 confirmEmail.link = Golygu’r cyfeiriad e-bost
 confirmEmail.body = Drwy gadarnhau’r newid hwn, rydych yn cytuno bod yr wybodaeth a roesoch yn gyflawn ac yn gywir.
 confirmEmail.edit = Golygu’r cyfeiriad e-bost
+
+confirmWebsite.title = Cadarnhau cyfeiriad y wefan
+confirmWebsite.heading = Cadarnhau cyfeiriad y wefan
+confirmWebsite.p1 = Cyfeiriad newydd y wefan yw {0}
+confirmWebsite.change = Newid cyfeiriad y wefan
+
+confirmWebsiteRemove.title = Cadarnhau eich bod am ddileu cyfeiriad y wefan
+confirmWebsiteRemove.heading = Cadarnhau eich bod am ddileu cyfeiriad y wefan: {0}
 
 verifyEmail.title = Dilysu’ch cyfeiriad e-bost
 verifyEmail.heading = Dilysu’ch cyfeiriad e-bost
@@ -82,6 +99,9 @@ verifyEmail.accordion.lineTwo = ei anfon eto
 verifyEmail.accordion.lineThree = Os byddwn yn ei anfon eto, ni fydd unrhyw gysylltiadau blaenorol yn gweithio mwyach.
 
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
+
+websiteChangeSuccess.title.change = Mae’ch cais i newid cyfeiriad y wefan wedi dod i law
+websiteChangeSuccess.title.remove = Mae’ch cais i ddileu cyfeiriad y wefan wedi dod i law
 
 changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEM i gael diweddariad.
 changeSuccess.helpOne.paper = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
