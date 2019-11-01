@@ -9,9 +9,6 @@ banner.feedback = adborth
 banner.feedbackImprove = yn ein helpu i’w wella.
 banner.phaseName = BETA
 
-feedback.title = Adborth
-feedbackThanks.title = Diolch
-
 common.clientService = Cyfrif Treth Busnes
 common.agentService = Manylion TAW eich cleient
 common.vat = TAW
@@ -21,6 +18,10 @@ common.error.prefixTitle = Gwall: {0}
 common.whatHappensNext = Yr hyn sy’n digwydd nesaf
 common.helpOne.apiFailure = Byddwn yn anfon diweddariad atoch cyn pen 15 diwrnod gwaith.
 common.changeClient = Newid cleient
+common.agent.updateClient1 = Byddwn hefyd yn cysylltu ag
+common.agent.updateClient2 = gyda diweddariad.
+common.agent.yourClient = eich cleient
+common.cancel = Canslo
 
 standardError.title = Mae problem gyda’r gwasanaeth 
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
@@ -50,7 +51,6 @@ agentJourneyDisabled.instructions = Os oes angen i’ch cleient newid ei gyfeiri
 
 captureEmail.title = Beth yw’r cyfeiriad e-bost?
 captureEmail.hint = Er enghraifft, enw@enghraifft.com
-captureEmail.onlyAddEmail = Dylech ond lenwi’r maes hwn os yw CThEM wedi rhoi gwybod i chi am wneud hynny.
 captureEmail.error.exceedsMaxLength = Mae’n rhaid i’r cyfeiriad e-bost fod yn 132 o gymeriadau neu lai
 captureEmail.error.invalid = Nodwch gyfeiriad e-bost dilys
 captureEmail.error.empty = Nodwch eich cyfeiriad e-bost
@@ -58,6 +58,15 @@ captureEmail.error.notChanged = Nodwch gyfeiriad e-bost gwahanol
 captureEmail.removeEmail.title = Hoffwn ddileu fy nghyfeiriad e-bost
 captureEmail.removeEmail.contactUs = Cysylltwch â ni (yn agor tab newydd)
 captureEmail.removeEmail.description = i ddileu eich cyfeiriad e-bost.
+captureEmail.onlyAddEmail = Dylech ond lenwi’r maes hwn os yw CThEM wedi rhoi gwybod i chi am wneud hynny.
+
+captureWebsite.title = Beth yw cyfeiriad y wefan?
+captureWebsite.hint = Er enghraifft, www.abc.co…
+captureWebsite.removeWebsite.linkText = Dileu cyfeiriad y wefan
+captureWebsite.error.exceedsMaxLength = Nodwch uchafswm o 132 o gymeriadau
+captureWebsite.error.invalid = Nodwch gyfeiriad gwefan yn y fformat cywir, fel www.enghraifft.co.uk
+captureWebsite.error.empty = Nodwch gyfeiriad gwefan
+captureWebsite.error.notChanged = Nodwch gyfeiriad gwefan newydd
 
 sessionTimeout.title = Mae’ch sesiwn wedi’i therfynu
 sessionTimeout.helpOne = I reoli’ch cyfrif TAW, bydd yn rhaid i chi
@@ -67,8 +76,15 @@ sessionTimeout.helpThree = gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) ar gyfer
 confirmEmail.title = Cadarnhau’r cyfeiriad e-bost newydd
 confirmEmail.heading = Cadarnhau’r cyfeiriad e-bost newydd
 confirmEmail.link = Golygu’r cyfeiriad e-bost
-confirmEmail.body = Drwy gadarnhau’r newid hwn, rydych yn cytuno bod yr wybodaeth a roesoch yn gyflawn ac yn gywir.
 confirmEmail.edit = Golygu’r cyfeiriad e-bost
+
+confirmWebsite.title = Cadarnhau cyfeiriad y wefan
+confirmWebsite.heading = Cadarnhau cyfeiriad y wefan
+confirmWebsite.p1 = Cyfeiriad newydd y wefan yw {0}
+confirmWebsite.change = Newid cyfeiriad y wefan
+
+confirmWebsiteRemove.title = Cadarnhau eich bod am ddileu cyfeiriad y wefan
+confirmWebsiteRemove.heading = Cadarnhau eich bod am ddileu cyfeiriad y wefan: {0}
 
 verifyEmail.title = Dilysu’ch cyfeiriad e-bost
 verifyEmail.heading = Dilysu’ch cyfeiriad e-bost
@@ -83,8 +99,13 @@ verifyEmail.accordion.lineThree = Os byddwn yn ei anfon eto, ni fydd unrhyw gysy
 
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
 
+websiteChangeSuccess.title.change = Mae’ch cais i newid cyfeiriad y wefan wedi dod i law
+websiteChangeSuccess.title.remove = Mae’ch cais i ddileu cyfeiriad y wefan wedi dod i law
+
 changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEM i gael diweddariad.
 changeSuccess.helpOne.paper = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
+changeSuccess.helpOne.digital.agent = Byddwn yn anfon e-bost i {0} cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a yw’r cais wedi’i dderbyn ai peidio.
+changeSuccess.helpOne.paper.agent = Byddwn yn anfon llythyr o gadarnhad i gyfeiriad yr asiantaeth sydd wedi’i gofrestru gyda CThEM cyn pen 15 diwrnod gwaith.
 changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
 
 inFlightChange.title = Mae gennych newid ar y gweill yn barod
