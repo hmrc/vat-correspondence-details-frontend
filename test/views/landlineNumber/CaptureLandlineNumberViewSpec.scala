@@ -48,7 +48,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 
         "have the correct field hint" in {
           elementText(s"$fieldLabel > span.form-hint") shouldBe
-            "You will need to include the country code for international telephone numbers, for example '+44'."
+            "You need to enter the country code for international numbers,like 00441632 960000. You cannot enter a '+'."
         }
 
         "have the correct visually hidden text" in {

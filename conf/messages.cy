@@ -117,3 +117,34 @@ inFlightChange.landline = rhif ffôn llinell dir y busnes
 inFlightChange.mobile = rhif ffôn symudol y busnes
 inFlightChange.website = cyfeiriad we y busnes
 inFlightChange.emailAddress = cyfeiriad e-bost
+
+captureLandline.title = Beth yw’r rhif ffôn llinell dir?
+captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00441632 960000. Ni allwch nodi ''+''.
+captureLandline.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif llinell dir
+captureLandline.error.invalid = Nodwch rif llinell dir yn y fformat cywir, fel 01632 960000 ac ni allwch nodi ''+''.
+captureLandline.remove = Dileu rhif ffôn llinell dir
+
+captureMobile.title = Beth yw’r rhif ffôn symudol?
+captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00447946 0000. Ni allwch nodi ''+''.
+captureMobile.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif ffôn symudol
+captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 0700 900000 ac ni allwch nodi ''+''.
+captureMobile.remove = Dileu rhif ffôn symudol
+
+confirmMobile.edit = Newid y rhif ffôn symudol
+confirmMobile.newNumber = Y rhif ffôn symudol newydd yw
+confirmMobile.heading = Cadarnhau’r rhif ffôn symudol
+
+confirmLandlineNumber.title = Cadarnhau’r rhif ffôn llinell dir
+confirmLandlineNumber.landline = Y rhif ffôn llinell dir newydd yw
+confirmLandlineNumber.edit = Newid y rhif ffôn llinell dir
+
+confirmRemoveLandline.title = Cadarnhau eich bod am ddileu’r rhif ffôn llinell dir
+confirmRemoveLandline.heading = Cadarnhau eich bod am ddileu’r rhif ffôn llinell dir: {0}
+
+confirmRemoveMobile.title = Cadarnhau eich bod am ddileu’r rhif ffôn symudol
+confirmRemoveMobile.heading = Cadarnhau eich bod am ddileu’r rhif ffôn symudol: {0}
+
+landlineChangeSuccess.title.change = Mae’ch cais i newid y rhif ffôn llinell dir wedi dod i law
+landlineChangeSuccess.title.remove = Mae’ch cais i ddileu’r rhif ffôn llinell dir wedi dod i law
+mobileChangeSuccess.title.change = Mae’ch cais i newid y rhif ffôn symudol wedi dod i law
+mobileChangeSuccess.title.remove = Mae’ch cais i ddileu’r rhif ffôn symudol wedi dod i law
