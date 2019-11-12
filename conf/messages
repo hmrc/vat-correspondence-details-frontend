@@ -69,15 +69,15 @@ captureWebsite.error.empty = Enter a website address
 captureWebsite.error.notChanged = Enter a new website address
 
 captureLandline.title = What is the landline number?
-captureLandline.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
+captureLandline.hint = You need to enter the country code for international numbers,like 00441632 960000. You cannot enter a ''+''.
 captureLandline.error.notChanged = You have not made any changes to the landline number
-captureLandline.error.invalid = Enter a landline number in the correct format, like 01632 960000 or 020 7946 0000
+captureLandline.error.invalid = Enter a landline number in the correct format, like 01632 960000 and you cannot enter a ''+''.
 captureLandline.remove = Remove landline number
 
 captureMobile.title = What is the mobile number?
-captureMobile.hint = You will need to include the country code for international telephone numbers, for example ''+44''.
+captureMobile.hint = You need to enter the country code for international numbers,like 00447946 0000. You cannot enter a ''+''.
 captureMobile.error.notChanged = You have not made any changes to the mobile number
-captureMobile.error.invalid = Enter a mobile number in the correct format, like 07911 123456
+captureMobile.error.invalid = Enter a mobile number in the correct format, like 07700 900000 and you cannot enter a ''+''.
 captureMobile.remove = Remove mobile number
 
 sessionTimeout.title = Your session has timed out
