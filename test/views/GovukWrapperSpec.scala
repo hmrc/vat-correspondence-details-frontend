@@ -32,6 +32,10 @@ class GovukWrapperSpec extends ViewBaseSpec {
       lazy val view = injectedView(mockConfig,"")
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
+      "not be shown a logo" in {
+        document.select(".organisation-logo") shouldBe empty
+      }
+
       "have the correct Accessibility link" in {
         element(accessibilityLinkSelector).attr("href") shouldBe "/vat-through-software/accessibility-statement"
       }
