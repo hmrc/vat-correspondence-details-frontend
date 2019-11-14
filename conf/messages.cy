@@ -121,13 +121,13 @@ inFlightChange.emailAddress = cyfeiriad e-bost
 captureLandline.title = Beth yw’r rhif ffôn llinell dir?
 captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00441632 960000. Ni allwch nodi ''+''.
 captureLandline.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif llinell dir
-captureLandline.error.invalid = Nodwch rif llinell dir yn y fformat cywir, fel 01632 960000 ac ni allwch nodi ''+''.
+captureLandline.error.invalid = Nodwch rif llinell dir yn y fformat cywir, fel 01632 960000 neu 00441632 960000 ac ni allwch nodi ''+''.
 captureLandline.remove = Dileu rhif ffôn llinell dir
 
 captureMobile.title = Beth yw’r rhif ffôn symudol?
-captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00447946 0000. Ni allwch nodi ''+''.
+captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00447946 123456. Ni allwch nodi ''+''.
 captureMobile.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif ffôn symudol
-captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 0700 900000 ac ni allwch nodi ''+''.
+captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07946 123456 neu 00447946 123456 ac ni allwch nodi ''+''.
 captureMobile.remove = Dileu rhif ffôn symudol
 
 confirmMobile.edit = Newid y rhif ffôn symudol
