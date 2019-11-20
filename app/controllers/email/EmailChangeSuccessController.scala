@@ -51,10 +51,8 @@ class EmailChangeSuccessController @Inject()(auditService: AuditingService,
           case Right(preference) =>
 
             auditService.extendedAudit(
-              ContactPreferenceAuditModel(
-                user.vrn,
-                preference.preference
-              )
+              ContactPreferenceAuditModel(user.vrn, preference.preference),
+              controllers.email.routes.EmailChangeSuccessController.show().url
             )
 
             Ok(changeSuccessView(

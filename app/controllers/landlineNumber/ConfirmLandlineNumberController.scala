@@ -66,7 +66,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
     }
   }
 
-  def updateLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async {
+  def updateLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async {
     implicit user =>
       val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey)
       val existingLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
@@ -85,7 +85,8 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
                 user.vrn,
                 user.isAgent,
                 user.arn
-              )
+              ),
+              controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber().url
             )
             Redirect(controllers.routes.ChangeSuccessController.landlineNumber())
               .removingFromSession(validationLandlineKey)

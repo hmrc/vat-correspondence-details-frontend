@@ -72,7 +72,8 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
                 user.vrn,
                 user.isAgent,
                 user.arn
-              )
+              ),
+              controllers.email.routes.ConfirmEmailController.updateEmailAddress().url
             )
             Redirect(routes.EmailChangeSuccessController.show())
               .removingFromSession(prepopulationEmailKey, validationEmailKey)
