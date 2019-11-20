@@ -36,7 +36,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 
         val view = injectedView(landlineNumberForm(testValidationLandline), testValidationLandline)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
-        val fieldLabel: String = "#content > article > form > div > label "
+        val fieldLabel: String = "#content > article > form > div > label"
 
         "have the correct title" in {
           document.title shouldBe "What is the landline number? - Business tax account - GOV.UK"

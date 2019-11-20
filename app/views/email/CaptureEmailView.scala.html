@@ -38,13 +38,9 @@
             <div class="form-group">
             @input(
                 emailForm("email"),
-                '_divClass -> "form-label",
-                '_labelId -> "label-email",
-                '_hintId -> "label-email-hint",
                 '_label -> messages("captureEmail.title"),
                 '_labelTextClass -> "visuallyhidden",
-                '_inputClass -> "input--fullwidth",
-                '_maxlength -> maxLength,
+                '_inputClass -> "form-control",
                 '_inputHint -> messages("captureEmail.hint")
             )
             </div>

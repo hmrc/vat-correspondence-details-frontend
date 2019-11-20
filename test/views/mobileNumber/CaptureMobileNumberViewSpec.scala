@@ -36,7 +36,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
         val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
-        val fieldLabel: String = "#content > article > form  > div > label "
+        val fieldLabel: String = "#content > article > form  > div > label"
 
         "have the correct title" in {
           document.title shouldBe "What is the mobile number? - Business tax account - GOV.UK"
