@@ -23,7 +23,7 @@ case class ChangedLandlineNumberAuditModel(currentLandlineNumber: Option[String]
                                            requestedLandlineNumber: String,
                                            vrn: String,
                                            isAgent: Boolean,
-                                           arn: Option[String]) extends ExtendedAuditModel {
+                                           arn: Option[String]) extends AuditModel {
 
   override val auditType: String = "ChangeLandlineNumber"
   override val detail: JsValue = Json.toJson(this)

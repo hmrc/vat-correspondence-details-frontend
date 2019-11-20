@@ -24,7 +24,7 @@ case class ChangedMobileNumberAuditModel(currentMobileNumber: Option[String],
                                          requestedMobileNumber: String,
                                          vrn: String,
                                          isAgent: Boolean,
-                                         arn: Option[String]) extends ExtendedAuditModel {
+                                         arn: Option[String]) extends AuditModel {
 
   override val auditType: String = "ChangeMobileNumber"
   override val detail: JsValue = Json.toJson(this)
