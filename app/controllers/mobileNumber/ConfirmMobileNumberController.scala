@@ -66,7 +66,7 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
     }
   }
 
-  def updateMobileNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async {
+  def updateMobileNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async {
     implicit user =>
       val enteredMobile = user.session.get(SessionKeys.prepopulationMobileKey)
       val existingMobile = user.session.get(validationMobileKey).filter(_.nonEmpty)
@@ -85,7 +85,8 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
                 user.vrn,
                 user.isAgent,
                 user.arn
-              )
+              ),
+              controllers.mobileNumber.routes.ConfirmMobileNumberController.updateMobileNumber().url
             )
             Redirect(controllers.routes.ChangeSuccessController.mobileNumber())
               .removingFromSession(validationMobileKey)

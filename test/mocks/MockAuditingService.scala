@@ -17,7 +17,7 @@
 package mocks
 
 import audit.AuditingService
-import audit.models.ExtendedAuditModel
+import audit.models.AuditModel
 import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,7 +29,7 @@ trait MockAuditingService extends MockitoSugar {
 
   val mockAuditingService: AuditingService = mock[AuditingService]
 
-  def verifyExtendedAudit(model: ExtendedAuditModel): Unit =
+  def verifyExtendedAudit(model: AuditModel): Unit =
     verify(mockAuditingService).extendedAudit(
       ArgumentMatchers.eq(model),
       ArgumentMatchers.any[String]

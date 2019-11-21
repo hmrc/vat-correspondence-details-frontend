@@ -90,7 +90,8 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
               user.vrn,
               user.isAgent,
               user.arn
-            )
+            ),
+            controllers.email.routes.CaptureEmailController.submit().url
           )
           Future.successful(Redirect(routes.ConfirmEmailController.show())
             .addingToSession(SessionKeys.prepopulationEmailKey -> email))

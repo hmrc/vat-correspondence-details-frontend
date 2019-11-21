@@ -67,7 +67,8 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
                 user.vrn,
                 user.isAgent,
                 user.arn
-              )
+              ),
+              controllers.website.routes.ConfirmWebsiteController.updateWebsite().url
             )
             Redirect(controllers.routes.ChangeSuccessController.websiteAddress())
               .addingToSession(websiteChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "website")
