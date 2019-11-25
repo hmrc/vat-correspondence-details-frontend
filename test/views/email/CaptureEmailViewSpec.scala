@@ -27,10 +27,9 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
   val injectedView: CaptureEmailView = injector.instanceOf[CaptureEmailView]
 
-  object Selectors {
+  private object Selectors {
     val pageHeading = "#content h1"
     val backLink = "#content > article > a"
-    val hintText = "#label-email-hint"
     val form = "form"
     val emailField = "#email"
     val continueButton = "button"
@@ -40,6 +39,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val removeEmailDesc = ".panel-border-narrow"
     val removeEmailLink = ".panel-border-narrow a"
     val onlyAddEmail = "#content > article > p"
+    val fieldLabel: String = "#content > article > form > div > label > span.form-hint"
   }
 
   "Rendering the capture email page" when {
@@ -71,8 +71,8 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
           elementText(Selectors.pageHeading) shouldBe "What is the email address?"
         }
 
-        "have the correct hint text" in {
-          elementText(Selectors.hintText) shouldBe "For example, name@example.com"
+        "have the correct field hint" in {
+          elementText(Selectors.fieldLabel) shouldBe "For example, name@example.com"
         }
 
         "have the email form with the correct form action" in {
