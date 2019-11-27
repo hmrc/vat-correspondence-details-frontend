@@ -58,17 +58,6 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec {
         }
       }
 
-      "have a cancel link" which {
-
-        "has the correct text" in {
-          elementText(Selectors.cancelLink) shouldBe "Cancel"
-        }
-
-        "has the correct link" in {
-          element(Selectors.cancelLink).attr("href") shouldBe "mockManageVatOverviewUrl"
-        }
-      }
-
       "have a continue button" which {
 
         "has the correct text" in {

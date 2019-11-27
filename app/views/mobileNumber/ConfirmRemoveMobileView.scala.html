@@ -26,10 +26,6 @@
 
 <h1 class="heading-large">@messages("confirmRemoveMobile.heading", mobile)</h1>
 
-<p>
-  <a href="@appConfig.manageVatSubscriptionServicePath">@messages("common.cancel")</a>
-</p>
-
 <a href='@controllers.mobileNumber.routes.ConfirmRemoveMobileController.removeMobileNumber().url'
    role="button" tabindex="0" class="button">@messages("base.confirmAndContinue")</a>
 }
