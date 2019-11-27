@@ -43,17 +43,6 @@ class ConfirmRemoveMobileViewSpec extends ViewBaseSpec {
         elementText("h1") shouldBe s"Confirm you want to remove the mobile number: $testValidationMobile"
       }
 
-      "have a cancel link" which {
-
-        "has the correct text" in {
-          elementText("#content > article > p > a") shouldBe "Cancel"
-        }
-
-        "has the correct link location" in {
-          element("#content > article > p > a").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
-        }
-      }
-
       "have a continue button" which {
 
         "has the correct text" in {

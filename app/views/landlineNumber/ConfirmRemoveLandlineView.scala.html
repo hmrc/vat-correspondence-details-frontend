@@ -26,10 +26,6 @@
 
 <h1 class="heading-large">@messages("confirmRemoveLandline.heading", landline)</h1>
 
-<p>
-  <a href="@appConfig.manageVatSubscriptionServicePath">@messages("common.cancel")</a>
-</p>
-
 <a href='@controllers.landlineNumber.routes.ConfirmRemoveLandlineController.removeLandlineNumber().url'
    role="button" tabindex="0" class="button">@messages("base.confirmAndContinue")</a>
 }

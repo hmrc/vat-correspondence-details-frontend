@@ -22,14 +22,10 @@
 
 @mainTemplate(title = messages("confirmWebsiteRemove.title")) {
 
- <a class="link-back" href='@controllers.website.routes.CaptureWebsiteController.show()'>@messages("base.back")</a>
+<a class="link-back" href='@controllers.website.routes.CaptureWebsiteController.show()'>@messages("base.back")</a>
 
- <h1 class="heading-large">@messages("confirmWebsiteRemove.heading",website)</h1>
+<h1 class="heading-large">@messages("confirmWebsiteRemove.heading",website)</h1>
 
- <p>
-   <a href="@appConfig.manageVatSubscriptionServicePath">@messages("common.cancel")</a>
- </p>
-
- <a href='@controllers.website.routes.ConfirmRemoveWebsiteController.removeWebsiteAddress().url'
-    role="button" tabindex="0" class="button">@messages("base.confirmAndContinue")</a>
+<a href='@controllers.website.routes.ConfirmRemoveWebsiteController.removeWebsiteAddress().url'
+   role="button" tabindex="0" class="button">@messages("base.confirmAndContinue")</a>
 }
