@@ -125,15 +125,16 @@ changeSuccess.helpOne.digital.agent = We’ll send an email to {0} within 2 work
 changeSuccess.helpOne.paper.agent = We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
 changeSuccess.helpTwo = Make sure your contact details are up to date.
 
-inFlightChange.title = You already have a change pending
-inFlightChange.recentlyRequested = You recently requested to change the {0}.
-inFlightChange.changePending = This change is pending and until this is confirmed, you cannot change your:
+inFlightChange.title = There is already a change pending
+inFlightChange.recentlyRequested = A recent request was made to change the {0}.
+inFlightChange.changePending = Until this is confirmed, you cannot change the:
 inFlightChange.ppob = principal place of business
-inFlightChange.email = business email address
-inFlightChange.landline = business landline number
-inFlightChange.mobile = business mobile number
-inFlightChange.website = business website address
-inFlightChange.emailAddress = email address
+inFlightChange.email = business’s email address
+inFlightChange.landline = business’s landline number
+inFlightChange.mobile = business’s mobile number
+inFlightChange.website = business’s website address
+inFlightChange.websiteAddress = website address
+inFlightChange.contactDetails = contact details
 
 confirmPhoneNumbers.notProvided = Not provided
 confirmPhoneNumbers.numberRemoved = Number removed

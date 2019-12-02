@@ -41,21 +41,21 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {
-        document.title shouldBe "You already have a change pending - VAT - GOV.UK"
+        document.title shouldBe "There is already a change pending - VAT - GOV.UK"
       }
 
       "have the correct heading" in {
-        elementText(Selectors.heading) shouldBe "You already have a change pending"
+        elementText(Selectors.heading) shouldBe "There is already a change pending"
       }
 
       "have the correct information in the first paragraph" in {
         elementText(Selectors.paragraphOne) shouldBe
-          "You recently requested to change the principal place of business."
+          "A recent request was made to change the principal place of business."
       }
 
       "have the correct information in the second paragraph" in {
         elementText(Selectors.paragraphTwo) shouldBe
-          "This change is pending and until this is confirmed, you cannot change your:"
+          "Until this is confirmed, you cannot change the:"
       }
 
       "have the correct list" which {
@@ -65,7 +65,11 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
         }
 
         "has the correct second item" in {
-          elementText(Selectors.listItem(2)) shouldBe "email address"
+          elementText(Selectors.listItem(2)) shouldBe "website address"
+        }
+
+        "has the correct third item" in {
+          elementText(Selectors.listItem(3)) shouldBe "contact details"
         }
       }
 
@@ -85,7 +89,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
 
       "have the correct information in the first paragraph" in {
         elementText(Selectors.paragraphOne) shouldBe
-          "You recently requested to change the business email address."
+          "A recent request was made to change the business’s email address."
       }
     }
 
@@ -96,7 +100,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
 
       "have the correct information in the first paragraph" in {
         elementText(Selectors.paragraphOne) shouldBe
-          "You recently requested to change the business landline number."
+          "A recent request was made to change the business’s landline number."
       }
     }
 
@@ -107,7 +111,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
 
       "have the correct information in the first paragraph" in {
         elementText(Selectors.paragraphOne) shouldBe
-          "You recently requested to change the business mobile number."
+          "A recent request was made to change the business’s mobile number."
       }
     }
 
@@ -118,7 +122,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
 
       "have the correct information in the first paragraph" in {
         elementText(Selectors.paragraphOne) shouldBe
-          "You recently requested to change the business website address."
+          "A recent request was made to change the business’s website address."
       }
     }
   }
