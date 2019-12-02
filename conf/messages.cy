@@ -108,15 +108,16 @@ changeSuccess.helpOne.digital.agent = Byddwn yn anfon e-bost i {0} cyn pen 2 dd
 changeSuccess.helpOne.paper.agent = Byddwn yn anfon llythyr o gadarnhad i gyfeiriad yr asiantaeth sydd wedi’i gofrestru gyda CThEM cyn pen 15 diwrnod gwaith.
 changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
 
-inFlightChange.title = Mae gennych newid ar y gweill yn barod
-inFlightChange.recentlyRequested = Gwnaethoch gais yn ddiweddar i newid {0}.
-inFlightChange.changePending = Mae’r newid hwn ar y gwell a hyd nes y caiff ei gadarnhau, ni allwch newid eich:
+inFlightChange.title = Mae newid ar y gweill eisoes
+inFlightChange.recentlyRequested = Cafodd cais ei wneud yn ddiweddar i newid {0}.
+inFlightChange.changePending = Hyd nes y caiff hyn ei gadarnhau, ni allwch newid y:
 inFlightChange.ppob = prif leoliad busnes
 inFlightChange.email = cyfeiriad e-bost y busnes
 inFlightChange.landline = rhif ffôn llinell dir y busnes
 inFlightChange.mobile = rhif ffôn symudol y busnes
 inFlightChange.website = cyfeiriad we y busnes
-inFlightChange.emailAddress = cyfeiriad e-bost
+inFlightChange.websiteAddress = cyfeiriad we
+inFlightChange.contactDetails = manylion cyswllt
 
 captureLandline.title = Beth yw’r rhif ffôn llinell dir?
 captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00441632 960000. Ni allwch nodi ''+''.

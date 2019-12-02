@@ -65,7 +65,7 @@ class InFlightPredicateSpec extends MockAuth {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
         }
 
         "not call the VatSubscriptionService" in {
@@ -108,7 +108,7 @@ class InFlightPredicateSpec extends MockAuth {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
         }
       }
 
@@ -129,7 +129,7 @@ class InFlightPredicateSpec extends MockAuth {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
         }
       }
 
@@ -150,7 +150,7 @@ class InFlightPredicateSpec extends MockAuth {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
         }
       }
 
@@ -171,7 +171,7 @@ class InFlightPredicateSpec extends MockAuth {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
         }
       }
 
@@ -192,7 +192,7 @@ class InFlightPredicateSpec extends MockAuth {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "You already have a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
         }
       }
 
