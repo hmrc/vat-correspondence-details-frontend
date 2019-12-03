@@ -115,7 +115,7 @@ inFlightChange.ppob = prif leoliad busnes
 inFlightChange.email = cyfeiriad e-bost y busnes
 inFlightChange.landline = rhif ffôn llinell dir y busnes
 inFlightChange.mobile = rhif ffôn symudol y busnes
-inFlightChange.website = cyfeiriad we y busnes
+inFlightChange.website = cyfeiriad gwefan y busnes
 inFlightChange.websiteAddress = cyfeiriad gwe
 inFlightChange.contactDetails = manylion cyswllt
 
