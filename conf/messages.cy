@@ -116,7 +116,7 @@ inFlightChange.email = cyfeiriad e-bost y busnes
 inFlightChange.landline = rhif ffôn llinell dir y busnes
 inFlightChange.mobile = rhif ffôn symudol y busnes
 inFlightChange.website = cyfeiriad we y busnes
-inFlightChange.websiteAddress = cyfeiriad we
+inFlightChange.websiteAddress = cyfeiriad gwe
 inFlightChange.contactDetails = manylion cyswllt
 
 captureLandline.title = Beth yw’r rhif ffôn llinell dir?
