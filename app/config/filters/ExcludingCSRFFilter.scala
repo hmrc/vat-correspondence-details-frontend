@@ -38,11 +38,14 @@ class ExcludingCSRFFilter @Inject()(filter: CSRFFilter) extends EssentialFilter 
 
     override def apply(rh: RequestHeader): Accumulator[ByteString, Result] = {
       val chainedFilter = filter.apply(nextFilter)
-      val handler = rh.attrs(Router.Attrs.HandlerDef)
-      if (handler.path.contains("NOCSRF")) {
-        nextFilter(rh)
-      } else {
+      rh.attrs.get(Router.Attrs.HandlerDef).fold {
         chainedFilter(rh)
+      } { handler =>
+        if (handler.comments.contains("NOCSRF")) {
+          nextFilter(rh)
+        } else {
+          chainedFilter(rh)
+        }
       }
     }
   }
