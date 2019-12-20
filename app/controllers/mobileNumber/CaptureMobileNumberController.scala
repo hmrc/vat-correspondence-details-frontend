@@ -25,7 +25,6 @@ import forms.MobileNumberForm._
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
-import views.html.errors.NotFoundView
 import views.html.mobileNumber.CaptureMobileNumberView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,12 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                               val errorHandler: ErrorHandler,
-                                              captureMobileNumberView: CaptureMobileNumberView,
-                                              notFoundView: NotFoundView)
+                                              captureMobileNumberView: CaptureMobileNumberView)
                                              (implicit val appConfig: AppConfig,
-                                                mcc: MessagesControllerComponents,
-                                                authComps: AuthPredicateComponents,
-                                                inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                              mcc: MessagesControllerComponents,
+                                              authComps: AuthPredicateComponents,
+                                              inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
@@ -72,7 +70,7 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
         }
       }
     } else {
-      Future.successful(NotFound(notFoundView()))
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 

@@ -29,7 +29,6 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.landlineNumber.CaptureLandlineNumberView
-import views.html.errors.NotFoundView
 
 import scala.concurrent.ExecutionContext
 
@@ -38,8 +37,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
   val controller = new CaptureLandlineNumberController(
     mockVatSubscriptionService,
     mockErrorHandler,
-    inject[CaptureLandlineNumberView],
-    inject[NotFoundView]
+    inject[CaptureLandlineNumberView]
   )
 
   "Calling the show action" when {

@@ -27,7 +27,6 @@ import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.errors.NotFoundView
 import views.html.website.CaptureWebsiteView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,8 +47,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
       mockVatSubscriptionService,
       mockErrorHandler,
       mockAuditingService,
-      injector.instanceOf[CaptureWebsiteView],
-      injector.instanceOf[NotFoundView]
+      injector.instanceOf[CaptureWebsiteView]
     )
   }
 

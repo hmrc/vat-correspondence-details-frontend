@@ -26,7 +26,6 @@ import forms.WebsiteForm.websiteForm
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
-import views.html.errors.NotFoundView
 import views.html.website.CaptureWebsiteView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,8 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                          val errorHandler: ErrorHandler,
                                          val auditService: AuditingService,
-                                         captureWebsiteView: CaptureWebsiteView,
-                                         notFoundView: NotFoundView)
+                                         captureWebsiteView: CaptureWebsiteView)
                                         (implicit val appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
                                          authComps: AuthPredicateComponents,
@@ -72,7 +70,7 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
         }
       }
     } else {
-      Future.successful(NotFound(notFoundView()))
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 

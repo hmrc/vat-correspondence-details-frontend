@@ -18,39 +18,27 @@ package config
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Request, RequestHeader, Result}
+import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import play.api.mvc.Results.InternalServerError
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.errors.StandardErrorView
-
-import scala.concurrent.Future
 
 @Singleton
 class ErrorHandler @Inject()(val messagesApi: MessagesApi,
                              standardErrorView: StandardErrorView,
                              implicit val appConfig: AppConfig) extends FrontendErrorHandler {
 
-  private implicit def rhToRequest(rh: RequestHeader) : Request[_] = Request(rh, "")
-
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)
                                     (implicit request: Request[_]): Html =
     standardErrorView(pageTitle, heading, message)
 
-  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = exception match {
-    case _ => Future.successful(showInternalServerError(request))
-  }
+  override def notFoundTemplate(implicit request: Request[_]): Html =
+    standardErrorTemplate("notFound.title", "notFound.heading", "notFound.message")
 
-  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = statusCode match {
-    case _ => Future.successful(showInternalServerError(request))
-  }
+  override def internalServerErrorTemplate(implicit request: Request[_]): Html =
+    standardErrorTemplate("standardError.title", "standardError.heading", "standardError.message")
 
-  def showInternalServerError(implicit request: Request[_]): Result = {
-    val msgs = request2Messages
-    InternalServerError(standardErrorTemplate(
-      msgs("standardError.title"),
-      msgs("standardError.heading"),
-      msgs("standardError.message")
-    ))
-  }
+  def showInternalServerError(implicit request: Request[_]): Result =
+    InternalServerError(internalServerErrorTemplate)
 }
