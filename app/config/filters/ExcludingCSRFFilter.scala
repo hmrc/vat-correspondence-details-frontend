@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +38,14 @@ class ExcludingCSRFFilter @Inject()(filter: CSRFFilter) extends EssentialFilter 
 
     override def apply(rh: RequestHeader): Accumulator[ByteString, Result] = {
       val chainedFilter = filter.apply(nextFilter)
-      val handler = rh.attrs(Router.Attrs.HandlerDef)
-      if (handler.path.contains("NOCSRF")) {
-        nextFilter(rh)
-      } else {
+      rh.attrs.get(Router.Attrs.HandlerDef).fold {
         chainedFilter(rh)
+      } { handler =>
+        if (handler.comments.contains("NOCSRF")) {
+          nextFilter(rh)
+        } else {
+          chainedFilter(rh)
+        }
       }
     }
   }

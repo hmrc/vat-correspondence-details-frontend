@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,13 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
 import views.html.landlineNumber.CaptureLandlineNumberView
-import views.html.errors.NotFoundView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                                 val errorHandler: ErrorHandler,
-                                                captureLandlineNumberView: CaptureLandlineNumberView,
-                                                notFoundView: NotFoundView)
+                                                captureLandlineNumberView: CaptureLandlineNumberView)
                                                (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
@@ -72,7 +70,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
         }
       }
     } else {
-      Future.successful(NotFound(notFoundView()))
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 

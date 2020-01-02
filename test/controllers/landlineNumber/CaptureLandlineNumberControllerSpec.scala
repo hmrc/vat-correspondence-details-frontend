@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.landlineNumber.CaptureLandlineNumberView
-import views.html.errors.NotFoundView
 
 import scala.concurrent.ExecutionContext
 
@@ -38,8 +37,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
   val controller = new CaptureLandlineNumberController(
     mockVatSubscriptionService,
     mockErrorHandler,
-    inject[CaptureLandlineNumberView],
-    inject[NotFoundView]
+    inject[CaptureLandlineNumberView]
   )
 
   "Calling the show action" when {
