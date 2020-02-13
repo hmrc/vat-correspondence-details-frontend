@@ -74,7 +74,7 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
             case _: AuthorisationException =>
               logWarn("[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
                 "delegated authority for Client")
-              Ok(notAuthorisedForClientView(vrn))
+              Redirect(appConfig.vatAgentClientLookupUnauthorised)
 
           }
       case _ =>
