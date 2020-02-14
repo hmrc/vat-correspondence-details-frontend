@@ -44,7 +44,6 @@ trait AppConfig {
   val shutterPage: String
   val signInUrl: String
   val signInContinueUrl: String
-  val agentInvitationsFastTrack: String
   val govUkCommercialSoftware: String
   val vatAgentClientLookupServicePath: String
   val vatAgentClientLookupUnauthorised: String
@@ -112,7 +111,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override lazy val whitelistExcludedPaths: Seq[Call] = whitelistConfig(Keys.whitelistExcludedPaths).map(path => Call("GET", path))
   override lazy val shutterPage: String = sc.getString(Keys.whitelistShutterPage)
 
-  override lazy val agentInvitationsFastTrack: String = sc.getString(Keys.agentInvitationsFastTrack)
   override lazy val govUkCommercialSoftware: String = sc.getString(Keys.govUkCommercialSoftware)
 
   private lazy val host: String = sc.getString(Keys.host)
