@@ -31,12 +31,6 @@ notFound.title = Page not found
 notFound.heading = This page cannot be found
 notFound.message = Please check that you have entered the correct web address.
 
-unauthorised.agentForClient.title = You are not authorised for this client
-unauthorised.agentForClient.useThisService = To use this service, your client needs to
-unauthorised.agentForClient.authoriseForClient = authorise you as their agent
-unauthorised.agentForClient.enterDetails = If you think you have entered the wrong details you can
-unauthorised.agentForClient.tryAgain = try again
-
 unauthorised.title = You can not use this service yet
 unauthorised.instructions = You need to
 unauthorised.instructions2 = sign up to use software to submit your VAT Returns

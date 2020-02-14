@@ -31,12 +31,6 @@ notFound.title = Heb ddod o hyd i’r dudalen
 notFound.heading = Ni ellir dod o hyd i’r dudalen hon
 notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
 
-unauthorised.agentForClient.title = Nid ydych wedi’ch awdurdodi ar gyfer y cleient hwn
-unauthorised.agentForClient.useThisService = I ddefnyddio’r gwasanaeth hwn, mae angen i’ch cleient
-unauthorised.agentForClient.authoriseForClient = eich awdurdodi fel ei asiant
-unauthorised.agentForClient.enterDetails = Os ydych yn credu eich bod wedi nodi’r manylion anghywir, gallwch
-unauthorised.agentForClient.tryAgain = roi cynnig arall arni
-
 unauthorised.title = Ni allwch ddefnyddio’r gwasanaeth hwn eto
 unauthorised.instructions = Mae angen i chi
 unauthorised.instructions2 = gofrestru i ddefnyddio meddalwedd er mwyn cyflwyno’ch Ffurflenni TAW
