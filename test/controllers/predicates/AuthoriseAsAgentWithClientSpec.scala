@@ -63,7 +63,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       mockConfig.features.agentAccessEnabled(true)
       lazy val result = target(fakeRequestWithClientsVRN)
 
-      "return 200" in {
+      "return 303" in {
         mockAuthorisationException()
         status(result) shouldBe Status.SEE_OTHER
       }
