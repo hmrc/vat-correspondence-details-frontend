@@ -60,4 +60,9 @@
                 </details>
             </div>
         }
+
+        <div>
+            @messages("hmrcPrivacyNotice.details")
+            <a target="_blank" href="@appConfig.hmrcPrivacyNoticeUrl">@messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
+        </div>
     }

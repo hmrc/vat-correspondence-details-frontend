@@ -22,6 +22,7 @@ common.agent.updateClient1 = We’ll also contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
 common.cancel = Cancel
+common.fullstop = .
 
 standardError.title = There is a problem with the service
 standardError.heading = Sorry, there is a problem with the service
@@ -43,8 +44,11 @@ agentJourneyDisabled.title = You cannot change your client’s email address yet
 agentJourneyDisabled.summary = Agents cannot change their client’s email address yet.
 agentJourneyDisabled.instructions = If your client needs to change their email address, they need to sign in using their own Government Gateway details.
 
+hmrcPrivacyNotice.details = Full details of how we use your information are in the
+hmrcPrivacyNotice.link = HMRC Privacy Notice (opens in a new window or tab)
+
 captureEmail.title = What is the email address?
-captureEmail.hint = For example, name@example.com
+captureEmail.hint = We will use this to send you updates about your VAT account if you have agreed to be contacted by email.
 captureEmail.error.exceedsMaxLength = Email address must be 132 characters or less
 captureEmail.error.invalid = Enter a valid email address
 captureEmail.error.empty = Enter your email address
@@ -63,15 +67,15 @@ captureWebsite.error.empty = Enter a website address
 captureWebsite.error.notChanged = Enter a new website address
 
 captureLandline.title = What is the landline number?
-captureLandline.hint = You need to enter the country code for international numbers, like 00441632 960000. You cannot enter a ''+''.
+captureLandline.hint = You need to enter the country code for international numbers, like 00441632 960000. You cannot enter a plus sign.
 captureLandline.error.notChanged = You have not made any changes to the landline number
-captureLandline.error.invalid = Enter a landline number in the correct format, like 01632 960000 or 00441632 960000 and you cannot enter a ''+''.
+captureLandline.error.invalid = Enter a landline number in the correct format, like 01632 960000 or 00441632 960000 and you cannot enter a plus sign.
 captureLandline.remove = Remove landline number
 
 captureMobile.title = What is the mobile number?
-captureMobile.hint = You need to enter the country code for international numbers, like 00447946 123456. You cannot enter a ''+''.
+captureMobile.hint = You need to enter the country code for international numbers, like 00447946 123456. You cannot enter a plus sign.
 captureMobile.error.notChanged = You have not made any changes to the mobile number
-captureMobile.error.invalid = Enter a mobile number in the correct format, like 07946 123456 or 00447946 123456 and you cannot enter a ''+''.
+captureMobile.error.invalid = Enter a mobile number in the correct format, like 07946 123456 or 00447946 123456 and you cannot enter a plus sign.
 captureMobile.remove = Remove mobile number
 
 sessionTimeout.title = Your session has timed out

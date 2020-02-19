@@ -34,6 +34,7 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val reportAProblemPartialUrl = ""
   override val reportAProblemNonJSUrl = ""
   override val agentServicesGovUkGuidance = "/setup-agent-services-account"
+  override val hmrcPrivacyNoticeUrl = "hmrc-privacy-notice"
   override def feedbackSurveyUrl(identifier: String): String = s"/survey/$identifier"
   override def feedbackSignOutUrl(identifier: String): String = s"/sign-out/$identifier"
   override val unauthorisedSignOutUrl = "/sign-out"

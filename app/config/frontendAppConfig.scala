@@ -33,6 +33,7 @@ trait AppConfig {
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
   val agentServicesGovUkGuidance: String
+  val hmrcPrivacyNoticeUrl: String
   def feedbackSurveyUrl(identifier: String): String
   def feedbackSignOutUrl(identifier: String): String
   val unauthorisedSignOutUrl: String
@@ -78,6 +79,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override lazy val assetsPrefix: String = sc.getString(Keys.assetsUrl) + sc.getString(Keys.assetsVersion)
 
   override lazy val agentServicesGovUkGuidance: String = sc.getString(Keys.govUkSetupAgentServices)
+
+  override lazy val hmrcPrivacyNoticeUrl: String = sc.getString(Keys.hmrcPrivacyNoticeUrl)
 
   private lazy val governmentGatewayHost: String = sc.getString(Keys.governmentGatewayHost)
 
