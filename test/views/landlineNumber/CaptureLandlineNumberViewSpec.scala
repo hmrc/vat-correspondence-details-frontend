@@ -76,6 +76,10 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
             element("form").attr("action") shouldBe routes.CaptureLandlineNumberController.submit().url
           }
         }
+
+        "have the HMRC Privacy Notice" in {
+          element(".hmrc-privacy-notice").attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
+        }
       }
 
       "there are errors in the form" should {
