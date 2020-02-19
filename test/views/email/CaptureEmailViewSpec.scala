@@ -40,7 +40,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val removeEmailLink = ".panel-border-narrow a"
     val onlyAddEmail = "#content > article > p"
     val fieldLabel: String = "#content > article > form > div > label > span.form-hint"
-    val hmrcPrivacyNotice: String = ".hmrc-privacy-notice"
+    val hmrcPrivacyNotice: String = "#hmrc-privacy-notice > a"
   }
 
   "Rendering the capture email page" when {

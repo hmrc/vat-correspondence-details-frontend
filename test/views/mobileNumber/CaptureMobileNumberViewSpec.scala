@@ -78,7 +78,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the HMRC Privacy Notice" in {
-          element(".hmrc-privacy-notice").attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
+          element("#hmrc-privacy-notice > a").attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
         }
       }
 
