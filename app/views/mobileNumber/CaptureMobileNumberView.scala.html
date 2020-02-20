@@ -22,36 +22,41 @@
 @(mobileNumberForm: Form[String], currentMobile: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @mainTemplate(
-  if(mobileNumberForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureMobile.title"))
-  else messages("captureMobile.title")
+    if(mobileNumberForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureMobile.title"))
+    else messages("captureMobile.title")
 ) {
 
-  <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
+    <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 
-  @errorSummary(messages("common.error.heading"), mobileNumberForm, forceDivToAppear = false)
+    @errorSummary(messages("common.error.heading"), mobileNumberForm, forceDivToAppear = false)
 
-  <h1 class="heading-large">@messages("captureMobile.title")</h1>
+    <h1 class="heading-large">@messages("captureMobile.title")</h1>
 
-  @form(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
+    @form(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
 
-    <div class ="form-group">
-          @input(
-            mobileNumberForm("mobileNumber"),
-            '_label -> messages("captureMobile.title"),
-            '_inputClass -> "form-control",
-            '_inputHint -> messages("captureMobile.hint"),
-            '_labelTextClass -> "visuallyhidden"
-          )
-    </div>
+        <div class ="form-group">
+            @input(
+                mobileNumberForm("mobileNumber"),
+                '_label -> messages("captureMobile.title"),
+                '_inputClass -> "form-control",
+                '_inputHint -> messages("captureMobile.hint"),
+                '_labelTextClass -> "visuallyhidden"
+            )
+        </div>
 
-    @if(currentMobile != "") {
-    <p><a id="remove-mobile" href='@controllers.mobileNumber.routes.ConfirmRemoveMobileController.show().url'>
-        @messages("captureMobile.remove")
-    </a></p>
+        @if(currentMobile != "") {
+            <p><a id="remove-mobile" href='@controllers.mobileNumber.routes.ConfirmRemoveMobileController.show().url'>
+                @messages("captureMobile.remove")
+            </a></p>
+        }
+
+        <div class="form-group">
+            <button class="button" type="submit">@messages("common.continue")</button>
+        </div>
     }
 
-    <div class="form-group">
-      <button class="button" type="submit">@messages("common.continue")</button>
+    <div id="hmrc-privacy-notice">
+        @messages("hmrcPrivacyNotice.details")
+        <a target="_blank" href="@appConfig.hmrcPrivacyNoticeUrl">@messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
     </div>
-  }
 }

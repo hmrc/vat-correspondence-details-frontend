@@ -22,6 +22,7 @@ common.agent.updateClient1 = Byddwn hefyd yn cysylltu â
 common.agent.updateClient2 = gyda diweddariad.
 common.agent.yourClient = eich cleient
 common.cancel = Canslo
+common.fullstop = .
 
 standardError.title = Mae problem gyda’r gwasanaeth 
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
@@ -43,8 +44,11 @@ agentJourneyDisabled.title = Ni allwch newid cyfeiriad e-bost eich cleient eto
 agentJourneyDisabled.summary = Ni all asiantau newid cyfeiriad e-bost eu cleientiaid eto.
 agentJourneyDisabled.instructions = Os oes angen i’ch cleient newid ei gyfeiriad e-bost, bydd angen iddo fewngofnodi gan ddefnyddio’i fanylion ei hun ar gyfer Porth y Llywodraeth.
 
+hmrcPrivacyNotice.details = Mae manylion llawn ynghylch sut yr ydym yn defnyddio eich gwybodaeth ar gael yn
+hmrcPrivacyNotice.link = Hysbysiad Preifatrwydd CThEM (yn agor ffenestr neu dab newydd)
+
 captureEmail.title = Beth yw’r cyfeiriad e-bost?
-captureEmail.hint = Er enghraifft, enw@enghraifft.com
+captureEmail.hint = Byddwn yn defnyddio hwn i anfon diweddariadau ynglŷn â’ch cyfrif TAW atoch, os ydych wedi cytuno i gael eich cysylltu drwy e-bost.
 captureEmail.error.exceedsMaxLength = Mae’n rhaid i’r cyfeiriad e-bost fod yn 132 o gymeriadau neu lai
 captureEmail.error.invalid = Nodwch gyfeiriad e-bost dilys
 captureEmail.error.empty = Nodwch eich cyfeiriad e-bost
@@ -114,15 +118,15 @@ inFlightChange.websiteAddress = cyfeiriad gwe
 inFlightChange.contactDetails = manylion cyswllt
 
 captureLandline.title = Beth yw’r rhif ffôn llinell dir?
-captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00441632 960000. Ni allwch nodi ''+''.
+captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00441632 960000. Ni allwch nodi arwydd plws.
 captureLandline.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif llinell dir
-captureLandline.error.invalid = Nodwch rif llinell dir yn y fformat cywir, fel 01632 960000 neu 00441632 960000 ac ni allwch nodi ''+''.
+captureLandline.error.invalid = Nodwch rif ffôn llinell dir yn y fformat cywir, fel 01632 960000 neu 00441632 960000 ac ni allwch nodi arwydd plws.
 captureLandline.remove = Dileu rhif ffôn llinell dir
 
 captureMobile.title = Beth yw’r rhif ffôn symudol?
-captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00447946 123456. Ni allwch nodi ''+''.
+captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00447946 123456. Ni allwch nodi arwydd plws.
 captureMobile.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif ffôn symudol
-captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07946 123456 neu 00447946 123456 ac ni allwch nodi ''+''.
+captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07946 123456 neu 00447946 123456 ac ni allwch nodi arwydd plws.
 captureMobile.remove = Dileu rhif ffôn symudol
 
 confirmMobile.edit = Newid y rhif ffôn symudol

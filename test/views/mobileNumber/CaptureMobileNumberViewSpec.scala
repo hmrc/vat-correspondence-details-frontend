@@ -48,7 +48,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
         "have the correct field hint" in {
           elementText(s"$fieldLabel > span.form-hint") shouldBe
-            "You need to enter the country code for international numbers, like 00447946 123456. You cannot enter a '+'."
+            "You need to enter the country code for international numbers, like 00447946 123456. You cannot enter a plus sign."
         }
 
         "have the correct visually hidden text" in {
@@ -75,6 +75,10 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
           "has the correct link location" in {
             element("form").attr("action") shouldBe routes.CaptureMobileNumberController.submit().url
           }
+        }
+
+        "have the HMRC Privacy Notice" in {
+          element("#hmrc-privacy-notice > a").attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
         }
       }
 

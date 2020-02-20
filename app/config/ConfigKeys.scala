@@ -23,6 +23,7 @@ object ConfigKeys {
   val contactFrontendService: String = "contact-frontend.url"
 
   val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
+  val hmrcPrivacyNoticeUrl: String = "govuk.guidance.hmrcPrivacyNotice.url"
   val govUkCommercialSoftware: String = "govuk.software.commercialSoftware.url"
 
   val governmentGatewayHost: String = "government-gateway.host"
