@@ -56,14 +56,14 @@ class EmailChangeSuccessController @Inject()(auditService: AuditingService,
             )
 
             Ok(changeSuccessView(
-              ChangeSuccessViewModel("emailChangeSuccess.title", None, Some(preference.preference), None)
+              ChangeSuccessViewModel("emailChangeSuccess.title", None, Some(preference.preference), None, None)
             ))
 
           case Left(error) =>
             logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
               s" Error code: ${error.status}, Error message: ${error.message}")
             Ok(changeSuccessView(
-              ChangeSuccessViewModel("emailChangeSuccess.title", None, None, None)
+              ChangeSuccessViewModel("emailChangeSuccess.title", None, None, None, None)
             ))
 
         }

@@ -19,4 +19,5 @@ package models.viewModels
 case class ChangeSuccessViewModel(pageTitle: String,
                                   agentEmail: Option[String],
                                   preference: Option[String],
-                                  businessName: Option[String])
+                                  businessName: Option[String],
+                                  emailVerified: Option[Boolean])

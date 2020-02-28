@@ -100,6 +100,7 @@ emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
 websiteChangeSuccess.title.change = Mae’ch cais i newid cyfeiriad y wefan wedi dod i law
 websiteChangeSuccess.title.remove = Mae’ch cais i ddileu cyfeiriad y wefan wedi dod i law
 
+changeSuccess.helpOne.emailVerified = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith gyda diweddariad, neu gallwch wirio’ch negeseuon diogel oddi wrth CThEM.
 changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEM i gael diweddariad.
 changeSuccess.helpOne.paper = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
 changeSuccess.helpOne.digital.agent = Byddwn yn anfon e-bost i {0} cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a yw’r cais wedi’i dderbyn ai peidio.

@@ -42,16 +42,19 @@
 
 } else {
 
-  @model.preference match {
+  @(model.preference, model.emailVerified) match {
 
-    case (Some(ContactPreference.digital)) => {
-      <p id="preference-message">@messages("changeSuccess.helpOne.digital")</p>
+    case (Some(ContactPreference.digital), Some(true)) => {
+        <p id="preference-message">@messages("changeSuccess.helpOne.emailVerified")</p>
     }
-    case (Some(ContactPreference.paper)) => {
-      <p id="preference-message">@messages("changeSuccess.helpOne.paper")</p>
+    case (Some(ContactPreference.digital), _) => {
+        <p id="preference-message">@messages("changeSuccess.helpOne.digital")</p>
+    }
+    case (Some(ContactPreference.paper), _) => {
+        <p id="preference-message">@messages("changeSuccess.helpOne.paper")</p>
     }
     case _ => {
-      <p>@messages("common.helpOne.apiFailure")</p>
+        <p>@messages("common.helpOne.apiFailure")</p>
     }
   }
 
