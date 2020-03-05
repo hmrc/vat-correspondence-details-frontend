@@ -29,7 +29,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.templates.ChangeSuccessView
 import assets.BaseTestConstants.vrn
-
 import scala.concurrent.Future
 
 class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService with MockAuditingService {
