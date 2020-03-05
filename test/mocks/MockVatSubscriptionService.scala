@@ -23,7 +23,6 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.VatSubscriptionService
-
 import scala.concurrent.Future
 
 trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {

@@ -24,13 +24,11 @@ import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
-import models.contactPreferences.ContactPreference
 import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
 import services.{ContactPreferenceService, VatSubscriptionService}
 import utils.LoggerUtil.logWarn
 import views.html.templates.ChangeSuccessView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

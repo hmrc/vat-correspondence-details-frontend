@@ -22,7 +22,6 @@ import controllers.ControllerBaseSpec
 import mocks.{MockAuditingService, MockContactPreferenceService}
 import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
-import org.jsoup.Jsoup
 import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty

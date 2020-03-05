@@ -26,7 +26,6 @@ import models.errors.ErrorModel
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
 import utils.TestUtil
-
 import scala.concurrent.Future
 
 class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnector with
