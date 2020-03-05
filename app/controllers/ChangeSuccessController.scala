@@ -24,7 +24,6 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.User
 import models.contactPreferences.ContactPreference
-import models.customerInformation.ContactDetails
 import models.errors.ErrorModel
 import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
@@ -70,27 +69,17 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
 
   private[controllers] def renderView(changeKey: String, isRemoval: Boolean)(implicit user: User[_]): Future[Result] =
     for {
-      entityName <- if (user.isAgent) {
-        getClientEntityName
-      }
-      else {
-        Future.successful(None)
-      }
+      entityName <-
+        if (user.isAgent) {getClientEntityName}
+        else {Future.successful(None)}
 
-      preference <- if (user.isAgent) {
-        Future.successful(Left(ErrorModel(NO_CONTENT, "")))
-      }
-      else {
-        contactPreferenceService.getContactPreference(user.vrn)
-            }
+      preference <-
+        if (user.isAgent) {Future.successful(Left(ErrorModel(NO_CONTENT, "")))}
+        else {contactPreferenceService.getContactPreference(user.vrn)}
 
-      emailVerified <- if (user.isAgent) {
-        Future.successful(None)
-      }
-      else {
-          getEmailVerifiedStatus
-        }
-
+        emailVerified <-
+        if (user.isAgent) {Future.successful(None)}
+        else {vatSubscriptionService.getEmailVerifiedStatus(user.vrn, preference)}
 
     } yield {
       val viewModel =
@@ -123,18 +112,4 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
         result.fold(_ => None, details => details.entityName)
       }
     }
-
-  private[controllers] def getEmailVerifiedStatus(implicit user: User[_]): Future[Option[Boolean]] = {
-    if (appConfig.features.emailVerifiedContactPrefEnabled()) {
-      vatSubscriptionService.getCustomerInfo(user.vrn) map {
-        case Right(result) =>
-          val contactDetails: Option[ContactDetails] = result.ppob.contactDetails
-          contactDetails match {
-            case Some(details) => details.emailVerified
-            case _ => None
-          }
-        case Left(_) => None
-      }
-    } else {Future.successful(None)}
   }
-}

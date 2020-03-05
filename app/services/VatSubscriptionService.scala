@@ -25,11 +25,15 @@ import models.customerInformation.{ContactDetails, PPOB, UpdatePPOBSuccess}
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
-
+import utils.LoggerUtil.logWarn
 import scala.concurrent.{ExecutionContext, Future}
+import config.AppConfig
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import models.contactPreferences.ContactPreference
 
 @Singleton
-class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emailVerificationService: EmailVerificationService) {
+class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emailVerificationService: EmailVerificationService)
+                                      (implicit val appConfig: AppConfig) {
 
   private[services] def buildEmailUpdateModel(email: String, ppob: PPOB): PPOB = {
     val existingContactDetails: ContactDetails =
@@ -57,7 +61,6 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
 
   private[services] def buildWebsiteUpdateModel(website: String, ppob: PPOB): PPOB =
     if(website.nonEmpty) ppob.copy(websiteAddress = Some(website)) else ppob.copy(websiteAddress = None)
-
 
 
   def getCustomerInfo(vrn: String)
@@ -98,5 +101,20 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
       case Right(customerInfo) =>
         connector.updatePPOB(vrn, buildMobileUpdateModel(mobile, customerInfo.ppob))
       case Left(error) => Future.successful(Left(error))
+    }
+
+  def getEmailVerifiedStatus(vrn: String, preferenceCall: HttpGetResult[ContactPreference])
+                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] =
+    preferenceCall match {
+      case Right(ContactPreference("DIGITAL")) if appConfig.features.emailVerifiedContactPrefEnabled() =>
+        getCustomerInfo(vrn).map {
+          case Right(result) =>
+            result.ppob.contactDetails.flatMap(_.emailVerified)
+          case Left(_) =>
+            logWarn("[VatSubscriptionService][getEmailVerifiedStatus] Unable to retrieve emailVerified " +
+              "status from vatSubscriptionService")
+            None
+        }
+      case _ => Future.successful(None)
     }
 }

@@ -17,7 +17,7 @@
 package controllers
 
 import assets.BaseTestConstants._
-import assets.CustomerInfoConstants.{minCustomerInfoModel, fullCustomerInfoModel}
+import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys._
 import mocks.MockContactPreferenceService
 import models.User
@@ -32,11 +32,6 @@ import views.html.templates.ChangeSuccessView
 import scala.concurrent.Future
 
 class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    mockConfig.features.emailVerifiedContactPrefEnabled(true)
-  }
 
   val controller: ChangeSuccessController = new ChangeSuccessController(
     mockContactPreferenceService,
@@ -57,8 +52,8 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
         "return 200" in {
           mockIndividualAuthorised()
-          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
-          getMockContactPreference("999999999")(Future(Right(ContactPreference("DIGITAL"))))
+          getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
+          mockGetEmailVerificationStatus(Future(Some(true)))
           status(result) shouldBe Status.OK
         }
 
@@ -70,13 +65,13 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
       "the user is an agent" should {
         lazy val result: Future[Result] = {
           controller.landlineNumber(request.withSession(
-            landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline, clientVrn -> "1111111111"
+            landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline, clientVrn -> vrn
           ))
         }
 
         "return 200" in {
           mockAgentAuthorised()
-          mockGetCustomerInfo("1111111111")(Future.successful(Right(fullCustomerInfoModel)))
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
           status(result) shouldBe Status.OK
         }
 
@@ -107,8 +102,8 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
       "the user is a principal entity" should {
 
         lazy val result: Future[Result] = {
-          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
-          getMockContactPreference("999999999")(Future.successful(Right(ContactPreference("DIGITAL"))))
+          getMockContactPreference(vrn)(Future.successful(Right(ContactPreference("DIGITAL"))))
+          mockGetEmailVerificationStatus(Future(Some(true)))
           controller.websiteAddress(request.withSession(
             prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"
           ))
@@ -127,9 +122,9 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
         lazy val result: Future[Result] = {
           mockAgentAuthorised()
-          mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
           controller.websiteAddress(request.withSession(
-            prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", clientVrn -> "999999999"
+            prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", clientVrn -> vrn
           ))
         }
 
@@ -224,54 +219,4 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
       }
     }
   }
-
-  "The .getVerifiedEmail function" when {
-
-    "the call to VatSubscription is successful" should {
-
-      "when the feature switch is on" should {
-
-        "return email verification status - emailVerified" in {
-          val result = {
-            mockIndividualAuthorised()
-            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
-            controller.getEmailVerifiedStatus(User(vrn)(request))
-          }
-          await(result) shouldBe Some(true)
-        }
-        "return email verification status - not verified" in {
-          val result = {
-            mockIndividualAuthorised()
-            mockGetCustomerInfo(vrn)(Future.successful(Right(minCustomerInfoModel)))
-            controller.getEmailVerifiedStatus(User(vrn)(request))
-          }
-          await(result) shouldBe None
-        }
-      }
-    }
-
-      "the feature switch is off" should {
-
-        "not call the .getVerifiedEmail function" in {
-          val result = {
-            mockConfig.features.emailVerifiedContactPrefEnabled(false)
-            mockIndividualAuthorised()
-            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
-            controller.getEmailVerifiedStatus(User(vrn)(request))
-          }
-          await(result) shouldBe None
-        }
-      }
-
-        "the call to VatSubscription is not successful" should {
-
-          "return None" in {
-            val result = {
-              mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error"))))
-              controller.getEmailVerifiedStatus(User(vrn)(request))
-            }
-            await(result) shouldBe None
-          }
-        }
-    }
-  }
+}

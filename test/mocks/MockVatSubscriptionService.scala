@@ -56,4 +56,7 @@ trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {
 
   def mockGetCustomerInfo(vrn: String)(response: Future[GetCustomerInfoResponse]): Unit =
     when(mockVatSubscriptionService.getCustomerInfo(argEq(vrn))(any(), any())) thenReturn response
+
+  def mockGetEmailVerificationStatus(response: Future[Option[Boolean]]): Unit =
+  when(mockVatSubscriptionService.getEmailVerifiedStatus(any(), any())(any(), any())) thenReturn response
 }

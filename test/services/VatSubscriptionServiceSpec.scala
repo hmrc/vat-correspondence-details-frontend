@@ -16,23 +16,30 @@
 
 package services
 
-import play.api.http.Status
-import assets.CustomerInfoConstants._
+import assets.BaseTestConstants._
+import assets.CustomerInfoConstants.{fullCustomerInfoModel, _}
 import mocks.{MockEmailVerificationService, MockVatSubscriptionConnector}
+import models.User
+import models.contactPreferences.ContactPreference
 import models.customerInformation._
 import models.errors.ErrorModel
+import play.api.http.Status
+import play.api.mvc.AnyContentAsEmpty
 import utils.TestUtil
 
 import scala.concurrent.Future
-import assets.BaseTestConstants._
-import models.User
-import play.api.mvc.AnyContentAsEmpty
 
-class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnector with MockEmailVerificationService {
+class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnector with
+  MockEmailVerificationService {
 
   val service = new VatSubscriptionService(connector, mockEmailVerificationService)
-  val testVrn: String   = "123456789"
+  val testVrn: String = "123456789"
   implicit val testUser: User[AnyContentAsEmpty.type] = user
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    mockConfig.features.emailVerifiedContactPrefEnabled(true)
+  }
 
   "calling getCustomerInfo" when {
 
@@ -342,6 +349,59 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
 
         val result = await(service.updateMobileNumber(testVrn, testPrepopMobile))
         result shouldBe Left(invalidJsonError)
+      }
+    }
+  }
+
+  "The .getVerifiedEmailStatus function" when {
+
+    "the feature switch is on" should {
+
+      "call getCustomerInfo successfully" when {
+
+        "a user has a digital preference and a verified email" should {
+
+          "return email verification status - emailVerified" in {
+            val result = {
+              mockGetCustomerInfoSuccessResponse
+              service.getEmailVerifiedStatus(user.vrn, Right(ContactPreference("DIGITAL")))
+            }
+            await(result) shouldBe Some(true)
+          }
+        }
+
+        "a user has a paper preference" should {
+
+          "return None for emailVerified" in {
+
+            val result = {
+              service.getEmailVerifiedStatus(user.vrn, Right(ContactPreference("PAPER")))
+            }
+            await(result) shouldBe None
+          }
+        }
+      }
+
+      "not call .getCustomerInfo successfully" should {
+
+        "return None" in {
+          val result = {
+            mockGetCustomerInfoFailureResponse
+            service.getEmailVerifiedStatus(user.vrn, Right(ContactPreference("DIGITAL")))
+          }
+          await(result) shouldBe None
+        }
+      }
+    }
+
+    "the feature switch is off" should {
+
+      "not call the .getCustomerInfo function" in {
+        val result = {
+          mockConfig.features.emailVerifiedContactPrefEnabled(false)
+          service.getEmailVerifiedStatus(user.vrn, Right(ContactPreference("DIGITAL")))
+        }
+        await(result) shouldBe None
       }
     }
   }
