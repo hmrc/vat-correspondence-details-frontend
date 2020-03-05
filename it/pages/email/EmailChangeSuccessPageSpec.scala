@@ -17,15 +17,13 @@
 package pages.email
 
 import common.SessionKeys
-import config.FrontendAppConfig
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.OK
-import stubs.AuthStub.clientVRN
-import stubs.ContactPreferencesStub
+import stubs.{ContactPreferencesStub, VatSubscriptionStub}
 
 class EmailChangeSuccessPageSpec extends BasePageISpec {
 
@@ -42,6 +40,7 @@ class EmailChangeSuccessPageSpec extends BasePageISpec {
       "render the success email page" in {
 
         given.user.isAuthenticated
+        VatSubscriptionStub.stubCustomerInfo
 
         And("a successful response for an individual is stubbed")
         ContactPreferencesStub.getContactPrefs(OK, Json.obj("preference" -> "DiGiTaL"))

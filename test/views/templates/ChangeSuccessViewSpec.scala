@@ -46,9 +46,9 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
       "the contact preference is successfully retrieved" when {
 
-        "the contact preference is Digital" should {
+        "the contact preference is Digital - email not verified" should {
 
-          val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.digital), None)
+          val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.digital), None, None)
           lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111"))
 
           lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -80,8 +80,19 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
         }
 
+        "the contact preference is Digital - verified email" should {
+          val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.digital), None, Some(true))
+          lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111"))
+          lazy implicit val document: Document = Jsoup.parse(view.body)
+
+          "have the correct first paragraph" in {
+            elementText(Selectors.paragraphOne) shouldBe "We’ll send you an email within 2 working days with" +
+              " an update or you can check your HMRC secure messages."
+          }
+        }
+
         "the contact preference is Paper" should {
-          val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.paper), None)
+          val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.paper), None, None)
           lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111"))
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -93,7 +104,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
       }
 
       "the contact preference is not retrieved" should {
-        val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, None)
+        val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, None, None)
         lazy implicit val document: Document = Jsoup.parse(injectedView(viewModel)(request, messages, mockConfig, User("1111111111")).body)
 
         "have the correct first paragraph" in {
@@ -105,7 +116,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
     "an agent is performing the action" when {
 
       "the agent has an email address registered" should {
-        val viewModel = ChangeSuccessViewModel(exampleTitle, Some("agent@example.com"), None, Some("TheBusiness"))
+        val viewModel = ChangeSuccessViewModel(exampleTitle, Some("agent@example.com"), None, Some("TheBusiness"), None)
         lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
 
         lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -137,7 +148,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
       }
 
       "the agent doesn't have an email address registered" should {
-        val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, Some("TheBusiness"))
+        val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, Some("TheBusiness"), None)
         lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
 
         lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -169,7 +180,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
       }
 
       "the client's business name isn't retrieved" should {
-        val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, None)
+        val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, None, None)
         lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
 
         lazy implicit val document: Document = Jsoup.parse(view.body)

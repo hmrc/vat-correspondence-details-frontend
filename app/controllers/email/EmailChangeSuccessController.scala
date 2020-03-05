@@ -26,15 +26,15 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
-import services.ContactPreferenceService
+import services.{ContactPreferenceService, VatSubscriptionService}
 import utils.LoggerUtil.logWarn
 import views.html.templates.ChangeSuccessView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailChangeSuccessController @Inject()(auditService: AuditingService,
                                              contactPreferenceService: ContactPreferenceService,
+                                             vatSubscriptionService: VatSubscriptionService,
                                              changeSuccessView: ChangeSuccessView)
                                             (implicit val appConfig: AppConfig,
                                              mcc: MessagesControllerComponents,
@@ -47,27 +47,31 @@ class EmailChangeSuccessController @Inject()(auditService: AuditingService,
 
     user.session.get(SessionKeys.emailChangeSuccessful) match {
       case Some("true") =>
-        contactPreferenceService.getContactPreference(user.vrn) map {
-          case Right(preference) =>
 
-            auditService.extendedAudit(
-              ContactPreferenceAuditModel(user.vrn, preference.preference),
-              controllers.email.routes.EmailChangeSuccessController.show().url
-            )
+        for {
+          pref <- contactPreferenceService.getContactPreference(user.vrn)
 
-            Ok(changeSuccessView(
-              ChangeSuccessViewModel("emailChangeSuccess.title", None, Some(preference.preference), None)
-            ))
+          emailVerified <- vatSubscriptionService.getEmailVerifiedStatus(user.vrn, pref)
+        } yield {
 
-          case Left(error) =>
-            logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
-              s" Error code: ${error.status}, Error message: ${error.message}")
-            Ok(changeSuccessView(
-              ChangeSuccessViewModel("emailChangeSuccess.title", None, None, None)
-            ))
+          pref match {
+            case Right(pref) =>
+              auditService.extendedAudit(
+                ContactPreferenceAuditModel(user.vrn, pref.preference),
+                controllers.email.routes.EmailChangeSuccessController.show().url
+              )
+              val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, Some(pref.preference), None, emailVerified)
+              Ok(changeSuccessView(viewModel))
 
+
+            case Left(error) =>
+              logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
+                s" Error code: ${error.status}, Error message: ${error.message}")
+
+              val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, None, None, None)
+              Ok(changeSuccessView(viewModel))
+          }
         }
-
       case _ => Future.successful(Redirect(routes.CaptureEmailController.show().url))
     }
   }

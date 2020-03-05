@@ -29,7 +29,6 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import views.html.templates.ChangeSuccessView
-
 import scala.concurrent.Future
 
 class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService {
@@ -53,7 +52,8 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
         "return 200" in {
           mockIndividualAuthorised()
-          getMockContactPreference("999999999")(Future(Right(ContactPreference("DIGITAL"))))
+          getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
+          mockGetEmailVerificationStatus(Future(Some(true)))
           status(result) shouldBe Status.OK
         }
 
@@ -65,13 +65,13 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
       "the user is an agent" should {
         lazy val result: Future[Result] = {
           controller.landlineNumber(request.withSession(
-            landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline, clientVrn -> "1111111111"
+            landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline, clientVrn -> vrn
           ))
         }
 
         "return 200" in {
           mockAgentAuthorised()
-          mockGetCustomerInfo("1111111111")(Future.successful(Right(fullCustomerInfoModel)))
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
           status(result) shouldBe Status.OK
         }
 
@@ -102,7 +102,8 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
       "the user is a principal entity" should {
 
         lazy val result: Future[Result] = {
-          getMockContactPreference("999999999")(Future.successful(Right(ContactPreference("DIGITAL"))))
+          getMockContactPreference(vrn)(Future.successful(Right(ContactPreference("DIGITAL"))))
+          mockGetEmailVerificationStatus(Future(Some(true)))
           controller.websiteAddress(request.withSession(
             prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"
           ))
@@ -121,9 +122,9 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
         lazy val result: Future[Result] = {
           mockAgentAuthorised()
-          mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
           controller.websiteAddress(request.withSession(
-            prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", clientVrn -> "999999999"
+            prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", clientVrn -> vrn
           ))
         }
 

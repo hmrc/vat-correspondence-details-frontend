@@ -22,7 +22,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.OK
-import stubs.ContactPreferencesStub
+import stubs.{ContactPreferencesStub, VatSubscriptionStub}
 
 class MobileChangeSuccessPageSpec extends BasePageISpec {
 
@@ -39,6 +39,7 @@ class MobileChangeSuccessPageSpec extends BasePageISpec {
         "load successfully" in {
 
           given.user.isAuthenticated
+          VatSubscriptionStub.stubCustomerInfo
 
           ContactPreferencesStub.getContactPrefs(OK, Json.obj("preference" -> "DIGITAL"))
 

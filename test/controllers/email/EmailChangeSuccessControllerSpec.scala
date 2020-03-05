@@ -22,14 +22,13 @@ import controllers.ControllerBaseSpec
 import mocks.{MockAuditingService, MockContactPreferenceService}
 import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
-import org.jsoup.Jsoup
 import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.templates.ChangeSuccessView
-
+import assets.BaseTestConstants.vrn
 import scala.concurrent.Future
 
 class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService with MockAuditingService {
@@ -39,6 +38,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
   object TestController extends EmailChangeSuccessController(
     mockAuditingService,
     mockContactPreferenceService,
+    mockVatSubscriptionService,
     view
   )
 
@@ -57,25 +57,18 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
             lazy val result = {
               mockIndividualAuthorised()
-              getMockContactPreference("999999999")(Future(Right(ContactPreference("DIGITAL"))))
+              getMockContactPreference(vrn)(Right(ContactPreference("DIGITAL")))
+              mockGetEmailVerificationStatus(Some(true))
               TestController.show(successfulChangeRequest)
             }
-
-            lazy val document = Jsoup.parse(bodyOf(result))
 
             "return 200" in {
               status(result) shouldBe Status.OK
             }
 
             "audit the contact preference" in {
-              verifyExtendedAudit(ContactPreferenceAuditModel("999999999", "DIGITAL"))
+              verifyExtendedAudit(ContactPreferenceAuditModel(vrn, "DIGITAL"))
               reset(mockAuditingService)
-            }
-
-            "render the email change success page" in {
-              messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
-                "We’ll send you an email within 2 working days with an update, followed by a letter to your " +
-                  "principal place of business. You can also check your HMRC secure messages for an update."
             }
           }
 
@@ -83,24 +76,18 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
             lazy val result = {
               mockIndividualAuthorised()
-              getMockContactPreference("999999999")(Future(Right(ContactPreference("PAPER"))))
+              getMockContactPreference(vrn)(Future(Right(ContactPreference("PAPER"))))
+              mockGetEmailVerificationStatus(None)
               TestController.show(successfulChangeRequest)
             }
-
-            lazy val document = Jsoup.parse(bodyOf(result))
 
             "return 200" in {
               status(result) shouldBe Status.OK
             }
 
             "audit the contact preference" in {
-              verifyExtendedAudit(ContactPreferenceAuditModel("999999999", "PAPER"))
+              verifyExtendedAudit(ContactPreferenceAuditModel(vrn, "PAPER"))
               reset(mockAuditingService)
-            }
-
-            "render the email change success page" in {
-              messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
-                "We’ll send a letter to your principal place of business with an update within 15 working days."
             }
           }
         }
@@ -109,11 +96,10 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
           lazy val result = {
             mockIndividualAuthorised()
-            getMockContactPreference("999999999")(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
+            getMockContactPreference(vrn)(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
+            mockGetEmailVerificationStatus(None)
             TestController.show(successfulChangeRequest)
           }
-
-          lazy val document = Jsoup.parse(bodyOf(result))
 
           "return 200" in {
             status(result) shouldBe Status.OK
@@ -122,11 +108,6 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
           "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the email change success page" in {
-            messages(document.select("#content article p:nth-of-type(1)").text()) shouldBe
-              "We will send you an update within 15 working days."
           }
         }
       }

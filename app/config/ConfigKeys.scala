@@ -50,6 +50,7 @@ object ConfigKeys {
   val contactPreferencesFeature: String = "features.contactPreferences.enabled"
   val languageSelectorFeature: String = "features.languageSelector.enabled"
   val changeContactDetailsFeature: String = "features.changeContactDetails.enabled"
+  val emailVerifiedContactPrefFeature: String = "features.emailVerifiedContactPref.enabled"
 
   val vatSubscription: String = "vat-subscription"
 

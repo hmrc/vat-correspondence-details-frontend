@@ -69,13 +69,21 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
 
   private[controllers] def renderView(changeKey: String, isRemoval: Boolean)(implicit user: User[_]): Future[Result] =
     for {
-      entityName <- if (user.isAgent) {getClientEntityName}
-      else {Future.successful(None)}
-      preference <- if (user.isAgent) {Future.successful(Left(ErrorModel(NO_CONTENT, "")))}
-      else {contactPreferenceService.getContactPreference(user.vrn)}
+      entityName <-
+        if (user.isAgent) {getClientEntityName}
+        else {Future.successful(None)}
+
+      preference <-
+        if (user.isAgent) {Future.successful(Left(ErrorModel(NO_CONTENT, "")))}
+        else {contactPreferenceService.getContactPreference(user.vrn)}
+
+        emailVerified <-
+        if (user.isAgent) {Future.successful(None)}
+        else {vatSubscriptionService.getEmailVerifiedStatus(user.vrn, preference)}
+
     } yield {
       val viewModel =
-        constructViewModel(entityName, preference, user.session.get(verifiedAgentEmail), changeKey, isRemoval)
+        constructViewModel(entityName, preference, user.session.get(verifiedAgentEmail), changeKey, isRemoval, emailVerified)
       Ok(changeSuccessView(viewModel))
     }
 
@@ -83,10 +91,11 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
                                               preferenceCall: HttpGetResult[ContactPreference],
                                               agentEmail: Option[String],
                                               changeKey: String,
-                                              isRemoval: Boolean): ChangeSuccessViewModel = {
+                                              isRemoval: Boolean,
+                                              emailVerified: Option[Boolean]): ChangeSuccessViewModel = {
     val preference: Option[String] = preferenceCall.fold(_ => None, pref => Some(pref.preference))
     val titleMessageKey: String = getTitleMessageKey(changeKey, isRemoval)
-    ChangeSuccessViewModel(titleMessageKey, agentEmail, preference, entityName)
+    ChangeSuccessViewModel(titleMessageKey, agentEmail, preference, entityName, emailVerified)
   }
 
   private[controllers] def getTitleMessageKey(changeKey: String, isRemoval: Boolean): String =
@@ -103,4 +112,4 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
         result.fold(_ => None, details => details.entityName)
       }
     }
-}
+  }

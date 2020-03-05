@@ -23,7 +23,6 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.VatSubscriptionService
-
 import scala.concurrent.Future
 
 trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {
@@ -56,4 +55,7 @@ trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {
 
   def mockGetCustomerInfo(vrn: String)(response: Future[GetCustomerInfoResponse]): Unit =
     when(mockVatSubscriptionService.getCustomerInfo(argEq(vrn))(any(), any())) thenReturn response
+
+  def mockGetEmailVerificationStatus(response: Future[Option[Boolean]]): Unit =
+  when(mockVatSubscriptionService.getEmailVerifiedStatus(any(), any())(any(), any())) thenReturn response
 }
