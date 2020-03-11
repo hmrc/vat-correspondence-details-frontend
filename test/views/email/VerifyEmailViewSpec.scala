@@ -18,64 +18,44 @@ package views.email
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.twirl.api.Html
 import views.ViewBaseSpec
 import views.html.email.VerifyEmailView
 
 class VerifyEmailViewSpec extends ViewBaseSpec {
 
   val injectedView: VerifyEmailView = injector.instanceOf[VerifyEmailView]
-
-  object Selectors {
-    val heading = "heading-large"
-    val firstParagraph = "#content article p"
-    val secondParagraph = "#content article p:nth-of-type(2)"
-    val captureYourEmailPageLink = "#content > article > p:nth-child(3) > a"
-    val accordionSpan = "#content span"
-    val accordionText = ".panel.panel-border-narrow"
-    val accordionGaTag = "#content > article > details > div > p > a"
-    val accordionLink = "#content > article > details > div > p > a"
-  }
+  lazy val view: Html = injectedView(testEmail)(user, messages, mockConfig)
+  lazy implicit val document: Document = Jsoup.parse(view.body)
 
   "The Verify Email view" should {
-
-    lazy val view = injectedView(testEmail)(user, messages, mockConfig)
-    lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct document title" in {
       document.title shouldBe "Verify your email address - Business tax account - GOV.UK"
     }
 
     "have the correct heading" in {
-      document.getElementsByClass(Selectors.heading).text() shouldBe "Verify your email address"
+      document.getElementsByClass("heading-large").text() shouldBe "Verify your email address"
     }
 
     "have the correct text for the first paragraph" in {
-      elementText(Selectors.firstParagraph) shouldBe "We’ve sent an email to test@email.co.uk. " +
-        "Click on the link in the email to verify your email address."
+      elementText("#content article p:nth-of-type(1)") shouldBe
+        "We’ve sent an email to test@email.co.uk. Click on the link in the email to verify your email address."
     }
 
     "have the correct text for the second paragraph" in {
-      elementText(Selectors.secondParagraph) shouldBe "You can change your email address if it is not correct."
+      elementText("#content article p:nth-of-type(2)") shouldBe "Check your junk folder. If it’s not there we can" +
+        " send it again. If we send it again, any previous link will stop working."
     }
 
-    "have a link element in the first paragraph that links to the Capture your email page" in {
-      element(Selectors.captureYourEmailPageLink).attr("href") shouldBe
-        controllers.email.routes.CaptureEmailController.show().url
-    }
+    "have a link" which {
 
-    "have an accordion which" should {
-
-      "have a span with the correct text" in {
-        elementText(Selectors.accordionSpan) shouldBe "I did not get the email"
+      "has the correct link text" in {
+        elementText("#content > article > p:nth-of-type(2) > a") shouldBe "send it again"
       }
 
-      "have a paragraph with the correct text" in {
-        elementText(Selectors.accordionText) shouldBe "Check your junk folder. If it’s not there we can" +
-          " send it again. If we send it again, any previous link will stop working."
-      }
-
-      "have a link element which calls the send email controller action" in {
-        element(Selectors.accordionLink).attr("href") shouldBe
+      "has the correct href" in {
+        element("#content > article > p:nth-of-type(2) > a").attr("href") shouldBe
           controllers.email.routes.VerifyEmailController.sendVerification().url
       }
     }

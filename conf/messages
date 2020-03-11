@@ -99,13 +99,9 @@ confirmWebsiteRemove.heading = Confirm you want to remove the website address: {
 verifyEmail.title = Verify your email address
 verifyEmail.heading = Verify your email address
 verifyEmail.lineOne = We’ve sent an email to {0}. Click on the link in the email to verify your email address.
-verifyEmail.lineTwo = You can
-verifyEmail.lineThree = change your email address
-verifyEmail.lineFour = if it is not correct.
-verifyEmail.accordion.heading = I did not get the email
-verifyEmail.accordion.lineOne = Check your junk folder. If it’s not there we can
-verifyEmail.accordion.lineTwo = send it again
-verifyEmail.accordion.lineThree = If we send it again, any previous link will stop working.
+verifyEmail.lineTwo.1 = Check your junk folder. If it’s not there we can
+verifyEmail.lineTwo.2 = send it again
+verifyEmail.lineTwo.3 = If we send it again, any previous link will stop working.
 
 emailChangeSuccess.title = We have received the new email address
 

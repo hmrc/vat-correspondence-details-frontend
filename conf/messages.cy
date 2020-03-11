@@ -87,13 +87,9 @@ confirmWebsiteRemove.heading = Cadarnhau eich bod am ddileu cyfeiriad y wefan: {
 verifyEmail.title = Dilysu’ch cyfeiriad e-bost
 verifyEmail.heading = Dilysu’ch cyfeiriad e-bost
 verifyEmail.lineOne = Rydym wedi anfon e-bost at {0}. Cliciwch ar y cysylltiad yn yr e-bost i ddilysu’ch cyfeiriad e-bost.
-verifyEmail.lineTwo = Gallwch
-verifyEmail.lineThree = newid eich cyfeiriad e-bost
-verifyEmail.lineFour = os nad yw’n gywir.
-verifyEmail.accordion.heading = Ches i ddim yr e-bost
-verifyEmail.accordion.lineOne = Chwiliwch yn eich ffolder sothach. Os nad yw’r e-bost yno, gallwn
-verifyEmail.accordion.lineTwo = ei anfon eto
-verifyEmail.accordion.lineThree = Os byddwn yn ei anfon eto, ni fydd unrhyw gysylltiadau blaenorol yn gweithio mwyach.
+verifyEmail.lineTwo.1 = Chwiliwch yn eich ffolder sothach. Os nad yw’r e-bost yno, gallwn
+verifyEmail.lineTwo.2 = ei anfon eto
+verifyEmail.lineTwo.3 = Os byddwn yn ei anfon eto, ni fydd unrhyw gysylltiadau blaenorol yn gweithio mwyach.
 
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
 
