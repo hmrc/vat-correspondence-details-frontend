@@ -198,7 +198,8 @@ button[disabled]:hover,
 .toggle__button--active,
 .toggle__button--active:hover,
 .toggle__button--active:focus,
-.button[disabled="disabled"] {
+.button[disabled="disabled"],
+.govuk-box-highlight {
   background-color: #00703c;
 }
 
