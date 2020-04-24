@@ -67,34 +67,25 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
     }
 
   private def comparePendingAndCurrent[A](pendingChanges: PendingChanges, customerInfo: CustomerInformation)
-                                         (implicit user: User[A]): Either[Result, User[A]] = {
-
-    def logWarnPending(changeType: String): Unit = logWarn("[InFlightPredicate][comparePendingAndCurrent] - " +
-      s"There is an in-flight $changeType change. Rendering graceful error page.")
+                                         (implicit user: User[A]): Either[Result, User[A]] =
 
     (customerInfo.sameAddress, customerInfo.sameEmail, customerInfo.sameLandline,
       customerInfo.sameMobile, customerInfo.sameWebsite) match {
       case (false, _, _, _, _) =>
-        logWarnPending("PPOB address")
         Left(Conflict(inFlightComps.inFlightChangeView("ppob"))
           .addingToSession(inFlightContactDetailsChangeKey -> "ppob"))
       case (_, false, _, _, _) =>
-        logWarnPending("email address")
         Left(Conflict(inFlightComps.inFlightChangeView("email"))
           .addingToSession(inFlightContactDetailsChangeKey -> "email"))
       case (_, _, false, _, _) =>
-        logWarnPending("landline number")
         Left(Conflict(inFlightComps.inFlightChangeView("landline"))
           .addingToSession(inFlightContactDetailsChangeKey -> "landline"))
       case (_, _, _, false, _) =>
-        logWarnPending("mobile number")
         Left(Conflict(inFlightComps.inFlightChangeView("mobile"))
           .addingToSession(inFlightContactDetailsChangeKey -> "mobile"))
       case (_, _, _, _, false) =>
-        logWarnPending("website address")
         Left(Conflict(inFlightComps.inFlightChangeView("website"))
           .addingToSession(inFlightContactDetailsChangeKey -> "website"))
       case _ => Right(user)
     }
-  }
 }
