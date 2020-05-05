@@ -36,7 +36,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
         val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
-        val fieldLabel: String = "#content > article > form  > div > label"
+        val fieldLabel: String = "#content > article > form  > div > div"
 
         "have the correct title" in {
           document.title shouldBe "What is the mobile number? - Business tax account - GOV.UK"
@@ -52,7 +52,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct visually hidden text" in {
-          elementText(s"$fieldLabel > span.visuallyhidden") shouldBe "What is the mobile number?"
+          elementText(s"$fieldLabel > label.visuallyhidden") shouldBe "What is the mobile number?"
         }
 
         "have a link to remove the mobile" which {
@@ -99,7 +99,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-notification") shouldBe "You have not made any changes to the mobile number"
+          elementText(".error-message") shouldBe "You have not made any changes to the mobile number"
         }
 
         "display the error summary" in {

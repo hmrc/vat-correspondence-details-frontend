@@ -28,7 +28,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
   val injectedView: CaptureWebsiteView = injector.instanceOf[CaptureWebsiteView]
 
   private object Selectors {
-    val pageHeading = "#content h1"
+    val pageHeading = "#page-heading"
     val backLink = "#content > article > a"
     val form = "form"
     val websiteField = "#website"
@@ -36,7 +36,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
     val errorSummary = "#error-summary-heading"
     val websiteFormGroup = "#content > article > form > div:nth-child(1)"
     val removeWebsite = "#remove-website"
-    val fieldLabel: String = "#content > article > form > div > label > span.form-hint"
+    val fieldLabel: String = "#content > article > form > div > div > span.form-hint"
   }
 
   "Rendering the capture website page" when {
@@ -108,6 +108,32 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           "not show the remove website link" in {
             elementExtinct(Selectors.removeWebsite)
           }
+        }
+      }
+
+      "there are errors in the form" should {
+        val view = injectedView(websiteForm(testWebsite).bind(
+          Map("website" -> testWebsite)
+        ), testWebsite)(user, messages, mockConfig)
+        implicit val document: Document = Jsoup.parse(view.body)
+
+        "have the correct document title" in {
+          document.title shouldBe "Error: What’s the website address? - Business tax account - GOV.UK"
+        }
+
+        "have a form error box" which {
+
+          "has the correct error message" in {
+            elementText("#website-error-summary") shouldBe "Enter a new website address"
+          }
+        }
+
+        "have the correct error notification text above the input box" in {
+          elementText(".error-message") shouldBe "Enter a new website address"
+        }
+
+        "display the error summary" in {
+          element("#error-summary-heading").text() shouldBe "There is a problem"
         }
       }
     }
