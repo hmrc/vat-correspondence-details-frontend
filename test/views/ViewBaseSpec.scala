@@ -21,6 +21,7 @@ import org.scalatest.Assertion
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import _root_.utils.TestUtil
 import org.jsoup.Jsoup
+import play.twirl.api.Html
 
 import scala.collection.JavaConverters._
 
@@ -65,7 +66,7 @@ trait ViewBaseSpec extends TestUtil with GuiceOneAppPerSuite {
     elements.first()
   }
 
-  def formatHtml(markup: String): String = Jsoup.parseBodyFragment(s"\n$markup\n").toString.trim
+  def formatHtml(markup: Html): String = Jsoup.parseBodyFragment(s"\n$markup\n").toString.trim
 
   def paragraph(index: Int)(implicit document: Document): String = elementText(s"article > p:nth-of-type($index)")
 

@@ -14,12 +14,20 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.{FormWithCSRF, ErrorSummary, Input}
+@import uk.gov.hmrc.play.views.html.helpers
 @import config.AppConfig
+@import templates.inputs.text
+@import views.html.templates.errors.errorSummary
 
-@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
+@this(mainTemplate: MainTemplate)
 
 @(landlineForm: Form[String], currentLandline: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@questionContent = {
+    <h1 id="page-heading" class="heading-large">@messages("captureLandline.title")</h1>
+
+    <span class=form-hint>@messages("captureLandline.hint")</span>
+}
 
 @mainTemplate(
     if(landlineForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureLandline.title"))
@@ -28,19 +36,15 @@
 
     <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 
-    @errorSummary(messages("common.error.heading"), landlineForm, forceDivToAppear = false)
+    @errorSummary(messages("common.error.heading"), landlineForm)
 
-    <h1 class="heading-large">@messages("captureLandline.title")</h1>
-
-    @form(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {
+    @helpers.form(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {
         <div class ="form-group">
-            @input(
-                landlineForm("landlineNumber"),
-                '_label -> messages("captureLandline.title"),
-                '_inputClass -> "form-control",
-                '_inputHint -> messages("captureLandline.hint"),
-                '_labelTextClass -> "visuallyhidden"
-            )
+        @text(
+            field = landlineForm("landlineNumber"),
+            label = messages("captureLandline.title"),
+            additionalContent = Some(questionContent)
+        )
         </div>
 
         @if(currentLandline != "") {
