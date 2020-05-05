@@ -21,7 +21,6 @@
 @import uk.gov.hmrc.play.views.html.layouts.{Head, HeaderNav, Footer, ServiceInfo, MainContentHeader, MainContent, Sidebar, Article, FooterLinks}
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import views.utils.ServiceNameUtil
-@import views.html.helpers.LanguageSelection
 
 @this(head: Head,
       headerNav: HeaderNav,
@@ -33,8 +32,7 @@
       article: Article,
       reportAProblemLink: ReportAProblemLink,
       footerLinks: FooterLinks,
-      hmrcGovUkTemplate: GovUkTemplate,
-      languageSelection: LanguageSelection)
+      hmrcGovUkTemplate: GovUkTemplate)
 
 @(appConfig: AppConfig,
   title: String,
@@ -155,11 +153,11 @@
 
 @mainContentHeaderContent = {
   @if(appConfig.features.languageSelectorEnabled()) {
-    @languageSelection(
-      appConfig.languageMap,
-      appConfig.routeToSwitchLanguage,
-      customClass = Some("text--right")
-    )
+<div>@language_selection(
+    appConfig.languageMap,
+    appConfig.routeToSwitchLanguage,
+    customClass = Some("text--right")
+    )</div>
   }
   @if(contentHeader.isDefined) {
     @mainContentHeader(contentHeader = contentHeader.get)
