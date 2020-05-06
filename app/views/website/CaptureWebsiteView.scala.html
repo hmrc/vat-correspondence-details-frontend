@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers
+@import uk.gov.hmrc.play.views.html.helpers.{FormWithCSRF, ErrorSummary}
 @import config.AppConfig
-@import templates.inputs.text
-@import views.html.templates.errors.errorSummary
+@import views.html.templates.inputs.Text
 
-@this(mainTemplate: MainTemplate)
+@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
 @(websiteForm: Form[String], currentWebsite: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -35,7 +34,7 @@
 
     @errorSummary(messages("common.error.heading"), websiteForm)
 
-    @helpers.form(action = controllers.website.routes.CaptureWebsiteController.submit, 'novalidate -> "novalidate") {
+    @form(action = controllers.website.routes.CaptureWebsiteController.submit, 'novalidate -> "novalidate") {
         <div class="form-group">
         @text(
             field = websiteForm("website"),

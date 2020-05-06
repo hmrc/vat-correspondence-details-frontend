@@ -49,8 +49,8 @@
   feedbackOnSignOut: Boolean = true)(implicit request: Request[_], messages: Messages)
 
 @linksElement = {
-<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/palette.css")'>
-<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/focus.css")'>
+<link rel="stylesheet" type="Text/css" href='@routes.Assets.at("stylesheets/palette.css")'>
+<link rel="stylesheet" type="Text/css" href='@routes.Assets.at("stylesheets/focus.css")'>
 }
 
 @headContent = {
@@ -95,8 +95,8 @@
 @afterHeader = {}
 
 @scriptElement = {
-  <script type="text/javascript" src=@routes.Assets.at("javascript/errorFocus.js")></script>
-  <script type="text/javascript" src='@routes.Assets.at("javascript/vat-corr-v1.js")'></script>
+  <script type="Text/javascript" src=@routes.Assets.at("javascript/errorFocus.js")></script>
+  <script type="Text/javascript" src='@routes.Assets.at("javascript/vat-corr-v1.js")'></script>
   <script>
       @if(showSignOut) {
         $.timeoutDialog({
@@ -156,7 +156,7 @@
 <div>@language_selection(
     appConfig.languageMap,
     appConfig.routeToSwitchLanguage,
-    customClass = Some("text--right")
+    customClass = Some("Text--right")
     )</div>
   }
   @if(contentHeader.isDefined) {

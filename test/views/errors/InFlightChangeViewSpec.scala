@@ -73,7 +73,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
         }
       }
 
-      "have the correct text for the back link" in {
+      "have the correct Text for the back link" in {
         elementText(Selectors.backLink) shouldBe "Back"
       }
 

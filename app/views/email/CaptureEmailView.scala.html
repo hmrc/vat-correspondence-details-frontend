@@ -14,13 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers
+@import uk.gov.hmrc.play.views.html.helpers.{FormWithCSRF, ErrorSummary}
 @import config.AppConfig
 @import forms.EmailForm._
-@import templates.inputs.text
-@import views.html.templates.errors.errorSummary
+@import views.html.templates.inputs.Text
 
-@this(mainTemplate: MainTemplate)
+@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -40,7 +39,7 @@
             <p>@messages("captureEmail.onlyAddEmail")</p>
         }
 
-        @helpers.form(action = controllers.email.routes.CaptureEmailController.submit) {
+        @form(action = controllers.email.routes.CaptureEmailController.submit) {
             <div class="form-group">
             @text(
                 field = emailForm("email"),

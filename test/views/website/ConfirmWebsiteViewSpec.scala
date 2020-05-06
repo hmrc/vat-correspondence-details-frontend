@@ -48,7 +48,7 @@ class ConfirmWebsiteViewSpec extends ViewBaseSpec {
 
       "have a back link" which {
 
-        "should have the correct text" in {
+        "should have the correct Text" in {
           elementText(Selectors.backLink) shouldBe "Back"
         }
 
@@ -63,7 +63,7 @@ class ConfirmWebsiteViewSpec extends ViewBaseSpec {
 
       "have a link to edit website address" which {
 
-        "has the correct text" in {
+        "has the correct Text" in {
           elementText(Selectors.editLink) shouldBe "Change the website address"
         }
 
@@ -75,7 +75,7 @@ class ConfirmWebsiteViewSpec extends ViewBaseSpec {
 
       "have a continue button" which {
 
-        "has the correct text" in {
+        "has the correct Text" in {
           elementText(Selectors.continueButton) shouldBe "Confirm and continue"
         }
 

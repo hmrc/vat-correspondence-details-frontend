@@ -57,7 +57,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
 
           "have a back link" which {
 
-            "should have the correct text" in {
+            "should have the correct Text" in {
               elementText(Selectors.backLink) shouldBe "Back"
             }
 
@@ -70,7 +70,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
             elementText(Selectors.pageHeading) shouldBe "What’s the website address?"
           }
 
-          "have the correct hint text" in {
+          "have the correct hint Text" in {
             elementText(Selectors.fieldLabel) shouldBe "For example, www.abc.co..."
           }
 
@@ -79,7 +79,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
               "correspondence/new-website-address"
           }
 
-          "have the website text field with the pre-populated value" in {
+          "have the website Text field with the pre-populated value" in {
             element(Selectors.websiteField).attr("value") shouldBe testWebsite
           }
 
@@ -101,7 +101,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           lazy val view: Html = injectedView(websiteForm(testWebsite), "")
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
-          "have the website text field with no pre-populated value" in {
+          "have the website Text field with no pre-populated value" in {
             element(Selectors.websiteField).attr("value") shouldBe ""
           }
 
@@ -128,7 +128,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           }
         }
 
-        "have the correct error notification text above the input box" in {
+        "have the correct error notification Text above the input box" in {
           elementText(".error-message") shouldBe "Enter a new website address"
         }
 
