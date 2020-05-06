@@ -20,13 +20,17 @@ import play.api.data.{Field, FormError}
 import play.twirl.api.Html
 import forms.FeatureSwitchForm
 import views.ViewBaseSpec
+import views.html.templates.inputs.Text
+
 class TextHelperSpec extends ViewBaseSpec {
+
+  val injectedView: Text = inject[Text]
 
   val fieldName = "fieldName"
   val label = "myLabel"
-  val field = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(), Some("text"))
+  val field = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(), Some("Text"))
 
-  "The text input form helper" when {
+  "The Text input form helper" when {
 
     "all parameters are default and there are no errors" should {
 
@@ -36,12 +40,12 @@ class TextHelperSpec extends ViewBaseSpec {
           s"""
              |<div class="form-field">
              |  <label for="$fieldName" class="form-label visuallyhidden">$label</label>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="Text">
              |</div>
              |""".stripMargin
         )
 
-        val result = views.html.templates.inputs.text(field, label)
+        val result = injectedView(field, label)
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }
@@ -51,7 +55,7 @@ class TextHelperSpec extends ViewBaseSpec {
 
       "render the error span and apply the form-field--error class to the field" in {
 
-        val errorField = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(FormError("error", "ERROR")), Some("text"))
+        val errorField = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(FormError("error", "ERROR")), Some("Text"))
 
         val expectedMarkup = Html(
           s"""
@@ -60,12 +64,12 @@ class TextHelperSpec extends ViewBaseSpec {
              |  <span class="error-message" role="tooltip">
              |    ERROR
              |  </span>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="Text">
              |</div>
              |""".stripMargin
         )
 
-        val result = views.html.templates.inputs.text(errorField, label)
+        val result = injectedView(errorField, label)
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }
@@ -79,12 +83,12 @@ class TextHelperSpec extends ViewBaseSpec {
           s"""
              |<div class="form-field">
              |  <label for="$fieldName" class="form-label ">$label</label>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="Text">
              |</div>
              |""".stripMargin
         )
 
-        val result = views.html.templates.inputs.text(field, label, labelHidden = false)
+        val result = injectedView(field, label, labelHidden = false)
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }
@@ -99,13 +103,13 @@ class TextHelperSpec extends ViewBaseSpec {
              |<div class="form-field">
              |  <p>Additional HTML</p>
              |  <label for="$fieldName" class="form-label visuallyhidden">$label</label>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="Text">
              |</div>
              |""".stripMargin
         )
 
         val result =
-          views.html.templates.inputs.text(field, label, additionalContent = Some(Html("<p>Additional HTML</p>")))
+          injectedView(field, label, additionalContent = Some(Html("<p>Additional HTML</p>")))
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }

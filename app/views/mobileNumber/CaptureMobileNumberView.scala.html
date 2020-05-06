@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers
+@import uk.gov.hmrc.play.views.html.helpers.{FormWithCSRF, ErrorSummary}
 @import config.AppConfig
-@import templates.inputs.text
-@import views.html.templates.errors.errorSummary
+@import views.html.templates.inputs.Text
 
-@this(mainTemplate: MainTemplate)
+@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
 @(mobileNumberForm: Form[String], currentMobile: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -38,7 +37,7 @@
 
     @errorSummary(messages("common.error.heading"), mobileNumberForm)
 
-    @helpers.form(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
+    @form(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
 
         <div class ="form-group">
         @text(

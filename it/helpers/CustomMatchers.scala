@@ -58,7 +58,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen{
 
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
-        Then(s"the text of '$cssSelector' should be '$expectedValue'")
+        Then(s"the Text of '$cssSelector' should be '$expectedValue'")
 
         HavePropertyMatchResult(
           body.select(cssSelector).text == expectedValue,

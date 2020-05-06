@@ -51,13 +51,13 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
             "You need to enter the country code for international numbers, like 00441632 960000. You cannot enter a plus sign."
         }
 
-        "have the correct visually hidden text" in {
+        "have the correct visually hidden Text" in {
           elementText(s"$fieldLabel > label.visuallyhidden") shouldBe "What is the landline number?"
         }
 
         "have a link to remove the landline" which {
 
-          "has the correct text" in {
+          "has the correct Text" in {
             elementText("#remove-landline") shouldBe "Remove landline number"
           }
 
@@ -68,7 +68,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 
         "have a button" which {
 
-          "has the correct text" in {
+          "has the correct Text" in {
             elementText(".button") shouldBe "Continue"
           }
 
@@ -99,7 +99,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
           }
         }
 
-        "have the correct error notification text above the input box" in {
+        "have the correct error notification Text above the input box" in {
           elementText(".error-message") shouldBe "You have not made any changes to the landline number"
         }
 
