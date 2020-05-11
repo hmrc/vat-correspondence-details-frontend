@@ -52,7 +52,7 @@ class ConfirmMobileNumberViewSpec extends ViewBaseSpec {
 
       "have a back link" which {
 
-        "should have the correct Text" in {
+        "should have the correct text" in {
           elementText(Selectors.backLink) shouldBe "Back"
         }
 
@@ -67,7 +67,7 @@ class ConfirmMobileNumberViewSpec extends ViewBaseSpec {
 
       "have a link to edit mobile number" which {
 
-        "has the correct Text" in {
+        "has the correct text" in {
           elementText(Selectors.editLink) shouldBe "Change the mobile number"
         }
 
@@ -79,7 +79,7 @@ class ConfirmMobileNumberViewSpec extends ViewBaseSpec {
 
       "have a continue button" which {
 
-        "has the correct Text" in {
+        "has the correct text" in {
           elementText(Selectors.continueButton) shouldBe "Confirm and continue"
         }
 

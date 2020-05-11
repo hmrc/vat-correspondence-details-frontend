@@ -61,7 +61,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
             elementText(Selectors.pageHeading) shouldBe exampleTitle
           }
 
-          "have a finish button with the correct Text" in {
+          "have a finish button with the correct text" in {
             elementText(Selectors.button) shouldBe "Finish"
           }
 
@@ -129,7 +129,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           elementText(Selectors.pageHeading) shouldBe exampleTitle
         }
 
-        "have a finish button with the correct Text" in {
+        "have a finish button with the correct text" in {
           elementText(Selectors.button) shouldBe "Finish"
         }
 
@@ -161,7 +161,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           elementText(Selectors.pageHeading) shouldBe exampleTitle
         }
 
-        "have a finish button with the correct Text" in {
+        "have a finish button with the correct text" in {
           elementText(Selectors.button) shouldBe "Finish"
         }
 
@@ -193,7 +193,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           elementText(Selectors.pageHeading) shouldBe exampleTitle
         }
 
-        "have a finish button with the correct Text" in {
+        "have a finish button with the correct text" in {
           elementText(Selectors.button) shouldBe "Finish"
         }
 

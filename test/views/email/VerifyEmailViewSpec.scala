@@ -38,19 +38,19 @@ class VerifyEmailViewSpec extends ViewBaseSpec {
       document.getElementsByClass("heading-large").text() shouldBe "Verify your email address"
     }
 
-    "have the correct Text for the first paragraph" in {
+    "have the correct text for the first paragraph" in {
       elementText("#content article p:nth-of-type(1)") shouldBe
         "We’ve sent an email to test@email.co.uk. Click on the link in the email to verify your email address."
     }
 
-    "have the correct Text for the second paragraph" in {
+    "have the correct text for the second paragraph" in {
       elementText("#content article p:nth-of-type(2)") shouldBe "Check your junk folder. If it’s not there we can" +
         " send it again. If we send it again, any previous link will stop working."
     }
 
     "have a link" which {
 
-      "has the correct link Text" in {
+      "has the correct link text" in {
         elementText("#content > article > p:nth-of-type(2) > a") shouldBe "send it again"
       }
 
