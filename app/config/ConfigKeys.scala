@@ -51,6 +51,7 @@ object ConfigKeys {
   val languageSelectorFeature: String = "features.languageSelector.enabled"
   val changeContactDetailsFeature: String = "features.changeContactDetails.enabled"
   val emailVerifiedContactPrefFeature: String = "features.emailVerifiedContactPref.enabled"
+  val bulkPaperOffFeature: String = "features.bulkPaperOff.enabled"
 
   val vatSubscription: String = "vat-subscription"
 

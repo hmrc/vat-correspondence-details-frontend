@@ -22,4 +22,5 @@ case class FeatureSwitchModel(agentAccess: Boolean,
                               contactPreferences: Boolean,
                               languageSelector: Boolean,
                               changeContactDetails: Boolean,
-                              emailVerifiedContactPref: Boolean)
+                              emailVerifiedContactPref: Boolean,
+                              bulkPaperOff: Boolean)
