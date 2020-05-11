@@ -28,7 +28,7 @@ class TextHelperSpec extends ViewBaseSpec {
 
   val fieldName = "fieldName"
   val label = "myLabel"
-  val field = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(), Some("Text"))
+  val field = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(), Some("text"))
 
   "The Text input form helper" when {
 
@@ -40,7 +40,7 @@ class TextHelperSpec extends ViewBaseSpec {
           s"""
              |<div class="form-field">
              |  <label for="$fieldName" class="form-label visuallyhidden">$label</label>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="Text">
+             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
              |</div>
              |""".stripMargin
         )
@@ -55,7 +55,7 @@ class TextHelperSpec extends ViewBaseSpec {
 
       "render the error span and apply the form-field--error class to the field" in {
 
-        val errorField = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(FormError("error", "ERROR")), Some("Text"))
+        val errorField = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(FormError("error", "ERROR")), Some("text"))
 
         val expectedMarkup = Html(
           s"""
@@ -64,7 +64,7 @@ class TextHelperSpec extends ViewBaseSpec {
              |  <span class="error-message" role="tooltip">
              |    ERROR
              |  </span>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="Text">
+             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
              |</div>
              |""".stripMargin
         )
@@ -83,7 +83,7 @@ class TextHelperSpec extends ViewBaseSpec {
           s"""
              |<div class="form-field">
              |  <label for="$fieldName" class="form-label ">$label</label>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="Text">
+             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
              |</div>
              |""".stripMargin
         )
@@ -103,7 +103,7 @@ class TextHelperSpec extends ViewBaseSpec {
              |<div class="form-field">
              |  <p>Additional HTML</p>
              |  <label for="$fieldName" class="form-label visuallyhidden">$label</label>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="Text">
+             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
              |</div>
              |""".stripMargin
         )

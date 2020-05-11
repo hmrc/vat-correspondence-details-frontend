@@ -45,7 +45,7 @@ class ConfirmRemoveMobileViewSpec extends ViewBaseSpec {
 
       "have a continue button" which {
 
-        "has the correct Text" in {
+        "has the correct text" in {
           elementText(".button") shouldBe "Confirm and continue"
         }
 

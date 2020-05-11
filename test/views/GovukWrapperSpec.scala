@@ -40,7 +40,7 @@ class GovukWrapperSpec extends ViewBaseSpec {
         element(accessibilityLinkSelector).attr("href") shouldBe "/vat-through-software/accessibility-statement"
       }
 
-      "have the correct Text for Accessibility link" in {
+      "have the correct text for Accessibility link" in {
         elementText(accessibilityLinkSelector) shouldBe "Accessibility"
       }
     }
