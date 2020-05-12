@@ -103,13 +103,11 @@ changeSuccess.helpOne.digital.agent = Byddwn yn anfon e-bost i {0} cyn pen 2 dd
 changeSuccess.helpOne.paper.agent = Byddwn yn anfon llythyr o gadarnhad i gyfeiriad yr asiantaeth sydd wedi’i gofrestru gyda CThEM cyn pen 15 diwrnod gwaith.
 changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
 
-changeSuccess.agent.digital.email.partOne = Byddwn yn anfon e-bost i
-changeSuccess.agent.digital.email.partTwo = cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a allwn dderbyn eich cais ai peidio.
-# TODO
-changeSuccess.agent.digital.secureMessage = We’ll send a secure message about the change to
-changeSuccess.agent.nonDigital.secureMessage.partOne = We’ll send a secure message to
-changeSuccess.agent.nonDigital.secureMessage.partTwo = within 2 working days, telling them whether we can accept your request.
-changeSuccess.agent.client = your client’s business tax account
+changeSuccess.agent.email.partOne = Byddwn yn anfon e-bost i
+changeSuccess.agent.email.partTwo = cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a allwn dderbyn eich cais ai peidio.
+changeSuccess.agent.client.partOne = Byddwn hefyd yn cysylltu â
+changeSuccess.agent.client.name = eich cleient
+changeSuccess.agent.client.partTwo = gyda diweddariad.
 
 inFlightChange.title = Mae newid ar y gweill eisoes
 inFlightChange.recentlyRequested = Cafodd cais ei wneud yn ddiweddar i newid {0}.
