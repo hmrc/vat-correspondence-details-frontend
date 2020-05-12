@@ -220,20 +220,52 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
           "client's business name is retrieved" should {
 
-            mockConfig.features.bulkPaperOffEnabled(true)
+            val viewModel = ChangeSuccessViewModel(
+              exampleTitle,
+              agentEmail = Some("abc@digital.com"),
+              None,
+              businessName = Some("ABC Digital Ltd"),
+              None
+            )
+            lazy val view = {
+              mockConfig.features.bulkPaperOffEnabled(true)
+              injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+            }
+            lazy implicit val document: Document = Jsoup.parse(view.body)
 
-            "render the correct content" in {
+            "have the correct first paragraph" in {
+              elementText(Selectors.paragraphOne) shouldBe "We’ll send an email to abc@digital.com within 2 working days " +
+                "telling you whether we can accept your request."
+            }
 
+            "have the correct second paragraph" in {
+              elementText(Selectors.paragraphTwo) shouldBe "We’ll contact ABC Digital Ltd with an update."
             }
           }
 
 
           "client's business name is not retrieved" should {
 
-            mockConfig.features.bulkPaperOffEnabled(true)
+            val viewModel = ChangeSuccessViewModel(
+              exampleTitle,
+              agentEmail = Some("abc@digital.com"),
+              None,
+              businessName = None,
+              None
+            )
+            lazy val view = {
+              mockConfig.features.bulkPaperOffEnabled(true)
+              injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+            }
+            lazy implicit val document: Document = Jsoup.parse(view.body)
 
-            "render the correct content" in {
+            "have the correct first paragraph" in {
+              elementText(Selectors.paragraphOne) shouldBe "We’ll send an email to abc@digital.com within 2 working days " +
+                "telling you whether we can accept your request."
+            }
 
+            "have the correct second paragraph" in {
+              elementText(Selectors.paragraphTwo) shouldBe "We’ll contact your client with an update."
             }
           }
         }
@@ -242,20 +274,41 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
           "client's business name is retrieved" should {
 
-            mockConfig.features.bulkPaperOffEnabled(true)
+            val viewModel = ChangeSuccessViewModel(
+              exampleTitle,
+              agentEmail = None,
+              None,
+              businessName = Some("ABC Digital Ltd"),
+              None
+            )
+            lazy val view = {
+              mockConfig.features.bulkPaperOffEnabled(true)
+              injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+            }
+            lazy implicit val document: Document = Jsoup.parse(view.body)
 
-            "render the correct content" in {
-
+            "have the correct paragraph" in {
+              elementText(Selectors.paragraphOne) shouldBe "We’ll contact ABC Digital Ltd with an update."
             }
           }
 
-
           "client's business name is not retrieved" should {
 
-            mockConfig.features.bulkPaperOffEnabled(true)
+            val viewModel = ChangeSuccessViewModel(
+              exampleTitle,
+              agentEmail = None,
+              None,
+              businessName = None,
+              None
+            )
+            lazy val view = {
+              mockConfig.features.bulkPaperOffEnabled(true)
+              injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+            }
+            lazy implicit val document: Document = Jsoup.parse(view.body)
 
-            "render the correct content" in {
-
+            "have the correct paragraph" in {
+              elementText(Selectors.paragraphOne) shouldBe "We’ll contact your client with an update."
             }
           }
         }
