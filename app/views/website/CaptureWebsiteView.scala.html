@@ -14,41 +14,44 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.{FormWithCSRF, ErrorSummary, Input}
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.AppConfig
-@import forms.WebsiteForm._
+@import views.html.templates.inputs.Text
+@import views.html.templates.errors.ErrorSummary
 
-@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, input: Input)
+@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
 @(websiteForm: Form[String], currentWebsite: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-    @mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title")) else messages("captureWebsite.title")) {
+@questionContent = {
+    <h1 id="page-heading" class="heading-large">@messages("captureWebsite.title")</h1>
 
-        <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
+    <span class=form-hint>@messages("captureWebsite.hint")</span>
+}
 
-        @errorSummary(messages("common.error.heading"), websiteForm, forceDivToAppear = false)
+@mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title")) else messages("captureWebsite.title")) {
 
-        <h1 class="heading-large">@messages("captureWebsite.title")</h1>
+    <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
 
-        @form(action = controllers.website.routes.CaptureWebsiteController.submit) {
-            <div class="form-group">
-            @input(
-                websiteForm("website"),
-                '_label -> messages("captureWebsite.title"),
-                '_inputClass -> "form-control",
-                '_inputHint -> messages("captureWebsite.hint"),
-                '_labelTextClass -> "visuallyhidden"
-            )
-            </div>
+    @errorSummary(messages("common.error.heading"), websiteForm)
 
-            @if(currentWebsite != ""){
-              <p><a id="remove-website" href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>
-                @messages("captureWebsite.removeWebsite.linkText")
-              </a></p>
-            }
+    @form(action = controllers.website.routes.CaptureWebsiteController.submit, 'novalidate -> "novalidate") {
+        <div class="form-group">
+        @text(
+            field = websiteForm("website"),
+            label = messages("captureWebsite.title"),
+            additionalContent = Some(questionContent)
+        )
+        </div>
 
-            <div class="form-group">
-                <button class="button" type="submit">@messages("common.continue")</button>
-            </div>
+        @if(currentWebsite != ""){
+          <p><a id="remove-website" href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>
+            @messages("captureWebsite.removeWebsite.linkText")
+          </a></p>
         }
+
+        <div class="form-group">
+            <button class="button" type="submit">@messages("common.continue")</button>
+        </div>
     }
+}

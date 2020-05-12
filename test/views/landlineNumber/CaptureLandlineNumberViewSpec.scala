@@ -36,7 +36,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 
         val view = injectedView(landlineNumberForm(testValidationLandline), testValidationLandline)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
-        val fieldLabel: String = "#content > article > form > div > label"
+        val fieldLabel: String = "#content > article > form > div > div"
 
         "have the correct title" in {
           document.title shouldBe "What is the landline number? - Business tax account - GOV.UK"
@@ -52,7 +52,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct visually hidden text" in {
-          elementText(s"$fieldLabel > span.visuallyhidden") shouldBe "What is the landline number?"
+          elementText(s"$fieldLabel > label.visuallyhidden") shouldBe "What is the landline number?"
         }
 
         "have a link to remove the landline" which {
@@ -100,7 +100,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-notification") shouldBe "You have not made any changes to the landline number"
+          elementText(".error-message") shouldBe "You have not made any changes to the landline number"
         }
 
         "display the error summary" in {
