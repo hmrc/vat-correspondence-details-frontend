@@ -213,50 +213,50 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
         }
       }
-    }
 
-    "bulkPaperOffEnabled feature switch is on" when {
+      "bulkPaperOffEnabled feature switch is on" when {
 
-      "agent has a digital preference" when {
+        "agent has a digital preference" when {
 
-        "client's business name is retrieved" should {
+          "client's business name is retrieved" should {
 
-          mockConfig.features.bulkPaperOffEnabled(true)
+            mockConfig.features.bulkPaperOffEnabled(true)
 
-          "render the correct content" in {
+            "render the correct content" in {
 
+            }
+          }
+
+
+          "client's business name is not retrieved" should {
+
+            mockConfig.features.bulkPaperOffEnabled(true)
+
+            "render the correct content" in {
+
+            }
           }
         }
 
+        "agent has no digital preference" when {
 
-        "client's business name is not retrieved" should {
+          "client's business name is retrieved" should {
 
-          mockConfig.features.bulkPaperOffEnabled(true)
+            mockConfig.features.bulkPaperOffEnabled(true)
 
-          "render the correct content" in {
+            "render the correct content" in {
 
+            }
           }
-        }
-      }
-
-      "agent has no digital preference" when {
-
-        "client's business name is retrieved" should {
-
-          mockConfig.features.bulkPaperOffEnabled(true)
-
-          "render the correct content" in {
-
-          }
-        }
 
 
-        "client's business name is not retrieved" should {
+          "client's business name is not retrieved" should {
 
-          mockConfig.features.bulkPaperOffEnabled(true)
+            mockConfig.features.bulkPaperOffEnabled(true)
 
-          "render the correct content" in {
+            "render the correct content" in {
 
+            }
           }
         }
       }

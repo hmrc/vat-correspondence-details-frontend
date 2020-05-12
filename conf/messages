@@ -120,12 +120,11 @@ changeSuccess.helpOne.digital.agent = We’ll send an email to {0} within 2 work
 changeSuccess.helpOne.paper.agent = We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
 changeSuccess.helpTwo = Make sure your contact details are up to date.
 
-changeSuccess.agent.digital.email.partOne = We’ll send an email to
-changeSuccess.agent.digital.email.partTwo = within 2 working days telling you whether we can accept your request.
-changeSuccess.agent.digital.secureMessage = We’ll send a secure message about the change to
-changeSuccess.agent.nonDigital.secureMessage.partOne = We’ll send a secure message to
-changeSuccess.agent.nonDigital.secureMessage.partTwo = within 2 working days, telling them whether we can accept your request.
-changeSuccess.agent.client = your client’s business tax account
+changeSuccess.agent.email.partOne = We’ll send an email to
+changeSuccess.agent.email.partTwo = within 2 working days telling you whether we can accept your request.
+changeSuccess.agent.client.partOne = We’ll contact
+changeSuccess.agent.client.name = your client
+changeSuccess.agent.client.partTwo = with an update.
 
 inFlightChange.title = There is already a change pending
 inFlightChange.recentlyRequested = A recent request was made to change the {0}.
