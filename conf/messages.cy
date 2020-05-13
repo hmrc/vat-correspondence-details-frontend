@@ -94,7 +94,6 @@ verifyEmail.lineTwo.3 = Os byddwn yn ei anfon eto, ni fydd unrhyw gysylltiadau b
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
 
 websiteChangeSuccess.title.change = Rydych wedi gofyn am newid cyfeiriad y wefan
-websiteChangeSuccess.title.remove = Rydych wedi gofyn am newid cyfeiriad y wefan
 
 changeSuccess.helpOne.emailVerified = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith gyda diweddariad, neu gallwch wirio’ch negeseuon diogel oddi wrth CThEM.
 changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEM i gael diweddariad.
@@ -147,6 +146,4 @@ confirmRemoveMobile.title = Cadarnhau eich bod am ddileu’r rhif ffôn symudol
 confirmRemoveMobile.heading = Cadarnhau eich bod am ddileu’r rhif ffôn symudol: {0}
 
 landlineChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif llinell dir
-landlineChangeSuccess.title.remove = Rydych wedi gofyn am newid y rhif llinell dir
 mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symudol
-mobileChangeSuccess.title.remove = Rydych wedi gofyn am newid y rhif ffôn symudol
