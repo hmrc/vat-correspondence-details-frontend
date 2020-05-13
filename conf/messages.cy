@@ -18,7 +18,7 @@ common.error.prefixTitle = Gwall: {0}
 common.whatHappensNext = Yr hyn sy’n digwydd nesaf
 common.helpOne.apiFailure = Byddwn yn anfon diweddariad atoch cyn pen 15 diwrnod gwaith.
 common.changeClient = Newid cleient
-common.agent.updateClient1 = Byddwn hefyd yn cysylltu â
+common.agent.updateClient1 = Byddwn yn cysylltu â
 common.agent.updateClient2 = gyda diweddariad.
 common.agent.yourClient = eich cleient
 common.cancel = Canslo
@@ -104,9 +104,6 @@ changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
 
 changeSuccess.agent.email.partOne = Byddwn yn anfon e-bost i
 changeSuccess.agent.email.partTwo = cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a allwn dderbyn eich cais ai peidio.
-changeSuccess.agent.client.partOne = Byddwn hefyd yn cysylltu â
-changeSuccess.agent.client.name = eich cleient
-changeSuccess.agent.client.partTwo = gyda diweddariad.
 
 inFlightChange.title = Mae newid ar y gweill eisoes
 inFlightChange.recentlyRequested = Cafodd cais ei wneud yn ddiweddar i newid {0}.

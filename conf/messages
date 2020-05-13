@@ -18,7 +18,7 @@ common.error.prefixTitle = Error: {0}
 common.whatHappensNext = What happens next
 common.helpOne.apiFailure = We will send you an update within 15 working days.
 common.changeClient = Change client
-common.agent.updateClient1 = We’ll also contact
+common.agent.updateClient1 = We’ll contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
 common.cancel = Cancel
@@ -119,9 +119,6 @@ changeSuccess.helpTwo = Make sure your contact details are up to date.
 
 changeSuccess.agent.email.partOne = We’ll send an email to
 changeSuccess.agent.email.partTwo = within 2 working days telling you whether we can accept your request.
-changeSuccess.agent.client.partOne = We’ll contact
-changeSuccess.agent.client.name = your client
-changeSuccess.agent.client.partTwo = with an update.
 
 inFlightChange.title = There is already a change pending
 inFlightChange.recentlyRequested = A recent request was made to change the {0}.

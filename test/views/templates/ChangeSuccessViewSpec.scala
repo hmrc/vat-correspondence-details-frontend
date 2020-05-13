@@ -145,7 +145,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have the correct second paragraph" in {
-            elementText(Selectors.paragraphTwo) shouldBe "We’ll also contact TheBusiness with an update."
+            elementText(Selectors.paragraphTwo) shouldBe "We’ll contact TheBusiness with an update."
           }
         }
 
@@ -177,7 +177,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have the correct second paragraph" in {
-            elementText(Selectors.paragraphTwo) shouldBe "We’ll also contact TheBusiness with an update."
+            elementText(Selectors.paragraphTwo) shouldBe "We’ll contact TheBusiness with an update."
           }
         }
 
@@ -208,7 +208,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have the correct second paragraph" in {
-            elementText(Selectors.paragraphTwo) shouldBe "We’ll also contact your client with an update."
+            elementText(Selectors.paragraphTwo) shouldBe "We’ll contact your client with an update."
           }
 
         }
