@@ -33,34 +33,22 @@
 
   @if(appConfig.features.bulkPaperOffEnabled()) {
 
-    @defining(
-        model.businessName.getOrElse(messages("changeSuccess.agent.client.name"))
-    ) { clientName =>
-
-      @model.agentEmail.map { agentEmail =>
-        <p>
-          @messages("changeSuccess.agent.email.partOne")
-          <strong class="bold">@agentEmail</strong>
-          @messages("changeSuccess.agent.email.partTwo")
-        </p>
-      }
-
+    @model.agentEmail.map { agentEmail =>
       <p>
-        @messages("changeSuccess.agent.client.partOne")
-        <strong class="bold">@clientName</strong>
-        @messages("changeSuccess.agent.client.partTwo")
+        @messages("changeSuccess.agent.email.partOne")
+        <strong class="bold">@agentEmail</strong>
+        @messages("changeSuccess.agent.email.partTwo")
       </p>
     }
 
   } else {
-
     @model.agentEmail match {
       case Some(email) => {<p>@messages("changeSuccess.helpOne.digital.agent", email)</p>}
       case _ => {<p>@messages("changeSuccess.helpOne.paper.agent")</p>}
     }
-
-    @updateClient(model.businessName)
   }
+
+  @updateClient(model.businessName)
 
   <p><a href="@appConfig.vatAgentClientLookupServicePath">@messages("common.changeClient")</a></p>
 
