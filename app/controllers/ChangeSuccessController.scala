@@ -57,8 +57,8 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
 
   private[controllers] def sessionGuard(changeKey: String, prePopKey: String)(implicit user: User[_]): Future[Result] =
     user.session.get(prePopKey) match {
-      case Some(value) if user.session.get(changeKey).exists(_.equals("true")) =>
-        renderView(changeKey, isRemoval = value == "")
+      case Some(_) if user.session.get(changeKey).exists(_.equals("true")) =>
+        renderView(changeKey)
       case _ =>
         val redirectLocation: Call = changeKey match {
           case `landlineChangeSuccessful` => controllers.landlineNumber.routes.CaptureLandlineNumberController.show()
@@ -67,7 +67,7 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
         Future.successful(Redirect(redirectLocation))
     }
 
-  private[controllers] def renderView(changeKey: String, isRemoval: Boolean)(implicit user: User[_]): Future[Result] =
+  private[controllers] def renderView(changeKey: String)(implicit user: User[_]): Future[Result] =
     for {
       entityName <-
         if (user.isAgent) {getClientEntityName}
@@ -83,7 +83,7 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
 
     } yield {
       val viewModel =
-        constructViewModel(entityName, preference, user.session.get(verifiedAgentEmail), changeKey, isRemoval, emailVerified)
+        constructViewModel(entityName, preference, user.session.get(verifiedAgentEmail), changeKey, emailVerified)
       Ok(changeSuccessView(viewModel))
     }
 
@@ -91,18 +91,17 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
                                               preferenceCall: HttpGetResult[ContactPreference],
                                               agentEmail: Option[String],
                                               changeKey: String,
-                                              isRemoval: Boolean,
                                               emailVerified: Option[Boolean]): ChangeSuccessViewModel = {
     val preference: Option[String] = preferenceCall.fold(_ => None, pref => Some(pref.preference))
-    val titleMessageKey: String = getTitleMessageKey(changeKey, isRemoval)
+    val titleMessageKey: String = getTitleMessageKey(changeKey)
     ChangeSuccessViewModel(titleMessageKey, agentEmail, preference, entityName, emailVerified)
   }
 
-  private[controllers] def getTitleMessageKey(changeKey: String, isRemoval: Boolean): String =
+  private[controllers] def getTitleMessageKey(changeKey: String): String =
     changeKey match {
-      case `landlineChangeSuccessful` => "landlineChangeSuccess.title" + (if(isRemoval) ".remove" else ".change")
-      case `mobileChangeSuccessful` => "mobileChangeSuccess.title" + (if(isRemoval) ".remove" else ".change")
-      case `websiteChangeSuccessful` => "websiteChangeSuccess.title" + (if(isRemoval) ".remove" else ".change")
+      case `landlineChangeSuccessful` => "landlineChangeSuccess.title.change"
+      case `mobileChangeSuccessful` => "mobileChangeSuccess.title.change"
+      case `websiteChangeSuccessful` => "websiteChangeSuccess.title.change"
     }
 
   private[controllers] def getClientEntityName(implicit user: User[_]): Future[Option[String]] =

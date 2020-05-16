@@ -18,7 +18,7 @@ common.error.prefixTitle = Error: {0}
 common.whatHappensNext = What happens next
 common.helpOne.apiFailure = We will send you an update within 15 working days.
 common.changeClient = Change client
-common.agent.updateClient1 = We’ll also contact
+common.agent.updateClient1 = We’ll contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
 common.cancel = Cancel
@@ -105,13 +105,10 @@ verifyEmail.lineTwo.3 = If we send it again, any previous link will stop working
 
 emailChangeSuccess.title = We have received the new email address
 
-landlineChangeSuccess.title.change = Request to change landline number received
-landlineChangeSuccess.title.remove = Request to remove landline number received
-mobileChangeSuccess.title.change = Request to change mobile number received
-mobileChangeSuccess.title.remove = Request to remove mobile number received
+landlineChangeSuccess.title.change = You have asked to change the landline number
+mobileChangeSuccess.title.change = You have asked to change the mobile number
 
-websiteChangeSuccess.title.change = Request to change website address received
-websiteChangeSuccess.title.remove = Request to remove website address received
+websiteChangeSuccess.title.change = You have asked to change the website address
 
 changeSuccess.helpOne.emailVerified = We’ll send you an email within 2 working days with an update or you can check your HMRC secure messages.
 changeSuccess.helpOne.digital = We’ll send you an email within 2 working days with an update, followed by a letter to your principal place of business. You can also check your HMRC secure messages for an update.
@@ -119,6 +116,9 @@ changeSuccess.helpOne.paper = We’ll send a letter to your principal place of b
 changeSuccess.helpOne.digital.agent = We’ll send an email to {0} within 2 working days telling you whether or not the request has been accepted.
 changeSuccess.helpOne.paper.agent = We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
 changeSuccess.helpTwo = Make sure your contact details are up to date.
+
+changeSuccess.agent.email.partOne = We’ll send an email to
+changeSuccess.agent.email.partTwo = within 2 working days telling you whether we can accept your request.
 
 inFlightChange.title = There is already a change pending
 inFlightChange.recentlyRequested = A recent request was made to change the {0}.

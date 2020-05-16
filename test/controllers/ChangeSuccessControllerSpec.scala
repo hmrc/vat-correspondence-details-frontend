@@ -155,23 +155,13 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
   "The .getTitleMessageKey function should return the appropriate message key" when {
 
     "the landline has been changed" in {
-      val result = controller.getTitleMessageKey(landlineChangeSuccessful, isRemoval = false)
+      val result = controller.getTitleMessageKey(landlineChangeSuccessful)
       result shouldBe "landlineChangeSuccess.title.change"
     }
 
-    "the landline has been removed" in {
-      val result = controller.getTitleMessageKey(landlineChangeSuccessful, isRemoval = true)
-      result shouldBe "landlineChangeSuccess.title.remove"
-    }
-
     "the website has been changed" in {
-      val result = controller.getTitleMessageKey(websiteChangeSuccessful, isRemoval = false)
+      val result = controller.getTitleMessageKey(websiteChangeSuccessful)
       result shouldBe "websiteChangeSuccess.title.change"
-    }
-
-    "the website has been removed" in {
-      val result = controller.getTitleMessageKey(websiteChangeSuccessful, isRemoval = true)
-      result shouldBe "websiteChangeSuccess.title.remove"
     }
   }
 

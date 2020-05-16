@@ -31,9 +31,21 @@
 
 @if(user.isAgent) {
 
-  @model.agentEmail match {
-    case Some(email) => {<p>@messages("changeSuccess.helpOne.digital.agent", email)</p>}
-    case _ => {<p>@messages("changeSuccess.helpOne.paper.agent")</p>}
+  @if(appConfig.features.bulkPaperOffEnabled()) {
+
+    @model.agentEmail.map { agentEmail =>
+      <p>
+        @messages("changeSuccess.agent.email.partOne")
+        <strong class="bold">@agentEmail</strong>
+        @messages("changeSuccess.agent.email.partTwo")
+      </p>
+    }
+
+  } else {
+    @model.agentEmail match {
+      case Some(email) => {<p>@messages("changeSuccess.helpOne.digital.agent", email)</p>}
+      case _ => {<p>@messages("changeSuccess.helpOne.paper.agent")</p>}
+    }
   }
 
   @updateClient(model.businessName)

@@ -37,7 +37,8 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
         contactPreferences = appConfig.features.contactPreferencesEnabled(),
         languageSelector = appConfig.features.languageSelectorEnabled(),
         changeContactDetails = appConfig.features.changeContactDetailsEnabled(),
-        emailVerifiedContactPref = appConfig.features.emailVerifiedContactPrefEnabled()
+        emailVerifiedContactPref = appConfig.features.emailVerifiedContactPrefEnabled(),
+        bulkPaperOff = appConfig.features.bulkPaperOffEnabled()
       )
     )))
   }
@@ -57,6 +58,7 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
     appConfig.features.languageSelectorEnabled(model.languageSelector)
     appConfig.features.changeContactDetailsEnabled(model.changeContactDetails)
     appConfig.features.emailVerifiedContactPrefEnabled(model.emailVerifiedContactPref)
+    appConfig.features.bulkPaperOffEnabled(model.bulkPaperOff)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 }

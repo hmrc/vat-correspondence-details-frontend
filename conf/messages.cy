@@ -18,7 +18,7 @@ common.error.prefixTitle = Gwall: {0}
 common.whatHappensNext = Yr hyn sy’n digwydd nesaf
 common.helpOne.apiFailure = Byddwn yn anfon diweddariad atoch cyn pen 15 diwrnod gwaith.
 common.changeClient = Newid cleient
-common.agent.updateClient1 = Byddwn hefyd yn cysylltu â
+common.agent.updateClient1 = Byddwn yn cysylltu â
 common.agent.updateClient2 = gyda diweddariad.
 common.agent.yourClient = eich cleient
 common.cancel = Canslo
@@ -93,8 +93,7 @@ verifyEmail.lineTwo.3 = Os byddwn yn ei anfon eto, ni fydd unrhyw gysylltiadau b
 
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
 
-websiteChangeSuccess.title.change = Mae’ch cais i newid cyfeiriad y wefan wedi dod i law
-websiteChangeSuccess.title.remove = Mae’ch cais i ddileu cyfeiriad y wefan wedi dod i law
+websiteChangeSuccess.title.change = Rydych wedi gofyn am newid cyfeiriad y wefan
 
 changeSuccess.helpOne.emailVerified = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith gyda diweddariad, neu gallwch wirio’ch negeseuon diogel oddi wrth CThEM.
 changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEM i gael diweddariad.
@@ -102,6 +101,9 @@ changeSuccess.helpOne.paper = Byddwn yn anfon llythyr i’ch prif fan busnes i r
 changeSuccess.helpOne.digital.agent = Byddwn yn anfon e-bost i {0} cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a yw’r cais wedi’i dderbyn ai peidio.
 changeSuccess.helpOne.paper.agent = Byddwn yn anfon llythyr o gadarnhad i gyfeiriad yr asiantaeth sydd wedi’i gofrestru gyda CThEM cyn pen 15 diwrnod gwaith.
 changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
+
+changeSuccess.agent.email.partOne = Byddwn yn anfon e-bost i
+changeSuccess.agent.email.partTwo = cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a allwn dderbyn eich cais ai peidio.
 
 inFlightChange.title = Mae newid ar y gweill eisoes
 inFlightChange.recentlyRequested = Cafodd cais ei wneud yn ddiweddar i newid {0}.
@@ -140,7 +142,5 @@ confirmRemoveLandline.heading = Cadarnhau eich bod am ddileu’r rhif ffôn llin
 confirmRemoveMobile.title = Cadarnhau eich bod am ddileu’r rhif ffôn symudol
 confirmRemoveMobile.heading = Cadarnhau eich bod am ddileu’r rhif ffôn symudol: {0}
 
-landlineChangeSuccess.title.change = Mae’ch cais i newid y rhif ffôn llinell dir wedi dod i law
-landlineChangeSuccess.title.remove = Mae’ch cais i ddileu’r rhif ffôn llinell dir wedi dod i law
-mobileChangeSuccess.title.change = Mae’ch cais i newid y rhif ffôn symudol wedi dod i law
-mobileChangeSuccess.title.remove = Mae’ch cais i ddileu’r rhif ffôn symudol wedi dod i law
+landlineChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif llinell dir
+mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symudol
