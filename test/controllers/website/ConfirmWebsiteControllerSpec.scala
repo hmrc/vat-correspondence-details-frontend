@@ -26,7 +26,7 @@ import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
-import views.html.website.ConfirmWebsiteView
+import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.Future
 
@@ -35,7 +35,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
   val controller = new ConfirmWebsiteController(
     mockErrorHandler,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmWebsiteView],
+    injector.instanceOf[CheckYourAnswersView],
     mockAuditingService
   )
 

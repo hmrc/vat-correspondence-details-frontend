@@ -71,16 +71,6 @@ sessionTimeout.helpOne = I reoli’ch cyfrif TAW, bydd yn rhaid i chi
 sessionTimeout.helpTwo = fewngofnodi
 sessionTimeout.helpThree = gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
 
-confirmEmail.title = Cadarnhau’r cyfeiriad e-bost newydd
-confirmEmail.heading = Cadarnhau’r cyfeiriad e-bost newydd
-confirmEmail.link = Golygu’r cyfeiriad e-bost
-confirmEmail.edit = Golygu’r cyfeiriad e-bost
-
-confirmWebsite.title = Cadarnhau cyfeiriad y wefan
-confirmWebsite.heading = Cadarnhau cyfeiriad y wefan
-confirmWebsite.p1 = Cyfeiriad newydd y wefan yw {0}
-confirmWebsite.change = Newid cyfeiriad y wefan
-
 confirmWebsiteRemove.title = Cadarnhau eich bod am ddileu cyfeiriad y wefan
 confirmWebsiteRemove.heading = Cadarnhau eich bod am ddileu cyfeiriad y wefan: {0}
 
@@ -88,9 +78,13 @@ checkYourAnswers.title = Gwiriwch eich atebion
 checkYourAnswers.vatBusinessDetails = Manylion busnes TAW
 checkYourAnswers.change = Newid
 checkYourAnswers.emailAddress = Cyfeiriad e-bost
+checkYourAnswers.emailAddress.edit = Golygu’r cyfeiriad e-bost
 checkYourAnswers.landlineNumber = Rhif ffôn llinell dir
-checkYourAnswers.mobileNumber = Rhif ffôn symudol
+checkYourAnswers.landlineNumber.edit = Newid y rhif ffôn llinell dir
 checkYourAnswers.websiteAddress = Cyfeiriad y wefan
+checkYourAnswers.websiteAddress.edit = Newid cyfeiriad y wefan
+checkYourAnswers.mobileNumber = Rhif ffôn symudol
+checkYourAnswers.mobileNumber.edit = Newid y rhif ffôn symudol
 
 verifyEmail.title = Dilysu’ch cyfeiriad e-bost
 verifyEmail.heading = Dilysu’ch cyfeiriad e-bost
@@ -135,14 +129,6 @@ captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyn
 captureMobile.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif ffôn symudol
 captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07946 123456 neu 00447946 123456 ac ni allwch nodi arwydd plws.
 captureMobile.remove = Dileu rhif ffôn symudol
-
-confirmMobile.edit = Newid y rhif ffôn symudol
-confirmMobile.newNumber = Y rhif ffôn symudol newydd yw
-confirmMobile.heading = Cadarnhau’r rhif ffôn symudol
-
-confirmLandlineNumber.title = Cadarnhau’r rhif ffôn llinell dir
-confirmLandlineNumber.landline = Y rhif ffôn llinell dir newydd yw
-confirmLandlineNumber.edit = Newid y rhif ffôn llinell dir
 
 confirmRemoveLandline.title = Cadarnhau eich bod am ddileu’r rhif ffôn llinell dir
 confirmRemoveLandline.heading = Cadarnhau eich bod am ddileu’r rhif ffôn llinell dir: {0}
