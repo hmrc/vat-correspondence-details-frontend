@@ -84,6 +84,14 @@ confirmWebsite.change = Newid cyfeiriad y wefan
 confirmWebsiteRemove.title = Cadarnhau eich bod am ddileu cyfeiriad y wefan
 confirmWebsiteRemove.heading = Cadarnhau eich bod am ddileu cyfeiriad y wefan: {0}
 
+checkYourAnswers.title = Gwiriwch eich atebion
+checkYourAnswers.vatBusinessDetails = Manylion busnes TAW
+checkYourAnswers.change = Newid
+checkYourAnswers.emailAddress = Cyfeiriad e-bost
+checkYourAnswers.landlineNumber = Rhif ffôn llinell dir
+checkYourAnswers.mobileNumber = Rhif ffôn symudol
+checkYourAnswers.websiteAddress = Cyfeiriad y wefan
+
 verifyEmail.title = Dilysu’ch cyfeiriad e-bost
 verifyEmail.heading = Dilysu’ch cyfeiriad e-bost
 verifyEmail.lineOne = Rydym wedi anfon e-bost at {0}. Cliciwch ar y cysylltiad yn yr e-bost i ddilysu’ch cyfeiriad e-bost.
