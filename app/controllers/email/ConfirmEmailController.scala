@@ -27,10 +27,11 @@ import javax.inject.{Inject, Singleton}
 import models.User
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
+import models.viewModels.CheckYourAnswersViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import utils.LoggerUtil.{logInfo, logWarn}
-import views.html.email.ConfirmEmailView
+import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
                                        val auditService: AuditingService,
                                        val vatSubscriptionService: VatSubscriptionService,
-                                       confirmEmailView: ConfirmEmailView)
+                                       confirmEmailView: CheckYourAnswersView)
                                       (implicit val appConfig: AppConfig,
                                        mcc: MessagesControllerComponents,
                                        authComps: AuthPredicateComponents,
@@ -50,7 +51,15 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
 
     extractSessionEmail(user) match {
       case Some(email) =>
-        Future.successful(Ok(confirmEmailView(email)))
+        Future.successful(Ok(
+          confirmEmailView(CheckYourAnswersViewModel(
+            question = "checkYourAnswers.emailAddress",
+            answer = email,
+            changeLink = routes.CaptureEmailController.show().url,
+            changeLinkHiddenText = "confirmEmail.edit",
+            continueLink = routes.ConfirmEmailController.updateEmailAddress().url
+          ))
+        ))
       case _ =>
         Future.successful(Redirect(routes.CaptureEmailController.show()))
     }

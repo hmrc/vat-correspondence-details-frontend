@@ -96,6 +96,14 @@ confirmWebsite.change = Change the website address
 confirmWebsiteRemove.title = Confirm you want to remove the website address
 confirmWebsiteRemove.heading = Confirm you want to remove the website address: {0}
 
+checkYourAnswers.title = Check your answers
+checkYourAnswers.vatBusinessDetails = VAT business details
+checkYourAnswers.change = Change
+checkYourAnswers.emailAddress = Email address
+checkYourAnswers.landlineNumber = Landline number
+checkYourAnswers.mobileNumber = Mobile number
+checkYourAnswers.websiteAddress = Website Address
+
 verifyEmail.title = Verify your email address
 verifyEmail.heading = Verify your email address
 verifyEmail.lineOne = We’ve sent an email to {0}. Click on the link in the email to verify your email address.
