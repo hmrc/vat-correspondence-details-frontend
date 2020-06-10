@@ -56,7 +56,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
             question = "checkYourAnswers.emailAddress",
             answer = email,
             changeLink = routes.CaptureEmailController.show().url,
-            changeLinkHiddenText = "confirmEmail.edit",
+            changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
             continueLink = routes.ConfirmEmailController.updateEmailAddress().url
           ))
         ))

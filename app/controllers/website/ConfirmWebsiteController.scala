@@ -25,17 +25,18 @@ import controllers.BaseController
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.errors.ErrorModel
+import models.viewModels.CheckYourAnswersViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import utils.LoggerUtil.logWarn
-import views.html.website.ConfirmWebsiteView
+import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
                                          val vatSubscriptionService: VatSubscriptionService,
-                                         confirmWebsiteView: ConfirmWebsiteView,
+                                         confirmWebsiteView: CheckYourAnswersView,
                                          auditService: AuditingService)
                                         (implicit val appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
@@ -48,7 +49,15 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
 
     user.session.get(prepopulationWebsiteKey).filter(_.nonEmpty) match {
       case Some(website) =>
-        Ok(confirmWebsiteView(website))
+        Ok(
+          confirmWebsiteView(CheckYourAnswersViewModel(
+            question = "checkYourAnswers.websiteAddress",
+            answer = website,
+            changeLink = routes.CaptureWebsiteController.show().url,
+            changeLinkHiddenText = "checkYourAnswers.websiteAddress.edit",
+            continueLink = routes.ConfirmWebsiteController.updateWebsite().url
+          )
+        ))
       case _ =>
         Redirect(routes.CaptureWebsiteController.show())
     }

@@ -27,7 +27,7 @@ import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
-import views.html.landlineNumber.ConfirmLandlineNumberView
+import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.Future
 
@@ -37,7 +37,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
   val controller = new ConfirmLandlineNumberController(
     mockErrorHandler,
     mockVatSubscriptionService,
-    inject[ConfirmLandlineNumberView],
+    inject[CheckYourAnswersView],
     mockAuditingService
   )
 

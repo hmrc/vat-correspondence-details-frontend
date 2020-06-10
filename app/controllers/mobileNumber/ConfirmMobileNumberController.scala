@@ -27,17 +27,18 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
+import models.viewModels.CheckYourAnswersViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import utils.LoggerUtil.{logInfo, logWarn}
-import views.html.mobileNumber.ConfirmMobileNumberView
+import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
                                               val vatSubscriptionService: VatSubscriptionService,
-                                              confirmMobileNumberView: ConfirmMobileNumberView,
+                                              confirmMobileNumberView: CheckYourAnswersView,
                                               auditService: AuditingService)
                                              (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
@@ -60,8 +61,14 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
 
     prepopulationMobile match {
       case None => Redirect(routes.CaptureMobileNumberController.show())
-      case _ => Ok(confirmMobileNumberView(
-        numberToShow(prepopulationMobile, validationMobile))
+      case _ => Ok(
+        confirmMobileNumberView(CheckYourAnswersViewModel(
+          question = "checkYourAnswers.mobileNumber",
+          answer = numberToShow(prepopulationMobile, validationMobile),
+          changeLink = routes.CaptureMobileNumberController.show().url,
+          changeLinkHiddenText = "checkYourAnswers.mobileNumber.edit",
+          continueLink = routes.ConfirmMobileNumberController.updateMobileNumber().url
+        ))
       )
     }
   }

@@ -27,17 +27,18 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
+import models.viewModels.CheckYourAnswersViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import utils.LoggerUtil.{logInfo, logWarn}
-import views.html.landlineNumber.ConfirmLandlineNumberView
+import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
                                                 val vatSubscriptionService: VatSubscriptionService,
-                                                confirmLandlineNumberView: ConfirmLandlineNumberView,
+                                                confirmLandlineNumberView: CheckYourAnswersView,
                                                 auditService: AuditingService)
                                                (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
@@ -60,8 +61,14 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
 
     prepopulationLandline match {
       case None => Redirect(routes.CaptureLandlineNumberController.show())
-      case _ => Ok(confirmLandlineNumberView(
-        numberToShow(prepopulationLandline, validationLandline))
+      case _ => Ok(
+        confirmLandlineNumberView(CheckYourAnswersViewModel(
+          question = "checkYourAnswers.landlineNumber",
+          answer = numberToShow(prepopulationLandline, validationLandline),
+          changeLink = routes.CaptureLandlineNumberController.show().url,
+          changeLinkHiddenText = "checkYourAnswers.landlineNumber.edit",
+          continueLink = routes.ConfirmLandlineNumberController.updateLandlineNumber().url
+        ))
       )
     }
   }
