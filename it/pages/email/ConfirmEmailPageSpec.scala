@@ -50,7 +50,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("confirmEmail.title"))
+            pageTitle(generateDocumentTitle("checkYourAnswers.title"))
           )
         }
       }

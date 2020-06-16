@@ -28,7 +28,7 @@ import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
-import views.html.email.ConfirmEmailView
+import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.Future
 
@@ -38,7 +38,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     mockErrorHandler,
     mockAuditingService,
     mockVatSubscriptionService,
-    injector.instanceOf[ConfirmEmailView]
+    injector.instanceOf[CheckYourAnswersView]
   )
 
   "Calling the extractEmail function in ConfirmEmailController" when {

@@ -27,7 +27,7 @@ import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
-import views.html.mobileNumber.ConfirmMobileNumberView
+import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.Future
 
@@ -37,7 +37,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
   val controller = new ConfirmMobileNumberController(
     mockErrorHandler,
     mockVatSubscriptionService,
-    inject[ConfirmMobileNumberView],
+    inject[CheckYourAnswersView],
     mockAuditingService
   )
 

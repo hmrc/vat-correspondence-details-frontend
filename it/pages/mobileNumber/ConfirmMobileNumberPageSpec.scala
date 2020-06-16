@@ -45,7 +45,7 @@ class ConfirmMobileNumberPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.OK),
-            pageTitle(generateDocumentTitle("confirmMobile.heading"))
+            pageTitle(generateDocumentTitle("checkYourAnswers.title"))
           )
         }
       }
