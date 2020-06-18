@@ -19,7 +19,7 @@
 
 @this(mainTemplate: MainTemplate, updateClient: UpdateClient)
 
-@(model: ChangeSuccessViewModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: User[_])
+@(model: ChangeSuccessViewModel)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @mainTemplate(title = messages(model.pageTitle)) {
 
@@ -73,5 +73,5 @@
   <p>@messages("changeSuccess.helpTwo")</p>
 }
 
-<a href="@appConfig.manageVatSubscriptionServicePath" class="button" role="button">@messages("base.finish")</a>
+<a href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)" class="button" role="button">@messages("base.finish")</a>
 }
