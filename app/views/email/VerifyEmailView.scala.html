@@ -26,9 +26,10 @@
 
     <p>@messages("verifyEmail.lineOne", email)</p>
 
+    <p>@messages("verifyEmail.lineTwo")</p>
+
     <p>
-        @messages("verifyEmail.lineTwo.1")
-        <a href='@controllers.email.routes.VerifyEmailController.sendVerification().url'>@messages("verifyEmail.lineTwo.2")</a>.
-        @messages("verifyEmail.lineTwo.3")
+        @messages("verifyEmail.lineThree.1")
+        <a href='@controllers.email.routes.VerifyEmailController.sendVerification().url'>@messages("verifyEmail.lineThree.2")</a>@messages("common.fullstop")
     </p>
 }
