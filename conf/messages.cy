@@ -21,10 +21,10 @@ common.changeClient = Newid cleient
 common.agent.updateClient1 = Byddwn yn cysylltu â
 common.agent.updateClient2 = gyda diweddariad.
 common.agent.yourClient = eich cleient
-common.cancel = Canslo
 common.fullstop = .
 common.yes = Iawn
 common.no = Na
+common.accountDetails = Bwrw golwg dros fanylion eich cyfrif
 
 standardError.title = Mae problem gyda’r gwasanaeth
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
@@ -143,3 +143,7 @@ mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symud
 
 emailToUse.title = A ydych am i ni ddefnyddio’r cyfeiriad e-bost hwn er mwyn cysylltu â chi ynghylch TAW?
 emailToUse.error = Dewiswch ‘Iawn’ os mai dyma’r cyfeiriad e-bost rydych am i ni ei ddefnyddio
+
+contactPrefConfirmation.title = Rydych wedi gofyn i ni newid sut yr ydym yn cysylltu â chi ynghylch TAW
+contactPrefConfirmation.contactYou = Os gallwn dderbyn y newid, byddwn yn cysylltu â chi ynghylch TAW yn {0}
+contactPrefConfirmation.stillNeedLetters = Bydd angen i ni anfon rhai llythyrau atoch drwy’r post o hyd oherwydd bod y gyfraith yn dweud wrthym am wneud hynny.
