@@ -107,6 +107,9 @@ verifyEmail.lineTwo = You need to click the link in our email within 15 minutes.
 verifyEmail.lineThree.1 = Check your junk folder. If it’s not there we can
 verifyEmail.lineThree.2 = send it again
 
+emailPreference.title = Do you want us to send you emails instead of letters?
+emailPreference.hint = We currently send messages about your VAT by letter.
+
 emailChangeSuccess.title = We have received the new email address
 
 landlineChangeSuccess.title.change = You have asked to change the landline number

@@ -95,6 +95,9 @@ verifyEmail.lineTwo = Mae angen i chi glicio’r cysylltiad yn yr e-bost cyn pen
 verifyEmail.lineThree.1 = Chwiliwch yn eich ffolder sothach. Os nad yw’r e-bost yno, gallwn
 verifyEmail.lineThree.2 = ei anfon eto
 
+emailPreference.title = A ydych am i ni anfon e-byst atoch yn hytrach na llythyrau?
+emailPreference.hint = Ar hyn o bryd, rydym yn anfon negeseuon ynghylch eich TAW atoch drwy lythyr.
+
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
 
 websiteChangeSuccess.title.change = Rydych wedi gofyn am newid cyfeiriad y wefan
