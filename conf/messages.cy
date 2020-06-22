@@ -23,6 +23,8 @@ common.agent.updateClient2 = gyda diweddariad.
 common.agent.yourClient = eich cleient
 common.cancel = Canslo
 common.fullstop = .
+common.yes = Iawn
+common.no = Na
 
 standardError.title = Mae problem gyda’r gwasanaeth 
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
@@ -138,3 +140,6 @@ confirmRemoveMobile.heading = Cadarnhau eich bod am ddileu’r rhif ffôn symudo
 
 landlineChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif llinell dir
 mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symudol
+
+emailToUse.title = A ydych am i ni ddefnyddio’r cyfeiriad e-bost hwn er mwyn cysylltu â chi ynghylch TAW?
+emailToUse.error = Dewiswch ‘Iawn’ os mai dyma’r cyfeiriad e-bost rydych am i ni ei ddefnyddio

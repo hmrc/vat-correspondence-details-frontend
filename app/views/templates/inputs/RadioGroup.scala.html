@@ -1,0 +1,57 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.helper._
+
+@this()
+
+@(field: Field,
+  choices: Seq[(String, String)],
+  question: String,
+  additionalContent: Option[Html] = None,
+  inline: Boolean = false)(implicit messages: Messages)
+
+@elements = @{ FieldElements(field.id, field, null, Map(), messages) }
+
+<div @if(elements.hasErrors){ class="form-field--error"}>
+
+    <fieldset>
+        <legend>
+            <h1 id="page-heading" class="heading-large">@question</h1>
+        </legend>
+
+        @additionalContent.map { content => @content }
+
+        @elements.errors.map { error => <span class="error-message">@messages(error)</span> }
+
+        <div @if(inline){ class="inline"}>
+            @choices.map { case (value, label) =>
+
+                @defining(s"${elements.field.name}-${value.toLowerCase}") { inputId =>
+                    <div class="multiple-choice">
+                        <input
+                            type="radio"
+                            id="@inputId"
+                            name="@elements.field.name"
+                            value="@value"
+                            @field.value.filter( _ == value).map{_ => checked="checked"}/>
+                        <label for="@inputId">@label</label>
+                    </div>
+                }
+            }
+        </div>
+    </fieldset>
+</div>
