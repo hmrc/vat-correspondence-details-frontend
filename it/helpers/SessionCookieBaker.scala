@@ -54,7 +54,6 @@ object SessionCookieBaker {
       SessionKeys.sessionId -> s"stubbed-${UUID.randomUUID}",
       SessionKeys.userId -> s"/auth/oid/1234567890",
       SessionKeys.authToken -> "token",
-      SessionKeys.authProvider -> "GGW",
       SessionKeys.lastRequestTimestamp -> rollbackTimestamp,
       SessionKeys.authToken -> "auth"
     ) ++ additionalData

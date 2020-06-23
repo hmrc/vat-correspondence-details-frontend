@@ -63,6 +63,9 @@ trait AppConfig {
   def contactPreferencesUrl(vrn: String): String
   def feedbackUrl(redirect: String): String
   val accessibilityLinkUrl: String
+  val btaAccountDetailsUrl: String
+  def dynamicJourneyEntryUrl(isAgent: Boolean): String =
+    if(features.btaEntryPointEnabled() && !isAgent) btaAccountDetailsUrl else manageVatSubscriptionServicePath
 }
 
 @Singleton
@@ -73,8 +76,10 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override lazy val contactFormServiceIdentifier = "VATC"
   override lazy val contactFrontendService: String = sc.getString(Keys.contactFrontendService)
   override lazy val feedbackFormPartialUrl: String = s"$contactFrontendService/contact/beta-feedback/form"
-  override lazy val reportAProblemPartialUrl = s"$contactFrontendService/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  override lazy val reportAProblemNonJSUrl = s"$contactFrontendService/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemPartialUrl =
+    s"$contactFrontendService/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemNonJSUrl =
+    s"$contactFrontendService/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 
   override lazy val assetsPrefix: String = sc.getString(Keys.assetsUrl) + sc.getString(Keys.assetsVersion)
 
@@ -146,9 +151,12 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override def contactPreferencesUrl(vrn: String): String = contactPreferencesService + s"/contact-preferences/vat/vrn/$vrn"
 
-  override def feedbackUrl(redirect: String): String = s"$contactFrontendService/contact/beta-feedback?service=$contactFormServiceIdentifier" +
+  override def feedbackUrl(redirect: String): String =
+    s"$contactFrontendService/contact/beta-feedback?service=$contactFormServiceIdentifier" +
     s"&backUrl=${ContinueUrl(host + redirect).encodedUrl}"
 
-  override val accessibilityLinkUrl: String = sc.getString(ConfigKeys.vatSummaryFrontendServiceUrl) + sc.getString(ConfigKeys.vatSummaryAccessibilityUrl)
+  override val accessibilityLinkUrl: String = sc.getString(Keys.vatSummaryFrontendServiceUrl) +
+    sc.getString(Keys.vatSummaryAccessibilityUrl)
 
+  override val btaAccountDetailsUrl: String = sc.getString(Keys.btaHost) + sc.getString(Keys.btaAccountDetailsUrl)
 }

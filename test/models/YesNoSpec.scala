@@ -16,12 +16,30 @@
 
 package models
 
-case class FeatureSwitchModel(agentAccess: Boolean,
-                              emailVerification: Boolean,
-                              stubContactPreferences: Boolean,
-                              contactPreferences: Boolean,
-                              languageSelector: Boolean,
-                              changeContactDetails: Boolean,
-                              emailVerifiedContactPref: Boolean,
-                              bulkPaperOff: Boolean,
-                              btaEntryPoint: Boolean)
+import play.api.libs.json.Json
+import utils.TestUtil
+
+class YesNoSpec extends TestUtil {
+
+  "YesNo.Yes" should {
+
+    "serialize to the correct JSON" in {
+      Json.toJson(Yes) shouldBe Json.obj(YesNo.id -> Yes.value)
+    }
+
+    "deserialize from the correct JSON" in {
+      Json.obj(YesNo.id -> Yes.value).as[YesNo] shouldBe Yes
+    }
+  }
+
+  "YesNo.No" should {
+
+    "serialize to the correct JSON" in {
+      Json.toJson(No) shouldBe Json.obj(YesNo.id -> No.value)
+    }
+
+    "deserialize from the correct JSON" in {
+      Json.obj(YesNo.id -> No.value).as[YesNo] shouldBe No
+    }
+  }
+}
