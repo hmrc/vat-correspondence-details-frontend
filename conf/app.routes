@@ -68,7 +68,7 @@ GET         /update-remove-mobile-number         controllers.mobileNumber.Confir
 GET         /mobile-number-confirmation            controllers.ChangeSuccessController.mobileNumber
 
 # email preference change successful
-GET         /contact-preference-email-confirmation controllers.email.EmailPreferenceConfirmationController.show
+GET         /confirmation-update-preference        controllers.email.EmailPreferenceConfirmationController.show
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                          controllers.Assets.at(path="/public", file)
