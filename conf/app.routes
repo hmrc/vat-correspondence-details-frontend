@@ -69,6 +69,7 @@ GET         /mobile-number-confirmation            controllers.ChangeSuccessCont
 
 # contact preference confirm email
 GET         /preference-confirm-email              controllers.changePref.EmailToUseController.show
+POST        /preference-confirm-email              controllers.changePref.EmailToUseController.submit
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                          controllers.Assets.at(path="/public", file)

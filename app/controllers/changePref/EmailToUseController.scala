@@ -19,10 +19,13 @@ package controllers.changePref
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
+import controllers.email.routes
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.YesNoForm
 import javax.inject.{Inject, Singleton}
+import models.{No, Yes, YesNo}
+import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import views.html.changePref.EmailToUseView
@@ -39,6 +42,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
                                       inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
+  val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
 
   def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
@@ -51,7 +55,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
     }
 
     validationEmail map {
-      case Some(email) => Ok(emailToUseView(YesNoForm.yesNoForm("emailToUse.error"), email))
+      case Some(email) => Ok(emailToUseView(form, email))
         .addingToSession(SessionKeys.validationEmailKey -> email)
         .addingToSession(SessionKeys.prepopulationEmailKey -> email)
       case _ => errorHandler.showInternalServerError
@@ -59,5 +63,23 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   }
 
 
+
+  def submit: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+    val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
+
+    validationEmail match {
+      case Some(email) => form.bindFromRequest().fold (
+        error =>
+          Future.successful (BadRequest (emailToUseView (error, email))),
+        success =>
+          success match {
+              //TODO Update Yes case to confirmation screen controller
+            case Yes =>Future.successful(Redirect(routes.CaptureEmailController.show()))
+            case No => Future.successful(Redirect(routes.CaptureEmailController.show()))
+          }
+      )
+      case _ => Future.successful(errorHandler.showInternalServerError)
+    }
+  }
 
 }
