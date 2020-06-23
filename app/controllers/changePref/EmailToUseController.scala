@@ -44,7 +44,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   implicit val ec: ExecutionContext = mcc.executionContext
   val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
 
-  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+  def show: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
       case Some(email) => Future.successful(Some(email))
       case _ =>
@@ -64,7 +64,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
 
 
 
-  def submit: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+  def submit: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
     val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
 
     validationEmail match {
@@ -74,8 +74,8 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
         success =>
           success match {
               //TODO Update Yes case to confirmation screen controller
-            case Yes =>Future.successful(Redirect(routes.CaptureEmailController.show()))
-            case No => Future.successful(Redirect(routes.CaptureEmailController.show()))
+            case Yes =>Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
+            case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
           }
       )
       case _ => Future.successful(errorHandler.showInternalServerError)

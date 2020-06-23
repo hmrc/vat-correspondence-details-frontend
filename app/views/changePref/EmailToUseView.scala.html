@@ -36,8 +36,7 @@
 
     @errorSummary(messages("common.error.heading"), emailToUseForm)
 
-    @*TODO: correct form action once controller has been built*@
-    @form(action = controllers.email.routes.CaptureEmailController.show, 'novalidate -> "novalidate") {
+    @form(action = controllers.changePref.routes.EmailToUseController.submit, 'novalidate -> "novalidate") {
 
         <div id="@yesNo" class="form-group">
             @radioGroup(
