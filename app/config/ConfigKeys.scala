@@ -52,6 +52,7 @@ object ConfigKeys {
   val changeContactDetailsFeature: String = "features.changeContactDetails.enabled"
   val emailVerifiedContactPrefFeature: String = "features.emailVerifiedContactPref.enabled"
   val bulkPaperOffFeature: String = "features.bulkPaperOff.enabled"
+  val btaEntryPointFeature: String = "features.btaEntryPoint.enabled"
 
   val vatSubscription: String = "vat-subscription"
 
@@ -67,4 +68,7 @@ object ConfigKeys {
 
   val vatSummaryFrontendServiceUrl: String = "vat-summary-frontend.url"
   val vatSummaryAccessibilityUrl: String = "vat-summary-frontend.accessibilityUrl"
+
+  val btaHost: String = "business-tax-account.url"
+  val btaAccountDetailsUrl: String = "business-tax-account.accountDetails"
 }

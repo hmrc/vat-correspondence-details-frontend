@@ -63,8 +63,8 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
             elementText(Selectors.backLink) shouldBe "Back"
           }
 
-          "should have the correct back link" in {
-            element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
+          "should have the correct href" in {
+            element(Selectors.backLink).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
           }
         }
 
@@ -73,7 +73,8 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         }
 
         "have the correct field hint" in {
-          elementText(Selectors.fieldLabel) shouldBe "We will use this to send you updates about your VAT account if you have agreed to be contacted by email."
+          elementText(Selectors.fieldLabel) shouldBe
+            "We will use this to send you updates about your VAT account if you have agreed to be contacted by email."
         }
 
         "have the email form with the correct form action" in {
@@ -113,7 +114,8 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
       }
 
       "the user has no email address in ETMP" should {
-        lazy val view: Html = injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = "")(user, messages, mockConfig)
+        lazy val view: Html = injectedView(emailForm(testEmail),
+          emailNotChangedError = false, currentEmail = "")(user, messages, mockConfig)
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the email text field with no pre-populated value" in {
@@ -160,6 +162,22 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         elementExtinct(Selectors.onlyAddEmail)
       }
     }
+
+    "the BTA entry point feature is set to false" should {
+
+      lazy val view: Html = {
+        mockConfig.features.btaEntryPointEnabled(false)
+        injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = testEmail)(user, messages, mockConfig)
+      }
+
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have a back link" which {
+
+        "should have the correct href" in {
+          element(Selectors.backLink).attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+        }
+      }
+    }
   }
 }
-

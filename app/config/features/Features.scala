@@ -30,4 +30,5 @@ class Features @Inject()(config: Configuration) {
   val changeContactDetailsEnabled = new Feature(ConfigKeys.changeContactDetailsFeature, config)
   val emailVerifiedContactPrefEnabled = new Feature(ConfigKeys.emailVerifiedContactPrefFeature, config)
   val bulkPaperOffEnabled = new Feature(ConfigKeys.bulkPaperOffFeature, config)
+  val btaEntryPointEnabled = new Feature(ConfigKeys.btaEntryPointFeature, config)
 }
