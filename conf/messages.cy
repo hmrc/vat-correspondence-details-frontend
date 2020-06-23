@@ -26,7 +26,7 @@ common.fullstop = .
 common.yes = Iawn
 common.no = Na
 
-standardError.title = Mae problem gyda’r gwasanaeth 
+standardError.title = Mae problem gyda’r gwasanaeth
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 standardError.message = Rhowch gynnig arall arni yn nes ymlaen.
 
@@ -88,12 +88,12 @@ checkYourAnswers.websiteAddress.edit = Newid cyfeiriad y wefan
 checkYourAnswers.mobileNumber = Rhif ffôn symudol
 checkYourAnswers.mobileNumber.edit = Newid y rhif ffôn symudol
 
-verifyEmail.title = Dilysu’ch cyfeiriad e-bost
-verifyEmail.heading = Dilysu’ch cyfeiriad e-bost
-verifyEmail.lineOne = Rydym wedi anfon e-bost at {0}. Cliciwch ar y cysylltiad yn yr e-bost i ddilysu’ch cyfeiriad e-bost.
-verifyEmail.lineTwo.1 = Chwiliwch yn eich ffolder sothach. Os nad yw’r e-bost yno, gallwn
-verifyEmail.lineTwo.2 = ei anfon eto
-verifyEmail.lineTwo.3 = Os byddwn yn ei anfon eto, ni fydd unrhyw gysylltiadau blaenorol yn gweithio mwyach.
+verifyEmail.title = Cadarnhau’ch cyfeiriad e-bost
+verifyEmail.heading = Cadarnhau’ch cyfeiriad e-bost
+verifyEmail.lineOne = Rydym wedi anfon e-bost at {0}
+verifyEmail.lineTwo = Mae angen i chi glicio’r cysylltiad yn yr e-bost cyn pen 15 munud. Bydd hyn yn cadarnhau’ch cyfeiriad e-bost.
+verifyEmail.lineThree.1 = Chwiliwch yn eich ffolder sothach. Os nad yw’r e-bost yno, gallwn
+verifyEmail.lineThree.2 = ei anfon eto
 
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
 

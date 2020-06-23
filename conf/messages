@@ -100,12 +100,12 @@ checkYourAnswers.websiteAddress.edit = Change the website address
 checkYourAnswers.mobileNumber = Mobile number
 checkYourAnswers.mobileNumber.edit = Change the mobile number
 
-verifyEmail.title = Verify your email address
-verifyEmail.heading = Verify your email address
-verifyEmail.lineOne = We’ve sent an email to {0}. Click on the link in the email to verify your email address.
-verifyEmail.lineTwo.1 = Check your junk folder. If it’s not there we can
-verifyEmail.lineTwo.2 = send it again
-verifyEmail.lineTwo.3 = If we send it again, any previous link will stop working.
+verifyEmail.title = Confirm your email address
+verifyEmail.heading = Confirm your email address
+verifyEmail.lineOne = We’ve sent an email to {0}
+verifyEmail.lineTwo = You need to click the link in our email within 15 minutes. This will confirm your email address.
+verifyEmail.lineThree.1 = Check your junk folder. If it’s not there we can
+verifyEmail.lineThree.2 = send it again
 
 emailChangeSuccess.title = We have received the new email address
 
