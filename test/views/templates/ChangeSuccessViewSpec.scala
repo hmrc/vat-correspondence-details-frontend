@@ -16,8 +16,6 @@
 
 package views.templates
 
-import assets.BaseTestConstants
-import models.User
 import models.contactPreferences.ContactPreference
 import models.viewModels.ChangeSuccessViewModel
 import org.jsoup.Jsoup
@@ -49,7 +47,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
         "the contact preference is Digital - email not verified" should {
 
           val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.digital), None, None)
-          lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111"))
+          lazy val view = injectedView(viewModel)(user, messages, mockConfig)
 
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -65,8 +63,8 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
             elementText(Selectors.button) shouldBe "Finish"
           }
 
-          "have a finish button which navigates to the Change of Circs overview page" in {
-            element(Selectors.button).select("a").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+          "have a finish button which navigates to the BTA Account Details page" in {
+            element(Selectors.button).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
           }
 
           "have the correct first paragraph" in {
@@ -82,7 +80,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
         "the contact preference is Digital - verified email" should {
           val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.digital), None, Some(true))
-          lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111"))
+          lazy val view = injectedView(viewModel)(user, messages, mockConfig)
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the correct first paragraph" in {
@@ -93,7 +91,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
         "the contact preference is Paper" should {
           val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.paper), None, None)
-          lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111"))
+          lazy val view = injectedView(viewModel)(user, messages, mockConfig)
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the correct first paragraph" in {
@@ -105,10 +103,24 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
       "the contact preference is not retrieved" should {
         val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, None, None)
-        lazy implicit val document: Document = Jsoup.parse(injectedView(viewModel)(request, messages, mockConfig, User("1111111111")).body)
+        lazy implicit val document: Document = Jsoup.parse(injectedView(viewModel)(user, messages, mockConfig).body)
 
         "have the correct first paragraph" in {
           elementText(Selectors.paragraphOne) shouldBe "We will send you an update within 15 working days."
+        }
+      }
+
+      "the BTA entry point feature is set to false" should {
+
+        val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.digital), None, None)
+        lazy val view = {
+          mockConfig.features.btaEntryPointEnabled(false)
+          injectedView(viewModel)(user, messages, mockConfig)
+        }
+        lazy implicit val document: Document = Jsoup.parse(view.body)
+
+        "have a finish button which navigates to the Change of Circs overview page" in {
+          element(Selectors.button).attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
         }
       }
     }
@@ -119,7 +131,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
         "the agent has an email address registered" should {
           val viewModel = ChangeSuccessViewModel(exampleTitle, Some("agent@example.com"), None, Some("TheBusiness"), None)
-          lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+          lazy val view = injectedView(viewModel)(agent, messages, mockConfig)
 
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -151,7 +163,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
         "the agent doesn't have an email address registered" should {
           val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, Some("TheBusiness"), None)
-          lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+          lazy val view = injectedView(viewModel)(agent, messages, mockConfig)
 
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -183,7 +195,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
         "the client's business name isn't retrieved" should {
           val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, None, None)
-          lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+          lazy val view = injectedView(viewModel)(agent, messages, mockConfig)
 
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -229,7 +241,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
             )
             lazy val view = {
               mockConfig.features.bulkPaperOffEnabled(true)
-              injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+              injectedView(viewModel)(agent, messages, mockConfig)
             }
             lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -255,7 +267,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
             )
             lazy val view = {
               mockConfig.features.bulkPaperOffEnabled(true)
-              injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+              injectedView(viewModel)(agent, messages, mockConfig)
             }
             lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -283,7 +295,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
             )
             lazy val view = {
               mockConfig.features.bulkPaperOffEnabled(true)
-              injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+              injectedView(viewModel)(agent, messages, mockConfig)
             }
             lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -303,7 +315,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
             )
             lazy val view = {
               mockConfig.features.bulkPaperOffEnabled(true)
-              injectedView(viewModel)(request, messages, mockConfig, User("1111111111", arn = Some(BaseTestConstants.arn)))
+              injectedView(viewModel)(agent, messages, mockConfig)
             }
             lazy implicit val document: Document = Jsoup.parse(view.body)
 

@@ -61,8 +61,8 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
               elementText(Selectors.backLink) shouldBe "Back"
             }
 
-            "should have the correct back link" in {
-              element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
+            "should have the correct href" in {
+              element(Selectors.backLink).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
             }
           }
 
@@ -98,7 +98,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
         }
 
         "the user has no website in ETMP" should {
-          lazy val view: Html = injectedView(websiteForm(testWebsite), "")
+          lazy val view: Html = injectedView(websiteForm(testWebsite), "")(user, messages, mockConfig)
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the website text field with no pre-populated value" in {
@@ -112,7 +112,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
       }
 
       "there are errors in the form" should {
-        val view = injectedView(websiteForm(testWebsite).bind(
+        lazy val view = injectedView(websiteForm(testWebsite).bind(
           Map("website" -> testWebsite)
         ), testWebsite)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
@@ -136,15 +136,39 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           element("#error-summary-heading").text() shouldBe "There is a problem"
         }
       }
+
+      "the BTA entry point feature is set to false" should {
+
+        lazy val view: Html = {
+          mockConfig.features.btaEntryPointEnabled(false)
+          injectedView(websiteForm(testWebsite).fill(testWebsite), testWebsite)(user, messages, mockConfig)
+        }
+        lazy implicit val document: Document = Jsoup.parse(view.body)
+
+        "have a back link" which {
+
+          "should have the correct href" in {
+            element(".link-back").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+          }
+        }
+      }
     }
+
     "the user is an agent" should {
 
       "there are no errors in the form" should {
-        val view = injectedView(websiteForm(testWebsite).fill(testWebsite), testWebsite)(agent, messages, mockConfig)
+        lazy val view = injectedView(websiteForm(testWebsite).fill(testWebsite), testWebsite)(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
           document.title shouldBe "What’s the website address? - Your client’s VAT details - GOV.UK"
+        }
+
+        "have a back link" which {
+
+          "should have the correct href" in {
+            element(".link-back").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+          }
         }
       }
     }

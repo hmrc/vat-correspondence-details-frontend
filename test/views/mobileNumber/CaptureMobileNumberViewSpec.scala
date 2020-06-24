@@ -16,7 +16,7 @@
 
 package views.mobileNumber
 
-import assets.BaseTestConstants.{testValidationMobile}
+import assets.BaseTestConstants.testValidationMobile
 import controllers.mobileNumber.routes
 import forms.MobileNumberForm.mobileNumberForm
 import org.jsoup.Jsoup
@@ -34,7 +34,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
       "there are no errors in the form" should {
 
-        val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
+        lazy val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
         val fieldLabel: String = "#content > article > form  > div > div"
 
@@ -44,6 +44,17 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
         "have the correct heading" in {
           elementText("h1") shouldBe "What is the mobile number?"
+        }
+
+        "have a back link" which {
+
+          "should have the correct text" in {
+            elementText(".link-back") shouldBe "Back"
+          }
+
+          "should have the correct href" in {
+            element(".link-back").attr("href") shouldBe mockConfig.btaAccountDetailsUrl
+          }
         }
 
         "have the correct field hint" in {
@@ -83,7 +94,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
       }
 
       "there are errors in the form" should {
-        val view = injectedView(mobileNumberForm(testValidationMobile)
+        lazy val view = injectedView(mobileNumberForm(testValidationMobile)
           .withError("mobileNumber", messages("captureMobile.error.notChanged")),testValidationMobile)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
@@ -106,16 +117,39 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
           element("#error-summary-heading").text() shouldBe "There is a problem"
         }
       }
+
+      "the BTA entry point feature is set to false" should {
+
+        lazy val view = {
+          mockConfig.features.btaEntryPointEnabled(false)
+          injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
+        }
+        lazy implicit val document: Document = Jsoup.parse(view.body)
+
+        "have a back link" which {
+
+          "should have the correct href" in {
+            element(".link-back").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+          }
+        }
+      }
     }
 
     "the user is an agent" when {
 
       "there are no errors in the form" should {
-        val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(agent, messages, mockConfig)
+        lazy val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
           document.title shouldBe "What is the mobile number? - Your client’s VAT details - GOV.UK"
+        }
+
+        "have a back link" which {
+
+          "should have the correct href" in {
+            element(".link-back").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+          }
         }
       }
     }

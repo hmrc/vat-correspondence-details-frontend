@@ -38,7 +38,10 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
         languageSelector = appConfig.features.languageSelectorEnabled(),
         changeContactDetails = appConfig.features.changeContactDetailsEnabled(),
         emailVerifiedContactPref = appConfig.features.emailVerifiedContactPrefEnabled(),
-        bulkPaperOff = appConfig.features.bulkPaperOffEnabled()
+        bulkPaperOff = appConfig.features.bulkPaperOffEnabled(),
+        btaEntryPoint = appConfig.features.btaEntryPointEnabled(),
+        letterToConfirmedEmail = appConfig.features.letterToConfirmedEmailEnabled()
+
       )
     )))
   }
@@ -59,6 +62,8 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
     appConfig.features.changeContactDetailsEnabled(model.changeContactDetails)
     appConfig.features.emailVerifiedContactPrefEnabled(model.emailVerifiedContactPref)
     appConfig.features.bulkPaperOffEnabled(model.bulkPaperOff)
+    appConfig.features.btaEntryPointEnabled(model.btaEntryPoint)
+    appConfig.features.letterToConfirmedEmailEnabled(model.letterToConfirmedEmail)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 }
