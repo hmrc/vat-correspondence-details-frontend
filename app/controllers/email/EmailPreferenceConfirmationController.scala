@@ -33,7 +33,7 @@ class EmailPreferenceConfirmationController @Inject()(val errorHandler: ErrorHan
                                        inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   def show: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
-    if(true) { //Feature switch needs to go here
+    if(appConfig.features.letterToConfirmedEmailEnabled()) {
       Future.successful(Ok(""))
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
