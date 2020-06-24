@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package views.changePref
+package views.contactPreference
 
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import views.ViewBaseSpec
-import views.html.changePref.EmailToUseView
+import views.html.contactPreference.EmailToUseView
 import assets.{ChangePrefMessages => viewMessages}
 
 class EmailToUseViewSpec extends ViewBaseSpec {

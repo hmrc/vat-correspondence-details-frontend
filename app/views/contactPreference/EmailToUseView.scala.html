@@ -36,7 +36,7 @@
 
     @errorSummary(messages("common.error.heading"), emailToUseForm)
 
-    @form(action = controllers.changePref.routes.EmailToUseController.submit, 'novalidate -> "novalidate") {
+    @form(action = controllers.contactPreference.routes.EmailToUseController.submit, 'novalidate -> "novalidate") {
 
         <div id="@yesNo" class="form-group">
             @radioGroup(

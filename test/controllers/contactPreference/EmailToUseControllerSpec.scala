@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.changePref
+package controllers.contactPreference
 
 import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys
@@ -28,7 +28,7 @@ import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.changePref.EmailToUseView
+import views.html.contactPreference.EmailToUseView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -78,6 +78,11 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
+
+        "add the email address to session" in {
+          session(result).get(SessionKeys.validationEmailKey) shouldBe Some(testValidationEmail)
+          session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidationEmail)
+        }
       }
 
       "there isn't an email in session" should {
@@ -96,19 +101,24 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
+
+        "add the email address to session" in {
+          session(result).get(SessionKeys.validationEmailKey) shouldBe Some("pepsimac@gmail.com")
+          session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
+        }
       }
     }
 
     "the letterToConfirmedEmail switch is disabled" should {
 
-      "return a 400" in {
+      "return a 404" in {
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(false)
           mockIndividualAuthorised()
           target().show()(existingEmailSessionRequest)
         }
-        status(result) shouldBe Status.BAD_REQUEST
+        status(result) shouldBe Status.NOT_FOUND
       }
     }
   }
@@ -157,6 +167,38 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
         }
       }
+
+      "the user submits without selecting an option" should {
+
+        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+          request
+            .withFormUrlEncodedBody((yesNo, ""))
+            .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          target().submit()(yesRequest)
+        }
+
+        "return a 400" in {
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+
+      "the user does not have an email in session" should {
+
+        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+          request
+            .withFormUrlEncodedBody((yesNo, "no"))
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          target().submit()(yesRequest)
+        }
+
+        "return an ISE" in {
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+
+      }
     }
 
     "the letterToConfirmedEmail switch is disabled" when {
@@ -171,8 +213,8 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         target().submit()(yesRequest)
       }
 
-      "return a 400" in {
-        status(result) shouldBe Status.BAD_REQUEST
+      "return a 404" in {
+        status(result) shouldBe Status.NOT_FOUND
       }
     }
   }

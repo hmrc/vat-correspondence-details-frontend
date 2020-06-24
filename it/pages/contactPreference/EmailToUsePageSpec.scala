@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pages.changePref
+package pages.contactPreference
 
 import assets.BaseITConstants.internalServerErrorTitle
 import common.SessionKeys
@@ -70,26 +70,6 @@ class EmailToUsePageSpec extends BasePageISpec {
             SessionCookieCrumbler.getSessionMap(res).get(SessionKeys.validationEmailKey) shouldBe Some("testemail@test.com")
           }
         }
-
-        "the data is invalid" should {
-
-          "return an error if invalid data is received" in {
-
-            given.user.isAuthenticated
-
-            And("a success response for Customer Details with invalid data is stubbed")
-            VatSubscriptionStub.stubCustomerInfoInvalidJson
-
-            When("the emailToUse page is called")
-            val result = show
-
-            result should have(
-              httpStatus(Status.INTERNAL_SERVER_ERROR),
-              pageTitle(generateDocumentTitle(internalServerErrorTitle))
-            )
-          }
-        }
-
 
       }
 

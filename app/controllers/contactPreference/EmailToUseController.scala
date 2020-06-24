@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.changePref
+package controllers.contactPreference
 
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
-import controllers.email.routes
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.YesNoForm
@@ -28,7 +27,7 @@ import models.{No, Yes, YesNo}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
-import views.html.changePref.EmailToUseView
+import views.html.contactPreference.EmailToUseView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -62,7 +61,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
         case _ => errorHandler.showInternalServerError
       }
     } else {
-      Future.successful(errorHandler.showBadRequestError)
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
 
   }
@@ -86,7 +85,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
         case _ => Future.successful(errorHandler.showInternalServerError)
       }
     } else {
-      Future.successful(errorHandler.showBadRequestError)
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 
