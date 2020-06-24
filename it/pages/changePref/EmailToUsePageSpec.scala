@@ -120,8 +120,8 @@ class EmailToUsePageSpec extends BasePageISpec {
         val result = show
 
         result should have(
-          httpStatus(Status.UNAUTHORIZED),
-          elementText("h1")("You cannot change your client’s email address yet")
+          httpStatus(Status.SEE_OTHER),
+          redirectURI("http://localhost:9149/vat-through-software/representative/client-vat-account")
         )
       }
     }

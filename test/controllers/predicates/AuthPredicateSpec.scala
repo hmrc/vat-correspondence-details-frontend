@@ -22,6 +22,7 @@ import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
 import utils.MaterializerSupport
+import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
@@ -64,6 +65,25 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
             "show the agent journey disabled page" in {
               messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
+            }
+          }
+
+          "the allowAgents parameter is set to false and they are trying to access the changePref journey" should {
+
+            val blockAgentPredicate: Action[AnyContent] =
+              new AuthPredicate(mockAuthPredicateComponents, allowsAgents = false, true).async {
+                implicit request => Future.successful(Ok("test"))
+              }
+
+            lazy val result = await(blockAgentPredicate(agent))
+
+            "return SEE_OTHER (303)" in {
+              mockAgentAuthorised()
+              status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "redirect to the agent hub page" in {
+              redirectLocation(result) shouldBe Some("agent-hub")
             }
           }
 
