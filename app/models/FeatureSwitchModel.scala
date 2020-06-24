@@ -24,4 +24,8 @@ case class FeatureSwitchModel(agentAccess: Boolean,
                               changeContactDetails: Boolean,
                               emailVerifiedContactPref: Boolean,
                               bulkPaperOff: Boolean,
+<<<<<<< HEAD
                               btaEntryPoint: Boolean)
+=======
+                              letterToConfirmedEmail: Boolean)
+>>>>>>> 33f7fa3... [BTAT-7969] letterToConfirmedEmail feature switch created

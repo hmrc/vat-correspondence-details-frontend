@@ -32,7 +32,11 @@ object FeatureSwitchForm {
       ConfigKeys.changeContactDetailsFeature -> boolean,
       ConfigKeys.emailVerifiedContactPrefFeature -> boolean,
       ConfigKeys.bulkPaperOffFeature -> boolean,
+<<<<<<< HEAD
       ConfigKeys.btaEntryPointFeature -> boolean
+=======
+      ConfigKeys.letterToConfirmedEmailFeature -> boolean
+>>>>>>> 33f7fa3... [BTAT-7969] letterToConfirmedEmail feature switch created
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }
