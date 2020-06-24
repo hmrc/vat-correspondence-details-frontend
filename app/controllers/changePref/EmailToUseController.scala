@@ -71,12 +71,11 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
       case Some(email) => form.bindFromRequest().fold (
         error =>
           Future.successful (BadRequest (emailToUseView (error, email))),
-        success =>
-          success match {
-              //TODO Update Yes case to confirmation screen controller
-            case Yes =>Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
-            case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
-          }
+        {
+          //TODO Update Yes case to confirmation screen controller
+          case Yes => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
+          case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
+        }
       )
       case _ => Future.successful(errorHandler.showInternalServerError)
     }
