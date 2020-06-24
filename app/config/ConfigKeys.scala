@@ -53,7 +53,7 @@ object ConfigKeys {
   val emailVerifiedContactPrefFeature: String = "features.emailVerifiedContactPref.enabled"
   val bulkPaperOffFeature: String = "features.bulkPaperOff.enabled"
   val btaEntryPointFeature: String = "features.btaEntryPoint.enabled"
-
+  val letterToConfirmedEmailFeature: String = "features.letterToConfirmedEmail.enabled"
   val vatSubscription: String = "vat-subscription"
 
   val surveyUrl: String = "feedback-frontend.url"
