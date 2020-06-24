@@ -60,75 +60,119 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
   "Calling the show action in EmailToUseController" when {
 
-    "there is an email in session" should {
+    "the letterToConfirmedEmail switch is enabled" when {
 
-      lazy val result = {
-        mockIndividualAuthorised()
-        target().show()(existingEmailSessionRequest)
+      "there is an email in session" should {
+
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          mockIndividualAuthorised()
+          target().show()(existingEmailSessionRequest)
+        }
+
+        "return 200 (OK)" in {
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
       }
 
-      "return 200 (OK)" in {
-        status(result) shouldBe Status.OK
-      }
+      "there isn't an email in session" should {
 
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          mockIndividualAuthorised()
+          target().show()(noEmailSessionRequest)
+        }
+
+        "return 200 (OK)" in {
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
       }
     }
 
-    "there isn't an email in session" should {
+    "the letterToConfirmedEmail switch is disabled" should {
 
-      lazy val result = {
-        mockIndividualAuthorised()
-        target().show()(noEmailSessionRequest)
-      }
+      "return a 400" in {
 
-      "return 200 (OK)" in {
-        status(result) shouldBe Status.OK
-      }
-
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(false)
+          mockIndividualAuthorised()
+          target().show()(existingEmailSessionRequest)
+        }
+        status(result) shouldBe Status.BAD_REQUEST
       }
     }
   }
 
   "Calling the submit action in EmailToUseController" when {
 
-    "the user submits after selecting an 'Yes' option" should {
+    "the letterToConfirmedEmail switch is enabled" when {
 
-      lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-        request
-          .withFormUrlEncodedBody((yesNo, "yes"))
-          .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
-      lazy val result = target().submit()(yesRequest)
+      "the user submits after selecting an 'Yes' option" should {
 
-      "return 303 (SEE OTHER)" in {
-        status(result) shouldBe Status.SEE_OTHER
+        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+          request
+            .withFormUrlEncodedBody((yesNo, "yes"))
+            .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          target().submit()(yesRequest)
+        }
+
+        "return 303 (SEE OTHER)" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        //TODO Update to correct location when journey is connected up
+        s"Redirect to the '${controllers.email.routes.CaptureEmailController.show().url}'" in {
+          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+        }
       }
 
-      //TODO Update to correct location when journey is connected up
-      s"Redirect to the '${controllers.email.routes.CaptureEmailController.show().url}'" in {
-        redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+      "the user submits after selecting an 'No' option" should {
+
+        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+          request
+            .withFormUrlEncodedBody((yesNo, "no"))
+            .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          target().submit()(yesRequest)
+        }
+
+        "return 303 (SEE OTHER)" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        s"Redirect to the '${controllers.email.routes.CaptureEmailController.show().url}'" in {
+          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+        }
       }
     }
 
-    "the user submits after selecting an 'No' option" should {
+    "the letterToConfirmedEmail switch is disabled" when {
 
       lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
         request
           .withFormUrlEncodedBody((yesNo, "no"))
           .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
-      lazy val result = target().submit()(yesRequest)
-
-      "return 303 (SEE OTHER)" in {
-        status(result) shouldBe Status.SEE_OTHER
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(false)
+        mockIndividualAuthorised()
+        target().submit()(yesRequest)
       }
 
-      s"Redirect to the '${controllers.email.routes.CaptureEmailController.show().url}'" in {
-        redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+      "return a 400" in {
+        status(result) shouldBe Status.BAD_REQUEST
       }
     }
   }
