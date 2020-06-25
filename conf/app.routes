@@ -68,8 +68,8 @@ GET         /update-remove-mobile-number           controllers.mobileNumber.Conf
 GET         /mobile-number-confirmation            controllers.ChangeSuccessController.mobileNumber
 
 # email preferences
-GET         /contact-preference-email              controllers.email.EmailPreferenceController.show
-POST        /contact-preference-email              controllers.email.EmailPreferenceController.submit
+GET         /contact-preference-email              controllers.contactPreference.EmailPreferenceController.show
+POST        /contact-preference-email              controllers.contactPreference.EmailPreferenceController.submit
 
 # contact preference confirm email
 GET         /preference-confirm-email              controllers.contactPreference.EmailToUseController.show

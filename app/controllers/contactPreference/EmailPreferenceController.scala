@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package controllers.email
+package controllers.contactPreference
 
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
+import forms.YesNoForm
 import javax.inject.Inject
+import models.{No, Yes, YesNo}
+import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 import scala.concurrent.Future
@@ -30,19 +33,28 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler)(implicit v
                                                                       authComps: AuthPredicateComponents,
                                                                       inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
 
-  def show: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
+  val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("emailPreference.error")
+
+  def show: Action[AnyContent] = changePrefPredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      Future.successful(Ok(""))
+      Future.successful(Ok("")) //TODO direct to the preference page
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 
-  def submit: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
+  def submit: Action[AnyContent] = changePrefPredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      Future.successful(Ok(""))
+      formYesNo.bindFromRequest().fold (
+        _ => Future.successful(BadRequest("")), //TODO Redirect back to the preference page
+        {
+          case Yes => Future.successful(Redirect(controllers.contactPreference.routes.EmailToUseController.show()))
+          case No => Future.successful(Redirect(appConfig.dynamicJourneyEntryUrl(user.isAgent)))
+        }
+      )
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
+
 }
