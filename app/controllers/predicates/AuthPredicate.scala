@@ -28,7 +28,8 @@ import utils.LoggerUtil.{logDebug, logWarn}
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthPredicate(authComps: AuthPredicateComponents,
-                    allowsAgents: Boolean)
+                    allowsAgents: Boolean,
+                    isChangePrefJourney: Boolean = false)
   extends AuthBasePredicate(authComps.mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
@@ -47,6 +48,8 @@ class AuthPredicate(authComps: AuthPredicateComponents,
           case (true, enrolments) =>
             if (appConfig.features.agentAccessEnabled() && allowsAgents) {
               checkAgentEnrolment(enrolments, block)
+            } else if(isChangePrefJourney) {
+              Future.successful(Redirect(authComps.appConfig.vatAgentClientLookupAgentHubPath))
             } else {
               Future.successful(Unauthorized(authComps.agentJourneyDisabledView()))
             }
