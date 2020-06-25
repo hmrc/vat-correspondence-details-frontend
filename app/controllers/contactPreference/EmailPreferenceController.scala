@@ -49,7 +49,7 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler)(implicit v
         _ => Future.successful(BadRequest("")), //TODO Redirect back to the preference page
         {
           case Yes => Future.successful(Redirect(controllers.contactPreference.routes.EmailToUseController.show()))
-          case No => Future.successful(Redirect(appConfig.dynamicJourneyEntryUrl(user.isAgent)))
+          case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )
     } else {

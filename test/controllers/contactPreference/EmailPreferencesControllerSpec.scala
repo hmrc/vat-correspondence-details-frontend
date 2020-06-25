@@ -29,7 +29,7 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
     ".show is called" should {
 
-      "return an OK result" in {
+      "return an NOT_FOUND result" in {
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(false)
           controller.show(request)
@@ -41,7 +41,7 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
     ".submit is called" should {
 
-      "return an OK result" in {
+      "return an NOT_FOUND result" in {
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(false)
