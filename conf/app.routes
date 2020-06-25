@@ -67,6 +67,10 @@ GET         /update-remove-mobile-number         controllers.mobileNumber.Confir
 # mobile number change successful
 GET         /mobile-number-confirmation            controllers.ChangeSuccessController.mobileNumber
 
+# contact preference confirm email
+GET         /preference-confirm-email              controllers.contactPreference.EmailToUseController.show
+POST        /preference-confirm-email              controllers.contactPreference.EmailToUseController.submit
+
 # email preference change successful
 GET         /confirmation-update-preference        controllers.email.EmailPreferenceConfirmationController.show
 

@@ -50,7 +50,7 @@ class AuthPredicate(authComps: AuthPredicateComponents,
               checkAgentEnrolment(enrolments, block)
             } else if(isChangePrefJourney) {
               Future.successful(Redirect(authComps.appConfig.vatAgentClientLookupAgentHubPath))
-            }else {
+            } else {
               Future.successful(Unauthorized(authComps.agentJourneyDisabledView()))
             }
           case (false, enrolments) => checkVatEnrolment(enrolments, block)

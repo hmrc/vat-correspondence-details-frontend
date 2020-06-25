@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
-import play.api.mvc.Results.InternalServerError
+import play.api.mvc.Results.{BadRequest, InternalServerError}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.errors.StandardErrorView
 
@@ -41,4 +41,6 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi,
 
   def showInternalServerError(implicit request: Request[_]): Result =
     InternalServerError(internalServerErrorTemplate)
+
+  def showBadRequestError(implicit request: Request[_]): Result = BadRequest(badRequestTemplate)
 }
