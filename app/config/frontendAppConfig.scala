@@ -47,6 +47,7 @@ trait AppConfig {
   val signInContinueUrl: String
   val govUkCommercialSoftware: String
   val vatAgentClientLookupServicePath: String
+  val vatAgentClientLookupAgentHubPath: String
   val vatAgentClientLookupUnauthorised: String
   val features: Features
   val emailVerificationBaseUrl: String
@@ -126,6 +127,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   private val vatAgentClientLookupServiceUrl: String = sc.getString(Keys.vatAgentClientLookupServiceUrl)
   override val vatAgentClientLookupServicePath: String =
     vatAgentClientLookupServiceUrl + sc.getString(Keys.vatAgentClientLookupServicePath)
+  override val vatAgentClientLookupAgentHubPath: String =
+    vatAgentClientLookupServiceUrl + sc.getString(Keys.vatAgentClientLookupAgentHubPath)
   override val vatAgentClientLookupUnauthorised: String =
     vatAgentClientLookupServiceUrl + sc.getString(Keys.vatAgentClientLookupServiceUnauthPath)
 
