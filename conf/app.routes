@@ -61,11 +61,15 @@ GET         /confirm-new-mobile-number             controllers.mobileNumber.Conf
 GET         /update-new-mobile-number              controllers.mobileNumber.ConfirmMobileNumberController.updateMobileNumber
 
 # remove mobile number
-GET         /confirm-remove-mobile-number        controllers.mobileNumber.ConfirmRemoveMobileController.show
-GET         /update-remove-mobile-number         controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
+GET         /confirm-remove-mobile-number          controllers.mobileNumber.ConfirmRemoveMobileController.show
+GET         /update-remove-mobile-number           controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
 
 # mobile number change successful
 GET         /mobile-number-confirmation            controllers.ChangeSuccessController.mobileNumber
+
+# email preferences
+GET         /contact-preference-email              controllers.contactPreference.EmailPreferenceController.show
+POST        /contact-preference-email              controllers.contactPreference.EmailPreferenceController.submit
 
 # contact preference confirm email
 GET         /preference-confirm-email              controllers.contactPreference.EmailToUseController.show
