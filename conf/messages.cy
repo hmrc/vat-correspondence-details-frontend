@@ -144,6 +144,8 @@ mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symud
 emailToUse.title = A ydych am i ni ddefnyddio’r cyfeiriad e-bost hwn er mwyn cysylltu â chi ynghylch TAW?
 emailToUse.error = Dewiswch ‘Iawn’ os mai dyma’r cyfeiriad e-bost rydych am i ni ei ddefnyddio
 
+emailPreference.error = Dewiswch ‘Iawn’ os ydych am gael gohebiaeth drwy e-bost
+
 contactPrefConfirmation.title = Rydych wedi gofyn i ni newid sut yr ydym yn cysylltu â chi ynghylch TAW
 contactPrefConfirmation.contactYou = Os gallwn dderbyn y newid, byddwn yn cysylltu â chi ynghylch TAW yn {0}
 contactPrefConfirmation.stillNeedLetters = Bydd angen i ni anfon rhai llythyrau atoch drwy’r post o hyd oherwydd bod y gyfraith yn dweud wrthym am wneud hynny.
