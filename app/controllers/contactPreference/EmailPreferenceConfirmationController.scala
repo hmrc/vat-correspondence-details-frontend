@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.email
+package controllers.contactPreference
 
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
@@ -32,7 +32,7 @@ class EmailPreferenceConfirmationController @Inject()(val errorHandler: ErrorHan
                                        authComps: AuthPredicateComponents,
                                        inFlightComps: InFlightPredicateComponents) extends BaseController {
 
-  def show: Action[AnyContent] = changePrefPredicate.async { implicit user =>
+  def show: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       //TODO Add correct route to page
       Future.successful(Ok(""))

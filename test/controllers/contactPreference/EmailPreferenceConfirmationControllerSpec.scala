@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.email
+package controllers.contactPreference
 
 import controllers.ControllerBaseSpec
 import play.api.http.Status.OK
@@ -26,7 +26,9 @@ class EmailPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
   ".show" should {
 
     "return an OK result" in {
-      val result = controller.show(fakeRequestWithClientsVRN)
+      val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        controller.show(fakeRequestWithClientsVRN)}
 
       status(result) shouldBe OK
     }

@@ -72,7 +72,7 @@ GET         /preference-confirm-email              controllers.contactPreference
 POST        /preference-confirm-email              controllers.contactPreference.EmailToUseController.submit
 
 # email preference change successful
-GET         /confirmation-update-preference        controllers.email.EmailPreferenceConfirmationController.show
+GET         /confirmation-update-preference        controllers.contactPreference.EmailPreferenceConfirmationController.show
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                          controllers.Assets.at(path="/public", file)

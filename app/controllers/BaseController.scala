@@ -29,7 +29,7 @@ abstract class BaseController(implicit val mcc: MessagesControllerComponents,
 
   val allowAgentPredicate = new AuthPredicate(authComps, allowsAgents = true)
   val blockAgentPredicate = new AuthPredicate(authComps, allowsAgents = false)
-  val changePrefPredicate = new AuthPredicate(authComps, allowsAgents = false, true)
+  val contactPreferencePredicate = new AuthPredicate(authComps, allowsAgents = false, true)
 
   val routePrefix = "/vat-through-software/account/correspondence"
 
