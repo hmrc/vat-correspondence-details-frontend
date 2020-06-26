@@ -16,13 +16,13 @@
 
 package views.contactPreference
 
+import assets.{ChangePrefMessages => viewMessages}
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import views.ViewBaseSpec
 import views.html.contactPreference.EmailToUseView
-import assets.{ChangePrefMessages => viewMessages}
 
 class EmailToUseViewSpec extends ViewBaseSpec {
 
