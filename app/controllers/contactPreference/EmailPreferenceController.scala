@@ -35,7 +35,7 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler)(implicit v
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("emailPreference.error")
 
-  def show: Action[AnyContent] = changePrefPredicate.async { implicit user =>
+  def show: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       Future.successful(Ok("")) //TODO direct to the preference page
     } else {
@@ -43,7 +43,7 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler)(implicit v
     }
   }
 
-  def submit: Action[AnyContent] = changePrefPredicate.async { implicit user =>
+  def submit: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       formYesNo.bindFromRequest().fold (
         _ => Future.successful(BadRequest("")), //TODO Redirect back to the preference page
