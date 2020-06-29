@@ -107,6 +107,10 @@ verifyEmail.lineTwo = You need to click the link in our email within 15 minutes.
 verifyEmail.lineThree.1 = Check your junk folder. If it’s not there we can
 verifyEmail.lineThree.2 = send it again
 
+emailPreference.title = Do you want us to send you emails instead of letters?
+emailPreference.hint = We currently send messages about your VAT by letter.
+emailPreference.error = Select yes if you want communications by email
+
 emailChangeSuccess.title = We have received the new email address
 
 landlineChangeSuccess.title.change = You have asked to change the landline number
@@ -146,8 +150,6 @@ confirmRemoveMobile.heading = Confirm you want to remove the mobile number: {0}
 
 emailToUse.title = Do you want us to use this email address to contact you about VAT?
 emailToUse.error = Select yes if this is the email address you want us to use
-
-emailPreference.error = Select yes if you want communications by email
 
 contactPrefConfirmation.title = You have asked us to change how we contact you about VAT
 contactPrefConfirmation.contactYou = If we can accept the change, we will contact you about VAT at {0}
