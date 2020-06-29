@@ -21,10 +21,10 @@ common.changeClient = Change client
 common.agent.updateClient1 = We’ll contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
-common.cancel = Cancel
 common.fullstop = .
 common.yes = Yes
 common.no = No
+common.accountDetails = View your account details
 
 standardError.title = There is a problem with the service
 standardError.heading = Sorry, there is a problem with the service
@@ -146,3 +146,9 @@ confirmRemoveMobile.heading = Confirm you want to remove the mobile number: {0}
 
 emailToUse.title = Do you want us to use this email address to contact you about VAT?
 emailToUse.error = Select yes if this is the email address you want us to use
+
+emailPreference.error = Select yes if you want communications by email
+
+contactPrefConfirmation.title = You have asked us to change how we contact you about VAT
+contactPrefConfirmation.contactYou = If we can accept the change, we will contact you about VAT at {0}
+contactPrefConfirmation.stillNeedLetters = We’ll still need to send you some letters in the post because the law tells us to.
