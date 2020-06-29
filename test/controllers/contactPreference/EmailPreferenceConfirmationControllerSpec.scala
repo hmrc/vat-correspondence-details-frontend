@@ -17,6 +17,7 @@
 package controllers.contactPreference
 
 import controllers.ControllerBaseSpec
+import play.api.http.Status
 import play.api.http.Status.OK
 
 class EmailPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
@@ -25,12 +26,20 @@ class EmailPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
 
   ".show" should {
 
-    "return an OK result" in {
+    "return an OK result when feature switch is true" in {
       val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
         controller.show(fakeRequestWithClientsVRN)}
 
       status(result) shouldBe OK
+    }
+
+    "return an OK result when feature switch is false" in {
+      val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(false)
+        controller.show(fakeRequestWithClientsVRN)}
+
+      status(result) shouldBe Status.NOT_FOUND
     }
   }
 }
