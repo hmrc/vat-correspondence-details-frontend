@@ -34,7 +34,7 @@ class EmailPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
       status(result) shouldBe OK
     }
 
-    "return an OK result when feature switch is false" in {
+    "return a NOT_FOUND result when feature switch is false" in {
       val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
         controller.show(fakeRequestWithClientsVRN)}
