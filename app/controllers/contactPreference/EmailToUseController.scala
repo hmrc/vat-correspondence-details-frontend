@@ -43,7 +43,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   implicit val ec: ExecutionContext = mcc.executionContext
   val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
 
-  def show: Action[AnyContent] = changePrefPredicate.async { implicit user =>
+  def show: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()){
       lazy val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
         case Some(email) => Future.successful(Some(email))
@@ -68,7 +68,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
 
 
 
-  def submit: Action[AnyContent] = changePrefPredicate.async { implicit user =>
+  def submit: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()){
       lazy val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
 
