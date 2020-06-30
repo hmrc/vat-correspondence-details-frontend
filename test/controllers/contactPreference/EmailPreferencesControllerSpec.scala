@@ -16,16 +16,14 @@
 
 package controllers.contactPreference
 
-import common.SessionKeys
 import controllers.ControllerBaseSpec
-import forms.YesNoForm.{yes, yesNo, no => _no}
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
+import forms.YesNoForm.{yesNo, yes, no =>_no}
+import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER, BAD_REQUEST}
 import play.api.test.Helpers._
-import views.html.contactPreference.EmailPreferenceView
 
 class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
-  lazy val controller = new EmailPreferenceController(mockErrorHandler, inject[EmailPreferenceView])
+  lazy val controller = new EmailPreferenceController(mockErrorHandler)
 
   "The letterToConfirmedEmailEnabled feature switch is off" when {
 
@@ -60,22 +58,13 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
     ".show is called" should {
 
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.show(request.withSession(SessionKeys.contactPrefUpdate -> "true"))
-      }
-
       "return an OK result" in {
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          controller.show(request)
+        }
+
         status(result) shouldBe OK
-      }
-
-      s"not contain the session key ${SessionKeys.contactPrefUpdate}" in {
-        session(result).get(SessionKeys.contactPrefUpdate) shouldBe None
-      }
-
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
       }
     }
 
@@ -92,10 +81,6 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
       "be at the correct url" in {
         redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/preference-confirm-email")
-      }
-
-      s"a value is added to the ${SessionKeys.contactPrefUpdate} key" in {
-        session(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
       }
 
     }

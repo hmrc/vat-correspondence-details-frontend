@@ -16,35 +16,26 @@
 
 package controllers.contactPreference
 
-import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
-import views.html.contactPreference.PreferenceConfirmationView
 
 import scala.concurrent.Future
 
 @Singleton
-class EmailPreferenceConfirmationController @Inject()(val errorHandler: ErrorHandler,
-                                                      preferenceConfirmationView: PreferenceConfirmationView)
+class EmailPreferenceConfirmationController @Inject()(val errorHandler: ErrorHandler)
                                                      (implicit val appConfig: AppConfig,
-                                                      mcc: MessagesControllerComponents,
-                                                      authComps: AuthPredicateComponents,
-                                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                       mcc: MessagesControllerComponents,
+                                       authComps: AuthPredicateComponents,
+                                       inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   def show: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
-    if (appConfig.features.letterToConfirmedEmailEnabled()) {
-      user.session.get(SessionKeys.contactPrefConfirmed) match {
-        case Some("true") =>
-          user.session.get(SessionKeys.validationEmailKey) match {
-            case Some(email) => Future.successful(Ok(preferenceConfirmationView(email)))
-            case _ => Future.successful(errorHandler.showInternalServerError)
-          }
-        case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailToUseController.show()))
-      }
+    if(appConfig.features.letterToConfirmedEmailEnabled()) {
+      //TODO Add correct route to page
+      Future.successful(Ok(""))
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
