@@ -44,21 +44,27 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
 
   def show: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
-    if(appConfig.features.letterToConfirmedEmailEnabled()){
-      lazy val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
-        case Some(email) => Future.successful(Some(email))
-        case _ =>
-          vatSubscriptionService.getCustomerInfo(user.vrn) map {
-            case Right(details) => Some(details.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""))
-            case _ => None
+    if (appConfig.features.letterToConfirmedEmailEnabled()) {
+      user.session.get(SessionKeys.contactPrefUpdate) match {
+        case Some("true") =>
+          lazy val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
+            case Some(email) => Future.successful(Some(email))
+            case _ =>
+              vatSubscriptionService.getCustomerInfo(user.vrn) map {
+                case Right(details) => Some(details.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""))
+                case _ => None
+              }
           }
-      }
 
-      validationEmail map {
-        case Some(email) => Ok(emailToUseView(form, email))
-          .addingToSession(SessionKeys.validationEmailKey -> email)
-          .addingToSession(SessionKeys.prepopulationEmailKey -> email)
-        case _ => errorHandler.showInternalServerError
+          validationEmail map {
+            case Some(email) => Ok(emailToUseView(form, email))
+              .addingToSession(SessionKeys.validationEmailKey -> email)
+              .addingToSession(SessionKeys.prepopulationEmailKey -> email)
+              .removingFromSession(SessionKeys.contactPrefConfirmed)
+            case _ => errorHandler.showInternalServerError
+          }
+
+        case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
       }
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
@@ -67,22 +73,28 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   }
 
 
-
   def submit: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
-    if(appConfig.features.letterToConfirmedEmailEnabled()){
-      lazy val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
+    if (appConfig.features.letterToConfirmedEmailEnabled()) {
 
-      validationEmail match {
-        case Some(email) => form.bindFromRequest().fold (
-          error =>
-            Future.successful (BadRequest (emailToUseView (error, email))),
-          {
-            //TODO Update Yes case to confirmation screen controller
-            case Yes => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
-            case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
+      user.session.get(SessionKeys.contactPrefUpdate) match {
+        case Some("true") =>
+          lazy val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
+
+          validationEmail match {
+            case Some(email) => form.bindFromRequest().fold(
+              error =>
+                Future.successful(BadRequest(emailToUseView(error, email))),
+              {
+                case Yes =>
+                  //TODO Add call to vat-subscription once the appropriate call exist
+                  Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceConfirmationController.show())
+                  .addingToSession(SessionKeys.contactPrefConfirmed -> "true"))
+                case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
+              }
+            )
+            case _ => Future.successful(errorHandler.showInternalServerError)
           }
-        )
-        case _ => Future.successful(errorHandler.showInternalServerError)
+        case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
       }
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))

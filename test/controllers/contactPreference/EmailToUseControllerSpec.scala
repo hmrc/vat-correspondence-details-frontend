@@ -41,10 +41,15 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
   val testValidationEmail: String = "validation@example.com"
 
   lazy val existingEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.validationEmailKey -> testValidationEmail)
+    request.withSession(
+      SessionKeys.validationEmailKey -> testValidationEmail,
+      SessionKeys.contactPrefUpdate -> "true",
+      SessionKeys.contactPrefConfirmed -> "true"
+    )
 
-  lazy val noEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request
+  lazy val noEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] = request.withSession(SessionKeys.contactPrefUpdate -> "true")
+
+  lazy val noPrefUpdateValueSessionRequest: FakeRequest[AnyContentAsEmpty.type] = request.withSession(SessionKeys.validationEmailKey -> testValidationEmail)
 
   val view: EmailToUseView = injector.instanceOf[EmailToUseView]
 
@@ -62,7 +67,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
     "the letterToConfirmedEmail switch is enabled" when {
 
-      "there is an email in session" should {
+      s"there is an email and the ${SessionKeys.contactPrefUpdate} value is in session" should {
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
@@ -82,6 +87,10 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         "add the email address to session" in {
           session(result).get(SessionKeys.validationEmailKey) shouldBe Some(testValidationEmail)
           session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidationEmail)
+        }
+
+        s"not contain the ${SessionKeys.contactPrefConfirmed} key" in {
+          session(result).get(SessionKeys.contactPrefConfirmed) shouldBe None
         }
       }
 
@@ -106,6 +115,24 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           session(result).get(SessionKeys.validationEmailKey) shouldBe Some("pepsimac@gmail.com")
           session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
         }
+      }
+
+      s"the ${SessionKeys.contactPrefUpdate} value is not in session" should {
+
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          mockIndividualAuthorised()
+          target().show()(noPrefUpdateValueSessionRequest)
+        }
+
+        s"return a $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirect to the preference select page" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
+        }
+
       }
     }
 
@@ -132,7 +159,10 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
           request
             .withFormUrlEncodedBody((yesNo, "yes"))
-            .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
+            .withSession(
+              SessionKeys.validationEmailKey -> testValidationEmail,
+              SessionKeys.contactPrefUpdate -> "true"
+            )
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
           target().submit()(yesRequest)
@@ -142,9 +172,8 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           status(result) shouldBe Status.SEE_OTHER
         }
 
-        //TODO Update to correct location when journey is connected up
-        s"Redirect to the '${controllers.email.routes.CaptureEmailController.show().url}'" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+        s"Redirect to the '${controllers.contactPreference.routes.EmailPreferenceConfirmationController.show().url}'" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceConfirmationController.show().url)
         }
       }
 
@@ -153,7 +182,10 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
           request
             .withFormUrlEncodedBody((yesNo, "no"))
-            .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
+            .withSession(
+              SessionKeys.validationEmailKey -> testValidationEmail,
+              SessionKeys.contactPrefUpdate -> "true"
+            )
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
           target().submit()(yesRequest)
@@ -173,7 +205,10 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
           request
             .withFormUrlEncodedBody((yesNo, ""))
-            .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
+            .withSession(
+              SessionKeys.validationEmailKey -> testValidationEmail,
+              SessionKeys.contactPrefUpdate -> "true"
+            )
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
           target().submit()(yesRequest)
@@ -189,6 +224,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
           request
             .withFormUrlEncodedBody((yesNo, "no"))
+          .withSession(SessionKeys.contactPrefUpdate -> "true")
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
           target().submit()(yesRequest)
@@ -198,6 +234,28 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
 
+      }
+
+      s"the ${SessionKeys.contactPrefUpdate} key is not in session" should {
+
+        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+          request
+            .withFormUrlEncodedBody((yesNo, "yes"))
+            .withSession(
+              SessionKeys.validationEmailKey -> testValidationEmail
+            )
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          target().submit()(yesRequest)
+        }
+
+        "return 303 (SEE OTHER)" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        s"Redirect to the '${controllers.contactPreference.routes.EmailPreferenceController.show().url}'" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
+        }
       }
     }
 

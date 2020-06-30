@@ -32,7 +32,7 @@ class EmailToUsePageSpec extends BasePageISpec {
 
   "Calling the EmailToUse .show method" when {
 
-    def show: WSResponse = get(path)
+    def show: WSResponse = get(path, formatEmailPrefUpdate(Some("true")))
 
     "the user is authenticated" when {
 
@@ -126,7 +126,7 @@ class EmailToUsePageSpec extends BasePageISpec {
   "Calling the EmailToUse .submit method with an authenticated user" when {
 
     def submit(data: YesNo): WSResponse =
-      post(path, formatValidationEmail(Some("test@test.com")))(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
+      post(path, formatValidationEmail(Some("test@test.com")) ++ formatEmailPrefUpdate(Some("true")))(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
 
     "the user is authenticated" when {
 
@@ -141,7 +141,7 @@ class EmailToUsePageSpec extends BasePageISpec {
 
           res should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.email.routes.CaptureEmailController.show().url)
+            redirectURI(controllers.contactPreference.routes.EmailPreferenceConfirmationController.show().url)
           )
         }
       }
@@ -168,7 +168,7 @@ class EmailToUsePageSpec extends BasePageISpec {
 
           given.user.isAuthenticated
 
-          post(path, formatValidationEmail(Some("test@test.com")))(Map("yes_no" -> Seq(""))) should have(
+          post(path, formatValidationEmail(Some("test@test.com")) ++ formatEmailPrefUpdate(Some("true")))(Map("yes_no" -> Seq(""))) should have(
             httpStatus(Status.BAD_REQUEST),
             pageTitle("Error: " + generateDocumentTitle("emailToUse.title")),
             elementText(".error-message")("Select yes if this is the email address you want us to use")

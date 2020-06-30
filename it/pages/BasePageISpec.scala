@@ -36,6 +36,12 @@ trait BasePageISpec extends IntegrationBaseSpec {
   def formatInflightChange: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.inFlightContactDetailsChangeKey -> x))
 
+  def formatEmailPrefUpdate: Option[String] => Map[String, String] =
+    _.fold(Map.empty[String, String])(value => Map(SessionKeys.contactPrefUpdate -> value))
+
+  def formatEmailPrefConfirmation: Option[String] => Map[String, String] =
+    _.fold(Map.empty[String, String])(value => Map(SessionKeys.contactPrefConfirmed -> value))
+
   def httpPostAuthenticationTests(path: String, sessionVrn: Option[String] = None)(formData: Map[String, Seq[String]]): Unit =
     authenticationTests(path, post(path, formatSessionVrn(sessionVrn))(formData))
 
