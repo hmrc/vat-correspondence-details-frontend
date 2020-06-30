@@ -16,7 +16,6 @@
 
 package controllers.contactPreference
 
-import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
@@ -26,22 +25,19 @@ import javax.inject.Inject
 import models.{No, Yes, YesNo}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import views.html.contactPreference.EmailPreferenceView
 
 import scala.concurrent.Future
 
-class EmailPreferenceController @Inject()(errorHandler: ErrorHandler,
-                                          emailPreferenceView: EmailPreferenceView)(implicit val appConfig: AppConfig,
-                                                                                    mcc: MessagesControllerComponents,
-                                                                                    authComps: AuthPredicateComponents,
-                                                                                    inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
+class EmailPreferenceController @Inject()(errorHandler: ErrorHandler)(implicit val appConfig: AppConfig,
+                                                                      mcc: MessagesControllerComponents,
+                                                                      authComps: AuthPredicateComponents,
+                                                                      inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("emailPreference.error")
 
   def show: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      Future.successful(Ok(emailPreferenceView(formYesNo))
-        .removingFromSession(SessionKeys.contactPrefUpdate))
+      Future.successful(Ok("")) //TODO direct to the preference page
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
@@ -50,10 +46,9 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler,
   def submit: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       formYesNo.bindFromRequest().fold (
-        formWithErrors => Future.successful(BadRequest(emailPreferenceView(formWithErrors))),
+        _ => Future.successful(BadRequest("")), //TODO Redirect back to the preference page
         {
-          case Yes => Future.successful(Redirect(controllers.contactPreference.routes.EmailToUseController.show())
-            .addingToSession(SessionKeys.contactPrefUpdate -> "true"))
+          case Yes => Future.successful(Redirect(controllers.contactPreference.routes.EmailToUseController.show()))
           case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )
