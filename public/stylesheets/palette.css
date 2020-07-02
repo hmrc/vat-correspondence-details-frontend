@@ -270,3 +270,7 @@ input.form-control-error[type="password"],
 .beta-banner .phase-tag {
   background-color: #1d70b8;
 }
+
+.secondary-text {
+  color: #6F777B;
+}
