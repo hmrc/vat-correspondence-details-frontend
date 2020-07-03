@@ -47,7 +47,7 @@ class PPOBPreferenceController  @Inject() (errorHandler: ErrorHandler) (implicit
   def submit: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       formYesNo.bindFromRequest().fold(
-      _ => Future.successful(BadRequest("")),
+      _ => Future.successful(BadRequest("")), // TODO - direct back to preference page
         {
         case Yes => Future.successful(Redirect("")) // TODO - PPOB confirmation page?
         case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
