@@ -49,7 +49,7 @@ class PPOBPreferenceController  @Inject() (errorHandler: ErrorHandler) (implicit
       formYesNo.bindFromRequest().fold(
       _ => Future.successful(BadRequest("")),
         {
-        case Yes => Future.successful("")
+        case Yes => Future.successful(Redirect(""))
         case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )
