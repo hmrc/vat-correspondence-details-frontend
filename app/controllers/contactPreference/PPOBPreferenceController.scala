@@ -38,7 +38,7 @@ class PPOBPreferenceController  @Inject() (errorHandler: ErrorHandler) (implicit
 
   def show: Action[AnyContent] = contactPreferencePredicate.async {implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      Future.successful(Ok("")) // direct to PPOB preference page
+      Future.successful(Ok("")) // TODO - direct to PPOB preference page
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
@@ -49,7 +49,7 @@ class PPOBPreferenceController  @Inject() (errorHandler: ErrorHandler) (implicit
       formYesNo.bindFromRequest().fold(
       _ => Future.successful(BadRequest("")),
         {
-        case Yes => Future.successful(Redirect(""))
+        case Yes => Future.successful(Redirect("")) // TODO - PPOB confirmation page?
         case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )

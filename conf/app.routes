@@ -78,5 +78,9 @@ POST        /preference-confirm-email              controllers.contactPreference
 # email preference change successful
 GET         /confirmation-update-preference        controllers.contactPreference.EmailPreferenceConfirmationController.show
 
+# PPOB preferences
+GET         /PPOB-letter-preference                controllers.contactPreferences.PPOBPreferenceController.show
+POST        /PPOB-letter-preference                controllers.contactPreferences.PPOBPreferenceController.submit
+
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                          controllers.Assets.at(path="/public", file)
