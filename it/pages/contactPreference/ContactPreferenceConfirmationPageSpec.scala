@@ -16,80 +16,51 @@
 
 package pages.contactPreference
 
-import models.contactPreferences.ContactPreference._
+import common.SessionKeys
 import pages.BasePageISpec
 import play.api.http.Status
-import stubs.VatSubscriptionStub
+import play.api.libs.ws.WSResponse
 
 class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
 
-  val emailPath = "/confirmation-email-preference"
-  val letterPath = "/confirmation-letter-preference"
+  val path = "/confirmation-email-preference"
 
-  "Calling GET /confirmation-:changeType-preference" when {
+  "Calling the EmailPreferenceConfirmation .show method" when {
+
+    def show: WSResponse = get(path,
+      formatValidationEmail(Some("asd@asd.com"))
+        ++ formatEmailPrefUpdate(Some("true"))
+        ++ formatLetterToEmailPrefConfirmation(Some("true"))
+    )
 
     "the user is authenticated" when {
 
-      "changeType is email" when {
+      "the data is valid" should {
 
-        "session data is valid" should {
+        "display the page correctly" in {
 
-          "display the page correctly" in {
+          given.user.isAuthenticated
 
-            given.user.isAuthenticated
+          When("the emailPreferenceConfirmation page is called")
+          val result = show
 
-            When("GET /confirmation-email-preference is called")
-            val result = get(
-              emailPath,
-              formatCurrentContactPref(Some(paper)) ++
-              formatValidationEmail(Some("asd@asd.com")) ++
-              formatLetterToEmailPrefConfirmation(Some("true"))
-            )
-
-            result should have(
-              httpStatus(Status.OK),
-              pageTitle(generateDocumentTitle("contactPrefConfirmation.title"))
-            )
-          }
+          result should have(
+            httpStatus(Status.OK),
+            pageTitle(generateDocumentTitle("contactPrefConfirmation.title"))
+          )
         }
       }
 
-      "changeType is letter" when {
-
-        "session data is valid" should {
-
-          "display the page correctly" in {
-
-            given.user.isAuthenticated
-
-            When("GET /confirmation-letter-preference is called")
-
-            And("Current address is retrieved")
-            VatSubscriptionStub.stubCustomerInfo
-
-            val result = get(
-              letterPath,
-              formatCurrentContactPref(Some(digital)) ++
-              formatEmailToLetterPrefConfirmation(Some("true"))
-            )
-
-            result should have(
-              httpStatus(Status.OK),
-              pageTitle(generateDocumentTitle("contactPrefConfirmation.title"))
-            )
-          }
-        }
-      }
     }
 
     "a user is an authenticated agent" should {
 
-      "redirect to Client's VAT Account" in {
+      "render the Agent unauthorised page" in {
 
         given.user.isAuthenticatedAgent
 
-        When("GET /confirmation-email-preference is called")
-        val result = get(emailPath)
+        When("the EmailToUse page is called")
+        val result = show
 
         result should have(
           httpStatus(Status.SEE_OTHER),
@@ -104,8 +75,8 @@ class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
 
         given.user.isNotEnrolled
 
-        When("GET /confirmation-email-preference is called")
-        val result = get(emailPath)
+        When("the EmailToUse page is called")
+        val result = show
 
         result should have(
           httpStatus(Status.FORBIDDEN),
@@ -114,4 +85,5 @@ class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
       }
     }
   }
+
 }
