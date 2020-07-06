@@ -49,7 +49,7 @@ class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler)(implicit
       formYesNo.bindFromRequest().fold(
       _ => Future.successful(BadRequest("")), // TODO - direct back to preference page
         {
-        case Yes => Future.successful(Redirect("")) // TODO - Letter confirmation page?
+        case Yes => Future.successful(Redirect("")) // TODO - Letter confirmation page
         case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )
