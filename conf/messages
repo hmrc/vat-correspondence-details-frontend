@@ -111,7 +111,7 @@ emailPreference.title = Do you want us to send you emails instead of letters?
 emailPreference.hint = We currently send messages about your VAT by letter.
 emailPreference.error = Select yes if you want communications by email
 
-PPOBPreference.error = Select yes if you want communications by letter
+LetterPreference.error = Select yes if you want communications by letter
 
 emailChangeSuccess.title = We have received the new email address
 

@@ -28,17 +28,17 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 import scala.concurrent.Future
 
-class PPOBPreferenceController  @Inject() (errorHandler: ErrorHandler) (implicit val appConfig: AppConfig,
+class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler)(implicit val appConfig: AppConfig,
                                                                         mcc: MessagesControllerComponents,
                                                                         authComps: AuthPredicateComponents,
                                                                         inFlightPredicateComponents: InFlightPredicateComponents)
                                                                         extends BaseController {
 
-  val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("PPOBPreference.error")
+  val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("LetterPreference.error")
 
   def show: Action[AnyContent] = contactPreferencePredicate.async {implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      Future.successful(Ok("")) // TODO - direct to PPOB preference page
+      Future.successful(Ok("")) // TODO - direct to Letter preference page
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
@@ -49,7 +49,7 @@ class PPOBPreferenceController  @Inject() (errorHandler: ErrorHandler) (implicit
       formYesNo.bindFromRequest().fold(
       _ => Future.successful(BadRequest("")), // TODO - direct back to preference page
         {
-        case Yes => Future.successful(Redirect("")) // TODO - PPOB confirmation page?
+        case Yes => Future.successful(Redirect("")) // TODO - Letter confirmation page?
         case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )

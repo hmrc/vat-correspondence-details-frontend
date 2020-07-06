@@ -151,7 +151,7 @@ emailToUse.error = Dewiswch ‘Iawn’ os mai dyma’r cyfeiriad e-bost rydych a
 
 emailPreference.error = Dewiswch ‘Iawn’ os ydych am gael gohebiaeth drwy e-bost
 
-PPOBPreference.error = Dewiswch ‘Iawn’ os hoffech gael gohebiaeth drwy lythyr
+LetterPreference.error = Dewiswch ‘Iawn’ os hoffech gael gohebiaeth drwy lythyr
 
 contactPrefConfirmation.title = Rydych wedi gofyn i ni newid sut yr ydym yn cysylltu â chi ynghylch TAW
 contactPrefConfirmation.contactYou = Os gallwn dderbyn y newid, byddwn yn cysylltu â chi ynghylch TAW yn {0}
