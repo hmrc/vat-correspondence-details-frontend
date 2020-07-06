@@ -152,5 +152,5 @@ emailToUse.error = Dewiswch ‘Iawn’ os mai dyma’r cyfeiriad e-bost rydych a
 emailPreference.error = Dewiswch ‘Iawn’ os ydych am gael gohebiaeth drwy e-bost
 
 contactPrefConfirmation.title = Rydych wedi gofyn i ni newid sut yr ydym yn cysylltu â chi ynghylch TAW
-contactPrefConfirmation.contactYou = Os gallwn dderbyn y newid, byddwn yn cysylltu â chi ynghylch TAW yn {0}
+contactPrefConfirmation.contactYou = Os gallwn dderbyn y newid, byddwn yn cysylltu â chi ynghylch TAW yn:
 contactPrefConfirmation.stillNeedLetters = Bydd angen i ni anfon rhai llythyrau atoch drwy’r post o hyd oherwydd bod y gyfraith yn dweud wrthym am wneud hynny.

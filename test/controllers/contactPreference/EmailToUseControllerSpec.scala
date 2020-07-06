@@ -172,8 +172,8 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           status(result) shouldBe Status.SEE_OTHER
         }
 
-        s"Redirect to the '${controllers.contactPreference.routes.EmailPreferenceConfirmationController.show().url}'" in {
-          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceConfirmationController.show().url)
+        s"Redirect to the '${controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url}'" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url)
         }
       }
 

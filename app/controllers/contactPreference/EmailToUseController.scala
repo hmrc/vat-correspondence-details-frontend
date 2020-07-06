@@ -87,8 +87,9 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
               {
                 case Yes =>
                   //TODO Add call to vat-subscription once the appropriate call exist
-                  Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceConfirmationController.show())
-                  .addingToSession(SessionKeys.contactPrefConfirmed -> "true"))
+                  Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
+                  .addingToSession( SessionKeys.letterToEmailChangeSuccessful -> "true",
+                                    SessionKeys.contactPrefConfirmed -> "true"))
                 case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
               }
             )

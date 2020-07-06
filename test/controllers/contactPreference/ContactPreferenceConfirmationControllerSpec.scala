@@ -23,9 +23,9 @@ import views.html.contactPreference.PreferenceConfirmationView
 import common.SessionKeys.validationEmailKey
 import play.api.test.Helpers._
 
-class EmailPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
+class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
 
-  val controller = new EmailPreferenceConfirmationController(mockErrorHandler, inject[PreferenceConfirmationView])
+  val controller = new ContactPreferenceConfirmationController(mockErrorHandler, inject[PreferenceConfirmationView])
 
   ".show" when {
 
@@ -35,7 +35,7 @@ class EmailPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
 
         val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(false)
-          controller.show(fakeRequestWithClientsVRN)}
+          controller.show("email")(fakeRequestWithClientsVRN)}
 
         status(result) shouldBe NOT_FOUND
 
@@ -49,27 +49,27 @@ class EmailPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
 
         val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
-          controller.show(fakeRequestWithClientsVRN.withSession(validationEmailKey -> "asd@asd.com", SessionKeys.contactPrefConfirmed -> "true"))}
+          controller.show("email")(fakeRequestWithClientsVRN.withSession(validationEmailKey -> "asd@asd.com", SessionKeys.contactPrefConfirmed -> "true",  SessionKeys.letterToEmailChangeSuccessful -> "true"))}
 
         status(result) shouldBe OK
 
       }
 
-      "return an internal server error if there is no email in session" in {
+      "redirect back to the emailToUse page if there is no email in session" in {
 
         val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
-          controller.show(request.withSession(SessionKeys.contactPrefConfirmed -> "true"))
+          controller.show("email")(request.withSession(SessionKeys.contactPrefConfirmed -> "true",  SessionKeys.letterToEmailChangeSuccessful -> "true"))
         }
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe SEE_OTHER
 
       }
 
       s"return a Redirect if the ${SessionKeys.contactPrefConfirmed} key is not in session" in {
         val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
-          controller.show(request)
+          controller.show("email")(request)
         }
 
         status(result) shouldBe SEE_OTHER

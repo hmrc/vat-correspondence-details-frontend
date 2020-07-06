@@ -27,7 +27,7 @@ class PreferenceConfirmationViewSpec extends ViewBaseSpec {
 
   "The Preference Confirmation page" should {
 
-    lazy val view = injectedView("pepsi-mac@test.com")
+    lazy val view = injectedView("pepsi-mac@test.com", "vatCorrespondenceLetterToEmailChangeSuccessful")
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct title" in {
@@ -44,7 +44,12 @@ class PreferenceConfirmationViewSpec extends ViewBaseSpec {
 
     "have the correct first paragraph" in {
       elementText("#content article p:nth-of-type(1)") shouldBe
-        "If we can accept the change, we will contact you about VAT at pepsi-mac@test.com"
+        "If we can accept the change, we will contact you about VAT at:"
+    }
+
+    "have the correct email address" in {
+      elementText(".panel-border-wide") shouldBe
+        "pepsi-mac@test.com"
     }
 
     "have the correct second paragraph" in {

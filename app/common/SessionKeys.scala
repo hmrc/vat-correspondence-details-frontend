@@ -40,4 +40,8 @@ object SessionKeys {
   val validationMobileKey: String = "vatCorrespondenceValidationMobile"
   val prepopulationMobileKey: String = "vatCorrespondencePrepopulationMobile"
   val mobileChangeSuccessful: String = "vatCorrespondenceMobileChangeSuccessful"
+
+  val letterToEmailChangeSuccessful: String = "vatCorrespondenceLetterToEmailChangeSuccessful"
+  val emailToLetterChangeSuccessful: String = "vatCorrespondenceEmailToLetterChangeSuccessful"
+  val validationPPOBKey: String = "vatCorrespondenceValidationPPOB"
 }

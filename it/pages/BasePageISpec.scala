@@ -42,6 +42,9 @@ trait BasePageISpec extends IntegrationBaseSpec {
   def formatEmailPrefConfirmation: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(value => Map(SessionKeys.contactPrefConfirmed -> value))
 
+  def formatLetterToEmailPrefConfirmation: Option[String] => Map[String, String] =
+    _.fold(Map.empty[String, String])(value => Map(SessionKeys.letterToEmailChangeSuccessful -> value))
+
   def httpPostAuthenticationTests(path: String, sessionVrn: Option[String] = None)(formData: Map[String, Seq[String]]): Unit =
     authenticationTests(path, post(path, formatSessionVrn(sessionVrn))(formData))
 
