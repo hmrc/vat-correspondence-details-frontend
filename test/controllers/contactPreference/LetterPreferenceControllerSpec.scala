@@ -62,16 +62,11 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec {
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.show(request.withSession(SessionKeys.contactPrefUpdate -> "true"))
+        controller.show(request)
       }
       "return an OK result" in {
 
         status(result) shouldBe OK
-
-      }
-
-      s"not contain the session key ${SessionKeys.contactPrefUpdate}" in {
-        session(result).get(SessionKeys.contactPrefUpdate) shouldBe None
       }
 
 
