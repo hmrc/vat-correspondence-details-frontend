@@ -23,31 +23,33 @@ import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.YesNoForm
 import javax.inject.Inject
+import models.contactPreferences.ContactPreference.paper
 import models.{No, Yes, YesNo}
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import views.html.contactPreference.EmailPreferenceView
 
 import scala.concurrent.Future
 
 class EmailPreferenceController @Inject()(errorHandler: ErrorHandler,
-                                          emailPreferenceView: EmailPreferenceView)(implicit val appConfig: AppConfig,
-                                                                                    mcc: MessagesControllerComponents,
-                                                                                    authComps: AuthPredicateComponents,
-                                                                                    inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
+                                          emailPreferenceView: EmailPreferenceView)
+                                         (implicit val appConfig: AppConfig,
+                                          authComps: AuthPredicateComponents,
+                                          inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("emailPreference.error")
 
-  def show: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
+  def show: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       Future.successful(Ok(emailPreferenceView(formYesNo))
-        .removingFromSession(SessionKeys.contactPrefUpdate))
+        .removingFromSession(SessionKeys.contactPrefUpdate)
+        .addingToSession(SessionKeys.currentContactPrefKey -> paper))
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 
-  def submit: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       formYesNo.bindFromRequest().fold (
         formWithErrors => Future.successful(BadRequest(emailPreferenceView(formWithErrors))),
@@ -61,5 +63,4 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler,
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
-
 }

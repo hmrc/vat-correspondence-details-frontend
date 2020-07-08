@@ -19,6 +19,7 @@ package common
 object SessionKeys {
   val clientVrn: String = "CLIENT_VRN"
   val inFlightContactDetailsChangeKey: String = "inFlightContactDetailsChange"
+  val currentContactPrefKey: String = "vatCorrespondenceContactPreference"
   val verifiedAgentEmail: String = "verifiedAgentEmail"
   val mtdVatAgentClientName: String = "mtdVatAgentClientName"
 

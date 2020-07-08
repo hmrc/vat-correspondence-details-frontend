@@ -19,6 +19,7 @@ package pages.contactPreference
 import common.SessionKeys
 import forms.YesNoForm
 import helpers.SessionCookieCrumbler
+import models.contactPreferences.ContactPreference.paper
 import models.{No, Yes, YesNo}
 import pages.BasePageISpec
 import play.api.http.Status
@@ -30,7 +31,7 @@ class EmailPreferencePageSpec extends BasePageISpec {
 
   "Calling the EmailPreference .show method" when {
 
-    def show: WSResponse = get(path, formatEmailPrefUpdate(Some("true")))
+    def show: WSResponse = get(path, formatEmailPrefUpdate(Some("true")) ++ formatCurrentContactPref(Some(paper)))
 
     "the user is authenticated" when {
 
@@ -87,8 +88,10 @@ class EmailPreferencePageSpec extends BasePageISpec {
 
   "Calling the EmailPreference .submit method with an authenticated user" when {
 
-    def submit(data: YesNo): WSResponse =
-      post(path, formatValidationEmail(Some("test@test.com")))(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
+    def submit(data: YesNo): WSResponse = post(
+      path,
+      formatValidationEmail(Some("test@test.com")) ++ formatCurrentContactPref(Some(paper))
+    )(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
 
     "the user is authenticated" when {
 
@@ -140,7 +143,14 @@ class EmailPreferencePageSpec extends BasePageISpec {
 
           given.user.isAuthenticated
 
-          post(path, formatValidationEmail(Some("test@test.com")) ++ formatEmailPrefUpdate(Some("true")))(Map("yes_no" -> Seq(""))) should have(
+          val res = post(
+            path,
+            formatValidationEmail(Some("test@test.com")) ++
+              formatEmailPrefUpdate(Some("true")) ++
+              formatCurrentContactPref(Some(paper)))(Map("yes_no" -> Seq(""))
+          )
+
+          res should have(
             httpStatus(Status.BAD_REQUEST),
             pageTitle("Error: " + generateDocumentTitle("emailPreference.title")),
             elementText(".error-message")("Select yes if you want communications by email")
@@ -149,5 +159,4 @@ class EmailPreferencePageSpec extends BasePageISpec {
       }
     }
   }
-
 }

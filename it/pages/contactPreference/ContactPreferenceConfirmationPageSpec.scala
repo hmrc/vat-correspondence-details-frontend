@@ -16,7 +16,7 @@
 
 package pages.contactPreference
 
-import common.SessionKeys
+import models.contactPreferences.ContactPreference.paper
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.libs.ws.WSResponse
@@ -27,11 +27,13 @@ class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
 
   "Calling the EmailPreferenceConfirmation .show method" when {
 
-    def show: WSResponse = get(path,
-      formatValidationEmail(Some("asd@asd.com"))
-        ++ formatEmailPrefUpdate(Some("true"))
-        ++ formatEmailPrefConfirmation(Some("true"))
-        ++ formatLetterToEmailPrefConfirmation(Some("true"))
+    def show: WSResponse = get(
+      path,
+      formatValidationEmail(Some("asd@asd.com")) ++
+        formatEmailPrefUpdate(Some("true")) ++
+        formatEmailPrefConfirmation(Some("true")) ++
+        formatLetterToEmailPrefConfirmation(Some("true")) ++
+        formatCurrentContactPref(Some(paper))
     )
 
     "the user is authenticated" when {
@@ -86,5 +88,4 @@ class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
       }
     }
   }
-
 }

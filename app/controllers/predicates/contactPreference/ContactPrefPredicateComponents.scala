@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.predicates.inflight
+package controllers.predicates.contactPreference
 
 import config.{AppConfig, ErrorHandler}
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import services.VatSubscriptionService
-import views.html.errors.InFlightChangeView
 
 @Singleton
-class InFlightPredicateComponents @Inject()(val vatSubscriptionService: VatSubscriptionService,
-                                            val errorHandler: ErrorHandler,
-                                            val messagesApi: MessagesApi,
-                                            val mcc: MessagesControllerComponents,
-                                            val inFlightChangeView: InFlightChangeView,
-                                            val appConfig: AppConfig)
+class ContactPrefPredicateComponents @Inject()(val vatSubscriptionService: VatSubscriptionService,
+                                               val errorHandler: ErrorHandler,
+                                               val mcc: MessagesControllerComponents,
+                                               val messagesApi: MessagesApi,
+                                               val appConfig: AppConfig)

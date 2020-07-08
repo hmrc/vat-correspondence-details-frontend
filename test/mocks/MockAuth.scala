@@ -91,8 +91,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
     messagesApi,
     mcc,
     inFlightChangeView,
-    mockConfig,
-    ec
+    mockConfig
   )
 
   val mockAuthPredicate: AuthPredicate =

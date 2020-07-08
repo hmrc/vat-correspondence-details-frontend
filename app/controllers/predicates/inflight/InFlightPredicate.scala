@@ -19,7 +19,7 @@ package controllers.predicates.inflight
 import common.SessionKeys.inFlightContactDetailsChangeKey
 import config.AppConfig
 import models.User
-import models.customerInformation.{CustomerInformation, PendingChanges}
+import models.customerInformation.CustomerInformation
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{ActionRefiner, Result}
 import play.api.mvc.Results.{Conflict, Redirect}
@@ -33,7 +33,7 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
                         redirectURL: String) extends ActionRefiner[User, User] with I18nSupport {
 
   implicit val appConfig: AppConfig = inFlightComps.appConfig
-  implicit val executionContext: ExecutionContext = inFlightComps.ec
+  implicit val executionContext: ExecutionContext = inFlightComps.mcc.executionContext
   implicit val messagesApi: MessagesApi = inFlightComps.messagesApi
 
   override def refine[A](request: User[A]): Future[Either[Result, User[A]]] = {
@@ -54,7 +54,7 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
       case Right(customerInfo) =>
         customerInfo.pendingChanges match {
           case Some(changes) if changes.ppob.isDefined =>
-            comparePendingAndCurrent(changes, customerInfo)
+            comparePendingAndCurrent(customerInfo)
           case _ =>
             logDebug("[InFlightPredicate][getCustomerInfoCall] - There are no in-flight changes. " +
               "Redirecting user to the start of the journey.")
@@ -66,7 +66,7 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
         Left(inFlightComps.errorHandler.showInternalServerError)
     }
 
-  private def comparePendingAndCurrent[A](pendingChanges: PendingChanges, customerInfo: CustomerInformation)
+  private def comparePendingAndCurrent[A](customerInfo: CustomerInformation)
                                          (implicit user: User[A]): Either[Result, User[A]] =
 
     (customerInfo.sameAddress, customerInfo.sameEmail, customerInfo.sameLandline,
