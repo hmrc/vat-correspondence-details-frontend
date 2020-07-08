@@ -111,6 +111,8 @@ emailPreference.title = Do you want us to send you emails instead of letters?
 emailPreference.hint = We currently send messages about your VAT by letter.
 emailPreference.error = Select yes if you want communications by email
 
+letterPreference.error = Select yes if you want communications by letter
+
 emailChangeSuccess.title = We have received the new email address
 
 landlineChangeSuccess.title.change = You have asked to change the landline number
