@@ -154,5 +154,5 @@ emailToUse.title = Do you want us to use this email address to contact you about
 emailToUse.error = Select yes if this is the email address you want us to use
 
 contactPrefConfirmation.title = You have asked us to change how we contact you about VAT
-contactPrefConfirmation.contactYou = If we can accept the change, we will contact you about VAT at {0}
+contactPrefConfirmation.contactYou = If we can accept the change, we will contact you about VAT at:
 contactPrefConfirmation.stillNeedLetters = We’ll still need to send you some letters in the post because the law tells us to.

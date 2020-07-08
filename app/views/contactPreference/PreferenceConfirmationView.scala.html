@@ -18,7 +18,7 @@
 
 @this(mainTemplate: MainTemplate)
 
-@(emailAddress: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(validationValue: String, changeKey: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @mainTemplate(title = messages("contactPrefConfirmation.title")) {
 
@@ -28,8 +28,14 @@
 
   <h2 class="heading-medium">@messages("common.whatHappensNext")</h2>
 
-  <p>@messages("contactPrefConfirmation.contactYou", emailAddress)</p>
+  <p>@messages("contactPrefConfirmation.contactYou")</p>
+<div class="panel panel-border-wide" id="validationValue">
+    @validationValue
+</div>
+
+@if(changeKey == "vatCorrespondenceLetterToEmailChangeSuccessful") {
   <p>@messages("contactPrefConfirmation.stillNeedLetters")</p>
+    }
 
   <a href="@appConfig.btaAccountDetailsUrl" class="button" role="button">@messages("common.accountDetails")</a>
 }

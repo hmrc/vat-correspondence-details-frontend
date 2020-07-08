@@ -76,7 +76,7 @@ GET         /preference-confirm-email              controllers.contactPreference
 POST        /preference-confirm-email              controllers.contactPreference.EmailToUseController.submit
 
 # email preference change successful
-GET         /confirmation-update-preference        controllers.contactPreference.EmailPreferenceConfirmationController.show
+GET         /confirmation-:changeType-preference        controllers.contactPreference.ContactPreferenceConfirmationController.show(changeType)
 
 # letter preferences
 GET         /contact-preference-letter               controllers.contactPreference.LetterPreferenceController.show

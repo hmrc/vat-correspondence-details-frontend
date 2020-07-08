@@ -16,13 +16,14 @@
 
 package pages.contactPreference
 
+import common.SessionKeys
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.libs.ws.WSResponse
 
-class EmailPreferenceConfirmationPageSpec extends BasePageISpec {
+class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
 
-  val path = "/confirmation-update-preference"
+  val path = "/confirmation-email-preference"
 
   "Calling the EmailPreferenceConfirmation .show method" when {
 
@@ -30,6 +31,7 @@ class EmailPreferenceConfirmationPageSpec extends BasePageISpec {
       formatValidationEmail(Some("asd@asd.com"))
         ++ formatEmailPrefUpdate(Some("true"))
         ++ formatEmailPrefConfirmation(Some("true"))
+        ++ formatLetterToEmailPrefConfirmation(Some("true"))
     )
 
     "the user is authenticated" when {
