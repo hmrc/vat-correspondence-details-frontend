@@ -25,7 +25,7 @@ import forms.YesNoForm
 import javax.inject.{Inject, Singleton}
 import models.{No, Yes, YesNo}
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
 import views.html.contactPreference.EmailToUseView
 
@@ -34,16 +34,15 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                      val errorHandler: ErrorHandler,
-                                     emailToUseView: EmailToUseView
-                                    )(implicit val appConfig: AppConfig,
-                                      mcc: MessagesControllerComponents,
-                                      authComps: AuthPredicateComponents,
-                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                     emailToUseView: EmailToUseView)
+                                    (implicit val appConfig: AppConfig,
+                                     authComps: AuthPredicateComponents,
+                                     inFlightComps: InFlightPredicateComponents) extends BaseController {
 
-  implicit val ec: ExecutionContext = mcc.executionContext
+  implicit val ec: ExecutionContext = authComps.mcc.executionContext
   val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
 
-  def show: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
+  def show: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       user.session.get(SessionKeys.contactPrefUpdate) match {
         case Some("true") =>
@@ -73,7 +72,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   }
 
 
-  def submit: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
 
       user.session.get(SessionKeys.contactPrefUpdate) match {
@@ -101,5 +100,4 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
-
 }

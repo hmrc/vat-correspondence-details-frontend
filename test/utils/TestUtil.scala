@@ -20,6 +20,7 @@ import scala.concurrent.ExecutionContext
 import common.SessionKeys._
 import config.ErrorHandler
 import mocks.MockAppConfig
+import models.contactPreferences.ContactPreference.{digital, paper}
 import models.User
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -96,6 +97,14 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   lazy val requestWithAllMobileNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     validationMobileKey -> testValidationMobile,
     prepopulationMobileKey -> testPrepopMobile
+  )
+
+  lazy val requestWithDigitalPref: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+    currentContactPrefKey -> digital
+  )
+
+  lazy val requestWithPaperPref: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+    currentContactPrefKey -> paper
   )
 
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)

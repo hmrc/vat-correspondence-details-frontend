@@ -19,11 +19,12 @@ package controllers.contactPreference
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import forms.YesNoForm.{yes, yesNo, no => _no}
+import models.contactPreferences.ContactPreference.paper
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import play.api.test.Helpers._
 import views.html.contactPreference.EmailPreferenceView
 
-class EmailPreferencesControllerSpec extends ControllerBaseSpec {
+class EmailPreferenceControllerSpec extends ControllerBaseSpec {
 
   lazy val controller = new EmailPreferenceController(mockErrorHandler, inject[EmailPreferenceView])
 
@@ -34,7 +35,7 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
       "return an NOT_FOUND result" in {
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(false)
-          controller.show(request)
+          controller.show(requestWithPaperPref)
         }
 
         status(result) shouldBe NOT_FOUND
@@ -47,7 +48,7 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(false)
-          controller.submit(request)
+          controller.submit(requestWithPaperPref)
         }
 
         status(result) shouldBe NOT_FOUND
@@ -62,20 +63,24 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.show(request.withSession(SessionKeys.contactPrefUpdate -> "true"))
+        controller.show(requestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
       }
 
       "return an OK result" in {
         status(result) shouldBe OK
       }
 
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+
       s"not contain the session key ${SessionKeys.contactPrefUpdate}" in {
         session(result).get(SessionKeys.contactPrefUpdate) shouldBe None
       }
 
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+      "add the current contact preference to session" in {
+        session(result).get(SessionKeys.currentContactPrefKey) shouldBe Some(paper)
       }
     }
 
@@ -83,7 +88,7 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.submit(request.withFormUrlEncodedBody(yesNo -> yes))
+        controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
       }
 
       "return a SEE_OTHER result" in {
@@ -104,7 +109,7 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.submit(request.withFormUrlEncodedBody(yesNo -> _no))
+        controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> _no))
       }
 
       "return a SEE_OTHER result" in {
@@ -123,7 +128,7 @@ class EmailPreferencesControllerSpec extends ControllerBaseSpec {
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
-          controller.submit(request.withFormUrlEncodedBody())
+          controller.submit(requestWithPaperPref.withFormUrlEncodedBody())
         }
 
         status(result) shouldBe BAD_REQUEST

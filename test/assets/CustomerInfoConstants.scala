@@ -16,6 +16,7 @@
 
 package assets
 
+import models.contactPreferences.ContactPreference.{digital, paper}
 import models.customerInformation._
 import models.errors.ErrorModel
 import play.api.http.Status
@@ -33,7 +34,7 @@ object CustomerInfoConstants {
     "countryCode" -> "codeOfMyCountry"
   )
 
-  val fullPPOBAddressModel = PPOBAddress(
+  val fullPPOBAddressModel: PPOBAddress = PPOBAddress(
     "firstLine",
     Some("secondLine"),
     Some("thirdLine"),
@@ -48,7 +49,7 @@ object CustomerInfoConstants {
     "countryCode" -> "codeOfMyCountry"
   )
 
-  val minPPOBAddressModel = PPOBAddress(
+  val minPPOBAddressModel: PPOBAddress = PPOBAddress(
     "firstLine",
     None,
     None,
@@ -66,7 +67,7 @@ object CustomerInfoConstants {
     "emailVerified" -> true
   )
 
-  val fullContactDetailsModel = ContactDetails(
+  val fullContactDetailsModel: ContactDetails = ContactDetails(
     Some("01234567890"),
     Some("07707707707"),
     Some("0123456789"),
@@ -74,7 +75,7 @@ object CustomerInfoConstants {
     Some(true)
   )
 
-  val fullEmailAddressModel = EmailAddress(
+  val fullEmailAddressModel: EmailAddress = EmailAddress(
     Some("test@email.com"),
     Some(true)
   )
@@ -84,7 +85,7 @@ object CustomerInfoConstants {
     "emailVerified" -> true
   )
 
-  val minEmailAddressModel = EmailAddress(
+  val minEmailAddressModel: EmailAddress = EmailAddress(
     None,
     None
   )
@@ -93,7 +94,7 @@ object CustomerInfoConstants {
 
   val minContactDetailsJson: JsObject = Json.obj()
 
-  val minContactDetailsModel = ContactDetails(
+  val minContactDetailsModel: ContactDetails = ContactDetails(
     None,
     None,
     None,
@@ -109,13 +110,13 @@ object CustomerInfoConstants {
 
   val fullUpdatePPOBJson: JsObject = fullPPOBJson ++ Json.obj("transactorOrCapacitorEmail" -> "test@test.com")
 
-  val fullPPOBModel = PPOB(
+  val fullPPOBModel: PPOB = PPOB(
     fullPPOBAddressModel,
     Some(fullContactDetailsModel),
     Some("www.pepsi-mac.biz")
   )
 
-  val fullUpdatePPOBModel = UpdatePPOB(
+  val fullUpdatePPOBModel: UpdatePPOB = UpdatePPOB(
     fullPPOBAddressModel,
     Some(fullContactDetailsModel),
     Some("www.pepsi-mac.biz"),
@@ -126,31 +127,33 @@ object CustomerInfoConstants {
     "address" -> minPPOBAddressJson
   )
 
-  val minPPOBModel = PPOB(
+  val minPPOBModel: PPOB = PPOB(
     minPPOBAddressModel,
     None,
     None
   )
 
-  val minUpdatePPOBModel = UpdatePPOB(
+  val minUpdatePPOBModel: UpdatePPOB = UpdatePPOB(
     minPPOBAddressModel,
     None,
     None,
     None
   )
 
-  val pendingChangesModel = PendingChanges(Some(minPPOBModel))
+  val pendingChangesModel: PendingChanges = PendingChanges(Some(minPPOBModel))
   val pendingChangesJson: JsObject = Json.obj("PPOBDetails" -> minPPOBModel)
 
-  val fullCustomerInfoModel = CustomerInformation(
+  val fullCustomerInfoModel: CustomerInformation = CustomerInformation(
     fullPPOBModel,
     Some(PendingChanges(Some(fullPPOBModel))),
     Some("Pepsi"),
     Some("Mac"),
     Some("PepsiMac Ltd"),
-    Some("PepsiMac")
+    Some("PepsiMac"),
+    Some(digital)
   )
-  val minCustomerInfoModel = CustomerInformation(minPPOBModel, None, None, None, None, None)
+
+  val minCustomerInfoModel: CustomerInformation = CustomerInformation(minPPOBModel, None, None, None, None, None, None)
 
   val customerInfoPendingAddressModel: CustomerInformation = fullCustomerInfoModel.copy(
     pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
@@ -182,6 +185,8 @@ object CustomerInfoConstants {
     ))))
   )
 
+  val customerInfoPaperPrefModel: CustomerInformation = fullCustomerInfoModel.copy(commsPreference = Some(paper))
+
   val fullCustomerInfoJson: JsObject = Json.obj(
     "ppob" -> fullPPOBJson,
     "pendingChanges" -> Some(PendingChanges(Some(fullPPOBModel))),
@@ -190,9 +195,10 @@ object CustomerInfoConstants {
       "lastName" -> "Mac",
       "organisationName" -> "PepsiMac Ltd",
       "tradingName" -> "PepsiMac"
-    )
+    ),
+    "commsPreference" -> digital
   )
   val minCustomerInfoJson: JsObject = Json.obj("ppob" -> minPPOBJson)
 
-  val invalidJsonError = ErrorModel(Status.INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
+  val invalidJsonError: ErrorModel = ErrorModel(Status.INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
 }

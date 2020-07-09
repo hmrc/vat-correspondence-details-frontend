@@ -44,7 +44,7 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
   val testEmail: String = "test@exmaple.com"
   implicit val testUser: models.User[AnyContentAsEmpty.type] = User("999999999")(FakeRequest())
 
-  val testPPOB = PPOB(
+  val testPPOB: PPOB = PPOB(
     PPOBAddress(
       "firstLine",
       None,
@@ -73,7 +73,7 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
 
         setupStubs()
 
-        val expected = Right(CustomerInformation(testPPOB, None, None, None, None, None))
+        val expected = Right(CustomerInformation(testPPOB, None, None, None, None, None, None))
         val result: GetCustomerInfoResponse = await(connector.getCustomerInfo("123456789"))
 
         result shouldBe expected

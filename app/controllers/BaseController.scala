@@ -16,20 +16,20 @@
 
 package controllers
 
+import controllers.predicates.contactPreference.{ContactPrefPredicate, ContactPrefPredicateComponents}
 import controllers.predicates.inflight.{InFlightPredicate, InFlightPredicateComponents}
 import controllers.predicates.{AuthPredicate, AuthPredicateComponents}
+import models.contactPreferences.ContactPreference.{digital, paper}
 import play.api.i18n.I18nSupport
-import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 
-abstract class BaseController(implicit val mcc: MessagesControllerComponents,
-                              authComps: AuthPredicateComponents,
-                              inFlightComps: InFlightPredicateComponents) extends FrontendController(mcc) with I18nSupport {
+abstract class BaseController(implicit authComps: AuthPredicateComponents,
+                              inFlightComps: InFlightPredicateComponents) extends FrontendController(authComps.mcc) with I18nSupport {
 
   val allowAgentPredicate = new AuthPredicate(authComps, allowsAgents = true)
   val blockAgentPredicate = new AuthPredicate(authComps, allowsAgents = false)
-  val contactPreferencePredicate = new AuthPredicate(authComps, allowsAgents = false, true)
+  val contactPreferencePredicate = new AuthPredicate(authComps, allowsAgents = false, isChangePrefJourney = true)
 
   val routePrefix = "/vat-through-software/account/correspondence"
 
@@ -45,4 +45,15 @@ abstract class BaseController(implicit val mcc: MessagesControllerComponents,
   val inFlightMobileNumberPredicate = new InFlightPredicate(
     inFlightComps, routePrefix + controllers.mobileNumber.routes.CaptureMobileNumberController.show().url
   )
+
+  val contactPrefComps = new ContactPrefPredicateComponents(
+    inFlightComps.vatSubscriptionService,
+    authComps.errorHandler,
+    authComps.mcc,
+    authComps.messagesApi,
+    authComps.appConfig
+  )
+
+  val digitalPrefPredicate = new ContactPrefPredicate(contactPrefComps, blockedPref = paper)
+  val paperPrefPredicate = new ContactPrefPredicate(contactPrefComps, blockedPref = digital)
 }

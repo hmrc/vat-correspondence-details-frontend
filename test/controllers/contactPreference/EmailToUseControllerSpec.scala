@@ -41,15 +41,17 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
   val testValidationEmail: String = "validation@example.com"
 
   lazy val existingEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(
+    requestWithPaperPref.withSession(
       SessionKeys.validationEmailKey -> testValidationEmail,
       SessionKeys.contactPrefUpdate -> "true",
       SessionKeys.contactPrefConfirmed -> "true"
     )
 
-  lazy val noEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] = request.withSession(SessionKeys.contactPrefUpdate -> "true")
+  lazy val noEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
+    requestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true")
 
-  lazy val noPrefUpdateValueSessionRequest: FakeRequest[AnyContentAsEmpty.type] = request.withSession(SessionKeys.validationEmailKey -> testValidationEmail)
+  lazy val noPrefUpdateValueSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
+    requestWithPaperPref.withSession(SessionKeys.validationEmailKey -> testValidationEmail)
 
   val view: EmailToUseView = injector.instanceOf[EmailToUseView]
 
@@ -157,7 +159,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
       "the user submits after selecting an 'Yes' option" should {
 
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          request
+          requestWithPaperPref
             .withFormUrlEncodedBody((yesNo, "yes"))
             .withSession(
               SessionKeys.validationEmailKey -> testValidationEmail,
@@ -180,7 +182,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
       "the user submits after selecting an 'No' option" should {
 
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          request
+          requestWithPaperPref
             .withFormUrlEncodedBody((yesNo, "no"))
             .withSession(
               SessionKeys.validationEmailKey -> testValidationEmail,
@@ -203,7 +205,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
       "the user submits without selecting an option" should {
 
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          request
+          requestWithPaperPref
             .withFormUrlEncodedBody((yesNo, ""))
             .withSession(
               SessionKeys.validationEmailKey -> testValidationEmail,
@@ -222,7 +224,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
       "the user does not have an email in session" should {
 
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          request
+          requestWithPaperPref
             .withFormUrlEncodedBody((yesNo, "no"))
           .withSession(SessionKeys.contactPrefUpdate -> "true")
         lazy val result = {
@@ -239,7 +241,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
       s"the ${SessionKeys.contactPrefUpdate} key is not in session" should {
 
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          request
+          requestWithPaperPref
             .withFormUrlEncodedBody((yesNo, "yes"))
             .withSession(
               SessionKeys.validationEmailKey -> testValidationEmail
@@ -262,7 +264,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     "the letterToConfirmedEmail switch is disabled" when {
 
       lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-        request
+        requestWithPaperPref
           .withFormUrlEncodedBody((yesNo, "no"))
           .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
       lazy val result = {

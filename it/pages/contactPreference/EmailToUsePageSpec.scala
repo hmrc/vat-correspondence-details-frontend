@@ -20,6 +20,7 @@ import assets.BaseITConstants.internalServerErrorTitle
 import common.SessionKeys
 import forms.YesNoForm
 import helpers.SessionCookieCrumbler
+import models.contactPreferences.ContactPreference.paper
 import models.{No, Yes, YesNo}
 import pages.BasePageISpec
 import play.api.libs.ws.WSResponse
@@ -32,7 +33,7 @@ class EmailToUsePageSpec extends BasePageISpec {
 
   "Calling the EmailToUse .show method" when {
 
-    def show: WSResponse = get(path, formatEmailPrefUpdate(Some("true")))
+    def show: WSResponse = get(path, formatEmailPrefUpdate(Some("true")) ++ formatCurrentContactPref(Some(paper)))
 
     "the user is authenticated" when {
 
@@ -125,8 +126,12 @@ class EmailToUsePageSpec extends BasePageISpec {
 
   "Calling the EmailToUse .submit method with an authenticated user" when {
 
-    def submit(data: YesNo): WSResponse =
-      post(path, formatValidationEmail(Some("test@test.com")) ++ formatEmailPrefUpdate(Some("true")))(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
+    def submit(data: YesNo): WSResponse = post(
+      path,
+      formatValidationEmail(Some("test@test.com")) ++
+        formatEmailPrefUpdate(Some("true")) ++
+        formatCurrentContactPref(Some(paper))
+    )(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
 
     "the user is authenticated" when {
 
@@ -168,7 +173,14 @@ class EmailToUsePageSpec extends BasePageISpec {
 
           given.user.isAuthenticated
 
-          post(path, formatValidationEmail(Some("test@test.com")) ++ formatEmailPrefUpdate(Some("true")))(Map("yes_no" -> Seq(""))) should have(
+          val res = post(
+            path,
+            formatValidationEmail(Some("test@test.com")) ++
+              formatEmailPrefUpdate(Some("true")) ++
+              formatCurrentContactPref(Some(paper))
+          )(Map("yes_no" -> Seq("")))
+
+          res should have(
             httpStatus(Status.BAD_REQUEST),
             pageTitle("Error: " + generateDocumentTitle("emailToUse.title")),
             elementText(".error-message")("Select yes if this is the email address you want us to use")
@@ -177,5 +189,4 @@ class EmailToUsePageSpec extends BasePageISpec {
       }
     }
   }
-
 }
