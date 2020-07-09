@@ -16,6 +16,7 @@
 
 package controllers.contactPreference
 
+import assets.CustomerInfoConstants
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
@@ -74,7 +75,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec {
 
     ".submit() is called with a yes" should {
 
-      lazy val result ={
+      lazy val result = {
 
         mockConfig.features.letterToConfirmedEmailEnabled(true)
         controller.submit(request.withFormUrlEncodedBody(yesNo -> yes))
@@ -120,6 +121,25 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec {
       }
     }
 
+    ".displayAddress() with a PPOB with a postcode" should {
+
+      "return the right string" in {
+        lazy val result = {
+          controller.displayAddress(CustomerInfoConstants.fullPPOBModel)
+        }
+        result shouldBe "firstLine, codeOfMyPost"
+      }
+
+      ".displayAddress() with a PPOB without a postcode" should {
+
+        "return the right string" in {
+          lazy val result = {
+            controller.displayAddress(CustomerInfoConstants.minPPOBModel)
+          }
+          result shouldBe "firstLine"
+        }
+      }
+    }
   }
 
 }
