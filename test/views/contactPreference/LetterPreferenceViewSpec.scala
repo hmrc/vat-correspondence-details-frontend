@@ -34,7 +34,8 @@ class LetterPreferenceViewSpec extends ViewBaseSpec {
     val yesOption = "div.multiple-choice:nth-child(1) > label"
     val noOption = "div.multiple-choice:nth-child(2) > label"
     val hint = ".secondary-text"
-    val errorHeading = "#error-summary-display"
+    val errorHeading = "#error-summary-display h2"
+    val errorSummaryMessage = "#yes_no-error-summary"
     val error = ".error-message"
   }
 
@@ -85,6 +86,17 @@ class LetterPreferenceViewSpec extends ViewBaseSpec {
 
     "have the correct page heading" in {
       elementText(Selectors.pageHeading) shouldBe LetterPreferenceMessages.heading
+    }
+
+    "display an error summary" which {
+
+      "has the correct title text" in {
+        elementText(Selectors.errorHeading) shouldBe "There is a problem"
+      }
+
+      "has an error" in {
+        elementText(Selectors.errorSummaryMessage) shouldBe LetterPreferenceMessages.errorMessage
+      }
     }
 
     "display the Yes option correctly with an address" in {
