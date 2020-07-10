@@ -46,7 +46,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   }
 
   lazy val injector: Injector = app.injector
-  implicit lazy val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
+  implicit lazy val mcc: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
   implicit lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
   implicit lazy val messages: Messages = MessagesImpl(Lang("en-GB"), messagesApi)
   implicit lazy val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)

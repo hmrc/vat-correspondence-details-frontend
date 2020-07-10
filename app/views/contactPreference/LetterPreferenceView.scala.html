@@ -40,11 +40,11 @@
         choices = Seq(
           yes -> messages("letterPreference.yes", address),
           no -> messages("letterPreference.no")
-          ),
+        ),
         question = messages("letterPreference.title"),
         additionalContent = Some(hint),
-        inline = true
-        )
+        inline = false
+      )
     </div>
 
     <button class="button" type="submit" id="continue">

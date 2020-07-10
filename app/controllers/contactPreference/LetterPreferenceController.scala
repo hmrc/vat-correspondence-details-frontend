@@ -24,47 +24,58 @@ import forms.YesNoForm
 import javax.inject.Inject
 import models.customerInformation.PPOB
 import models.{No, Yes, YesNo}
+import play.api.Logger
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.VatSubscriptionService
+import views.html.contactPreference.LetterPreferenceView
+import controllers.contactPreference._
+import scala.concurrent.{ExecutionContext, Future}
 
-import scala.concurrent.Future
-
-class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler)(implicit val appConfig: AppConfig,
-                                                                        mcc: MessagesControllerComponents,
-                                                                        authComps: AuthPredicateComponents,
-                                                                        inFlightPredicateComponents: InFlightPredicateComponents)
-                                                                        extends BaseController {
+class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler,
+                                            view: LetterPreferenceView,
+                                            vatSubscriptionService: VatSubscriptionService)
+                                           (implicit val appConfig: AppConfig,
+                                            ec: ExecutionContext,
+                                            mcc: MessagesControllerComponents,
+                                            authComps: AuthPredicateComponents,
+                                            inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("letterPreference.error")
 
-  // TODO - this method needs to be passed into the view as part of the wiring up task
-  def displayAddress(ppob: PPOB): String = {
-    ppob.address.postCode match {
-      case None => ppob.address.line1
-      case Some(postCode) => ppob.address.line1 + ", " + postCode
-    }
-  }
+  def displayAddress(ppob: PPOB): String = ppob.address.line1 + ppob.address.postCode.fold("")(", " + _)
 
-  def show: Action[AnyContent] = contactPreferencePredicate.async {implicit user =>
+  def show: Action[AnyContent] = (contactPreferencePredicate andThen digitalPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      Future.successful(Ok("")) // TODO - direct to Letter preference page
+      vatSubscriptionService.getCustomerInfo(user.vrn) map {
+        case Right(details) => Ok(view(formYesNo, displayAddress(details.ppob)))
+        case _ =>
+          Logger.warn("[LetterPreferenceController][show] Unable to retrieve current business address")
+          errorHandler.showInternalServerError
+      }
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 
-  def submit: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen digitalPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       formYesNo.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest("")), // TODO - direct back to preference page
+        formWithErrors => {
+          vatSubscriptionService.getCustomerInfo(user.vrn) map {
+            case Right(details) => BadRequest(view(formWithErrors, displayAddress(details.ppob)))
+            case _ =>
+              Logger.warn("[LetterPreferenceController][submit] Unable to retrieve current business address")
+              errorHandler.showInternalServerError
+          }
+        },
         {
-        case Yes => Future.successful(Redirect("")) // TODO - Letter confirmation page
-        case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
+          case Yes => Future.successful(Redirect(routes.ContactPreferenceConfirmationController.show("letter").url))
+          case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
-
 }

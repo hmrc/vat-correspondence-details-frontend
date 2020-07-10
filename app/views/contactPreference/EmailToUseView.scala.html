@@ -19,7 +19,6 @@
 @import templates.inputs.RadioGroup
 @import forms.YesNoForm._
 
-
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, radioGroup: RadioGroup)
 
 @(emailToUseForm: Form[YesNo], emailAddress: String)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
