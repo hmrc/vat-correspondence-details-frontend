@@ -103,7 +103,6 @@ letterPreference.title = A hoffech i ni anfon llythyrau i’ch prif leoliad busn
 letterPreference.hint = Ar hyn o bryd, rydym yn anfon negeseuon ynghylch eich TAW drwy e-bost.
 letterPreference.yes = Iawn, anfonwch lythyrau i {0}
 letterPreference.no = Na, hoffwn barhau i gael e-byst
-letterPreference.changePpobLink = Newid cyfeiriad eich prif leoliad busnes
 letterPreference.error = Dewiswch ‘Iawn’ os hoffech gael gohebiaeth drwy lythyr
 
 emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
@@ -154,10 +153,6 @@ mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symud
 
 emailToUse.title = A ydych am i ni ddefnyddio’r cyfeiriad e-bost hwn er mwyn cysylltu â chi ynghylch TAW?
 emailToUse.error = Dewiswch ‘Iawn’ os mai dyma’r cyfeiriad e-bost rydych am i ni ei ddefnyddio
-
-emailPreference.error = Dewiswch ‘Iawn’ os ydych am gael gohebiaeth drwy e-bost
-
-letterPreference.error = Dewiswch ‘Iawn’ os hoffech gael gohebiaeth drwy lythyr
 
 contactPrefConfirmation.title = Rydych wedi gofyn i ni newid sut yr ydym yn cysylltu â chi ynghylch TAW
 contactPrefConfirmation.contactYou = Os gallwn dderbyn y newid, byddwn yn cysylltu â chi ynghylch TAW yn:

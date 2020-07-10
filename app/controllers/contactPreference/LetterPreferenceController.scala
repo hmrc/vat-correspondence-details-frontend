@@ -16,6 +16,7 @@
 
 package controllers.contactPreference
 
+import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
@@ -30,6 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.VatSubscriptionService
 import views.html.contactPreference.LetterPreferenceView
 import controllers.contactPreference._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler,
@@ -70,7 +72,10 @@ class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler,
           }
         },
         {
-          case Yes => Future.successful(Redirect(routes.ContactPreferenceConfirmationController.show("letter").url))
+          case Yes => Future.successful(
+            Redirect(routes.ContactPreferenceConfirmationController.show("letter").url)
+              .addingToSession(SessionKeys.contactPrefUpdate -> "true")
+          )
           case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )

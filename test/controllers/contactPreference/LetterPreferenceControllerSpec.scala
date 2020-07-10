@@ -205,20 +205,35 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
             }
           }
 
-          "Nothing is submitted (form has errors)" should {
+          "Nothing is submitted (form has errors)" when {
 
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
-              controller.submit(requestWithSession.withFormUrlEncodedBody())
+            "call to customer info is successful" should {
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+                controller.submit(requestWithSession.withFormUrlEncodedBody())
+              }
+
+              "return a BAD_REQUEST result" in {
+                status(result) shouldBe BAD_REQUEST
+              }
+
+              "return the LetterPreference view with errors" in {
+                Jsoup.parse(bodyOf(result)).title should include("Error: " + LetterPreferenceMessages.heading)
+              }
             }
 
-            "return a BAD_REQUEST result" in {
-              status(result) shouldBe BAD_REQUEST
-            }
+            "call to customer info is unsuccessful" should {
 
-            "return the LetterPreference view with errors" in {
-              Jsoup.parse(bodyOf(result)).title should include("Error: " + LetterPreferenceMessages.heading)
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+                controller.submit(requestWithSession.withFormUrlEncodedBody())
+              }
+
+              "return an INTERNAL_SERVER_ERROR result" in {
+                status(result) shouldBe INTERNAL_SERVER_ERROR
+              }
             }
           }
         }
