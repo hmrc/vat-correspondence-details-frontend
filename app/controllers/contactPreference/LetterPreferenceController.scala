@@ -22,6 +22,7 @@ import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.YesNoForm
 import javax.inject.Inject
+import models.customerInformation.PPOB
 import models.{No, Yes, YesNo}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,6 +36,14 @@ class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler)(implicit
                                                                         extends BaseController {
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("LetterPreference.error")
+
+  // TODO - this method needs to be passed into the view as part of the wiring up task
+  def displayAddress(ppob: PPOB): String = {
+    ppob.address.postCode match {
+      case None => ppob.address.line1
+      case Some(postCode) => ppob.address.line1 + ", " + postCode
+    }
+  }
 
   def show: Action[AnyContent] = contactPreferencePredicate.async {implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
@@ -57,7 +66,5 @@ class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler)(implicit
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
-
-
 
 }
