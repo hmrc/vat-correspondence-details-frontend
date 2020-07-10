@@ -24,13 +24,13 @@
 
 @hint = {
   <div class="secondary-text">
-    <p>@messages("lettersToPpob.hint")</p>
+    <p>@messages("letterPreference.hint")</p>
   </div>
 }
 
 @mainTemplate(
-  title = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("lettersToPpob.title"))
-          else messages("lettersToPpob.title")) {
+  title = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("letterPreference.title"))
+          else messages("letterPreference.title")) {
 
   @formWithCSRF(action = controllers.contactPreference.routes.LetterPreferenceController.submit,
     'novalidate -> "novalidate") {
@@ -38,10 +38,10 @@
       @radioGroup(
         field = form(yesNo),
         choices = Seq(
-          yes -> messages("lettersToPpob.yes", address),
-          no -> messages("lettersToPpob.no")
+          yes -> messages("letterPreference.yes", address),
+          no -> messages("letterPreference.no")
           ),
-        question = messages("lettersToPpob.title"),
+        question = messages("letterPreference.title"),
         additionalContent = Some(hint),
         inline = true
         )

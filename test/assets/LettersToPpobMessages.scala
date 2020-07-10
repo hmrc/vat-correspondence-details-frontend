@@ -16,7 +16,7 @@
 
 package assets
 
-object LettersToPpobMessages {
+object LetterPreferenceMessages {
   val heading = "Do you want us to send letters to your principal place of business, instead of emailing you?"
   val titleSuffixUser = " - Business tax account - GOV.UK"
   val title: String = heading + titleSuffixUser

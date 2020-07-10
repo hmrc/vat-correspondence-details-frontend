@@ -35,7 +35,7 @@ class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler)(implicit
                                                                         inFlightPredicateComponents: InFlightPredicateComponents)
                                                                         extends BaseController {
 
-  val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("LetterPreference.error")
+  val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("letterPreference.error")
 
   // TODO - this method needs to be passed into the view as part of the wiring up task
   def displayAddress(ppob: PPOB): String = {
