@@ -83,7 +83,6 @@ val compile = Seq(
 )
 
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc" %% "bootstrap-play-26" % bootstrapPlayVersion % scope classifier "tests",
   "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
   "org.scalatest" %% "scalatest" % scalatestVersion % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,

@@ -54,7 +54,7 @@ class LetterPreferencePageSpec extends BasePageISpec {
 
     "a user is an agent" should {
 
-      "redirect to Agent overview" in {
+      "redirect to Client's VAT Account" in {
 
         given.user.isAuthenticatedAgent
 

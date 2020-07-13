@@ -17,7 +17,7 @@
 package controllers.contactPreference
 
 import common.SessionKeys
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents

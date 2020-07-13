@@ -19,7 +19,6 @@ package pages.contactPreference
 import models.contactPreferences.ContactPreference._
 import pages.BasePageISpec
 import play.api.http.Status
-import play.api.libs.ws.WSResponse
 import stubs.VatSubscriptionStub
 
 class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
@@ -85,11 +84,11 @@ class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
 
     "a user is an authenticated agent" should {
 
-      "render the Agent unauthorised page" in {
+      "redirect to Client's VAT Account" in {
 
         given.user.isAuthenticatedAgent
 
-        When("the EmailToUse page is called")
+        When("GET /confirmation-email-preference is called")
         val result = get(emailPath)
 
         result should have(
@@ -105,7 +104,7 @@ class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
 
         given.user.isNotEnrolled
 
-        When("the EmailToUse page is called")
+        When("GET /confirmation-email-preference is called")
         val result = get(emailPath)
 
         result should have(

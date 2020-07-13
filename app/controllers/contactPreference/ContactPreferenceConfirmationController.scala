@@ -17,7 +17,7 @@
 package controllers.contactPreference
 
 import common.SessionKeys._
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
@@ -25,9 +25,7 @@ import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.Logger
 import play.api.mvc._
-import play.twirl.api.Html
 import services.VatSubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.contactPreference.PreferenceConfirmationView
 
 import scala.concurrent.{ExecutionContext, Future}
