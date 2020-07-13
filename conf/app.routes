@@ -76,11 +76,11 @@ GET         /preference-confirm-email              controllers.contactPreference
 POST        /preference-confirm-email              controllers.contactPreference.EmailToUseController.submit
 
 # email preference change successful
-GET         /confirmation-:changeType-preference        controllers.contactPreference.ContactPreferenceConfirmationController.show(changeType)
+GET         /confirmation-:changeType-preference   controllers.contactPreference.ContactPreferenceConfirmationController.show(changeType)
 
 # letter preferences
-GET         /contact-preference-letter               controllers.contactPreference.LetterPreferenceController.show
-POST        /contact-preference-letter               controllers.contactPreference.LetterPreferenceController.submit
+GET         /contact-preference-letter             controllers.contactPreference.LetterPreferenceController.show
+POST        /contact-preference-letter             controllers.contactPreference.LetterPreferenceController.submit
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                          controllers.Assets.at(path="/public", file)

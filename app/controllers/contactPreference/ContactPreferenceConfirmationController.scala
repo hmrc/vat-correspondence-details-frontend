@@ -17,47 +17,69 @@
 package controllers.contactPreference
 
 import common.SessionKeys._
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.User
+import play.api.Logger
 import play.api.mvc._
+import services.VatSubscriptionService
 import views.html.contactPreference.PreferenceConfirmationView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationView: PreferenceConfirmationView)
+class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationView: PreferenceConfirmationView,
+                                                        vatSubscriptionService: VatSubscriptionService)
                                                        (implicit val appConfig: AppConfig,
                                                         authComps: AuthPredicateComponents,
-                                                        inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                                        inFlightComps: InFlightPredicateComponents,
+                                                        ec: ExecutionContext) extends BaseController {
 
-  def show(changeType: String): Action[AnyContent] =
-    (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def show(changeType: String): Action[AnyContent] = contactPreferencePredicate async { implicit user =>
       if (appConfig.features.letterToConfirmedEmailEnabled()) {
         changeType match {
-          case "email" => sessionGuard(letterToEmailChangeSuccessful, validationEmailKey)
-          case "letter" => sessionGuard(emailToLetterChangeSuccessful, validationPPOBKey)
+          case "email" => sessionGuard(letterToEmailChangeSuccessful)
+          case "letter" => sessionGuard(emailToLetterChangeSuccessful)
         }
       } else {
         Future.successful(NotFound(authComps.errorHandler.notFoundTemplate))
       }
     }
 
-  private[controllers] def sessionGuard(changeKey: String, validationKey: String)(implicit user: User[_]): Future[Result] =
-    user.session.get(validationKey) match {
-      case Some(validationValue) if user.session.get(changeKey).exists(_.equals("true")) =>
-        renderView(changeKey, validationValue)
-      case _ =>
-        val redirectLocation: Call = changeKey match {
-          case `letterToEmailChangeSuccessful` => controllers.contactPreference.routes.EmailToUseController.show()
-          case `emailToLetterChangeSuccessful` => controllers.contactPreference.routes.EmailToUseController.show() //TODO Change this to the correct page
-        }
-        Future.successful(Redirect(redirectLocation))
+  private[controllers] def renderLetterPreferenceView(implicit user: User[_]): Future[Result] = {
+    vatSubscriptionService.getCustomerInfo(user.vrn) map {
+      case Right(result) =>
+        val address: Seq[String] = result.ppob.address.line1 +: Seq(
+          result.ppob.address.line2,
+          result.ppob.address.line3,
+          result.ppob.address.line4,
+          result.ppob.address.line5,
+          result.ppob.address.postCode
+        ).flatten
+        Ok(preferenceConfirmationView(address, emailToLetterChangeSuccessful))
+      case Left(_) =>
+        Logger.warn("[ContactPreferenceConfirmationController][renderLetterPreferenceView] Unable to retrieve current business address")
+        authComps.errorHandler.showInternalServerError
     }
+  }
 
-  private[controllers] def renderView(changeKey: String, validationValue: String)(implicit user: User[_]): Future[Result] =
-    Future.successful(Ok(preferenceConfirmationView(validationValue, changeKey)))
+  private[controllers] def renderEmailPreferenceView(implicit user: User[_]): Result = {
+    user.session.get(validationEmailKey) match {
+      case Some(value) => Ok(preferenceConfirmationView(Seq(value), letterToEmailChangeSuccessful))
+      case _ => Redirect(controllers.contactPreference.routes.EmailToUseController.show())
+    }
+  }
+
+  private[controllers] def sessionGuard(changeKey: String)(implicit user: User[_]): Future[Result] = {
+    val journeyComplete = user.session.get(changeKey).exists(_.equals("true"))
+    changeKey match {
+      case `letterToEmailChangeSuccessful` =>
+        if(journeyComplete) Future(renderEmailPreferenceView) else Future(Redirect(routes.EmailToUseController.show()))
+      case `emailToLetterChangeSuccessful` =>
+        if(journeyComplete) renderLetterPreferenceView else Future(Redirect(routes.LetterPreferenceController.show()))
+    }
+  }
 }

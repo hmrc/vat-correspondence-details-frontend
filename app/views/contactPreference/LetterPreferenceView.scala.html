@@ -17,34 +17,37 @@
 @import views.html.templates.inputs.RadioGroup
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import forms.YesNoForm._
+@import views.html.templates.errors.ErrorSummary
 
-@this(mainTemplate: MainTemplate, radioGroup: RadioGroup, formWithCSRF: FormWithCSRF)
+@this(mainTemplate: MainTemplate, radioGroup: RadioGroup, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
 
 @(form: Form[YesNo], address: String)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @hint = {
   <div class="secondary-text">
-    <p>@messages("lettersToPpob.hint")</p>
+    <p>@messages("letterPreference.hint")</p>
   </div>
 }
 
 @mainTemplate(
-  title = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("lettersToPpob.title"))
-          else messages("lettersToPpob.title")) {
+  title = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("letterPreference.title"))
+          else messages("letterPreference.title")) {
 
-  @formWithCSRF(action = controllers.contactPreference.routes.LetterPreferenceController.submit,
+    @errorSummary(messages("common.error.heading"), form)
+
+    @formWithCSRF(action = controllers.contactPreference.routes.LetterPreferenceController.submit,
     'novalidate -> "novalidate") {
     <div id="@yesNo" class="form-group">
       @radioGroup(
         field = form(yesNo),
         choices = Seq(
-          yes -> messages("lettersToPpob.yes", address),
-          no -> messages("lettersToPpob.no")
-          ),
-        question = messages("lettersToPpob.title"),
+          yes -> messages("letterPreference.yes", address),
+          no -> messages("letterPreference.no")
+        ),
+        question = messages("letterPreference.title"),
         additionalContent = Some(hint),
-        inline = true
-        )
+        inline = false
+      )
     </div>
 
     <button class="button" type="submit" id="continue">

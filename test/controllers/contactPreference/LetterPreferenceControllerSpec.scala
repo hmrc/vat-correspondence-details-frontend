@@ -16,130 +16,278 @@
 
 package controllers.contactPreference
 
-import assets.CustomerInfoConstants
+import assets.BaseTestConstants.vrn
+import assets.CustomerInfoConstants._
+import assets.{CustomerInfoConstants, LetterPreferenceMessages}
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import play.api.test.Helpers._
 import forms.YesNoForm.{yes, yesNo, no => _no}
+import mocks.MockVatSubscriptionService
+import models.errors.ErrorModel
+import org.jsoup.Jsoup
+import play.api.http.Status
+import views.html.contactPreference.LetterPreferenceView
+import models.contactPreferences.ContactPreference._
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 
-class LetterPreferenceControllerSpec extends ControllerBaseSpec {
+import scala.concurrent.Future
 
-  lazy val controller = new LetterPreferenceController(mockErrorHandler)
+class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 
-  "the letterToConfirmedEmailEnabled feature switch is off" when {
+  lazy val view: LetterPreferenceView = inject[LetterPreferenceView]
+  lazy val controller = new LetterPreferenceController(view, mockVatSubscriptionService)
+  lazy val requestWithSession: FakeRequest[AnyContentAsEmpty.type] = request.withSession((SessionKeys.currentContactPrefKey -> digital))
 
+  "Calling .show()" when {
 
-    ".show() is called" should {
+    "the user is authorised" when {
 
-      "return a NOT_FOUND result" in {
+      "the user currently has a digital preference" when {
 
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(false)
-          controller.show(request)
+        "the letterToConfirmedEmailEnabled feature switch is off" should {
+
+          lazy val result = {
+            mockConfig.features.letterToConfirmedEmailEnabled(false)
+            controller.show(requestWithSession)
+          }
+
+          "return a NOT_FOUND result" in {
+            status(result) shouldBe NOT_FOUND
+          }
         }
 
-        status(result) shouldBe NOT_FOUND
-      }
-    }
+        "the letterToConfirmedEmailEnabled feature switch is on" when {
 
-    ".submit() is called" should {
+          "call to customer info is successful" when {
 
-      "return a NOT_FOUND result" in {
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(false)
-          controller.submit(request)
+            "user has a postcode" should {
+
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+                controller.show(requestWithSession)
+              }
+
+              lazy val page = Jsoup.parse(bodyOf(result))
+
+              "return an OK result" in {
+                status(result) shouldBe OK
+              }
+
+              "return the LetterPreference view" in {
+                page.title should include(LetterPreferenceMessages.heading)
+              }
+
+              "show first line of address and postcode" in {
+                page.select("label[for=yes_no-yes]").text() should include("firstLine, codeOfMyPost")
+              }
+            }
+
+            "user does not have a postcode" should {
+
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockGetCustomerInfo(vrn)(Future.successful(Right(minCustomerInfoModel)))
+                controller.show(requestWithSession)
+              }
+
+              lazy val page = Jsoup.parse(bodyOf(result))
+
+              "return an OK result" in {
+                status(result) shouldBe OK
+              }
+
+              "show first line of address" in {
+                page.select("label[for=yes_no-yes]").text() should include("firstLine")
+              }
+            }
+          }
+
+          "call to customer info is unsuccessful" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+              controller.show(requestWithSession)
+            }
+
+            "return an INTERNAL_SERVER_ERROR result" in {
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+            }
+          }
         }
-
-        status(result) shouldBe NOT_FOUND
-      }
-    }
-
-  }
-
-  "the letterToConfirmedEmailEnabled feature switch is on" when {
-
-    ".show() is called" should {
-
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.show(request)
-      }
-      "return an OK result" in {
-
-        status(result) shouldBe OK
       }
 
-
-    }
-
-    ".submit() is called with a yes" should {
-
-      lazy val result = {
-
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.submit(request.withFormUrlEncodedBody(yesNo -> yes))
-      }
-
-
-      "return a SEE_OTHER result" in {
-
-        status(result) shouldBe SEE_OTHER
-
-      }
-
-    }
-
-    ".submit() is called with a no" should {
-
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.submit(request.withFormUrlEncodedBody(yesNo -> _no))
-      }
-
-      "return a SEE_OTHER result" in {
-
-        status(result) shouldBe SEE_OTHER
-      }
-
-      "be at the correct URL" in {
-        redirectLocation(result) shouldBe Some(mockConfig.dynamicJourneyEntryUrl(false))
-      }
-
-    }
-
-    ".submit() is called with no form data" should {
-
-      "return a BAD_REQUEST result" in {
+      "the user currently has a paper preference" should {
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
-          controller.submit(request.withFormUrlEncodedBody())
+          controller.show(request.withSession(SessionKeys.currentContactPrefKey -> paper))
         }
 
-        status(result) shouldBe BAD_REQUEST
+        "return an SEE_OTHER result" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirect to BTA" in {
+          redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
+        }
       }
     }
 
-    ".displayAddress() with a PPOB with a postcode" should {
+    "user is unauthorised" should {
 
-      "return the right string" in {
-        lazy val result = {
-          controller.displayAddress(CustomerInfoConstants.fullPPOBModel)
-        }
-        result shouldBe "firstLine, codeOfMyPost"
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockIndividualWithoutEnrolment()
+        controller.show(request)
       }
 
-      ".displayAddress() with a PPOB without a postcode" should {
-
-        "return the right string" in {
-          lazy val result = {
-            controller.displayAddress(CustomerInfoConstants.minPPOBModel)
-          }
-          result shouldBe "firstLine"
-        }
+      "return a FORBIDDEN result" in {
+        status(result) shouldBe FORBIDDEN
       }
     }
   }
 
+  "calling .submit()" when {
+
+    "the user is authorised" when {
+
+      "the user currently has a digital preference" when {
+
+        "the letterToConfirmedEmailEnabled feature switch is off" when {
+
+          lazy val result = {
+            mockConfig.features.letterToConfirmedEmailEnabled(false)
+            controller.submit(requestWithSession)
+          }
+
+          "return a NOT_FOUND result" in {
+            status(result) shouldBe NOT_FOUND
+          }
+        }
+
+        "the letterToConfirmedEmailEnabled feature switch is on" when {
+
+          "'Yes' is submitted'" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              controller.submit(requestWithSession.withFormUrlEncodedBody(yesNo -> yes))
+            }
+
+            "return a SEE_OTHER result" in {
+              status(result) shouldBe SEE_OTHER
+            }
+
+            "redirect to confirmation page" in {
+              redirectLocation(result) shouldBe
+                Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url)
+            }
+          }
+
+          "'No' is submitted'" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              controller.submit(requestWithSession.withFormUrlEncodedBody(yesNo -> _no))
+            }
+
+            "return a SEE_OTHER result" in {
+              status(result) shouldBe SEE_OTHER
+            }
+
+            "redirect to BTA" in {
+              redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
+            }
+          }
+
+          "Nothing is submitted (form has errors)" when {
+
+            "call to customer info is successful" should {
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+                controller.submit(requestWithSession.withFormUrlEncodedBody())
+              }
+
+              "return a BAD_REQUEST result" in {
+                status(result) shouldBe BAD_REQUEST
+              }
+
+              "return the LetterPreference view with errors" in {
+                Jsoup.parse(bodyOf(result)).title should include("Error: " + LetterPreferenceMessages.heading)
+              }
+            }
+
+            "call to customer info is unsuccessful" should {
+
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+                controller.submit(requestWithSession.withFormUrlEncodedBody())
+              }
+
+              "return an INTERNAL_SERVER_ERROR result" in {
+                status(result) shouldBe INTERNAL_SERVER_ERROR
+              }
+            }
+          }
+        }
+      }
+
+      "the user currently has a paper preference" should {
+
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          controller.submit(request.withSession(SessionKeys.currentContactPrefKey -> paper))
+        }
+
+        "return an SEE_OTHER result" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirect to BTA" in {
+          redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
+        }
+      }
+    }
+
+    "user is unauthorised" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockIndividualWithoutEnrolment()
+        controller.submit(requestWithSession)
+      }
+
+      "return a FORBIDDEN result" in {
+        status(result) shouldBe FORBIDDEN
+      }
+    }
+  }
+
+  "Calling .displayAddress()" when {
+
+    "PPOB has a postcode" should {
+
+      lazy val result = controller.displayAddress(CustomerInfoConstants.fullPPOBModel)
+
+      "return the right string" in {
+        result shouldBe "firstLine, codeOfMyPost"
+      }
+    }
+
+    "PPOB does not have a postcode" should {
+
+      lazy val result = controller.displayAddress(CustomerInfoConstants.minPPOBModel)
+
+      "return the right string" in {
+        result shouldBe "firstLine"
+      }
+    }
+  }
 }

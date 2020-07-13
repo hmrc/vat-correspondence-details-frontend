@@ -111,12 +111,11 @@ emailPreference.title = Do you want us to send you emails instead of letters?
 emailPreference.hint = We currently send messages about your VAT by letter.
 emailPreference.error = Select yes if you want communications by email
 
-lettersToPpob.title = Do you want us to send letters to your principal place of business, instead of emailing you?
-lettersToPpob.hint = We currently send messages about your VAT by email.
-lettersToPpob.yes = Yes, send letters to {0}
-lettersToPpob.no = No, I want to continue to receive emails
-lettersToPpob.changePpobLink = Change your principal place of business address
-lettersToPpob.error = Select yes if you want communications by letter
+letterPreference.title = Do you want us to send letters to your principal place of business, instead of emailing you?
+letterPreference.hint = We currently send messages about your VAT by email.
+letterPreference.yes = Yes, send letters to {0}
+letterPreference.no = No, I want to continue to receive emails
+letterPreference.error = Select yes if you want communications by letter
 
 emailChangeSuccess.title = We have received the new email address
 

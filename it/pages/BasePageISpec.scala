@@ -39,11 +39,11 @@ trait BasePageISpec extends IntegrationBaseSpec {
   def formatEmailPrefUpdate: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(value => Map(SessionKeys.contactPrefUpdate -> value))
 
-  def formatEmailPrefConfirmation: Option[String] => Map[String, String] =
-    _.fold(Map.empty[String, String])(value => Map(SessionKeys.contactPrefConfirmed -> value))
-
   def formatLetterToEmailPrefConfirmation: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(value => Map(SessionKeys.letterToEmailChangeSuccessful -> value))
+
+  def formatEmailToLetterPrefConfirmation: Option[String] => Map[String, String] =
+    _.fold(Map.empty[String, String])(value => Map(SessionKeys.emailToLetterChangeSuccessful -> value))
 
   def formatCurrentContactPref: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(value => Map(SessionKeys.currentContactPrefKey -> value))

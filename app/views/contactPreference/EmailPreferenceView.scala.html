@@ -24,7 +24,7 @@
 @(form: Form[YesNo])(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @questionContent = {
-  <div class="panel">
+  <div class="panel panel-border-wide">
     @messages("emailPreference.hint")
   </div>
 }
@@ -44,7 +44,7 @@
           no  -> messages("common.no")),
         question = messages("emailPreference.title"),
         additionalContent = Some(questionContent),
-        inline = true
+        inline = false
       )
     </div>
 
