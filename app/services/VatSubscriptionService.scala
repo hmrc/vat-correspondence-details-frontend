@@ -103,10 +103,10 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
       case Left(error) => Future.successful(Left(error))
     }
 
-  def getEmailVerifiedStatus(vrn: String, preferenceCall: HttpGetResult[ContactPreference])
+  def getEmailVerifiedStatus(vrn: String, preferenceCall: HttpGetResult[Option[String]])
                             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] =
     preferenceCall match {
-      case Right(ContactPreference("DIGITAL")) if appConfig.features.emailVerifiedContactPrefEnabled() =>
+      case Right(Some("DIGITAL")) | Right(Some("ZEL")) if appConfig.features.emailVerifiedContactPrefEnabled() =>
         getCustomerInfo(vrn).map {
           case Right(result) =>
             result.ppob.contactDetails.flatMap(_.emailVerified)

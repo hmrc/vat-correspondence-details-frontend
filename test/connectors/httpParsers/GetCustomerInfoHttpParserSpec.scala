@@ -23,8 +23,9 @@ import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.TestUtil
 
-class GetCustomerInfoHttpParserSpec extends UnitSpec {
+class GetCustomerInfoHttpParserSpec extends UnitSpec with TestUtil {
 
   private def customerInfoResult(response: HttpResponse): GetCustomerInfoResponse =
     CustomerInfoReads.read("", "", response)
@@ -36,6 +37,7 @@ class GetCustomerInfoHttpParserSpec extends UnitSpec {
       "valid JSON is returned" should {
 
         "return a CustomerInformation model" in {
+          mockConfig.features.contactPrefMigrationEnabled(true)
           val response = HttpResponse(Status.OK, Some(fullCustomerInfoJson))
           val result = customerInfoResult(response)
           result shouldBe Right(fullCustomerInfoModel)

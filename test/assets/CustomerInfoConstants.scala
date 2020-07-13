@@ -108,7 +108,12 @@ object CustomerInfoConstants {
     "websiteAddress" -> "www.pepsi-mac.biz"
   )
 
-  val fullUpdatePPOBJson: JsObject = fullPPOBJson ++ Json.obj("transactorOrCapacitorEmail" -> "test@test.com")
+  val fullUpdatePPOBJson: JsObject = Json.obj(
+    "address" -> fullPPOBAddressJson,
+    "contactDetails" -> fullContactDetailsJson,
+    "websiteAddress" -> "www.pepsi-mac.biz",
+    "transactorOrCapacitorEmail" -> "test@test.com"
+  )
 
   val fullPPOBModel: PPOB = PPOB(
     fullPPOBAddressModel,

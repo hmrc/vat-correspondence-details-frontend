@@ -24,6 +24,7 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.User
 import models.contactPreferences.ContactPreference
+import models.customerInformation.CustomerInformation
 import models.errors.ErrorModel
 import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
@@ -69,30 +70,31 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
 
   private[controllers] def renderView(changeKey: String)(implicit user: User[_]): Future[Result] =
     for {
-      entityName <-
-        if (user.isAgent) {getClientEntityName}
-        else {Future.successful(None)}
 
       preference <-
-        if (user.isAgent) {Future.successful(Left(ErrorModel(NO_CONTENT, "")))}
+        if (user.isAgent || appConfig.features.contactPrefMigrationEnabled()) {Future.successful(Left(ErrorModel(NO_CONTENT, "")))}
         else {contactPreferenceService.getContactPreference(user.vrn)}
 
-        emailVerified <-
-        if (user.isAgent) {Future.successful(None)}
-        else {vatSubscriptionService.getEmailVerifiedStatus(user.vrn, preference)}
+      customerDetails <-
+        vatSubscriptionService.getCustomerInfo(user.vrn)
 
     } yield {
       val viewModel =
-        constructViewModel(entityName, preference, user.session.get(verifiedAgentEmail), changeKey, emailVerified)
+        constructViewModel(preference, user.session.get(verifiedAgentEmail), changeKey, customerDetails)
       Ok(changeSuccessView(viewModel))
     }
 
-  private[controllers] def constructViewModel(entityName: Option[String],
-                                              preferenceCall: HttpGetResult[ContactPreference],
+  private[controllers] def constructViewModel(preferenceCall: HttpGetResult[ContactPreference],
                                               agentEmail: Option[String],
                                               changeKey: String,
-                                              emailVerified: Option[Boolean]): ChangeSuccessViewModel = {
-    val preference: Option[String] = preferenceCall.fold(_ => None, pref => Some(pref.preference))
+                                              customerDetails: HttpGetResult[CustomerInformation]): ChangeSuccessViewModel = {
+    val preference: Option[String] = if(appConfig.features.contactPrefMigrationEnabled()) {
+      customerDetails.fold(_ => None, _.commsPreference)
+    } else {
+      preferenceCall.fold(_ => None, pref => Some(pref.preference))
+    }
+    val entityName = customerDetails.fold(_ => None, _.entityName)
+    val emailVerified = customerDetails.fold(_ => None, _.ppob.contactDetails.flatMap(_.emailVerified))
     val titleMessageKey: String = getTitleMessageKey(changeKey)
     ChangeSuccessViewModel(titleMessageKey, agentEmail, preference, entityName, emailVerified)
   }

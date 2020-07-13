@@ -42,6 +42,7 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
     mockConfig.features.agentAccessEnabled(true)
     mockConfig.features.bulkPaperOffEnabled(false)
     mockConfig.features.btaEntryPointEnabled(true)
+    mockConfig.features.contactPrefMigrationEnabled(true)
   }
 
   lazy val injector: Injector = app.injector

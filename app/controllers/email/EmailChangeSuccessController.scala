@@ -24,11 +24,13 @@ import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
+import models.contactPreferences.ContactPreference
 import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
 import services.{ContactPreferenceService, VatSubscriptionService}
 import utils.LoggerUtil.logWarn
 import views.html.templates.ChangeSuccessView
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -49,24 +51,36 @@ class EmailChangeSuccessController @Inject()(auditService: AuditingService,
       case Some("true") =>
 
         for {
-          pref <- contactPreferenceService.getContactPreference(user.vrn)
+          pref <- if(appConfig.features.contactPrefMigrationEnabled()){
+            vatSubscriptionService.getCustomerInfo(user.vrn).map(a => a.fold(error => Left(error), a => Right(a.commsPreference)))
+          } else {
+            contactPreferenceService.getContactPreference(user.vrn).map(a => a.fold(error => Left(error), a => Right(Some(a.preference))))
+          }
 
           emailVerified <- vatSubscriptionService.getEmailVerifiedStatus(user.vrn, pref)
         } yield {
 
           pref match {
-            case Right(pref) =>
+            case Right(Some(pref)) =>
               auditService.extendedAudit(
-                ContactPreferenceAuditModel(user.vrn, pref.preference),
+                ContactPreferenceAuditModel(user.vrn, pref),
                 controllers.email.routes.EmailChangeSuccessController.show().url
               )
-              val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, Some(pref.preference), None, emailVerified)
+              val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, Some(pref), None, emailVerified)
               Ok(changeSuccessView(viewModel))
 
+            case Right(None) =>
+              val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, None, None, None)
+              Ok(changeSuccessView(viewModel))
 
             case Left(error) =>
-              logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
-                s" Error code: ${error.status}, Error message: ${error.message}")
+              if(appConfig.features.contactPrefMigrationEnabled()){
+                logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
+                  s" Error code: ${error.status}, Error message: ${error.message}")
+              } else {
+                logWarn("[EmailChangeSuccessController][show] Error retrieved from vatSubscriptionService." +
+                  s" Error code: ${error.status}, Error message: ${error.message}")
+              }
 
               val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, None, None, None)
               Ok(changeSuccessView(viewModel))

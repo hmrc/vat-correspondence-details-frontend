@@ -363,7 +363,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
           "return email verification status - emailVerified" in {
             val result = {
               mockGetCustomerInfoSuccessResponse
-              service.getEmailVerifiedStatus(user.vrn, Right(ContactPreference("DIGITAL")))
+              service.getEmailVerifiedStatus(user.vrn, Right(Some("DIGITAL")))
             }
             await(result) shouldBe Some(true)
           }
@@ -374,7 +374,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
           "return None for emailVerified" in {
 
             val result = {
-              service.getEmailVerifiedStatus(user.vrn, Right(ContactPreference("PAPER")))
+              service.getEmailVerifiedStatus(user.vrn, Right(Some("PAPER")))
             }
             await(result) shouldBe None
           }
@@ -386,7 +386,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
         "return None" in {
           val result = {
             mockGetCustomerInfoFailureResponse
-            service.getEmailVerifiedStatus(user.vrn, Right(ContactPreference("DIGITAL")))
+            service.getEmailVerifiedStatus(user.vrn, Right(Some("DIGITAL")))
           }
           await(result) shouldBe None
         }
@@ -398,7 +398,7 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       "not call the .getCustomerInfo function" in {
         val result = {
           mockConfig.features.emailVerifiedContactPrefEnabled(false)
-          service.getEmailVerifiedStatus(user.vrn, Right(ContactPreference("DIGITAL")))
+          service.getEmailVerifiedStatus(user.vrn, Right(Some("DIGITAL")))
         }
         await(result) shouldBe None
       }

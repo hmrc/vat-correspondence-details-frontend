@@ -29,6 +29,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.templates.ChangeSuccessView
 import assets.BaseTestConstants.vrn
+import assets.CustomerInfoConstants.fullCustomerInfoModel
+
 import scala.concurrent.Future
 
 class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService with MockAuditingService {
@@ -57,7 +59,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
             lazy val result = {
               mockIndividualAuthorised()
-              getMockContactPreference(vrn)(Right(ContactPreference("DIGITAL")))
+              mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
               mockGetEmailVerificationStatus(Some(true))
               TestController.show(successfulChangeRequest)
             }
@@ -76,7 +78,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
             lazy val result = {
               mockIndividualAuthorised()
-              getMockContactPreference(vrn)(Future(Right(ContactPreference("PAPER"))))
+              mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(commsPreference = Some("PAPER"))))
               mockGetEmailVerificationStatus(None)
               TestController.show(successfulChangeRequest)
             }
@@ -96,7 +98,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
           lazy val result = {
             mockIndividualAuthorised()
-            getMockContactPreference(vrn)(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
+            mockGetCustomerInfo(vrn)(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
             mockGetEmailVerificationStatus(None)
             TestController.show(successfulChangeRequest)
           }
@@ -145,5 +147,83 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         charset(result) shouldBe Some("utf-8")
       }
     }
+  }
+
+  "When the contactPrefMigration feature switch is turned off" when {
+
+    "calling the show action" when {
+
+      "a user is enrolled with a valid enrolment" when {
+
+        "the user has the email change success key in the session" when {
+
+          "a valid response is retrieved from the contact preference service" should {
+
+            "a digital preference is retrieved" should {
+
+              lazy val result = {
+                mockIndividualAuthorised()
+                mockConfig.features.contactPrefMigrationEnabled(false)
+                getMockContactPreference(vrn)(Right(ContactPreference("DIGITAL")))
+                mockGetEmailVerificationStatus(Some(true))
+                TestController.show(successfulChangeRequest)
+              }
+
+              "return 200" in {
+                status(result) shouldBe Status.OK
+              }
+
+              "audit the contact preference" in {
+                verifyExtendedAudit(ContactPreferenceAuditModel(vrn, "DIGITAL"))
+                reset(mockAuditingService)
+              }
+
+            }
+
+            "a paper preference is retrieved" should {
+
+              lazy val result = {
+                mockIndividualAuthorised()
+                mockConfig.features.contactPrefMigrationEnabled(false)
+                getMockContactPreference(vrn)(Right(ContactPreference("PAPER")))
+                mockGetEmailVerificationStatus(None)
+                TestController.show(successfulChangeRequest)
+              }
+
+              "return 200" in {
+                status(result) shouldBe Status.OK
+              }
+
+              "audit the contact preference" in {
+                verifyExtendedAudit(ContactPreferenceAuditModel(vrn, "PAPER"))
+                reset(mockAuditingService)
+              }
+
+            }
+
+            "an invalid response is retrieved from the contact preference service" should {
+
+              lazy val result = {
+                mockIndividualAuthorised()
+                mockConfig.features.contactPrefMigrationEnabled(false)
+                getMockContactPreference(vrn)(Right(ContactPreference("DIGITAL")))
+                mockGetEmailVerificationStatus(None)
+                TestController.show(successfulChangeRequest)
+              }
+
+              "return 200" in {
+                status(result) shouldBe Status.OK
+              }
+
+              "return HTML" in {
+                contentType(result) shouldBe Some("text/html")
+                charset(result) shouldBe Some("utf-8")
+              }
+            }
+          }
+        }
+      }
+    }
+
   }
 }
