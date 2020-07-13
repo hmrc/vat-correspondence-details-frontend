@@ -42,7 +42,7 @@ class ContactPreferenceRedirectController @Inject()(errorHandler: ErrorHandler)
       vatSubscriptionService.getCustomerInfo(user.vrn) map {
         case Right(details) => details.commsPreference match {
           case Some(`paper`) => Redirect(controllers.contactPreference.routes.EmailPreferenceController.show())
-          case Some(_) => Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()) //TODO change to LetterPrefController
+          case Some(_) => Redirect(controllers.contactPreference.routes.LetterPreferenceController.show())
           case _ => errorHandler.showInternalServerError
         }
         case _ => errorHandler.showInternalServerError

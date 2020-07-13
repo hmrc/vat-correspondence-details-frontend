@@ -82,5 +82,8 @@ GET         /confirmation-:changeType-preference   controllers.contactPreference
 GET         /contact-preference-letter             controllers.contactPreference.LetterPreferenceController.show
 POST        /contact-preference-letter             controllers.contactPreference.LetterPreferenceController.submit
 
+# Contact preference redirect (for BTA)
+GET         /contact-preference-redirect            controllers.contactPreference.ContactPreferenceRedirectController.redirect
+
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                          controllers.Assets.at(path="/public", file)
