@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 
   lazy val view: LetterPreferenceView = inject[LetterPreferenceView]
-  lazy val controller = new LetterPreferenceController(mockErrorHandler, view, mockVatSubscriptionService)
+  lazy val controller = new LetterPreferenceController(view, mockVatSubscriptionService)
   lazy val requestWithSession: FakeRequest[AnyContentAsEmpty.type] = request.withSession((SessionKeys.currentContactPrefKey -> digital))
 
   "Calling .show()" when {

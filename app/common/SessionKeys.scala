@@ -44,5 +44,4 @@ object SessionKeys {
 
   val letterToEmailChangeSuccessful: String = "vatCorrespondenceLetterToEmailChangeSuccessful"
   val emailToLetterChangeSuccessful: String = "vatCorrespondenceEmailToLetterChangeSuccessful"
-  val validationPPOBKey: String = "vatCorrespondenceValidationPPOB"
 }

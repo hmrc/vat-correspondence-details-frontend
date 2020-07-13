@@ -27,15 +27,13 @@ import models.customerInformation.PPOB
 import models.{No, Yes, YesNo}
 import play.api.Logger
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
 import views.html.contactPreference.LetterPreferenceView
-import controllers.contactPreference._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler,
-                                            view: LetterPreferenceView,
+class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
                                             vatSubscriptionService: VatSubscriptionService)
                                            (implicit val appConfig: AppConfig,
                                             ec: ExecutionContext,
@@ -53,10 +51,10 @@ class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler,
         case Right(details) => Ok(view(formYesNo, displayAddress(details.ppob)))
         case _ =>
           Logger.warn("[LetterPreferenceController][show] Unable to retrieve current business address")
-          errorHandler.showInternalServerError
+          authComps.errorHandler.showInternalServerError
       }
     } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
+      Future.successful(NotFound(authComps.errorHandler.notFoundTemplate))
     }
   }
 
@@ -68,19 +66,19 @@ class LetterPreferenceController  @Inject()(errorHandler: ErrorHandler,
             case Right(details) => BadRequest(view(formWithErrors, displayAddress(details.ppob)))
             case _ =>
               Logger.warn("[LetterPreferenceController][submit] Unable to retrieve current business address")
-              errorHandler.showInternalServerError
+              authComps.errorHandler.showInternalServerError
           }
         },
         {
           case Yes => Future.successful(
             Redirect(routes.ContactPreferenceConfirmationController.show("letter").url)
-              .addingToSession(SessionKeys.contactPrefUpdate -> "true")
+              .addingToSession(SessionKeys.emailToLetterChangeSuccessful -> "true")
           )
           case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )
     } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
+      Future.successful(NotFound(authComps.errorHandler.notFoundTemplate))
     }
   }
 }
