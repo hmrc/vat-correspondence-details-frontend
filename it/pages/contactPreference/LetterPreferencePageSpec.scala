@@ -106,7 +106,7 @@ class LetterPreferencePageSpec extends BasePageISpec {
             redirectURI(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url)
           )
 
-          SessionCookieCrumbler.getSessionMap(res).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
+          SessionCookieCrumbler.getSessionMap(res).get(SessionKeys.emailToLetterChangeSuccessful) shouldBe Some("true")
         }
       }
 

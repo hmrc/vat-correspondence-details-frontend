@@ -63,7 +63,7 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
         ).flatten
         Ok(preferenceConfirmationView(address, emailToLetterChangeSuccessful))
       case Left(_) =>
-        Logger.warn("[ContactPreferenceConfirmationController][currentAddress] Unable to retrieve current business address")
+        Logger.warn("[ContactPreferenceConfirmationController][renderLetterPreferenceView] Unable to retrieve current business address")
         authComps.errorHandler.showInternalServerError
     }
   }

@@ -15,6 +15,7 @@
  *@
 
 @import config.AppConfig
+@import common.SessionKeys
 
 @this(mainTemplate: MainTemplate)
 
@@ -35,7 +36,7 @@
       }
   </div>
 
-  @if(changeKey == "vatCorrespondenceLetterToEmailChangeSuccessful") {
+  @if(changeKey == SessionKeys.letterToEmailChangeSuccessful) {
     <p>@messages("contactPrefConfirmation.stillNeedLetters")</p>
   }
 

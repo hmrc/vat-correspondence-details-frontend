@@ -22,7 +22,6 @@ common.agent.updateClient1 = We’ll contact
 common.agent.updateClient2 = with an update.
 common.agent.yourClient = your client
 common.fullstop = .
-common.comma = ,
 common.yes = Yes
 common.no = No
 common.accountDetails = View your account details
