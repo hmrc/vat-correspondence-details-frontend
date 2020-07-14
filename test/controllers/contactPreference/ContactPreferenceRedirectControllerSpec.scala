@@ -18,14 +18,10 @@ package controllers.contactPreference
 
 import assets.BaseTestConstants.vrn
 import assets.CustomerInfoConstants._
-import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
 import mocks.MockVatSubscriptionService
-import models.customerInformation.CustomerInformation
 import models.errors.ErrorModel
 import play.api.test.Helpers._
-
-import scala.concurrent.Future
 
 class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 
@@ -37,21 +33,15 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
     mockVatSubscriptionService
   )
 
-  implicit def convertToFutureRight: CustomerInformation => Future[GetCustomerInfoResponse] = customerDetails =>
-    Future.successful(Right(customerDetails))
-
-  implicit def convertToFutureLeft: ErrorModel => Future[GetCustomerInfoResponse] = error =>
-    Future.successful(Left(error))
-
   "Calling .redirect as a user" should {
 
     "return a redirect" when {
 
       "the user has a paper preference" which {
-        val result = {
-          mockGetCustomerInfo(vrn)(fullCustomerInfoModel.copy(commsPreference = Some("PAPER")))
-          mockIndividualAuthorised()
-          controller.redirect()(fakeRequestWithClientsVRN)
+
+        lazy val result = {
+          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(commsPreference = Some("PAPER"))))
+          controller.redirect(request)
         }
 
         s"returns a $SEE_OTHER" in {
@@ -66,10 +56,9 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
       "the user has an email preference" which {
 
-        val result = {
-          mockGetCustomerInfo(vrn)(fullCustomerInfoModel)
-          mockIndividualAuthorised()
-          controller.redirect()(fakeRequestWithClientsVRN)
+        lazy val result = {
+          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+          controller.redirect(request)
         }
 
         s"returns a $SEE_OTHER" in {
@@ -88,9 +77,8 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
       "the customer details are not returned" in {
         val result = {
-          mockGetCustomerInfo(vrn)(ErrorModel(BAD_REQUEST, "nu-uh"))
-          mockIndividualAuthorised()
-          controller.redirect()(fakeRequestWithClientsVRN)
+          mockGetCustomerInfo(vrn)(Left(ErrorModel(BAD_REQUEST, "nu-uh")))
+          controller.redirect(request)
         }
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -98,9 +86,8 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
       "the user has no comms preference" in {
         val result = {
-          mockGetCustomerInfo(vrn)(fullCustomerInfoModel.copy(commsPreference = None))
-          mockIndividualAuthorised()
-          controller.redirect()(fakeRequestWithClientsVRN)
+          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(commsPreference = None)))
+          controller.redirect(request)
         }
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -115,7 +102,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
     "redirect them to the agent hub page" in {
       val result = {
         mockAgentAuthorised()
-        controller.redirect()(request)
+        controller.redirect(fakeRequestWithClientsVRN)
       }
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(mockConfig.vatAgentClientLookupAgentHubPath)
