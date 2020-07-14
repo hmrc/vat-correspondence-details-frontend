@@ -48,7 +48,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
     "return a redirect" when {
 
       "the user has a paper preference" which {
-        val result = {
+        lazy val result = {
           mockGetCustomerInfo(vrn)(fullCustomerInfoModel.copy(commsPreference = Some("PAPER")))
           mockIndividualAuthorised()
           controller.redirect()(fakeRequestWithClientsVRN)
@@ -66,7 +66,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
       "the user has an email preference" which {
 
-        val result = {
+        lazy val result = {
           mockGetCustomerInfo(vrn)(fullCustomerInfoModel)
           mockIndividualAuthorised()
           controller.redirect()(fakeRequestWithClientsVRN)
@@ -87,7 +87,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
     "return an internal server error" when {
 
       "the customer details are not returned" in {
-        val result = {
+        lazy val result = {
           mockGetCustomerInfo(vrn)(ErrorModel(BAD_REQUEST, "nu-uh"))
           mockIndividualAuthorised()
           controller.redirect()(fakeRequestWithClientsVRN)
@@ -97,7 +97,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
       }
 
       "the user has no comms preference" in {
-        val result = {
+        lazy val result = {
           mockGetCustomerInfo(vrn)(fullCustomerInfoModel.copy(commsPreference = None))
           mockIndividualAuthorised()
           controller.redirect()(fakeRequestWithClientsVRN)
@@ -113,7 +113,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
   "Calling .redirect as an agent" should {
 
     "redirect them to the agent hub page" in {
-      val result = {
+      lazy val result = {
         mockAgentAuthorised()
         controller.redirect()(request)
       }
