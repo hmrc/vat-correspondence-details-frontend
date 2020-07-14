@@ -112,13 +112,13 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
   "Calling .redirect as an agent" should {
 
-    s"return a $UNAUTHORIZED response" in {
+    "redirect them to the agent hub page" in {
       val result = {
         mockAgentAuthorised()
         controller.redirect()(request)
       }
-      status(result) shouldBe UNAUTHORIZED
-
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(mockConfig.vatAgentClientLookupAgentHubPath)
     }
 
   }
