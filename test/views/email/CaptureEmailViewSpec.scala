@@ -40,7 +40,8 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val removeEmailLink = ".panel-border-narrow a"
     val onlyAddEmail = "#content > article > p"
     val fieldLabel: String = "#content > article > form > div > div > span.form-hint"
-    val hmrcPrivacyNotice: String = "#hmrc-privacy-notice > a"
+    val hmrcPrivacyNotice: String = "#hmrc-privacy-notice"
+    val hmrcPrivacyNoticeLink: String = "#hmrc-privacy-notice > a"
   }
 
   "Rendering the capture email page" when {
@@ -108,8 +109,10 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
           }
         }
 
-        "have the HMRC Privacy Notice" in {
-          element(Selectors.hmrcPrivacyNotice).attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
+        "have the HMRC Privacy Notice with the correct text" in {
+          elementText(Selectors.hmrcPrivacyNotice) shouldBe
+            "Full details of how we use your information are in the HMRC Privacy Notice (opens in a new window or tab)."
+          element(Selectors.hmrcPrivacyNoticeLink).attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
         }
       }
 
