@@ -37,7 +37,6 @@ class GetCustomerInfoHttpParserSpec extends UnitSpec with TestUtil {
       "valid JSON is returned" should {
 
         "return a CustomerInformation model" in {
-          mockConfig.features.contactPrefMigrationEnabled(true)
           val response = HttpResponse(Status.OK, Some(fullCustomerInfoJson))
           val result = customerInfoResult(response)
           result shouldBe Right(fullCustomerInfoModel)

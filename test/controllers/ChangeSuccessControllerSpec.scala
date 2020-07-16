@@ -55,7 +55,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
           "return 200" in {
             mockIndividualAuthorised()
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-            mockGetEmailVerificationStatus(Future(Some(true)))
             status(result) shouldBe Status.OK
           }
 
@@ -109,7 +108,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
           lazy val result: Future[Result] = {
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-            mockGetEmailVerificationStatus(Future(Some(true)))
             controller.websiteAddress(request.withSession(
               prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"
             ))
@@ -236,7 +234,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
             mockIndividualAuthorised()
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
             getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
-            mockGetEmailVerificationStatus(Future(Some(true)))
             status(result) shouldBe Status.OK
           }
 
@@ -257,7 +254,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
             mockConfig.features.contactPrefMigrationEnabled(false)
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
             getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
-            mockGetEmailVerificationStatus(Future(Some(true)))
             controller.websiteAddress(request.withSession(
               prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"
             ))

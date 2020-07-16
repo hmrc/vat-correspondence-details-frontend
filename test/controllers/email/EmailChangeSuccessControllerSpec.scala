@@ -30,6 +30,7 @@ import play.api.test.Helpers._
 import views.html.templates.ChangeSuccessView
 import assets.BaseTestConstants.vrn
 import assets.CustomerInfoConstants.fullCustomerInfoModel
+import org.jsoup.Jsoup
 
 import scala.concurrent.Future
 
@@ -53,24 +54,24 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
       "the user has the email change success key in the session" when {
 
-        "a valid response is retrieved from the contact preference service" should {
+        "a valid response is retrieved from the customer info service" should {
 
           "a digital preference is retrieved" should {
 
             lazy val result = {
               mockIndividualAuthorised()
               mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-              mockGetEmailVerificationStatus(Some(true))
               TestController.show(successfulChangeRequest)
             }
+            lazy val document = Jsoup.parse(bodyOf(result))
 
             "return 200" in {
               status(result) shouldBe Status.OK
             }
 
-            "audit the contact preference" in {
-              verifyExtendedAudit(ContactPreferenceAuditModel(vrn, "DIGITAL"))
-              reset(mockAuditingService)
+            "the digital preference message is displayed" in {
+              document.select("#content article p:nth-of-type(1)").text() shouldBe
+                "We’ll send you an email within 2 working days with an update or you can check your HMRC secure messages."
             }
           }
 
@@ -79,37 +80,37 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
             lazy val result = {
               mockIndividualAuthorised()
               mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(commsPreference = Some("PAPER"))))
-              mockGetEmailVerificationStatus(None)
               TestController.show(successfulChangeRequest)
             }
+            lazy val document = Jsoup.parse(bodyOf(result))
 
             "return 200" in {
               status(result) shouldBe Status.OK
             }
 
-            "audit the contact preference" in {
-              verifyExtendedAudit(ContactPreferenceAuditModel(vrn, "PAPER"))
-              reset(mockAuditingService)
+            "the paper preference message is displayed" in {
+              document.select("#content article p:nth-of-type(1)").text() shouldBe
+                "We’ll send a letter to your principal place of business with an update within 15 working days."
             }
           }
         }
 
-        "an invalid response is retrieved from the contact preference service" should {
+        "an invalid response is retrieved from the customer info service" should {
 
           lazy val result = {
             mockIndividualAuthorised()
             mockGetCustomerInfo(vrn)(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
-            mockGetEmailVerificationStatus(None)
             TestController.show(successfulChangeRequest)
           }
+          lazy val document = Jsoup.parse(bodyOf(result))
 
           "return 200" in {
             status(result) shouldBe Status.OK
           }
 
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
+          "the generic preference message is displayed" in {
+            document.select("#content article p:nth-of-type(1)").text() shouldBe
+              "We will send you an update within 15 working days."
           }
         }
       }
@@ -164,10 +165,11 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
               lazy val result = {
                 mockIndividualAuthorised()
                 mockConfig.features.contactPrefMigrationEnabled(false)
+                mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
                 getMockContactPreference(vrn)(Right(ContactPreference("DIGITAL")))
-                mockGetEmailVerificationStatus(Some(true))
                 TestController.show(successfulChangeRequest)
               }
+              lazy val document = Jsoup.parse(bodyOf(result))
 
               "return 200" in {
                 status(result) shouldBe Status.OK
@@ -178,6 +180,11 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
                 reset(mockAuditingService)
               }
 
+              "the digital preference message is displayed" in {
+                document.select("#content article p:nth-of-type(1)").text() shouldBe
+                  "We’ll send you an email within 2 working days with an update or you can check your HMRC secure messages."
+              }
+
             }
 
             "a paper preference is retrieved" should {
@@ -185,10 +192,11 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
               lazy val result = {
                 mockIndividualAuthorised()
                 mockConfig.features.contactPrefMigrationEnabled(false)
+                mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
                 getMockContactPreference(vrn)(Right(ContactPreference("PAPER")))
-                mockGetEmailVerificationStatus(None)
                 TestController.show(successfulChangeRequest)
               }
+              lazy val document = Jsoup.parse(bodyOf(result))
 
               "return 200" in {
                 status(result) shouldBe Status.OK
@@ -199,6 +207,11 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
                 reset(mockAuditingService)
               }
 
+              "the paper preference message is displayed" in {
+                document.select("#content article p:nth-of-type(1)").text() shouldBe
+                  "We’ll send a letter to your principal place of business with an update within 15 working days."
+              }
+
             }
 
             "an invalid response is retrieved from the contact preference service" should {
@@ -206,18 +219,19 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
               lazy val result = {
                 mockIndividualAuthorised()
                 mockConfig.features.contactPrefMigrationEnabled(false)
-                getMockContactPreference(vrn)(Right(ContactPreference("DIGITAL")))
-                mockGetEmailVerificationStatus(None)
+                mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+                getMockContactPreference(vrn)(Left(ErrorModel(Status.BAD_GATEWAY, "Error")))
                 TestController.show(successfulChangeRequest)
               }
+              lazy val document = Jsoup.parse(bodyOf(result))
 
               "return 200" in {
                 status(result) shouldBe Status.OK
               }
 
-              "return HTML" in {
-                contentType(result) shouldBe Some("text/html")
-                charset(result) shouldBe Some("utf-8")
+              "the generic preference message is displayed" in {
+                document.select("#content article p:nth-of-type(1)").text() shouldBe
+                  "We will send you an update within 15 working days."
               }
             }
           }
