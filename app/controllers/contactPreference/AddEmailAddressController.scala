@@ -17,12 +17,14 @@
 package controllers.contactPreference
 
 import config.{AppConfig, ErrorHandler}
+import common.SessionKeys
+import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.YesNoForm
 import javax.inject.{Inject, Singleton}
-import models.YesNo
+import models.{No, Yes, YesNo}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import views.html.contactPreference.AddEmailAddressView
@@ -39,7 +41,6 @@ class AddEmailAddressController @Inject()(val errorHandler: ErrorHandler,
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("cPrefAddEmail.error")
 
-
   def show: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       Future.successful(Ok(addEmailAddressView(formYesNo)))
@@ -47,7 +48,20 @@ class AddEmailAddressController @Inject()(val errorHandler: ErrorHandler,
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
+
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate) { implicit user =>
+    if(appConfig.features.letterToConfirmedEmailEnabled()) {
+      formYesNo.bindFromRequest().fold (
+        formWithErrors =>
+          //TODO: update with view created in BTAT-8058
+          BadRequest(""),
+        {
+          case Yes => Redirect(controllers.contactPreference.routes.ChangeEmailController.show())
+          case No => Redirect(appConfig.btaAccountDetailsUrl)
+        }
+      )
+    } else {
+      NotFound(authComps.errorHandler.notFoundTemplate)
+    }
+  }
 }
-
-
-
