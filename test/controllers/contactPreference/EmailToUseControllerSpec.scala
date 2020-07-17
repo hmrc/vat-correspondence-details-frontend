@@ -16,11 +16,16 @@
 
 package controllers.contactPreference
 
+import assets.BaseTestConstants._
 import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
 import forms.YesNoForm.yesNo
+import models.contactPreferences.ContactPreference
+import models.customerInformation.UpdatePPOBSuccess
+import models.errors.ErrorModel
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -156,7 +161,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
     "the letterToConfirmedEmail switch is enabled" when {
 
-      "the user submits after selecting an 'Yes' option" should {
+      "the user submits after selecting an 'Yes' option" when {
 
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
           requestWithPaperPref
@@ -165,17 +170,64 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
               SessionKeys.validationEmailKey -> testValidationEmail,
               SessionKeys.contactPrefUpdate -> "true"
             )
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          target().submit()(yesRequest)
+
+        "the contact preference has been updated successfully" should {
+
+          lazy val result = {
+            mockConfig.features.letterToConfirmedEmailEnabled(true)
+            mockIndividualAuthorised()
+            mockUpdateContactPreference(
+              vrn, ContactPreference.digital)(Future(Right(UpdatePPOBSuccess("success")))
+            )
+            target().submit(yesRequest)
+          }
+
+          "return 303 (SEE OTHER)" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          s"Redirect to the '${controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url}'" in {
+            redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url)
+          }
         }
 
-        "return 303 (SEE OTHER)" in {
-          status(result) shouldBe Status.SEE_OTHER
+        "there was a conflict returned when trying to update the contact preference" should {
+
+          lazy val result = {
+            mockConfig.features.letterToConfirmedEmailEnabled(true)
+            mockIndividualAuthorised()
+            mockUpdateContactPreference(
+              vrn, ContactPreference.digital)(Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress")))
+            )
+            target().submit(yesRequest)
+          }
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect the user to the manage-vat overview page" in {
+            redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+          }
         }
 
-        s"Redirect to the '${controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url}'" in {
-          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url)
+        "there was an unexpected error trying to update the contact preference" should {
+
+          lazy val result = {
+            mockConfig.features.letterToConfirmedEmailEnabled(true)
+            mockIndividualAuthorised()
+            mockUpdateContactPreference(vrn, ContactPreference.digital)(
+              Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't update contact preference"))))
+            target().submit(yesRequest)
+          }
+
+          "return 500" in {
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+
+          "show the internal server error page" in {
+            messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+          }
         }
       }
 

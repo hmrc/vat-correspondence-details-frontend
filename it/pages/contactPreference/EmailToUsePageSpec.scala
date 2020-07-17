@@ -141,7 +141,10 @@ class EmailToUsePageSpec extends BasePageISpec {
 
           given.user.isAuthenticated
 
-          When("'Yes' is selected")
+          When("a successful vat subscription response is stubbed")
+          VatSubscriptionStub.stubUpdateContactPreference
+
+          And("'Yes' is selected")
           val res = submit(Yes)
 
           res should have(

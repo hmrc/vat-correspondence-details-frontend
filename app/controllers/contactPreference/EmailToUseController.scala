@@ -23,11 +23,16 @@ import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.YesNoForm
 import javax.inject.{Inject, Singleton}
-import models.{No, Yes, YesNo}
+import models.contactPreferences.ContactPreference
+import models.customerInformation.UpdatePPOBSuccess
+import models.errors.ErrorModel
+import models.{No, User, Yes, YesNo}
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.VatSubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.contactPreference.EmailToUseView
+import utils.LoggerUtil.{logInfo, logWarn}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -84,11 +89,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
               error =>
                 Future.successful(BadRequest(emailToUseView(error, email))),
               {
-                case Yes =>
-                  //TODO Add call to vat-subscription once the appropriate call exist
-                  Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
-                  .addingToSession( SessionKeys.letterToEmailChangeSuccessful -> "true",
-                                    SessionKeys.contactPrefConfirmed -> "true"))
+                case Yes => updateCommsPreference(user.vrn)
                 case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
               }
             )
@@ -99,5 +100,21 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
     } else {
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
+  }
+
+  private def updateCommsPreference(vrn: String)(implicit hc: HeaderCarrier, user: User[_]): Future[Result] =
+    vatSubscriptionService.updateContactPreference(vrn, ContactPreference.digital) map {
+    case Right(UpdatePPOBSuccess(_)) =>
+      Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
+        .addingToSession( SessionKeys.letterToEmailChangeSuccessful -> "true",
+          SessionKeys.contactPrefConfirmed -> "true")
+
+    case Left(ErrorModel(CONFLICT, _)) =>
+      logWarn("[EmailToUseController][updateCommsPreference] - There is an update request " +
+        "already in progress. Redirecting user to manage-vat overview page.")
+      Redirect(appConfig.manageVatSubscriptionServicePath)
+
+    case Left(_) =>
+      errorHandler.showInternalServerError
   }
 }

@@ -142,6 +142,27 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
     }
   }
 
+  "calling updateContactPreference" when {
+
+    "the update is successful" should {
+
+      "return the success model" in {
+        mockUpdateContactPreferenceSuccess()
+        val result = await(service.updateContactPreference(testVrn, ContactPreference.digital))
+        result shouldBe Right(UpdatePPOBSuccess("success"))
+      }
+    }
+
+    "the VatSubscriptionConnector returns an error for the updatePPOB call" should {
+
+      "return the error" in {
+        mockUpdateContactPreferenceFailure()
+        val result = await(service.updateContactPreference(testVrn, ContactPreference.digital))
+        result shouldBe Left(invalidJsonError)
+      }
+    }
+  }
+
   "calling buildEmailUpdateModel" when {
 
     "the user has existing contact details" should {

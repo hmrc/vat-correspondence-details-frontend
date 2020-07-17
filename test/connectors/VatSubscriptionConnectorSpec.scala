@@ -36,5 +36,10 @@ class VatSubscriptionConnectorSpec extends ControllerBaseSpec {
       connector.updatePPOBUrl(testVrn) shouldBe
         "mockVatSubscriptionHost/vat-subscription/123456789/ppob"
     }
+
+    "generate the correct url for updateContactPreferences" in {
+      connector.updateContactPreferenceUrl(testVrn) shouldBe
+        "mockVatSubscriptionHost/vat-subscription/123456789/contact-preference"
+    }
   }
 }

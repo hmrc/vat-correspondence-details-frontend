@@ -21,7 +21,8 @@ import config.AppConfig
 import connectors.httpParsers.ResponseHttpParser.{HttpGetResult, HttpPutResult}
 import javax.inject.{Inject, Singleton}
 import models.User
-import models.customerInformation.{CustomerInformation, PPOB, UpdatePPOB, UpdatePPOBSuccess}
+import models.contactPreferences.ContactPreference
+import models.customerInformation._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.LoggerUtil.{logDebug, logWarn}
@@ -37,6 +38,9 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
 
   private[connectors] def updatePPOBUrl(vrn: String): String =
     s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/ppob"
+
+  private[connectors] def updateContactPreferenceUrl(vrn: String): String =
+    s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/contact-preference"
 
   def getCustomerInfo(vrn: String)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[CustomerInformation]] = {
@@ -69,6 +73,24 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
         result
       case httpError@Left(error) =>
         logWarn("[VatSubscriptionConnector][updatePPOB] received error - " + error.message)
+        httpError
+    }
+  }
+
+  def updateContactPreference(vrn: String, contactPreference: String)
+                             (implicit hc: HeaderCarrier,
+                              ec: ExecutionContext,
+                              user: User[_]): Future[HttpPutResult[UpdatePPOBSuccess]] = {
+
+    import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads
+
+    val updateModel = ContactPreference(contactPreference)
+
+    http.PUT[ContactPreference, HttpPutResult[UpdatePPOBSuccess]](updateContactPreferenceUrl(vrn), updateModel).map {
+      case result@Right(_) =>
+        result
+      case httpError@Left(error) =>
+        logWarn("[VatSubscriptionConnector][updateContactPreference] received error - " + error.message)
         httpError
     }
   }
