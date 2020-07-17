@@ -52,18 +52,32 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
     extractSessionEmail(user) match {
       case Some(email) =>
         Future.successful(Ok(
-          confirmEmailView(CheckYourAnswersViewModel(
-            question = "checkYourAnswers.emailAddress",
-            answer = email,
-            changeLink = routes.CaptureEmailController.show().url,
-            changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
-            continueLink = routes.ConfirmEmailController.updateEmailAddress().url
-          ))
+          confirmEmailView(viewModel(email))
         ))
       case _ =>
         Future.successful(Redirect(routes.CaptureEmailController.show()))
     }
   }
+
+  def showNoExistingEmail: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+
+    extractSessionEmail(user) match {
+      case Some(email) =>
+        Future.successful(Ok(
+          confirmEmailView(viewModel(email))
+        ))
+      case _ =>
+        Future.successful(Redirect(routes.CaptureEmailController.show()))
+    }
+  }
+
+  def viewModel(email: String): CheckYourAnswersViewModel = CheckYourAnswersViewModel(
+                                                              question = "checkYourAnswers.emailAddress",
+                                                              answer = email,
+                                                              changeLink = routes.CaptureEmailController.show().url,
+                                                              changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
+                                                              continueLink = routes.ConfirmEmailController.updateEmailAddress().url
+  )
 
   def updateEmailAddress(): Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
 
