@@ -25,10 +25,11 @@ import views.html.email.VerifyEmailView
 class VerifyEmailViewSpec extends ViewBaseSpec {
 
   val injectedView: VerifyEmailView = injector.instanceOf[VerifyEmailView]
-  lazy val view: Html = injectedView(testEmail)(user, messages, mockConfig)
-  lazy implicit val document: Document = Jsoup.parse(view.body)
 
-  "The Verify Email view" should {
+  "The Verify Email view without contact pref change" should {
+
+    lazy val view: Html = injectedView(testEmail, isContactPrefJourney = false)(user, messages, mockConfig)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct document title" in {
       document.title shouldBe "Confirm your email address - Business tax account - GOV.UK"
@@ -60,7 +61,21 @@ class VerifyEmailViewSpec extends ViewBaseSpec {
 
       "has the correct href" in {
         element("#content > article > p:nth-of-type(3) > a").attr("href") shouldBe
-          controllers.email.routes.VerifyEmailController.sendVerification().url
+          controllers.email.routes.VerifyEmailController.emailSendVerification().url
+      }
+    }
+  }
+
+  "The Verify Email view with contact pref change" should {
+
+    lazy val view: Html = injectedView(testEmail, isContactPrefJourney = true)(user, messages, mockConfig)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
+
+    "have a link" which {
+
+      "has the correct href" in {
+        element("#content > article > p:nth-of-type(3) > a").attr("href") shouldBe
+          controllers.email.routes.VerifyEmailController.contactPrefSendVerification().url
       }
     }
   }

@@ -52,13 +52,12 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     }
   }
 
-  "Calling the show action in VerifyEmailController" when {
+  "Calling the emailShow action in VerifyEmailController" when {
 
     "there is an email in session" should {
 
       lazy val result = {
-        mockIndividualAuthorised()
-        TestVerifyEmailController.show()(requestWithEmail)
+        TestVerifyEmailController.emailShow()(requestWithEmail)
       }
 
       "return 200 (OK)" in {
@@ -74,8 +73,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "there isn't an email in session" should {
 
       lazy val result = {
-        mockIndividualAuthorised()
-        TestVerifyEmailController.show()(emptyEmailSessionRequest)
+        TestVerifyEmailController.emailShow()(emptyEmailSessionRequest)
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -91,7 +89,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockIndividualWithoutEnrolment()
-        TestVerifyEmailController.show()(requestWithEmail)
+        TestVerifyEmailController.emailShow()(requestWithEmail)
       }
 
       "return forbidden (403)" in {
@@ -100,14 +98,13 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     }
   }
 
-  "Calling the sendVerification action in VerifyEmailController" when {
+  "Calling the emailSendVerification action in VerifyEmailController" when {
 
     "there is an email in session and the email request is successfully created" should {
 
       lazy val result = {
-        mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(Some(true))
-        TestVerifyEmailController.sendVerification()(requestWithEmail)
+        TestVerifyEmailController.emailSendVerification()(requestWithEmail)
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -115,16 +112,15 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       }
 
       "redirect to the verify your email page" in {
-        redirectLocation(result) shouldBe Some(routes.VerifyEmailController.show().url)
+        redirectLocation(result) shouldBe Some(routes.VerifyEmailController.emailShow().url)
       }
     }
 
     "there is an email in session and the email request is not created as already verified" should {
 
       lazy val result = {
-        mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(Some(false))
-        TestVerifyEmailController.sendVerification()(requestWithEmail)
+        TestVerifyEmailController.emailSendVerification()(requestWithEmail)
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -140,9 +136,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "there is an email in session and the email request returned an unexpected error" should {
 
       lazy val result = {
-        mockIndividualAuthorised()
         mockCreateEmailVerificationRequest(None)
-        TestVerifyEmailController.sendVerification()(requestWithEmail)
+        TestVerifyEmailController.emailSendVerification()(requestWithEmail)
       }
 
       "return 500 (INTERNAL_SERVER_ERROR)" in {
@@ -153,8 +148,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "there isn't an email in session" should {
 
       lazy val result = {
-        mockIndividualAuthorised()
-        TestVerifyEmailController.sendVerification()(emptyEmailSessionRequest)
+        TestVerifyEmailController.emailSendVerification()(emptyEmailSessionRequest)
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -170,11 +164,160 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockIndividualWithoutEnrolment()
-        TestVerifyEmailController.sendVerification()(requestWithEmail)
+        TestVerifyEmailController.emailSendVerification()(requestWithEmail)
       }
 
       "return forbidden (403)" in {
         status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+  }
+
+  "Calling the contactPrefShow action in VerifyEmailController" when {
+
+    "there is an email in session" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        TestVerifyEmailController.contactPrefShow()(requestWithEmail)
+      }
+
+      "return 200 (OK)" in {
+        status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+    }
+
+    "there isn't an email in session" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        TestVerifyEmailController.contactPrefShow()(emptyEmailSessionRequest)
+      }
+
+      "return 303 (SEE_OTHER)" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the start of the contact preference journey" in {
+        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+      }
+    }
+
+    "the user is not authorised" should {
+
+      lazy val result = {
+        mockIndividualWithoutEnrolment()
+        TestVerifyEmailController.contactPrefShow()(requestWithEmail)
+      }
+
+      "return forbidden (403)" in {
+        status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+
+    "the letterToConfirmedEmailEnabled feature switch is off" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(false)
+        TestVerifyEmailController.contactPrefShow()(requestWithEmail)
+      }
+
+      "return page not found (404)" in {
+        status(result) shouldBe Status.NOT_FOUND
+      }
+    }
+  }
+
+  "Calling the contactPrefSendVerification action in VerifyEmailController" when {
+
+    "there is an email in session and the email request is successfully created" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockCreateEmailVerificationRequest(Some(true))
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+      }
+
+      "return 303 (SEE_OTHER)" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the verify your email page" in {
+        redirectLocation(result) shouldBe Some(routes.VerifyEmailController.contactPrefShow().url)
+      }
+    }
+
+    "there is an email in session and the email request is not created as already verified" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockCreateEmailVerificationRequest(Some(false))
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+      }
+
+      "return 303 (SEE_OTHER)" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the update email address and contact preference route" in {
+        redirectLocation(result) shouldBe Some("")
+      }
+    }
+
+    "there is an email in session and the email request returned an unexpected error" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockCreateEmailVerificationRequest(None)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+      }
+
+      "return 500 (INTERNAL_SERVER_ERROR)" in {
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "there isn't an email in session" should {
+
+      lazy val result = {
+        TestVerifyEmailController.contactPrefSendVerification()(emptyEmailSessionRequest)
+      }
+
+      "return 303 (SEE_OTHER)" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the contact preference redirect route" in {
+        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+      }
+    }
+
+    "the user is not authorised" should {
+
+      lazy val result = {
+        mockIndividualWithoutEnrolment()
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+      }
+
+      "return forbidden (403)" in {
+        status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+
+    "the letterToConfirmedEmailEnabled feature switch is off" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(false)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+      }
+
+      "return page not found (404)" in {
+        status(result) shouldBe Status.NOT_FOUND
       }
     }
   }

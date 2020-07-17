@@ -85,7 +85,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
       case Some(email) =>
         vatSubscriptionService.updateEmail(user.vrn, email) map {
           case Right(UpdatePPOBSuccess(message)) if message.isEmpty =>
-            Redirect(routes.VerifyEmailController.sendVerification())
+            Redirect(routes.VerifyEmailController.emailSendVerification())
 
           case Right(UpdatePPOBSuccess(_)) =>
             auditService.extendedAudit(

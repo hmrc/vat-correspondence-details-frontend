@@ -208,7 +208,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
             result should have(
               httpStatus(Status.SEE_OTHER),
-              redirectURI(controllers.email.routes.VerifyEmailController.sendVerification().url)
+              redirectURI(controllers.email.routes.VerifyEmailController.emailSendVerification().url)
             )
           }
         }
