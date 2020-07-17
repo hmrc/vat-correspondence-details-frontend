@@ -105,7 +105,7 @@ letterPreference.yes = Iawn, anfonwch lythyrau i {0}
 letterPreference.no = Na, hoffwn barhau i gael e-byst
 letterPreference.error = Dewiswch ‘Iawn’ os hoffech gael gohebiaeth drwy lythyr
 
-emailChangeSuccess.title = Mae’r cyfeiriad e-bost newydd wedi dod i law
+emailChangeSuccess.title = Rydych wedi gofyn am gael newid eich cyfeiriad e-bost ar gyfer TAW
 
 websiteChangeSuccess.title.change = Rydych wedi gofyn am newid cyfeiriad y wefan
 
@@ -115,6 +115,9 @@ changeSuccess.helpOne.paper = Byddwn yn anfon llythyr i’ch prif fan busnes i r
 changeSuccess.helpOne.digital.agent = Byddwn yn anfon e-bost i {0} cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a yw’r cais wedi’i dderbyn ai peidio.
 changeSuccess.helpOne.paper.agent = Byddwn yn anfon llythyr o gadarnhad i gyfeiriad yr asiantaeth sydd wedi’i gofrestru gyda CThEM cyn pen 15 diwrnod gwaith.
 changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
+
+changeEmailSuccess.helpTwo = Os gwnaethoch hefyd ofyn i ni newid y ffordd rydym yn cysylltu â chi ynghylch TAW, byddwn yn gwneud hynny ar yr un pryd.
+changeEmailSuccess.helpThree = Mae angen i chi ddiweddaru’ch cyfeiriad e-bost ar gyfer trethi eraill ar wahân.
 
 changeSuccess.agent.email.partOne = Byddwn yn anfon e-bost i
 changeSuccess.agent.email.partTwo = cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a allwn dderbyn eich cais ai peidio.
