@@ -57,10 +57,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
             status(result) shouldBe Status.OK
           }
-
-          "not call the VatSubscription service" in {
-            verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
-          }
         }
 
       }
@@ -76,10 +72,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
           mockAgentAuthorised()
           mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
           status(result) shouldBe Status.OK
-        }
-
-        "not call the ContactPreferences service" in {
-          verify(mockContactPreferenceService, times(0)).getContactPreference(any())(any(), any())
         }
       }
     }
@@ -116,10 +108,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
           "return 200" in {
             status(result) shouldBe Status.OK
           }
-
-          "not call the VatSubscription service" in {
-            verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
-          }
         }
       }
 
@@ -135,10 +123,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
         "return 200" in {
           status(result) shouldBe Status.OK
-        }
-
-        "not call the ContactPreferences service" in {
-          verify(mockContactPreferenceService, times(0)).getContactPreference(any())(any(), any())
         }
       }
     }
@@ -180,10 +164,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
       "return the entity name" in {
         await(result) shouldBe Some("Jorip Biscuit Co")
-      }
-
-      "not call the VatSubscription service" in {
-        verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
       }
     }
 
@@ -236,10 +216,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
             getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
             status(result) shouldBe Status.OK
           }
-
-          "not call the VatSubscription service" in {
-            verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
-          }
         }
       }
     }
@@ -261,10 +237,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
           "return 200" in {
               status(result) shouldBe Status.OK
-          }
-
-          "not call the VatSubscription service" in {
-            verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
           }
         }
       }
