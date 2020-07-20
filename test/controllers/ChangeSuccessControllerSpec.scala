@@ -43,23 +43,22 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
     "both expected session keys are populated" when {
 
-      "the user is a principal entity" should {
-        lazy val result: Future[Result] = {
-          controller.landlineNumber(request.withSession(
-            landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline
-          ))
+      "the user is a principal entity" when {
+
+        "the contactPrefMigrationEnabled feature switch is turned on" should {
+          lazy val result: Future[Result] = {
+            controller.landlineNumber(request.withSession(
+              landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline
+            ))
+          }
+
+          "return 200" in {
+            mockIndividualAuthorised()
+            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+            status(result) shouldBe Status.OK
+          }
         }
 
-        "return 200" in {
-          mockIndividualAuthorised()
-          getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
-          mockGetEmailVerificationStatus(Future(Some(true)))
-          status(result) shouldBe Status.OK
-        }
-
-        "not call the VatSubscription service" in {
-          verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
-        }
       }
 
       "the user is an agent" should {
@@ -73,10 +72,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
           mockAgentAuthorised()
           mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
           status(result) shouldBe Status.OK
-        }
-
-        "not call the ContactPreferences service" in {
-          verify(mockContactPreferenceService, times(0)).getContactPreference(any())(any(), any())
         }
       }
     }
@@ -99,22 +94,20 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
     "both expected session keys are populated" when {
 
-      "the user is a principal entity" should {
+      "the user is a principal entity"  when {
 
-        lazy val result: Future[Result] = {
-          getMockContactPreference(vrn)(Future.successful(Right(ContactPreference("DIGITAL"))))
-          mockGetEmailVerificationStatus(Future(Some(true)))
-          controller.websiteAddress(request.withSession(
-            prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"
-          ))
-        }
+        "the contactPrefMigrationEnabled feature switch is turned on" should {
 
-        "return 200" in {
-          status(result) shouldBe Status.OK
-        }
+          lazy val result: Future[Result] = {
+            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+            controller.websiteAddress(request.withSession(
+              prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"
+            ))
+          }
 
-        "not call the VatSubscription service" in {
-          verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
+          "return 200" in {
+            status(result) shouldBe Status.OK
+          }
         }
       }
 
@@ -130,10 +123,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
 
         "return 200" in {
           status(result) shouldBe Status.OK
-        }
-
-        "not call the ContactPreferences service" in {
-          verify(mockContactPreferenceService, times(0)).getContactPreference(any())(any(), any())
         }
       }
     }
@@ -176,10 +165,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
       "return the entity name" in {
         await(result) shouldBe Some("Jorip Biscuit Co")
       }
-
-      "not call the VatSubscription service" in {
-        verify(mockVatSubscriptionService, times(0)).getCustomerInfo(any())(any(), any())
-      }
     }
 
     "there is not an entity name in session" when {
@@ -205,6 +190,54 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
           }
 
           await(result) shouldBe None
+        }
+      }
+    }
+  }
+
+  "The contactPrefMigrationEnabled feature switch is turned off" when {
+
+    "calling the landlineNumber action" when {
+
+      "both expected session keys are populated" when {
+
+        "the user is a principal entity" should {
+
+          lazy val result: Future[Result] = {
+            mockConfig.features.contactPrefMigrationEnabled(false)
+            controller.landlineNumber(request.withSession(
+              landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline
+            ))
+          }
+
+          "return 200" in {
+            mockIndividualAuthorised()
+            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+            getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
+            status(result) shouldBe Status.OK
+          }
+        }
+      }
+    }
+
+    "calling the websiteAddress action" when {
+
+      "both expected session keys are populated" when {
+
+        "the user is a principal entity" should {
+
+          lazy val result: Future[Result] = {
+            mockConfig.features.contactPrefMigrationEnabled(false)
+            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+            getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
+            controller.websiteAddress(request.withSession(
+              prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"
+            ))
+          }
+
+          "return 200" in {
+              status(result) shouldBe Status.OK
+          }
         }
       }
     }

@@ -102,19 +102,4 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
         connector.updatePPOB(vrn, buildMobileUpdateModel(mobile, customerInfo.ppob))
       case Left(error) => Future.successful(Left(error))
     }
-
-  def getEmailVerifiedStatus(vrn: String, preferenceCall: HttpGetResult[ContactPreference])
-                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] =
-    preferenceCall match {
-      case Right(ContactPreference("DIGITAL")) if appConfig.features.emailVerifiedContactPrefEnabled() =>
-        getCustomerInfo(vrn).map {
-          case Right(result) =>
-            result.ppob.contactDetails.flatMap(_.emailVerified)
-          case Left(_) =>
-            logWarn("[VatSubscriptionService][getEmailVerifiedStatus] Unable to retrieve emailVerified " +
-              "status from vatSubscriptionService")
-            None
-        }
-      case _ => Future.successful(None)
-    }
 }

@@ -71,7 +71,8 @@ object VatSubscriptionStub extends WireMockMethods {
         "mobileNumber" -> currentMobile
       ),
       "websiteAddress" -> "www.pepsi.biz"
-    )
+    ),
+    "commsPreference" -> "DIGITAL"
   )
 
   val emptyCustomerInfo: JsObject = Json.obj("xxx" -> "xxx")
