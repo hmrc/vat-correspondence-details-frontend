@@ -70,7 +70,14 @@
     }
   }
 
-  <p>@messages("changeSuccess.helpTwo")</p>
+    @if(model.pageTitle == "emailChangeSuccess.title") {
+        <p>@messages("changeEmailSuccess.helpTwo")</p>
+        <div class="panel panel-border-wide">
+            @messages("changeEmailSuccess.helpThree")
+        </div>
+    } else {
+      <p>@messages("changeSuccess.helpTwo")</p>
+    }
 }
 
 <a href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)" class="button" role="button">@messages("base.finish")</a>
