@@ -42,7 +42,9 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   implicit val ec: ExecutionContext = authComps.mcc.executionContext
   val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
 
-  def show: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (contactPreferencePredicate andThen
+                                  paperPrefPredicate andThen
+                                  inFlightContactPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       user.session.get(SessionKeys.contactPrefUpdate) match {
         case Some("true") =>
@@ -72,7 +74,9 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   }
 
 
-  def submit: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen
+                                    paperPrefPredicate andThen
+                                    inFlightContactPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
 
       user.session.get(SessionKeys.contactPrefUpdate) match {

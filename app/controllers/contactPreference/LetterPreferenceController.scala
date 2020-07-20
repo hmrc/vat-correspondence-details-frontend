@@ -45,7 +45,9 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
 
   def displayAddress(ppob: PPOB): String = ppob.address.line1 + ppob.address.postCode.fold("")(", " + _)
 
-  def show: Action[AnyContent] = (contactPreferencePredicate andThen digitalPrefPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (contactPreferencePredicate andThen
+                                  digitalPrefPredicate andThen
+                                  inFlightContactPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       vatSubscriptionService.getCustomerInfo(user.vrn) map {
         case Right(details) => Ok(view(formYesNo, displayAddress(details.ppob)))
@@ -58,7 +60,9 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
     }
   }
 
-  def submit: Action[AnyContent] = (contactPreferencePredicate andThen digitalPrefPredicate).async { implicit user =>
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen
+                                    digitalPrefPredicate andThen
+                                    inFlightContactPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       formYesNo.bindFromRequest().fold(
         formWithErrors => {

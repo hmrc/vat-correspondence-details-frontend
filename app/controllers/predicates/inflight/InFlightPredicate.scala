@@ -19,7 +19,6 @@ package controllers.predicates.inflight
 import common.SessionKeys.inFlightContactDetailsChangeKey
 import config.AppConfig
 import models.User
-import models.customerInformation.CustomerInformation
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{ActionRefiner, Result}
 import play.api.mvc.Results.{Conflict, Redirect}
@@ -30,7 +29,8 @@ import utils.LoggerUtil.{logDebug, logWarn}
 import scala.concurrent.{ExecutionContext, Future}
 
 class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
-                        redirectURL: String) extends ActionRefiner[User, User] with I18nSupport {
+                        redirectURL: String,
+                        blockIfPendingPref: Boolean) extends ActionRefiner[User, User] with I18nSupport {
 
   implicit val appConfig: AppConfig = inFlightComps.appConfig
   implicit val executionContext: ExecutionContext = inFlightComps.mcc.executionContext
@@ -43,8 +43,9 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
 
     req.session.get(inFlightContactDetailsChangeKey) match {
       case Some("false") => Future.successful(Right(req))
-      case Some(change) => Future.successful(Left(Conflict(inFlightComps.inFlightChangeView(change))))
-      case None => getCustomerInfoCall(req.vrn)
+      case Some("commsPref") if blockIfPendingPref => Future.successful(Left(Conflict(inFlightComps.inFlightChangeView())))
+      case Some("true") => Future.successful(Left(Conflict(inFlightComps.inFlightChangeView())))
+      case _ => getCustomerInfoCall(req.vrn)
     }
   }
 
@@ -53,8 +54,10 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
     inFlightComps.vatSubscriptionService.getCustomerInfo(vrn).map {
       case Right(customerInfo) =>
         customerInfo.pendingChanges match {
+          case Some(changes) if blockIfPendingPref && changes.commsPreference.isDefined =>
+            Left(Conflict(inFlightComps.inFlightChangeView()).addingToSession(inFlightContactDetailsChangeKey -> "commsPref"))
           case Some(changes) if changes.ppob.isDefined =>
-            comparePendingAndCurrent(customerInfo)
+            Left(Conflict(inFlightComps.inFlightChangeView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
           case _ =>
             logDebug("[InFlightPredicate][getCustomerInfoCall] - There are no in-flight changes. " +
               "Redirecting user to the start of the journey.")
@@ -64,28 +67,5 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
         logWarn("[InFlightPredicate][getCustomerInfoCall] - " +
           s"The call to the GetCustomerInfo API failed. Error: ${error.message}")
         Left(inFlightComps.errorHandler.showInternalServerError)
-    }
-
-  private def comparePendingAndCurrent[A](customerInfo: CustomerInformation)
-                                         (implicit user: User[A]): Either[Result, User[A]] =
-
-    (customerInfo.sameAddress, customerInfo.sameEmail, customerInfo.sameLandline,
-      customerInfo.sameMobile, customerInfo.sameWebsite) match {
-      case (false, _, _, _, _) =>
-        Left(Conflict(inFlightComps.inFlightChangeView("ppob"))
-          .addingToSession(inFlightContactDetailsChangeKey -> "ppob"))
-      case (_, false, _, _, _) =>
-        Left(Conflict(inFlightComps.inFlightChangeView("email"))
-          .addingToSession(inFlightContactDetailsChangeKey -> "email"))
-      case (_, _, false, _, _) =>
-        Left(Conflict(inFlightComps.inFlightChangeView("landline"))
-          .addingToSession(inFlightContactDetailsChangeKey -> "landline"))
-      case (_, _, _, false, _) =>
-        Left(Conflict(inFlightComps.inFlightChangeView("mobile"))
-          .addingToSession(inFlightContactDetailsChangeKey -> "mobile"))
-      case (_, _, _, _, false) =>
-        Left(Conflict(inFlightComps.inFlightChangeView("website"))
-          .addingToSession(inFlightContactDetailsChangeKey -> "website"))
-      case _ => Right(user)
     }
 }

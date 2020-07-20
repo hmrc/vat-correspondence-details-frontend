@@ -138,15 +138,10 @@ changeSuccess.agent.email.partOne = We’ll send an email to
 changeSuccess.agent.email.partTwo = within 2 working days telling you whether we can accept your request.
 
 inFlightChange.title = There is already a change pending
-inFlightChange.recentlyRequested = A recent request was made to change the {0}.
-inFlightChange.changePending = Until this is confirmed, you cannot change the:
-inFlightChange.ppob = principal place of business
-inFlightChange.email = business’s email address
-inFlightChange.landline = business’s landline number
-inFlightChange.mobile = business’s mobile number
-inFlightChange.website = business’s website address
-inFlightChange.websiteAddress = website address
-inFlightChange.contactDetails = contact details
+inFlightChange.recentRequest = We are dealing with a recent request to change something on this VAT account.
+inFlightChange.untilWeAccept = Until we accept that request, you cannot make a further change.
+inFlightChange.acceptOrReject = HMRC accepts or rejects changes to VAT accounts within 2 working days.
+inFlightChange.backToAccountDetails = Back to account details
 
 confirmPhoneNumbers.notProvided = Not provided
 confirmPhoneNumbers.numberRemoved = Number removed

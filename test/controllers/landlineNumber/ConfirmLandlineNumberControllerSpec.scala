@@ -121,7 +121,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         }
 
         "add the inflight change key to the session" in {
-          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("landline")
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
         }
       }
 

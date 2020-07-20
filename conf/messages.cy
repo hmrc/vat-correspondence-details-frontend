@@ -123,15 +123,10 @@ changeSuccess.agent.email.partOne = Byddwn yn anfon e-bost i
 changeSuccess.agent.email.partTwo = cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a allwn dderbyn eich cais ai peidio.
 
 inFlightChange.title = Mae newid ar y gweill eisoes
-inFlightChange.recentlyRequested = Cafodd cais ei wneud yn ddiweddar i newid {0}.
-inFlightChange.changePending = Hyd nes y caiff hyn ei gadarnhau, ni allwch newid y:
-inFlightChange.ppob = prif leoliad busnes
-inFlightChange.email = cyfeiriad e-bost y busnes
-inFlightChange.landline = rhif ffôn llinell dir y busnes
-inFlightChange.mobile = rhif ffôn symudol y busnes
-inFlightChange.website = cyfeiriad gwefan y busnes
-inFlightChange.websiteAddress = cyfeiriad gwe
-inFlightChange.contactDetails = manylion cyswllt
+inFlightChange.recentRequest = Rydym yn delio â chais diweddar i newid rhywbeth ar y cyfrif TAW hwn.
+inFlightChange.untilWeAccept = Ni allwch wneud newid pellach tan i ni dderbyn y cais hwnnw.
+inFlightChange.acceptOrReject = Mae CThEM yn derbyn neu’n gwrthod newidiadau i gyfrifon TAW cyn pen 2 ddiwrnod gwaith.
+inFlightChange.backToAccountDetails = Yn ôl i fanylion y cyfrif
 
 captureLandline.title = Beth yw’r rhif ffôn llinell dir?
 captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00441632 960000. Ni allwch nodi arwydd plws.

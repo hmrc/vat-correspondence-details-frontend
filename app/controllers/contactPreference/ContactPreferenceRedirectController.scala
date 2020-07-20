@@ -38,7 +38,7 @@ class ContactPreferenceRedirectController @Inject()(errorHandler: ErrorHandler)
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def redirect: Action[AnyContent] =
-    contactPreferencePredicate.async { implicit user =>
+    (contactPreferencePredicate andThen inFlightContactPrefPredicate).async { implicit user =>
       vatSubscriptionService.getCustomerInfo(user.vrn) map {
         case Right(details) => details.commsPreference match {
           case Some(`paper`) => Redirect(controllers.contactPreference.routes.EmailPreferenceController.show())

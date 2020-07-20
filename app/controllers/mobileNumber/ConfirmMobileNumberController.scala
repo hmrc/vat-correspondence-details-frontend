@@ -97,13 +97,13 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
             )
             Redirect(controllers.routes.ChangeSuccessController.mobileNumber())
               .removingFromSession(validationMobileKey)
-              .addingToSession(mobileChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "mobile")
+              .addingToSession(mobileChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
           case Left(ErrorModel(CONFLICT, _)) =>
             logWarn("[ConfirmMobileNumberController][updateMobileNumber] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "mobile")
+              .addingToSession(inFlightContactDetailsChangeKey -> "true")
 
           case Left(_) =>
             errorHandler.showInternalServerError

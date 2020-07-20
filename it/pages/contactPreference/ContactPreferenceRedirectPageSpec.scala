@@ -48,7 +48,7 @@ class ContactPreferenceRedirectPageSpec extends BasePageISpec {
               .withBody(customerJson))
         )
 
-        val result = get("/contact-preference-redirect")
+        val result = get("/contact-preference-redirect", formatInflightChange(Some("false")))
 
 
         result should have(
@@ -82,7 +82,7 @@ class ContactPreferenceRedirectPageSpec extends BasePageISpec {
               .withBody(customerJson))
         )
 
-        val result = get("/contact-preference-redirect")
+        val result = get("/contact-preference-redirect", formatInflightChange(Some("false")))
 
 
         result should have(

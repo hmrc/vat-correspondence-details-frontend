@@ -17,7 +17,6 @@
 package models.customerInformation
 
 import assets.CustomerInfoConstants._
-import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
 class PendingChangesSpec extends UnitSpec {
@@ -27,11 +26,6 @@ class PendingChangesSpec extends UnitSpec {
     "parse from JSON" in {
       val result = pendingChangesJson.as[PendingChanges]
       result shouldBe pendingChangesModel
-    }
-
-    "parse to JSON" in {
-      val result = Json.toJson(pendingChangesModel)
-      result shouldBe pendingChangesJson
     }
   }
 }

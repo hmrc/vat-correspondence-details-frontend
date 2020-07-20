@@ -31,7 +31,12 @@ class EmailPreferencePageSpec extends BasePageISpec {
 
   "Calling the EmailPreference .show method" when {
 
-    def show: WSResponse = get(path, formatEmailPrefUpdate(Some("true")) ++ formatCurrentContactPref(Some(paper)))
+    def show: WSResponse = get(
+      path,
+      formatEmailPrefUpdate(Some("true")) ++
+        formatCurrentContactPref(Some(paper)) ++
+        formatInflightChange(Some("false"))
+    )
 
     "the user is authenticated" when {
 
@@ -90,7 +95,9 @@ class EmailPreferencePageSpec extends BasePageISpec {
 
     def submit(data: YesNo): WSResponse = post(
       path,
-      formatValidationEmail(Some("test@test.com")) ++ formatCurrentContactPref(Some(paper))
+      formatValidationEmail(Some("test@test.com")) ++
+        formatCurrentContactPref(Some(paper)) ++
+        formatInflightChange(Some("false"))
     )(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
 
     "the user is authenticated" when {
@@ -147,8 +154,9 @@ class EmailPreferencePageSpec extends BasePageISpec {
             path,
             formatValidationEmail(Some("test@test.com")) ++
               formatEmailPrefUpdate(Some("true")) ++
-              formatCurrentContactPref(Some(paper)))(Map("yes_no" -> Seq(""))
-          )
+              formatCurrentContactPref(Some(paper)) ++
+              formatInflightChange(Some("false"))
+          )(Map("yes_no" -> Seq("")))
 
           res should have(
             httpStatus(Status.BAD_REQUEST),
