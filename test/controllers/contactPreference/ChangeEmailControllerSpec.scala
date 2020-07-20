@@ -16,76 +16,39 @@
 
 package controllers.contactPreference
 
-import common.SessionKeys
+import assets.CustomerInfoConstants.fullCustomerInfoModel
+import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import models.contactPreferences.ContactPreference._
+import controllers.email.CaptureEmailController
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import uk.gov.hmrc.http.HeaderCarrier
+import views.html.email.CaptureEmailView
 
-class ChangeEmailControllerSpec extends ControllerBaseSpec {
+import scala.concurrent.{ExecutionContext, Future}
 
-  lazy val controller = new ChangeEmailController()
-  lazy val requestWithSession: FakeRequest[AnyContentAsEmpty.type] = request.withSession((SessionKeys.currentContactPrefKey -> paper))
+class ChangeEmailControllerSpec extends ControllerBaseSpec{
 
-  "ChangeEmailController .show" when {
+  val testValidationEmail: String = "validation@example.com"
+  val testValidEmail: String      = "pepsimac@gmail.com"
+  val testInvalidEmail: String    = "invalidEmail"
+  val view: CaptureEmailView = injector.instanceOf[CaptureEmailView]
 
-    "user is authorised" when {
+  def setup(result: GetCustomerInfoResponse): Any =
+    when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(result))
 
-      "the user currently has a digital preference" when {
+  def target(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)): CaptureEmailController = {
+    setup(result)
 
-        "the letterToConfirmedEmailEnabled feature switch is off" should {
-
-          lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(false)
-            controller.show(requestWithSession)
-          }
-
-          "return a NOT_FOUND result" in {
-            status(result) shouldBe NOT_FOUND
-          }
-        }
-
-        "the letterToConfirmedEmailEnabled feature switch is on" when {
-
-          lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            controller.show(requestWithSession)
-          }
-
-          "return OK" in {
-            status(result) shouldBe OK
-          }
-        }
-      }
-
-      "the user currently has a paper preference" should {
-
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          controller.show(request.withSession(SessionKeys.currentContactPrefKey -> digital))
-        }
-
-        "return a SEE_OTHER result" in {
-          status(result) shouldBe SEE_OTHER
-        }
-
-        "redirect to BTA" in {
-          redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
-        }
-      }
-    }
-
-    "user is unauthorised" should {
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        mockIndividualWithoutEnrolment()
-        controller.show(requestWithSession)
-      }
-
-      "return a FORBIDDEN result" in {
-        status(result) shouldBe FORBIDDEN
-      }
-    }
+    new CaptureEmailController(
+      mockVatSubscriptionService,
+      mockErrorHandler,
+      mockAuditingService,
+      view
+    )
   }
+
+
+
 }

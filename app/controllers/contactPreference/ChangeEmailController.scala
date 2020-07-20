@@ -43,7 +43,7 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (contactPreferencePredicate andThen inFlightEmailPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
 
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
       case Some(email) => Future.successful(Some(email))
@@ -74,7 +74,7 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
   }
 
 
-  def submit: Action[AnyContent] = (contactPreferencePredicate andThen inFlightEmailPredicate).async { implicit user =>
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
     val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
     val prepopulationEmail: Option[String] = user.session.get(SessionKeys.prepopulationEmailKey)
 
@@ -94,13 +94,13 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
               user.isAgent,
               user.arn
             ),
-            controllers.email.routes.CaptureEmailController.submit().url
+            controllers.contactPreference.routes.ChangeEmailController.submit().url
           )
           Future.successful(Redirect("")
-            .addingToSession(SessionKeys.prepopulationEmailKey -> email)) // TODO - Redirect to confirmation page
+            .addingToSession(SessionKeys.prepopulationEmailKey -> email)) // TODO - BTAT-8062 confirm conntroller
         }
       )
-      case (None, _) => Future.successful(errorHandler.showInternalServerError)
+      case (None, _) => Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 
