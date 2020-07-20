@@ -17,47 +17,61 @@
 package mocks
 
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
-import org.mockito.ArgumentMatchers.{any, eq => argEq}
-import org.mockito.Mockito.{reset, when}
-import org.scalatestplus.mockito.MockitoSugar
+import models.User
+import models.contactPreferences.ContactPreference
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.VatSubscriptionService
-import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
-trait MockVatSubscriptionService extends MockitoSugar with BeforeAndAfterEach {
+import scala.concurrent.{ExecutionContext, Future}
+
+trait MockVatSubscriptionService extends MockFactory with BeforeAndAfterEach {
   this: Suite =>
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockVatSubscriptionService)
   }
 
   val mockVatSubscriptionService: VatSubscriptionService = mock[VatSubscriptionService]
 
   def mockUpdateEmailAddress(vrn: String, email: String)(response: Future[UpdatePPOBResponse]): Unit =
-    when(mockVatSubscriptionService.updateEmail(argEq(vrn), argEq(email))(any(), any(), any())) thenReturn response
+    (mockVatSubscriptionService.updateEmail(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
+      .expects(vrn, email, *, *, *)
+      .returning(response)
+
+  def mockUpdateContactPrefEmailAddress(vrn: String, email: String, response: Future[UpdateEmailResponse]): Unit =
+    (mockVatSubscriptionService.updateContactPrefEmail(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(vrn, email, *, *)
+      .returning(response)
 
   def mockUpdateWebsite(vrn: String, website: String)(response: Future[UpdatePPOBResponse]): Unit =
-    when(mockVatSubscriptionService.updateWebsite(argEq(vrn), argEq(website))(any(), any(), any())) thenReturn response
+    (mockVatSubscriptionService.updateWebsite(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
+      .expects(vrn, website, *, *, *)
+      .returning(response)
 
   def mockUpdateLandlineNumber(vrn: String, landline: String)
-                            (response: Future[UpdatePPOBResponse]): Unit =
-    when(mockVatSubscriptionService.updateLandlineNumber(
-      argEq(vrn),argEq(landline))(any(), any(), any())
-    ) thenReturn response
+                              (response: Future[UpdatePPOBResponse]): Unit =
+    (mockVatSubscriptionService.updateLandlineNumber(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
+      .expects(vrn, landline, *, *, *)
+      .returning(response)
 
   def mockUpdateMobileNumber(vrn: String, mobile: String)
-                              (response: Future[UpdatePPOBResponse]): Unit =
-    when(mockVatSubscriptionService.updateMobileNumber(
-      argEq(vrn),argEq(mobile))(any(), any(), any())
-    ) thenReturn response
+                            (response: Future[UpdatePPOBResponse]): Unit =
+    (mockVatSubscriptionService.updateMobileNumber(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
+      .expects(vrn, mobile, *, *, *)
+      .returning(response)
 
   def mockUpdateContactPreference(vrn: String, contactPref: String)(response: Future[UpdatePPOBResponse]): Unit =
-    when(mockVatSubscriptionService.updateContactPreference(
-      argEq(vrn), argEq(contactPref))(any(), any(), any())
-    ) thenReturn response
+    (mockVatSubscriptionService.updateContactPreference(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
+      .expects(vrn, contactPref, *, *, *)
+      .returning(response)
 
   def mockGetCustomerInfo(vrn: String)(response: Future[GetCustomerInfoResponse]): Unit =
-    when(mockVatSubscriptionService.getCustomerInfo(argEq(vrn))(any(), any())) thenReturn response
+    (mockVatSubscriptionService.getCustomerInfo(_: String)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(vrn, *, *)
+      .returning(response)
 }

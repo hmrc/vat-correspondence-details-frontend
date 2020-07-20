@@ -24,12 +24,13 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import org.mockito.Mockito.{mock => mMock}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuditServiceSpec extends ControllerBaseSpec {
 
-  lazy val mockAuditConnector: AuditConnector = mock[AuditConnector]
+  lazy val mockAuditConnector: AuditConnector = mMock[AuditConnector](classOf[AuditConnector])
   val auditingService = new AuditingService(mockConfig, mockAuditConnector)
 
   "The Auditing Service" should {

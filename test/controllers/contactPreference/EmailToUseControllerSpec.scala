@@ -19,7 +19,6 @@ package controllers.contactPreference
 import assets.BaseTestConstants._
 import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys
-import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
 import forms.YesNoForm.yesNo
 import models.contactPreferences.ContactPreference
@@ -32,16 +31,14 @@ import play.api.http.Status
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.contactPreference.EmailToUseView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class EmailToUseControllerSpec extends ControllerBaseSpec {
 
-  def setup(result: GetCustomerInfoResponse): Any =
-    when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(Future.successful(result))
+  def mockVatSubscriptionCall(): Unit =
+    mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
 
   val testValidationEmail: String = "validation@example.com"
 
@@ -60,9 +57,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
   val view: EmailToUseView = injector.instanceOf[EmailToUseView]
 
-  def target(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)): EmailToUseController = {
-    setup(result)
-
+  def target(): EmailToUseController = {
     new EmailToUseController(
       mockVatSubscriptionService,
       mockErrorHandler,
@@ -104,6 +99,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
       "there isn't an email in session" should {
 
         lazy val result = {
+          mockVatSubscriptionCall()
           mockConfig.features.letterToConfirmedEmailEnabled(true)
           mockIndividualAuthorised()
           target().show()(noEmailSessionRequest)
@@ -278,7 +274,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
           requestWithPaperPref
             .withFormUrlEncodedBody((yesNo, "no"))
-          .withSession(SessionKeys.contactPrefUpdate -> "true")
+            .withSession(SessionKeys.contactPrefUpdate -> "true")
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
           target().submit()(yesRequest)

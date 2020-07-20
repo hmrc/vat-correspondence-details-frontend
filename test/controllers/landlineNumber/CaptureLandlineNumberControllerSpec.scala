@@ -63,11 +63,6 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
           document.select("#landlineNumber").attr("value") shouldBe testValidationLandline
         }
 
-        "not call the VatSubscription service" in {
-          verify(mockVatSubscriptionService, never())
-            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-        }
-
       }
     }
 
@@ -87,11 +82,6 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
       "prepopulate the form with the previously entered landline" in {
         document.select("#landlineNumber").attr("value") shouldBe testPrepopLandline
-      }
-
-      "not call the VatSubscription service" in {
-        verify(mockVatSubscriptionService, never())
-          .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
       }
     }
 

@@ -23,14 +23,9 @@ import controllers.ControllerBaseSpec
 import mocks.MockVatSubscriptionService
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify}
 import play.api.http.Status
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.mobileNumber.CaptureMobileNumberView
-
-import scala.concurrent.ExecutionContext
 
 class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 
@@ -63,11 +58,6 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
           document.select("#mobileNumber").attr("value") shouldBe testValidationMobile
         }
 
-        "not call the VatSubscription service" in {
-          verify(mockVatSubscriptionService, never())
-            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-        }
-
       }
     }
 
@@ -87,11 +77,6 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
       "prepopulate the form with the previously entered mobile" in {
         document.select("#mobileNumber").attr("value") shouldBe testPrepopMobile
-      }
-
-      "not call the VatSubscription service" in {
-        verify(mockVatSubscriptionService, never())
-          .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
       }
     }
 

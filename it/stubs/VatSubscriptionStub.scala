@@ -25,6 +25,7 @@ object VatSubscriptionStub extends WireMockMethods {
 
   private val getCustomerInfoUri: String = "/vat-subscription/([0-9]+)/full-information"
   private val updatePPOBUri: String = "/vat-subscription/([0-9]+)/ppob"
+  private val updateEmailUri: String = "/vat-subscription/([0-9]{9})/contact-preference/email"
   private val updateContactPref: String = "/vat-subscription/([0-9]+)/contact-preference"
 
   def stubCustomerInfo: StubMapping = {
@@ -44,16 +45,28 @@ object VatSubscriptionStub extends WireMockMethods {
 
   def stubUpdatePPOB: StubMapping = {
     when(method = PUT, uri = updatePPOBUri)
-      .thenReturn(status = OK, body = updatePPOBJson)
+      .thenReturn(status = OK, body = successfulUpdateJson)
+  }
+
+  def stubUpdateEmail(email: String): StubMapping = {
+    when(method = PUT, uri = updateEmailUri, body = Some(
+      Json.stringify(Json.obj("emailAddress" -> email))
+    ))
+      .thenReturn(status = OK, body = successfulUpdateJson)
   }
 
   def stubUpdateContactPreference: StubMapping = {
-    when(method = PUT, uri = updateContactPref).thenReturn(status = OK, body = updatePPOBJson)
+    when(method = PUT, uri = updateContactPref).thenReturn(status = OK, body = successfulUpdateJson)
   }
 
   def stubUpdatePPOBNoMessage: StubMapping = {
     when(method = PUT, uri = updatePPOBUri)
-      .thenReturn(status = OK, body = updatePPOBEmptyResponse)
+      .thenReturn(status = OK, body = updateEmptyResponse)
+  }
+
+  def stubUpdateEmailError(email: String): StubMapping = {
+    when(method = PUT, uri = updateEmailUri, body = Some(Json.stringify(Json.obj("emailAddress" -> email))))
+      .thenReturn(status = INTERNAL_SERVER_ERROR, body = Json.obj("ha" -> "noway"))
   }
 
   def stubCustomerInfoError: StubMapping = {
@@ -96,11 +109,11 @@ object VatSubscriptionStub extends WireMockMethods {
 
   val emptyCustomerInfo: JsObject = Json.obj("xxx" -> "xxx")
 
-  val updatePPOBJson: JsObject = Json.obj(
+  val successfulUpdateJson: JsObject = Json.obj(
     "formBundle" -> "success"
   )
 
-  val updatePPOBEmptyResponse: JsObject = Json.obj(
+  val updateEmptyResponse: JsObject = Json.obj(
     "formBundle" -> ""
   )
 }

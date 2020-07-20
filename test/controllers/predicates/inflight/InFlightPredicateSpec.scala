@@ -24,21 +24,15 @@ import models.User
 import models.customerInformation.PendingChanges
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.{ExecutionContext, Future}
 
 class InFlightPredicateSpec extends MockAuth {
 
   def setup(result: GetCustomerInfoResponse = Right(customerInfoPendingAddressModel)): Unit =
-    when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(Future.successful(result))
+    mockGetCustomerInfo("999999999")(result)
 
   val inflightPPOBPredicate = new InFlightPredicate(
     mockInFlightPredicateComponents,
@@ -73,11 +67,6 @@ class InFlightPredicateSpec extends MockAuth {
         "show the 'change pending' error page" in {
           messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
         }
-
-        "not call the VatSubscriptionService" in {
-          verify(mockVatSubscriptionService, never())
-            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-        }
       }
 
       "the inflight indicator is set to 'true'" should {
@@ -92,11 +81,6 @@ class InFlightPredicateSpec extends MockAuth {
         "show the 'change pending' error page" in {
           messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
         }
-
-        "not call the VatSubscriptionService" in {
-          verify(mockVatSubscriptionService, never())
-            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-        }
       }
 
       "the inflight indicator is set to 'false'" should {
@@ -105,11 +89,6 @@ class InFlightPredicateSpec extends MockAuth {
 
         "allow the request to pass through the predicate" in {
           result shouldBe Right(userWithSession("false"))
-        }
-
-        "not call the VatSubscriptionService" in {
-          verify(mockVatSubscriptionService, never())
-            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
         }
       }
     }

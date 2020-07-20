@@ -16,8 +16,8 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads._
 import assets.UpdateEmailConstants._
+import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailReads._
 import models.errors.ErrorModel
 import org.scalatest.EitherValues
 import play.api.http.Status
@@ -26,14 +26,14 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
 
-class UpdatePPOBHttpParserSpec extends UnitSpec with EitherValues {
+class UpdateEmailHttpParserSpec extends UnitSpec with EitherValues {
 
   "read" when {
     "the response status is OK" should {
       "return a updateEmailSuccess when the response Json can be parsed" in {
         val httpResponse = HttpResponse(Status.OK, Some(Json.obj("formBundle" -> s"$formBundle")))
 
-        read("", "", httpResponse).right.value shouldBe updatePPOBSuccess
+        read("", "", httpResponse).right.value shouldBe updateEmailSuccess
       }
 
       "return the expected Left Error Model when the response Json cannot be parsed" in {

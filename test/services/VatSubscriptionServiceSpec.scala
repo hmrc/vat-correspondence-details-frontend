@@ -99,6 +99,35 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
       }
     }
 
+    "calling updateContactPrefEmail" should {
+
+      lazy val vrn = "123456789"
+      lazy val email = "some@email.com"
+
+      "return an email success response" when {
+
+        "one is returned from the connector" in {
+          mockUpdateEmailSuccessResponse(vrn, email)
+
+          val result = await(service.updateContactPrefEmail("123456789", "some@email.com"))
+          result shouldBe Right(UpdateEmailSuccess("success"))
+        }
+
+      }
+
+      "return an error" when {
+
+        "an error is returned from the connector" in {
+          mockUpdateEmailFailureResponse(vrn, email)
+
+          val result = await(service.updateContactPrefEmail(vrn, email))
+          result shouldBe Left(invalidJsonError)
+        }
+
+      }
+
+    }
+
     "there was an unexpected response from email verification service" should {
 
       "return the error" in {

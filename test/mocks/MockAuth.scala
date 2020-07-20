@@ -32,6 +32,7 @@ import models.User
 import play.api.mvc.Result
 import views.html.errors.{InFlightChangeView, NotSignedUpView, SessionTimeoutView}
 import views.html.errors.agent.{AgentJourneyDisabledView, UnauthorisedAgentView}
+import org.mockito.Mockito.{mock => mMock}
 
 import scala.concurrent.Future
 
@@ -49,7 +50,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
   val unauthorisedAgentView: UnauthorisedAgentView = injector.instanceOf[UnauthorisedAgentView]
   val notSignedUpView: NotSignedUpView = injector.instanceOf[NotSignedUpView]
 
-  lazy val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  lazy val mockAuthConnector: AuthConnector = mMock[AuthConnector](classOf[AuthConnector])
 
   def setupAuthResponse(authResult: Future[~[Option[AffinityGroup], Enrolments]]): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     when(mockAuthConnector.authorise(

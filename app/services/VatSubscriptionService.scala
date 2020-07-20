@@ -21,14 +21,15 @@ import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import javax.inject.{Inject, Singleton}
 import models.User
-import models.customerInformation.{ContactDetails, PPOB, UpdatePPOBSuccess}
+import models.customerInformation.{ContactDetails, PPOB, UpdateEmailSuccess, UpdatePPOBSuccess}
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggerUtil.logWarn
+
 import scala.concurrent.{ExecutionContext, Future}
 import config.AppConfig
-import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import connectors.httpParsers.ResponseHttpParser.{HttpGetResult, HttpPutResult}
 import models.contactPreferences.ContactPreference
 
 @Singleton
@@ -79,6 +80,10 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
       case Some(false) => Future.successful(Right(UpdatePPOBSuccess("")))
       case None => Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address")))
     }
+
+  def updateContactPrefEmail(vrn: String, email: String)
+                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpPutResult[UpdateEmailSuccess]] =
+    connector.updateEmail(vrn, email)
 
   def updateWebsite(vrn: String, website: String)
                    (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =

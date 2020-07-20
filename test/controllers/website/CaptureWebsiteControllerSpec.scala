@@ -22,27 +22,16 @@ import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.website.CaptureWebsiteView
-
-import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
   val testValidationWebsite: String = "https://www.current~valid~website.com"
   val testValidWebsite: String      = "https://www.new~valid~website.com"
   val testInvalidWebsite: String    = "invalid@£$%^&website"
 
-  def setup(result: GetCustomerInfoResponse): Any =
-    when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(Future.successful(result))
-
-  def target(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)): CaptureWebsiteController = {
-    setup(result)
-
+  def target(): CaptureWebsiteController = {
     new CaptureWebsiteController(
       mockVatSubscriptionService,
       mockErrorHandler,
@@ -51,6 +40,8 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
     )
   }
 
+  private def mockVatSubscriptionCall(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)) =
+    mockGetCustomerInfo("999999999")(result)
 
   "Calling the show action" when {
 
@@ -77,11 +68,6 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
           document.select("#website").attr("value") shouldBe testValidationWebsite
         }
 
-        "not call the VatSubscription service" in {
-          verify(mockVatSubscriptionService, never())
-            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-        }
-
       }
     }
 
@@ -105,18 +91,16 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
       "prepopulate the form with the previously entered form value" in {
         document.select("#website").attr("value") shouldBe testValidWebsite
       }
-
-      "not call the VatSubscription service" in {
-        verify(mockVatSubscriptionService, never())
-          .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-      }
     }
 
     "there is no website in session" when {
 
       "the customerInfo call succeeds" should {
 
-        lazy val result = target().show(request)
+        lazy val result = {
+          mockVatSubscriptionCall()
+          target().show(request)
+        }
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 200" in {
@@ -135,10 +119,14 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
       "the customerInfo call fails" should {
 
-        lazy val result = target(Left(ErrorModel(
+        lazy val callReturn = Left(ErrorModel(
           Status.INTERNAL_SERVER_ERROR,
           "error"
-        ))).show(request)
+        ))
+        lazy val result = {
+          mockVatSubscriptionCall(callReturn)
+          target().show(request)
+        }
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -151,7 +139,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "a user is does not have a valid enrolment" should {
+    "a user does not have a valid enrolment" should {
 
       lazy val result = target().show(request)
 
@@ -243,6 +231,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
         lazy val result = target().submit(request)
 
+
         "render the error view" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -254,7 +243,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "a user is does not have a valid enrolment" should {
+    "a user does not have a valid enrolment" should {
 
       lazy val result = target().submit(request)
 
