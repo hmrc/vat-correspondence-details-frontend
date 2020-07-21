@@ -131,7 +131,7 @@ changeSuccess.helpOne.digital.agent = We’ll send an email to {0} within 2 work
 changeSuccess.helpOne.paper.agent = We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days.
 changeSuccess.helpTwo = Make sure your contact details are up to date.
 
-changeEmailSuccess.helpTwo = If you also asked us to change the way we contact you about VAT, we'll do this at the same time.
+changeEmailSuccess.helpTwo = If you also asked us to change the way we contact you about VAT, we’ll do this at the same time.
 changeEmailSuccess.helpThree = You need to update your email address for other taxes separately.
 
 changeSuccess.agent.email.partOne = We’ll send an email to
