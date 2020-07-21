@@ -55,20 +55,6 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe NOT_FOUND
       }
     }
-
-//    ".submit is called" should {
-//
-//      "return an NOT_FOUND result" in {
-//
-//        lazy val result = {
-//          mockConfig.features.letterToConfirmedEmailEnabled(false)
-//          controller.submit(requestWithPaperPref)
-//        }
-//
-//        status(result) shouldBe NOT_FOUND
-//      }
-//    }
-
   }
 
   "The letterToConfirmedEmailEnabled feature switch is on" when {
