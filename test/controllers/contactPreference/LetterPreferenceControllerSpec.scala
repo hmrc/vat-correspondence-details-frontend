@@ -16,7 +16,7 @@
 
 package controllers.contactPreference
 
-import assets.BaseTestConstants.vrn
+import assets.BaseTestConstants._
 import assets.CustomerInfoConstants._
 import assets.{CustomerInfoConstants, LetterPreferenceMessages}
 import common.SessionKeys
@@ -25,11 +25,13 @@ import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import play.api.test.Helpers._
 import forms.YesNoForm.{yes, yesNo, no => _no}
 import mocks.MockVatSubscriptionService
+import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import views.html.contactPreference.LetterPreferenceView
 import models.contactPreferences.ContactPreference._
+import models.customerInformation.UpdatePPOBSuccess
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -38,7 +40,7 @@ import scala.concurrent.Future
 class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 
   lazy val view: LetterPreferenceView = inject[LetterPreferenceView]
-  lazy val controller = new LetterPreferenceController(view, mockVatSubscriptionService)
+  lazy val controller = new LetterPreferenceController(view, mockVatSubscriptionService, mockErrorHandler)
   lazy val requestWithSession: FakeRequest[AnyContentAsEmpty.type] = request.withSession((SessionKeys.currentContactPrefKey -> digital))
 
   "Calling .show()" when {
@@ -172,20 +174,67 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
         "the letterToConfirmedEmailEnabled feature switch is on" when {
 
-          "'Yes' is submitted'" should {
+          "'Yes' is submitted" should {
 
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              controller.submit(requestWithSession.withFormUrlEncodedBody(yesNo -> yes))
+            val yesRequest = requestWithSession.withFormUrlEncodedBody(yesNo -> yes)
+
+            "the contact preference has been updated successfully" should {
+
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockIndividualAuthorised()
+                mockUpdateContactPreference(
+                  vrn, ContactPreference.paper)(Future(Right(UpdatePPOBSuccess("success")))
+                )
+                controller.submit(yesRequest)
+              }
+
+              "return 303 (SEE OTHER)" in {
+                status(result) shouldBe Status.SEE_OTHER
+              }
+
+              s"Redirect to the '${controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url}'" in {
+                redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url)
+              }
             }
 
-            "return a SEE_OTHER result" in {
-              status(result) shouldBe SEE_OTHER
+            "there was a conflict returned when trying to update the contact preference" should {
+
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockIndividualAuthorised()
+                mockUpdateContactPreference(
+                  vrn, ContactPreference.paper)(Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress")))
+                )
+                controller.submit(yesRequest)
+              }
+
+              "return 303" in {
+                status(result) shouldBe Status.SEE_OTHER
+              }
+
+              "redirect the user to the manage-vat overview page" in {
+                redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+              }
             }
 
-            "redirect to confirmation page" in {
-              redirectLocation(result) shouldBe
-                Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url)
+            "there was an unexpected error trying to update the contact preference" should {
+
+              lazy val result = {
+                mockConfig.features.letterToConfirmedEmailEnabled(true)
+                mockIndividualAuthorised()
+                mockUpdateContactPreference(vrn, ContactPreference.paper)(
+                  Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't update contact preference"))))
+                controller.submit(yesRequest)
+              }
+
+              "return 500" in {
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
+
+              "show the internal server error page" in {
+                messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+              }
             }
           }
 

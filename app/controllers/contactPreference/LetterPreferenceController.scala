@@ -17,24 +17,29 @@
 package controllers.contactPreference
 
 import common.SessionKeys
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.YesNoForm
 import javax.inject.Inject
-import models.customerInformation.PPOB
-import models.{No, Yes, YesNo}
+import models.contactPreferences.ContactPreference
+import models.customerInformation.{PPOB, UpdatePPOBSuccess}
+import models.errors.ErrorModel
+import models.{No, User, Yes, YesNo}
 import play.api.Logger
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.VatSubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.LoggerUtil.logWarn
 import views.html.contactPreference.LetterPreferenceView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
-                                            vatSubscriptionService: VatSubscriptionService)
+                                            vatSubscriptionService: VatSubscriptionService,
+                                            val errorHandler: ErrorHandler)
                                            (implicit val appConfig: AppConfig,
                                             ec: ExecutionContext,
                                             mcc: MessagesControllerComponents,
@@ -70,10 +75,7 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
           }
         },
         {
-          case Yes => Future.successful(
-            Redirect(routes.ContactPreferenceConfirmationController.show("letter").url)
-              .addingToSession(SessionKeys.emailToLetterChangeSuccessful -> "true")
-          )
+          case Yes => updateCommsPreference(user.vrn)
           case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )
@@ -81,4 +83,19 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
       Future.successful(NotFound(authComps.errorHandler.notFoundTemplate))
     }
   }
+
+  private def updateCommsPreference(vrn: String)(implicit hc: HeaderCarrier, user: User[_]): Future[Result] =
+    vatSubscriptionService.updateContactPreference(vrn, ContactPreference.paper) map {
+      case Right(UpdatePPOBSuccess(_)) =>
+        Redirect(routes.ContactPreferenceConfirmationController.show("letter").url)
+          .addingToSession(SessionKeys.emailToLetterChangeSuccessful -> "true")
+
+      case Left(ErrorModel(CONFLICT, _)) =>
+        logWarn("[LetterPreferenceController][updateCommsPreference] - There is an update request " +
+          "already in progress. Redirecting user to manage-vat overview page.")
+        Redirect(appConfig.manageVatSubscriptionServicePath)
+
+      case Left(_) =>
+        errorHandler.showInternalServerError
+    }
 }

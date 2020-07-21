@@ -25,6 +25,7 @@ object VatSubscriptionStub extends WireMockMethods {
 
   private val getCustomerInfoUri: String = "/vat-subscription/([0-9]+)/full-information"
   private val updatePPOBUri: String = "/vat-subscription/([0-9]+)/ppob"
+  private val updateContactPref: String = "/vat-subscription/([0-9]+)/contact-preference"
 
   def stubCustomerInfo: StubMapping = {
     when(method = GET, uri = getCustomerInfoUri)
@@ -39,6 +40,10 @@ object VatSubscriptionStub extends WireMockMethods {
   def stubUpdatePPOB: StubMapping = {
     when(method = PUT, uri = updatePPOBUri)
       .thenReturn(status = OK, body = updatePPOBJson)
+  }
+
+  def stubUpdateContactPreference: StubMapping = {
+    when(method = PUT, uri = updateContactPref).thenReturn(status = OK, body = updatePPOBJson)
   }
 
   def stubUpdatePPOBNoMessage: StubMapping = {

@@ -16,12 +16,17 @@
 
 package models.contactPreferences
 
+import play.api.libs.functional.syntax.unlift
 import play.api.libs.json._
 
 case class ContactPreference(preference: String)
 
 object ContactPreference {
+
+  private val writesPreferencePath = __ \ "commsPreference"
+
   implicit val reads: Reads[ContactPreference] = Json.reads[ContactPreference]
+  implicit val writes: Writes[ContactPreference] = writesPreferencePath.write[String].contramap(unlift(ContactPreference.unapply))
 
   val digital: String = "DIGITAL"
   val paper: String = "PAPER"

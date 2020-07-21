@@ -102,4 +102,9 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
         connector.updatePPOB(vrn, buildMobileUpdateModel(mobile, customerInfo.ppob))
       case Left(error) => Future.successful(Left(error))
     }
+
+  def updateContactPreference(vrn: String, contactPreference: String)
+                             (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
+        connector.updateContactPreference(vrn, contactPreference)
+
 }

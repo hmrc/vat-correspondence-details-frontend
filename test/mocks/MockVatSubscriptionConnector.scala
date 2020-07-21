@@ -43,9 +43,18 @@ trait MockVatSubscriptionConnector extends MockFactory {
       .returns(result)
   }
 
+  def mockUpdateContactPreferenceResponse(result: Future[UpdatePPOBResponse]): Unit = {
+    (connector.updateContactPreference(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
+      .expects(*, *, *, *, *)
+      .returns(result)
+  }
+
   def mockGetCustomerInfoSuccessResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Right(fullCustomerInfoModel)))
   def mockGetCustomerInfoFailureResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Left(invalidJsonError)))
 
   def mockUpdatePPOBSuccessResponse(): Unit = mockUpdatePPOBResponse(Future.successful(Right(UpdatePPOBSuccess("success"))))
   def mockUpdatePPOBFailureResponse(): Unit = mockUpdatePPOBResponse(Future.successful(Left(invalidJsonError)))
+
+  def mockUpdateContactPreferenceSuccess(): Unit = mockUpdateContactPreferenceResponse(Future.successful(Right(UpdatePPOBSuccess("success"))))
+  def mockUpdateContactPreferenceFailure(): Unit = mockUpdateContactPreferenceResponse(Future.successful(Left(invalidJsonError)))
 }
