@@ -25,31 +25,39 @@ import forms.YesNoForm
 import javax.inject.Inject
 import models.contactPreferences.ContactPreference.paper
 import models.{No, Yes, YesNo}
+import play.api.Logger
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent}
-import views.html.contactPreference.EmailPreferenceView
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.VatSubscriptionService
+import views.html.contactPreference.{AddEmailAddressView, EmailPreferenceView}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class EmailPreferenceController @Inject()(errorHandler: ErrorHandler,
-                                          emailPreferenceView: EmailPreferenceView)
+class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptionService,
+                                          errorHandler: ErrorHandler,
+                                          emailPreferenceView: EmailPreferenceView,
+                                          addEmailAddressView: AddEmailAddressView)
                                          (implicit val appConfig: AppConfig,
                                           authComps: AuthPredicateComponents,
+                                          mcc: MessagesControllerComponents,
+                                          executionContext: ExecutionContext,
                                           inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
 
+
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("emailPreference.error")
+
 
   def show: Action[AnyContent] = (contactPreferencePredicate andThen
                                   paperPrefPredicate andThen
                                   inFlightContactPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      Future.successful(Ok(emailPreferenceView(formYesNo))
-        .removingFromSession(SessionKeys.contactPrefUpdate)
-        .addingToSession(SessionKeys.currentContactPrefKey -> paper))
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
-    }
-  }
+          Future.successful(Ok(emailPreferenceView(formYesNo))
+            .removingFromSession(SessionKeys.contactPrefUpdate)
+            .addingToSession(SessionKeys.currentContactPrefKey -> paper))
+        } else {
+          Future.successful(NotFound(errorHandler.notFoundTemplate))
+        }
+      }
 
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen
                                     paperPrefPredicate andThen
@@ -58,8 +66,24 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler,
       formYesNo.bindFromRequest().fold (
         formWithErrors => Future.successful(BadRequest(emailPreferenceView(formWithErrors))),
         {
-          case Yes => Future.successful(Redirect(controllers.contactPreference.routes.EmailToUseController.show())
-            .addingToSession(SessionKeys.contactPrefUpdate -> "true"))
+          case Yes =>
+            vatSubscriptionService.getCustomerInfo(user.vrn).map {
+              case Right(details) =>
+               details.ppob.contactDetails.flatMap(_.emailAddress) match {
+                  case Some(_) =>
+                    Redirect(controllers.contactPreference.routes.EmailToUseController.show())
+                      .addingToSession(SessionKeys.contactPrefUpdate -> "true")
+                  case None =>
+                    Redirect(controllers.contactPreference.routes.AddEmailAddressController.show())
+                      .addingToSession(SessionKeys.contactPrefUpdate -> "true")
+
+                }
+              case Left(_) =>
+              Logger.warn("[EmailPreferenceController][.submit] Unable to retrieve email address")
+              authComps.errorHandler.showInternalServerError
+
+            }
+
           case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )

@@ -155,6 +155,12 @@ confirmRemoveMobile.heading = Confirm you want to remove the mobile number: {0}
 emailToUse.title = Do you want us to use this email address to contact you about VAT?
 emailToUse.error = Select yes if this is the email address you want us to use
 
+cPrefAddEmail.title = We do not have an email address for you
+cPrefAddEmail.line1 = Tell us your email address so we can change how we contact you.
+cPrefAddEmail.line2 = You’ll need to confirm the email address before we add it to your VAT account.
+cPrefAddEmail.question = Do you want to add an email address?
+cPrefAddEmail.error = Select yes if you want to add an email address
+
 contactPrefConfirmation.title = You have asked us to change how we contact you about VAT
 contactPrefConfirmation.contactYou = If we can accept the change, we will contact you about VAT at:
 contactPrefConfirmation.stillNeedLetters = We’ll still need to send you some letters in the post because the law tells us to.
