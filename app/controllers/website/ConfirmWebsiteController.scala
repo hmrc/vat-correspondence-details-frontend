@@ -80,14 +80,14 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
               controllers.website.routes.ConfirmWebsiteController.updateWebsite().url
             )
             Redirect(controllers.routes.ChangeSuccessController.websiteAddress())
-              .addingToSession(websiteChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "website")
+              .addingToSession(websiteChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
               .removingFromSession(validationWebsiteKey)
 
           case Left(ErrorModel(CONFLICT, _)) =>
             logWarn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "website")
+              .addingToSession(inFlightContactDetailsChangeKey -> "true")
 
           case Left(_) =>
             errorHandler.showInternalServerError

@@ -51,11 +51,10 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
 
   lazy val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
-  def setupAuthResponse(authResult: Future[~[Option[AffinityGroup], Enrolments]]): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] = {
+  def setupAuthResponse(authResult: Future[~[Option[AffinityGroup], Enrolments]]): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     when(mockAuthConnector.authorise(
       any(), any[Retrieval[~[Option[AffinityGroup], Enrolments]]]())(any(), any())
     ).thenReturn(authResult)
-  }
 
   val mockEnrolmentsAuthService: EnrolmentsAuthService = new EnrolmentsAuthService(mockAuthConnector)
 
@@ -103,7 +102,8 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
 
     object MockPredicate extends InFlightPredicate(
       mockInFlightPredicateComponents,
-      "/redirect-location"
+      "/redirect-location",
+      blockIfPendingPref = false
     ) {
       override def refine[A](request: User[A]): Future[Either[Result, User[A]]] =
         Future.successful(Right(User(vrn)(request)))

@@ -39,7 +39,9 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler,
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("emailPreference.error")
 
-  def show: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (contactPreferencePredicate andThen
+                                  paperPrefPredicate andThen
+                                  inFlightContactPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       Future.successful(Ok(emailPreferenceView(formYesNo))
         .removingFromSession(SessionKeys.contactPrefUpdate)
@@ -49,7 +51,9 @@ class EmailPreferenceController @Inject()(errorHandler: ErrorHandler,
     }
   }
 
-  def submit: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen
+                                    paperPrefPredicate andThen
+                                    inFlightContactPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       formYesNo.bindFromRequest().fold (
         formWithErrors => Future.successful(BadRequest(emailPreferenceView(formWithErrors))),

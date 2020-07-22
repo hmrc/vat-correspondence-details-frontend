@@ -100,13 +100,13 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
             )
             Redirect(routes.EmailChangeSuccessController.show())
               .removingFromSession(prepopulationEmailKey, validationEmailKey)
-              .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "email")
+              .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
           case Left(ErrorModel(CONFLICT, _)) =>
             logWarn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "email")
+              .addingToSession(inFlightContactDetailsChangeKey -> "true")
 
           case Left(_) =>
             errorHandler.showInternalServerError

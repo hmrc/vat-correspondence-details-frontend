@@ -34,16 +34,30 @@ abstract class BaseController(implicit authComps: AuthPredicateComponents,
   val routePrefix = "/vat-through-software/account/correspondence"
 
   val inFlightEmailPredicate = new InFlightPredicate(
-    inFlightComps, routePrefix + controllers.email.routes.CaptureEmailController.show().url
+    inFlightComps,
+    routePrefix + controllers.email.routes.CaptureEmailController.show().url,
+    blockIfPendingPref = false
   )
   val inFlightWebsitePredicate = new InFlightPredicate(
-    inFlightComps, routePrefix + controllers.website.routes.CaptureWebsiteController.show().url
+    inFlightComps,
+    routePrefix + controllers.website.routes.CaptureWebsiteController.show().url,
+    blockIfPendingPref = false
   )
   val inFlightLandlineNumberPredicate = new InFlightPredicate(
-    inFlightComps, routePrefix + controllers.landlineNumber.routes.CaptureLandlineNumberController.show().url
+    inFlightComps,
+    routePrefix + controllers.landlineNumber.routes.CaptureLandlineNumberController.show().url,
+    blockIfPendingPref = false
   )
   val inFlightMobileNumberPredicate = new InFlightPredicate(
-    inFlightComps, routePrefix + controllers.mobileNumber.routes.CaptureMobileNumberController.show().url
+    inFlightComps,
+    routePrefix + controllers.mobileNumber.routes.CaptureMobileNumberController.show().url,
+    blockIfPendingPref = false
+  )
+
+  val inFlightContactPrefPredicate = new InFlightPredicate(
+    inFlightComps,
+    routePrefix + controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url,
+    blockIfPendingPref = true
   )
 
   val contactPrefComps = new ContactPrefPredicateComponents(

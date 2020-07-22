@@ -32,7 +32,7 @@ class LetterPreferencePageSpec extends BasePageISpec {
 
   "Calling the LetterPreference .show method" when {
 
-    def show: WSResponse = get(path, formatCurrentContactPref(Some(digital)))
+    def show: WSResponse = get(path, formatCurrentContactPref(Some(digital)) ++ formatInflightChange(Some("false")))
 
     "the user is authenticated" should {
 
@@ -87,7 +87,7 @@ class LetterPreferencePageSpec extends BasePageISpec {
 
     def submit(data: YesNo): WSResponse = post(
       path,
-      formatCurrentContactPref(Some(digital))
+      formatCurrentContactPref(Some(digital)) ++ formatInflightChange(Some("false"))
     )(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
 
     "the user is authenticated" when {
@@ -140,8 +140,8 @@ class LetterPreferencePageSpec extends BasePageISpec {
 
           val res = post(
             path,
-            formatCurrentContactPref(Some(digital)))(Map("yes_no" -> Seq(""))
-          )
+            formatCurrentContactPref(Some(digital)) ++ formatInflightChange(Some("false"))
+          )(Map("yes_no" -> Seq("")))
 
           res should have(
             httpStatus(Status.BAD_REQUEST),

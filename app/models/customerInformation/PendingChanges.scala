@@ -17,17 +17,18 @@
 package models.customerInformation
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Reads, Writes}
+import play.api.libs.json.{JsPath, Reads}
 
-case class PendingChanges(ppob: Option[PPOB])
+case class PendingChanges(ppob: Option[PPOB],
+                          commsPreference: Option[String])
 
 object PendingChanges {
 
   private val ppobPath = JsPath \ "PPOBDetails"
+  private val commsPreferencePath = JsPath \ "commsPreference"
 
-  implicit val reads: Reads[PendingChanges] =
-    ppobPath.readNullable[PPOB].map(PendingChanges.apply)
-
-  implicit val writes: Writes[PendingChanges] =
-    ppobPath.writeNullable[PPOB].contramap(unlift(PendingChanges.unapply))
+  implicit val reads: Reads[PendingChanges] = (
+    ppobPath.readNullable[PPOB] and
+    commsPreferencePath.readNullable[String]
+  )(PendingChanges.apply _)
 }

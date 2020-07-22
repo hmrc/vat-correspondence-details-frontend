@@ -33,7 +33,12 @@ class EmailToUsePageSpec extends BasePageISpec {
 
   "Calling the EmailToUse .show method" when {
 
-    def show: WSResponse = get(path, formatEmailPrefUpdate(Some("true")) ++ formatCurrentContactPref(Some(paper)))
+    def show: WSResponse = get(
+      path,
+      formatEmailPrefUpdate(Some("true")) ++
+        formatCurrentContactPref(Some(paper)) ++
+        formatInflightChange(Some("false"))
+    )
 
     "the user is authenticated" when {
 
@@ -130,7 +135,8 @@ class EmailToUsePageSpec extends BasePageISpec {
       path,
       formatValidationEmail(Some("test@test.com")) ++
         formatEmailPrefUpdate(Some("true")) ++
-        formatCurrentContactPref(Some(paper))
+        formatCurrentContactPref(Some(paper)) ++
+        formatInflightChange(Some("false"))
     )(toFormData(YesNoForm.yesNoForm("yesNoError"), data))
 
     "the user is authenticated" when {
@@ -180,7 +186,8 @@ class EmailToUsePageSpec extends BasePageISpec {
             path,
             formatValidationEmail(Some("test@test.com")) ++
               formatEmailPrefUpdate(Some("true")) ++
-              formatCurrentContactPref(Some(paper))
+              formatCurrentContactPref(Some(paper)) ++
+              formatInflightChange(Some("false"))
           )(Map("yes_no" -> Seq("")))
 
           res should have(

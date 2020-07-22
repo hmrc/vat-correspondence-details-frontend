@@ -16,7 +16,6 @@
 
 package controllers.predicates.inflight
 
-import assets.BaseTestConstants.internalServerErrorTitle
 import assets.CustomerInfoConstants._
 import common.SessionKeys.inFlightContactDetailsChangeKey
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
@@ -43,7 +42,14 @@ class InFlightPredicateSpec extends MockAuth {
 
   val inflightPPOBPredicate = new InFlightPredicate(
     mockInFlightPredicateComponents,
-    "/redirect-location"
+    "/redirect-location",
+    blockIfPendingPref = false
+  )
+
+  val inflightCommsPrefPredicate = new InFlightPredicate(
+    mockInFlightPredicateComponents,
+    "/redirect-location",
+    blockIfPendingPref = true
   )
 
   def userWithSession(inflightPPOBValue: String): User[AnyContentAsEmpty.type] =
@@ -55,9 +61,28 @@ class InFlightPredicateSpec extends MockAuth {
 
     "there is an inflight indicator in session" when {
 
-      "the inflight indicator is set to a change value" should {
+      "the inflight indicator is set to 'commsPref' and the blockIfPendingPref parameter is true" should {
 
-        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("ppob"))).left.get
+        lazy val result = await(inflightCommsPrefPredicate.refine(userWithSession("commsPref"))).left.get
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        "return 409" in {
+          status(result) shouldBe Status.CONFLICT
+        }
+
+        "show the 'change pending' error page" in {
+          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
+        }
+
+        "not call the VatSubscriptionService" in {
+          verify(mockVatSubscriptionService, never())
+            .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
+        }
+      }
+
+      "the inflight indicator is set to 'true'" should {
+
+        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("true"))).left.get
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return 409" in {
@@ -91,7 +116,7 @@ class InFlightPredicateSpec extends MockAuth {
 
     "there is no inflight indicator in session" when {
 
-      "the user has an inflight PPOB address" should {
+      "the user has an inflight PPOB section" should {
 
         lazy val result = {
           setup()
@@ -103,8 +128,8 @@ class InFlightPredicateSpec extends MockAuth {
           status(result) shouldBe Status.CONFLICT
         }
 
-        "add the inflight indicator 'ppob' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("ppob")
+        "add the inflight indicator 'true' to session" in {
+          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("true")
         }
 
         "show the 'change pending' error page" in {
@@ -112,87 +137,47 @@ class InFlightPredicateSpec extends MockAuth {
         }
       }
 
-      "the user has an inflight email" should {
+      "the user has an inflight commsPreference" when {
 
-        lazy val result = {
-          setup(Right(customerInfoPendingEmailModel))
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
-        }
-        lazy val document = Jsoup.parse(bodyOf(result))
+        "the blockIfPendingPref parameter is true" should {
 
-        "return 409" in {
-          status(result) shouldBe Status.CONFLICT
-        }
+          lazy val result = {
+            setup(Right(customerInfoPendingContactPrefModel))
+            await(inflightCommsPrefPredicate.refine(userWithoutSession)).left.get
+          }
+          lazy val document = Jsoup.parse(bodyOf(result))
 
-        "add the inflight indicator 'email' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("email")
-        }
+          "return 409" in {
+            status(result) shouldBe Status.CONFLICT
+          }
 
-        "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
-        }
-      }
+          "show the 'change pending' error page" in {
+            messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
+          }
 
-      "the user has an inflight landline number" should {
-
-        lazy val result = {
-          setup(Right(customerInfoPendingLandlineModel))
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
-        }
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return 409" in {
-          status(result) shouldBe Status.CONFLICT
+          "add the inflight indicator 'commsPref' to session" in {
+            session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("commsPref")
+          }
         }
 
-        "add the inflight indicator 'landline' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("landline")
-        }
+        "the blockIfPendingPref parameter is false" should {
 
-        "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
-        }
-      }
+          lazy val result = {
+            setup(Right(customerInfoPendingContactPrefModel))
+            await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+          }
 
-      "the user has an inflight mobile number" should {
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
 
-        lazy val result = {
-          setup(Right(customerInfoPendingMobileModel))
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
-        }
-        lazy val document = Jsoup.parse(bodyOf(result))
+          "redirect the user to the predicate's redirect URL" in {
+            redirectLocation(result) shouldBe Some("/redirect-location")
+          }
 
-        "return 409" in {
-          status(result) shouldBe Status.CONFLICT
-        }
-
-        "add the inflight indicator 'mobile' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("mobile")
-        }
-
-        "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
-        }
-      }
-
-      "the user has an inflight website address" should {
-
-        lazy val result = {
-          setup(Right(customerInfoPendingWebsiteModel))
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
-        }
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return 409" in {
-          status(result) shouldBe Status.CONFLICT
-        }
-
-        "add the inflight indicator 'website' to session" in {
-          session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("website")
-        }
-
-        "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
+          "add the inflight indicator 'false' to session" in {
+            session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("false")
+          }
         }
       }
 
@@ -216,10 +201,10 @@ class InFlightPredicateSpec extends MockAuth {
         }
       }
 
-      "the user has a non-PPOB change pending" should {
+      "the user has a change pending that the predicate does not cater for" should {
 
         lazy val result = {
-          setup(Right(minCustomerInfoModel.copy(pendingChanges = Some(PendingChanges(None)))))
+          setup(Right(minCustomerInfoModel.copy(pendingChanges = Some(PendingChanges(None, None)))))
           await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
 
@@ -227,7 +212,7 @@ class InFlightPredicateSpec extends MockAuth {
           status(result) shouldBe Status.SEE_OTHER
         }
 
-        "redirect the user to the capture email address page" in {
+        "redirect the user to the predicate's redirect URL" in {
           redirectLocation(result) shouldBe Some("/redirect-location")
         }
 

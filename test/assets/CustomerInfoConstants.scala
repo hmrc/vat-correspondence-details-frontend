@@ -145,12 +145,12 @@ object CustomerInfoConstants {
     None
   )
 
-  val pendingChangesModel: PendingChanges = PendingChanges(Some(minPPOBModel))
-  val pendingChangesJson: JsObject = Json.obj("PPOBDetails" -> minPPOBModel)
+  val pendingChangesModel: PendingChanges = PendingChanges(Some(fullPPOBModel), Some(digital))
+  val pendingChangesJson: JsObject = Json.obj("PPOBDetails" -> fullPPOBModel, "commsPreference" -> digital)
 
   val fullCustomerInfoModel: CustomerInformation = CustomerInformation(
     fullPPOBModel,
-    Some(PendingChanges(Some(fullPPOBModel))),
+    Some(pendingChangesModel),
     Some("Pepsi"),
     Some("Mac"),
     Some("PepsiMac Ltd"),
@@ -163,38 +163,42 @@ object CustomerInfoConstants {
   val customerInfoPendingAddressModel: CustomerInformation = fullCustomerInfoModel.copy(
     pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
       address = minPPOBAddressModel
-    ))))
+    )), None))
   )
 
   val customerInfoPendingEmailModel: CustomerInformation = fullCustomerInfoModel.copy(
     pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
       contactDetails = Some(fullContactDetailsModel.copy(emailAddress = Some("myEmail@cool.com")))
-    ))))
+    )), None))
   )
 
   val customerInfoPendingWebsiteModel: CustomerInformation = fullCustomerInfoModel.copy(
     pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
       websiteAddress = Some("www.new-website.co.uk")
-    ))))
+    )), None))
   )
 
   val customerInfoPendingLandlineModel: CustomerInformation = fullCustomerInfoModel.copy(
     pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
       contactDetails = Some(fullContactDetailsModel.copy(phoneNumber = Some("01610111111")))
-    ))))
+    )), None))
   )
 
   val customerInfoPendingMobileModel: CustomerInformation = fullCustomerInfoModel.copy(
     pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
       contactDetails = Some(fullContactDetailsModel.copy(mobileNumber = Some("07777777777")))
-    ))))
+    )), None))
+  )
+
+  val customerInfoPendingContactPrefModel: CustomerInformation = fullCustomerInfoModel.copy(
+    pendingChanges = Some(PendingChanges(None, Some(digital)))
   )
 
   val customerInfoPaperPrefModel: CustomerInformation = fullCustomerInfoModel.copy(commsPreference = Some(paper))
 
   val fullCustomerInfoJson: JsObject = Json.obj(
     "ppob" -> fullPPOBJson,
-    "pendingChanges" -> Some(PendingChanges(Some(fullPPOBModel))),
+    "pendingChanges" -> pendingChangesJson,
     "customerDetails" -> Json.obj(
       "firstName" -> "Pepsi",
       "lastName" -> "Mac",

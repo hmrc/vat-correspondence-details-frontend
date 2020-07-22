@@ -16,19 +16,13 @@
 
 @this(mainTemplate: MainTemplate)
 
-@(changeType: String)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
 @mainTemplate(title = messages("inFlightChange.title")) {
 
-  <a class="link-back" href="@appConfig.manageVatSubscriptionServicePath">@messages("base.back")</a>
-
   <h1 class="heading-large">@messages("inFlightChange.title")</h1>
-  <p>@messages("inFlightChange.recentlyRequested", messages(s"inFlightChange.$changeType"))</p>
-  <p>@messages("inFlightChange.changePending")</p>
-  <ul class="list list-bullet">
-    <li>@messages("inFlightChange.ppob")</li>
-    <li>@messages("inFlightChange.websiteAddress")</li>
-    <li>@messages("inFlightChange.contactDetails")</li>
-  </ul>
-
+  <p>@messages("inFlightChange.recentRequest")</p>
+  <p>@messages("inFlightChange.untilWeAccept")</p>
+  <p>@messages("inFlightChange.acceptOrReject")</p>
+  <a href="@appConfig.btaAccountDetailsUrl">@messages("inFlightChange.backToAccountDetails")</a>
 }

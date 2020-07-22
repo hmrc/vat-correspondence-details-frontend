@@ -97,13 +97,13 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
             )
             Redirect(controllers.routes.ChangeSuccessController.landlineNumber())
               .removingFromSession(validationLandlineKey)
-              .addingToSession(landlineChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "landline")
+              .addingToSession(landlineChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
           case Left(ErrorModel(CONFLICT, _)) =>
             logWarn("[ConfirmLandlineNumberController][updateLandlineNumber] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "landline")
+              .addingToSession(inFlightContactDetailsChangeKey -> "true")
 
           case Left(_) =>
             errorHandler.showInternalServerError

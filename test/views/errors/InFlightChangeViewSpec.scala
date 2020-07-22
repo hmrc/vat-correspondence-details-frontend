@@ -27,102 +27,48 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "h1"
-    val paragraphOne = "article > p:nth-child(3)"
-    val paragraphTwo = "article > p:nth-child(4)"
-    val backLink = ".link-back"
-    def listItem(num: Int): String = s"#content > article > ul > li:nth-child($num)"
+    val paragraphOne = "article > p:nth-child(2)"
+    val paragraphTwo = "article > p:nth-child(3)"
+    val paragraphThree = "article > p:nth-child(4)"
+    val backToAccountDetails = "article > a"
   }
 
   "The Inflight change pending view" when {
 
-    "the pending change is PPOB" should {
+    lazy val view = injectedView()
+    lazy implicit val document: Document = Jsoup.parse(view.body)
 
-      lazy val view = injectedView("ppob")
-      lazy implicit val document: Document = Jsoup.parse(view.body)
-
-      "have the correct title" in {
-        document.title shouldBe "There is already a change pending - VAT - GOV.UK"
-      }
-
-      "have the correct heading" in {
-        elementText(Selectors.heading) shouldBe "There is already a change pending"
-      }
-
-      "have the correct information in the first paragraph" in {
-        elementText(Selectors.paragraphOne) shouldBe
-          "A recent request was made to change the principal place of business."
-      }
-
-      "have the correct information in the second paragraph" in {
-        elementText(Selectors.paragraphTwo) shouldBe
-          "Until this is confirmed, you cannot change the:"
-      }
-
-      "have the correct list" which {
-
-        "has the correct first item" in {
-          elementText(Selectors.listItem(1)) shouldBe "principal place of business"
-        }
-
-        "has the correct second item" in {
-          elementText(Selectors.listItem(2)) shouldBe "website address"
-        }
-
-        "has the correct third item" in {
-          elementText(Selectors.listItem(3)) shouldBe "contact details"
-        }
-      }
-
-      "have the correct text for the back link" in {
-        elementText(Selectors.backLink) shouldBe "Back"
-      }
-
-      "have the correct back link location" in {
-        element(Selectors.backLink).attr("href") shouldBe "mockManageVatOverviewUrl"
-      }
+    "have the correct title" in {
+      document.title shouldBe "There is already a change pending - VAT - GOV.UK"
     }
 
-    "the pending change is email address" should {
-
-      lazy val view = injectedView("email")
-      lazy implicit val document: Document = Jsoup.parse(view.body)
-
-      "have the correct information in the first paragraph" in {
-        elementText(Selectors.paragraphOne) shouldBe
-          "A recent request was made to change the business’s email address."
-      }
+    "have the correct heading" in {
+      elementText(Selectors.heading) shouldBe "There is already a change pending"
     }
 
-    "the pending change is landline number" should {
-
-      lazy val view = injectedView("landline")
-      lazy implicit val document: Document = Jsoup.parse(view.body)
-
-      "have the correct information in the first paragraph" in {
-        elementText(Selectors.paragraphOne) shouldBe
-          "A recent request was made to change the business’s landline number."
-      }
+    "have the correct information in the first paragraph" in {
+      elementText(Selectors.paragraphOne) shouldBe
+        "We are dealing with a recent request to change something on this VAT account."
     }
 
-    "the pending change is mobile number" should {
-
-      lazy val view = injectedView("mobile")
-      lazy implicit val document: Document = Jsoup.parse(view.body)
-
-      "have the correct information in the first paragraph" in {
-        elementText(Selectors.paragraphOne) shouldBe
-          "A recent request was made to change the business’s mobile number."
-      }
+    "have the correct information in the second paragraph" in {
+      elementText(Selectors.paragraphTwo) shouldBe
+        "Until we accept that request, you cannot make a further change."
     }
 
-    "the pending change is website address" should {
+    "have the correct information in the third paragraph" in {
+      elementText(Selectors.paragraphThree) shouldBe
+        "HMRC accepts or rejects changes to VAT accounts within 2 working days."
+    }
 
-      lazy val view = injectedView("website")
-      lazy implicit val document: Document = Jsoup.parse(view.body)
+    "have a link" which {
 
-      "have the correct information in the first paragraph" in {
-        elementText(Selectors.paragraphOne) shouldBe
-          "A recent request was made to change the business’s website address."
+      "has the correct text" in {
+        elementText(Selectors.backToAccountDetails) shouldBe "Back to account details"
+      }
+
+      "has the correct href" in {
+        element(Selectors.backToAccountDetails).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
       }
     }
   }
