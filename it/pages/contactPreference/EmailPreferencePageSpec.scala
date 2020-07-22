@@ -16,6 +16,7 @@
 
 package pages.contactPreference
 
+import assets.BaseITConstants.internalServerErrorTitle
 import common.SessionKeys
 import forms.YesNoForm
 import helpers.SessionCookieCrumbler
@@ -24,6 +25,7 @@ import models.{No, Yes, YesNo}
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.libs.ws.WSResponse
+import stubs.VatSubscriptionStub
 
 class EmailPreferencePageSpec extends BasePageISpec {
 
@@ -55,7 +57,6 @@ class EmailPreferencePageSpec extends BasePageISpec {
           )
         }
       }
-
     }
 
     "a user is an authenticated agent" should {
@@ -102,11 +103,14 @@ class EmailPreferencePageSpec extends BasePageISpec {
 
     "the user is authenticated" when {
 
-      "the user selects 'Yes'" should {
+      "the user has an email address and selects 'Yes'" should {
 
         "redirect to the the Email to Use page" in {
 
           given.user.isAuthenticated
+
+          And("a successful response for an individual is stubbed")
+          VatSubscriptionStub.stubCustomerInfo
 
           When("'Yes' is selected")
           val res = submit(Yes)
@@ -127,6 +131,42 @@ class EmailPreferencePageSpec extends BasePageISpec {
           SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
         }
       }
+
+      "the user doesn't have an email address and selects 'Yes'" should {
+
+        "redirect to the the (contact pref) Add email address page" in {
+
+          given.user.isAuthenticated
+
+          And("a successful response for an individual is stubbed")
+          VatSubscriptionStub.stubCustomerInfoNoEmail
+
+          When("'Yes' is selected")
+          val res = submit(Yes)
+
+          res should have(
+            httpStatus(Status.SEE_OTHER),
+            redirectURI(controllers.contactPreference.routes.AddEmailAddressController.show().url)
+          )
+        }
+      }
+
+      "an error response is received for Customer Details" in {
+
+        given.user.isAuthenticated
+
+        And("an error response for an individual is stubbed")
+        VatSubscriptionStub.stubCustomerInfoError
+
+        When("get customer info call fails")
+        val result = submit(Yes)
+
+              result should have(
+                httpStatus(Status.INTERNAL_SERVER_ERROR),
+                pageTitle(generateDocumentTitle(internalServerErrorTitle))
+              )
+            }
+
 
       "the user selects 'No'" should {
 

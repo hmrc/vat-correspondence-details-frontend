@@ -23,10 +23,19 @@ import models.contactPreferences.ContactPreference.paper
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import play.api.test.Helpers._
 import views.html.contactPreference.EmailPreferenceView
+import assets.BaseTestConstants._
+import assets.CustomerInfoConstants.{fullCustomerInfoModel, minCustomerInfoModel}
+import models.errors.ErrorModel
+import play.api.http.Status
+
+import scala.concurrent.Future
 
 class EmailPreferenceControllerSpec extends ControllerBaseSpec {
 
-  lazy val controller = new EmailPreferenceController(mockErrorHandler, inject[EmailPreferenceView])
+  lazy val controller = new EmailPreferenceController(mockVatSubscriptionService,
+                                                      mockErrorHandler,
+                                                      inject[EmailPreferenceView]
+                                                      )
 
   "The letterToConfirmedEmailEnabled feature switch is off" when {
 
@@ -54,7 +63,6 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe NOT_FOUND
       }
     }
-
   }
 
   "The letterToConfirmedEmailEnabled feature switch is on" when {
@@ -84,10 +92,11 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    ".submit is called with a Yes" should {
+    ".submit is called with a Yes and client has an email address" should {
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
         controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
       }
 
@@ -102,8 +111,42 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
       s"a value is added to the ${SessionKeys.contactPrefUpdate} key" in {
         session(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
       }
-
     }
+
+    ".submit is called with a Yes and client does not have an email address" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockGetCustomerInfo(vrn)(Future.successful(Right(minCustomerInfoModel)))
+        controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
+      }
+
+      "return a SEE_OTHER result" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "be at the correct url" in {
+        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/contact-preference/add-email-address")
+      }
+
+      s"a value is added to the ${SessionKeys.contactPrefUpdate} key" in {
+        session(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
+      }
+    }
+
+    ".submit is called with but the get customer info call fails" should {
+
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+          controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
+
+        }
+
+        "return an INTERNAL_SERVER_ERROR result" in {
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+      }
 
     ".submit is called with a No" should {
 
@@ -119,7 +162,6 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
       "be at the correct url" in {
         redirectLocation(result) shouldBe Some(mockConfig.dynamicJourneyEntryUrl(false))
       }
-
     }
 
     ".submit is called with no form data" should {
@@ -133,9 +175,6 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
 
         status(result) shouldBe BAD_REQUEST
       }
-
     }
-
   }
-
 }

@@ -1,0 +1,67 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.inputs.RadioGroup
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import forms.YesNoForm._
+@import views.html.templates.errors.ErrorSummary
+
+@this(mainTemplate: MainTemplate, radioGroup: RadioGroup, errorSummary: ErrorSummary, formWithCSRF: FormWithCSRF)
+
+@(form: Form[YesNo])(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
+
+@furtherContent = {
+    <div>
+    <p> @messages("cPrefAddEmail.line1")</p>
+    <p> @messages("cPrefAddEmail.line2")</p>
+
+    <p>
+    <strong class="bold-small">
+        @messages("cPrefAddEmail.question")
+    </strong>
+    </p>
+
+    </div>
+}
+
+@mainTemplate(
+    title = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("cPrefAddEmail.title"))
+    else messages("cPrefAddEmail.title")) {
+
+    <a class="link-back" href="@controllers.contactPreference.routes.EmailPreferenceController.show().url">@messages("base.back")</a>
+
+    @errorSummary(messages("common.error.heading"), form)
+
+    @formWithCSRF(action = controllers.contactPreference.routes.AddEmailAddressController.show, 'novalidate -> "novalidate") {
+
+        <div id="@yesNo" class="form-group">
+         @radioGroup(
+        field = form(yesNo),
+        choices = Seq(
+        yes -> messages("common.yes"),
+        no  -> messages("common.no")),
+        question = messages("cPrefAddEmail.title"),
+        additionalContent = Some(furtherContent),
+        inline = false
+        )
+        </div>
+
+        <button class="button" type="submit" id="continue">
+        @messages("common.continue")
+
+        </button>
+        }
+    }
