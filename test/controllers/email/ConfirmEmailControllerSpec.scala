@@ -93,6 +93,45 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     }
   }
 
+  "Calling the showNoExistingEmail action in ConfirmEmailController" when {
+
+    "there is an email in session" should {
+
+      "show the Confirm Email page" in {
+        mockIndividualAuthorised()
+        val result = TestConfirmEmailController.showNoExistingEmail(requestWithEmail)
+
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "there isn't an email in session" should {
+
+      lazy val result = {
+        mockIndividualAuthorised()
+        TestConfirmEmailController.showNoExistingEmail(request)
+      }
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect the user to enter a new email address" in {
+        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
+      }
+    }
+
+    "the user is not authorised" should {
+
+      "return forbidden (403)" in {
+        mockIndividualWithoutEnrolment()
+        val result = TestConfirmEmailController.showNoExistingEmail(requestWithEmail)
+
+        status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+  }
+
   "Calling the updateEmailAddress() action in ConfirmEmailController" when {
 
     "there is a verified email in session" when {

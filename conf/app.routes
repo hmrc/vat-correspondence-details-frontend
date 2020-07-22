@@ -1,89 +1,92 @@
 # microservice specific routes
 
-GET         /assets/*file                          controllers.Assets.at(path="/public", file)
+GET         /assets/*file                               controllers.Assets.at(path="/public", file)
 
-GET         /language/:lang                        controllers.LanguageController.switchToLanguage(lang: String)
-GET         /sign-out                              controllers.SignOutController.signOut(feedbackOnSignOut: Boolean)
+GET         /language/:lang                             controllers.LanguageController.switchToLanguage(lang: String)
+GET         /sign-out                                   controllers.SignOutController.signOut(feedbackOnSignOut: Boolean)
 
 # capture email address
-GET         /change-email-address                  controllers.email.CaptureEmailController.show
-POST        /change-email-address                  controllers.email.CaptureEmailController.submit
+GET         /change-email-address                       controllers.email.CaptureEmailController.show
+POST        /change-email-address                       controllers.email.CaptureEmailController.submit
 
 # confirm email address
-GET         /confirm-email-address                 controllers.email.ConfirmEmailController.show
-GET         /update-email-address                  controllers.email.ConfirmEmailController.updateEmailAddress
+GET         /confirm-email-address                      controllers.email.ConfirmEmailController.show
+GET         /update-email-address                       controllers.email.ConfirmEmailController.updateEmailAddress
+
+# confirm email address where there is no existing email
+GET         /contact-preference/confirm-email-address   controllers.email.ConfirmEmailController.showNoExistingEmail
 
 # verify email address
-GET         /verify-email-address                  controllers.email.VerifyEmailController.show
+GET         /verify-email-address                       controllers.email.VerifyEmailController.show
 
 # link to send email verification
-GET         /send-verification                     controllers.email.VerifyEmailController.sendVerification
+GET         /send-verification                          controllers.email.VerifyEmailController.sendVerification
 
 # email change successful
-GET         /email-address-confirmation            controllers.email.EmailChangeSuccessController.show
+GET         /email-address-confirmation                 controllers.email.EmailChangeSuccessController.show
 
 # capture website
-GET         /new-website-address                   controllers.website.CaptureWebsiteController.show
-POST        /new-website-address                   controllers.website.CaptureWebsiteController.submit
+GET         /new-website-address                        controllers.website.CaptureWebsiteController.show
+POST        /new-website-address                        controllers.website.CaptureWebsiteController.submit
 
 # confirm website
-GET         /confirm-new-website-address           controllers.website.ConfirmWebsiteController.show
-GET         /update-website-address                controllers.website.ConfirmWebsiteController.updateWebsite
+GET         /confirm-new-website-address                controllers.website.ConfirmWebsiteController.show
+GET         /update-website-address                     controllers.website.ConfirmWebsiteController.updateWebsite
 
 # website change successfull
-GET         /website-address-confirmation          controllers.ChangeSuccessController.websiteAddress
+GET         /website-address-confirmation               controllers.ChangeSuccessController.websiteAddress
 
 # remove website address
-GET         /remove-website-address                controllers.website.ConfirmRemoveWebsiteController.show
-GET         /update-remove-website-address         controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
+GET         /remove-website-address                     controllers.website.ConfirmRemoveWebsiteController.show
+GET         /update-remove-website-address              controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
 
 # capture landline number
-GET         /new-landline-number                   controllers.landlineNumber.CaptureLandlineNumberController.show
-POST        /new-landline-number                   controllers.landlineNumber.CaptureLandlineNumberController.submit
+GET         /new-landline-number                        controllers.landlineNumber.CaptureLandlineNumberController.show
+POST        /new-landline-number                        controllers.landlineNumber.CaptureLandlineNumberController.submit
 
 # confirm landline number
-GET         /confirm-new-landline-number           controllers.landlineNumber.ConfirmLandlineNumberController.show
-GET         /update-new-landline-number            controllers.landlineNumber.ConfirmLandlineNumberController.updateLandlineNumber
+GET         /confirm-new-landline-number                controllers.landlineNumber.ConfirmLandlineNumberController.show
+GET         /update-new-landline-number                 controllers.landlineNumber.ConfirmLandlineNumberController.updateLandlineNumber
 
 # remove landline number
-GET         /confirm-remove-landline-number        controllers.landlineNumber.ConfirmRemoveLandlineController.show
-GET         /update-remove-landline-number         controllers.landlineNumber.ConfirmRemoveLandlineController.removeLandlineNumber
+GET         /confirm-remove-landline-number             controllers.landlineNumber.ConfirmRemoveLandlineController.show
+GET         /update-remove-landline-number              controllers.landlineNumber.ConfirmRemoveLandlineController.removeLandlineNumber
 
 # landline number change successful
-GET         /landline-number-confirmation          controllers.ChangeSuccessController.landlineNumber
+GET         /landline-number-confirmation               controllers.ChangeSuccessController.landlineNumber
 
 # capture mobile number
-GET         /new-mobile-number                     controllers.mobileNumber.CaptureMobileNumberController.show
-POST        /new-mobile-number                     controllers.mobileNumber.CaptureMobileNumberController.submit
+GET         /new-mobile-number                          controllers.mobileNumber.CaptureMobileNumberController.show
+POST        /new-mobile-number                          controllers.mobileNumber.CaptureMobileNumberController.submit
 
 # confirm mobile number
-GET         /confirm-new-mobile-number             controllers.mobileNumber.ConfirmMobileNumberController.show
-GET         /update-new-mobile-number              controllers.mobileNumber.ConfirmMobileNumberController.updateMobileNumber
+GET         /confirm-new-mobile-number                  controllers.mobileNumber.ConfirmMobileNumberController.show
+GET         /update-new-mobile-number                   controllers.mobileNumber.ConfirmMobileNumberController.updateMobileNumber
 
 # remove mobile number
-GET         /confirm-remove-mobile-number          controllers.mobileNumber.ConfirmRemoveMobileController.show
-GET         /update-remove-mobile-number           controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
+GET         /confirm-remove-mobile-number               controllers.mobileNumber.ConfirmRemoveMobileController.show
+GET         /update-remove-mobile-number                controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
 
 # mobile number change successful
-GET         /mobile-number-confirmation            controllers.ChangeSuccessController.mobileNumber
+GET         /mobile-number-confirmation                 controllers.ChangeSuccessController.mobileNumber
 
 # email preferences
-GET         /contact-preference-email              controllers.contactPreference.EmailPreferenceController.show
-POST        /contact-preference-email              controllers.contactPreference.EmailPreferenceController.submit
+GET         /contact-preference-email                   controllers.contactPreference.EmailPreferenceController.show
+POST        /contact-preference-email                   controllers.contactPreference.EmailPreferenceController.submit
 
 # contact preference confirm email
-GET         /preference-confirm-email              controllers.contactPreference.EmailToUseController.show
-POST        /preference-confirm-email              controllers.contactPreference.EmailToUseController.submit
+GET         /preference-confirm-email                   controllers.contactPreference.EmailToUseController.show
+POST        /preference-confirm-email                   controllers.contactPreference.EmailToUseController.submit
 
 # email preference change successful
-GET         /confirmation-:changeType-preference   controllers.contactPreference.ContactPreferenceConfirmationController.show(changeType)
+GET         /confirmation-:changeType-preference        controllers.contactPreference.ContactPreferenceConfirmationController.show(changeType)
 
 # letter preferences
-GET         /contact-preference-letter             controllers.contactPreference.LetterPreferenceController.show
-POST        /contact-preference-letter             controllers.contactPreference.LetterPreferenceController.submit
+GET         /contact-preference-letter                  controllers.contactPreference.LetterPreferenceController.show
+POST        /contact-preference-letter                  controllers.contactPreference.LetterPreferenceController.submit
 
 # Contact preference redirect (for BTA)
-GET         /contact-preference-redirect            controllers.contactPreference.ContactPreferenceRedirectController.redirect
+GET         /contact-preference-redirect                controllers.contactPreference.ContactPreferenceRedirectController.redirect
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                          controllers.Assets.at(path="/public", file)
+GET         /assets/*file                               controllers.Assets.at(path="/public", file)
