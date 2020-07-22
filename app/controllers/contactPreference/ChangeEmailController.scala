@@ -43,7 +43,7 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (contactPreferencePredicate andThen inFlightChangePrefEmailPredicate).async { implicit user =>
 
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
       case Some(email) => Future.successful(Some(email))
@@ -74,7 +74,7 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
   }
 
 
-  def submit: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def submit: Action[AnyContent] = (contactPreferencePredicate andThen inFlightChangePrefEmailPredicate).async { implicit user =>
     val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
     val prepopulationEmail: Option[String] = user.session.get(SessionKeys.prepopulationEmailKey)
 
@@ -95,9 +95,9 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
               user.arn
             ),
             controllers.contactPreference.routes.ChangeEmailController.submit().url
-          )
+          )                                                       // TODO - BTAT-8081 confirmation controller redirect
           Future.successful(Redirect("")
-            .addingToSession(SessionKeys.prepopulationEmailKey -> email)) // TODO - BTAT-8062 confirm conntroller
+            .addingToSession(SessionKeys.prepopulationEmailKey -> email))
         }
       )
       case (None, _) => Future.successful(NotFound(errorHandler.notFoundTemplate))
