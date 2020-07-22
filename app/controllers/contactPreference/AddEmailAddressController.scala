@@ -33,10 +33,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddEmailAddressController @Inject()(val errorHandler: ErrorHandler,
                                           addEmailAddressView: AddEmailAddressView)
                                          (implicit val appConfig: AppConfig,
-                                     authComps: AuthPredicateComponents,
-                                     inFlightComps: InFlightPredicateComponents) extends BaseController {
-
-  implicit val ec: ExecutionContext = authComps.mcc.executionContext
+                                          authComps: AuthPredicateComponents,
+                                          executionContext: ExecutionContext,
+                                          inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("cPrefAddEmail.error")
 

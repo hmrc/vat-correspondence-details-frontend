@@ -22,7 +22,7 @@ import forms.YesNoForm.{yes, yesNo, no => _no}
 import models.contactPreferences.ContactPreference.paper
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import play.api.test.Helpers._
-import views.html.contactPreference.{AddEmailAddressView, EmailPreferenceView}
+import views.html.contactPreference.EmailPreferenceView
 import assets.BaseTestConstants._
 import assets.CustomerInfoConstants.{fullCustomerInfoModel, minCustomerInfoModel}
 import models.errors.ErrorModel
@@ -34,8 +34,8 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
 
   lazy val controller = new EmailPreferenceController(mockVatSubscriptionService,
                                                       mockErrorHandler,
-                                                      inject[EmailPreferenceView],
-                                                      inject[AddEmailAddressView])
+                                                      inject[EmailPreferenceView]
+                                                      )
 
   "The letterToConfirmedEmailEnabled feature switch is off" when {
 

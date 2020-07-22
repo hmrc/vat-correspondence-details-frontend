@@ -29,14 +29,13 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
-import views.html.contactPreference.{AddEmailAddressView, EmailPreferenceView}
+import views.html.contactPreference.EmailPreferenceView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptionService,
                                           errorHandler: ErrorHandler,
-                                          emailPreferenceView: EmailPreferenceView,
-                                          addEmailAddressView: AddEmailAddressView)
+                                          emailPreferenceView: EmailPreferenceView)
                                          (implicit val appConfig: AppConfig,
                                           authComps: AuthPredicateComponents,
                                           mcc: MessagesControllerComponents,
@@ -67,17 +66,17 @@ class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptio
         formWithErrors => Future.successful(BadRequest(emailPreferenceView(formWithErrors))),
         {
           case Yes =>
-            vatSubscriptionService.getCustomerInfo(user.vrn).map {
-              case Right(details) =>
-               details.ppob.contactDetails.flatMap(_.emailAddress) match {
-                  case Some(_) =>
-                    Redirect(controllers.contactPreference.routes.EmailToUseController.show())
-                      .addingToSession(SessionKeys.contactPrefUpdate -> "true")
-                  case None =>
-                    Redirect(controllers.contactPreference.routes.AddEmailAddressController.show())
-                      .addingToSession(SessionKeys.contactPrefUpdate -> "true")
+             vatSubscriptionService.getCustomerInfo(user.vrn).map {
+               case Right(details) =>
+                 val result = details.ppob.contactDetails.flatMap(_.emailAddress) match {
+                   case Some(_) =>
+                     Redirect(controllers.contactPreference.routes.EmailToUseController.show())
+                   case None =>
+                     Redirect(controllers.contactPreference.routes.AddEmailAddressController.show())
+                 }
+                 result.addingToSession(SessionKeys.contactPrefUpdate -> "true")
 
-                }
+
               case Left(_) =>
               Logger.warn("[EmailPreferenceController][.submit] Unable to retrieve email address")
               authComps.errorHandler.showInternalServerError

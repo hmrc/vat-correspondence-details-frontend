@@ -149,16 +149,6 @@ class EmailPreferencePageSpec extends BasePageISpec {
             redirectURI(controllers.contactPreference.routes.AddEmailAddressController.show().url)
           )
         }
-
-        s"add the ${SessionKeys.contactPrefUpdate} key and value to session" in {
-
-          given.user.isAuthenticated
-
-          When("'Yes' is selected")
-          val result = submit(Yes)
-
-          SessionCookieCrumbler.getSessionMap(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
-        }
       }
 
       "an error response is received for Customer Details" in {

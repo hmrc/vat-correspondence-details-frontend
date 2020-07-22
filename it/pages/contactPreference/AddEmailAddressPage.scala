@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ class AddEmailAddressPage extends BasePageISpec {
 
     "a user is an authenticated agent" should {
 
-      "render the Agent unauthorised page" in {
+      "redirect to client VAT account" in {
 
         given.user.isAuthenticatedAgent
 
