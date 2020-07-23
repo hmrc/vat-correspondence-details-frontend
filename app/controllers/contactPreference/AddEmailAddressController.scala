@@ -53,8 +53,7 @@ class AddEmailAddressController @Inject()(val errorHandler: ErrorHandler,
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
       formYesNo.bindFromRequest().fold (
         formWithErrors =>
-          //TODO: update with view created in BTAT-8058
-          BadRequest(""),
+          BadRequest(addEmailAddressView(formWithErrors)),
         {
           case Yes => Redirect(controllers.contactPreference.routes.ChangeEmailController.show())
           case No => Redirect(appConfig.btaAccountDetailsUrl)

@@ -18,19 +18,15 @@ package controllers.contactPreference
 
 import common.SessionKeys
 import controllers.ControllerBaseSpec
-import play.api.http.Status.{NOT_FOUND, OK}
-import play.api.test.Helpers._
-import views.html.contactPreference.AddEmailAddressView
-import common.SessionKeys
-import controllers.ControllerBaseSpec
 import forms.YesNoForm
-import play.api.test.Helpers._
 import forms.YesNoForm.{yes, yesNo}
 import models.contactPreferences.ContactPreference._
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, SEE_OTHER}
+import org.jsoup.Jsoup
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers.redirectLocation
+import play.api.test.Helpers.{redirectLocation, _}
+import views.html.contactPreference.AddEmailAddressView
 
 class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
@@ -164,6 +160,10 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
             "return a BAD_REQUEST result" in {
               status(result) shouldBe BAD_REQUEST
+            }
+
+            "render the view with errors" in {
+              Jsoup.parse(bodyOf(result)).title should include("Error:")
             }
           }
         }
