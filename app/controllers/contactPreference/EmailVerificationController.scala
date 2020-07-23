@@ -17,7 +17,6 @@
 package controllers.contactPreference
 
 import audit.AuditingService
-import audit.models.ChangedEmailAddressAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
@@ -52,9 +51,9 @@ class EmailVerificationController @Inject()(
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (blockAgentPredicate).async { implicit user =>
     extractSessionEmail(user) match {
-      case Some(email) => Future.successful(Ok(verifyEmailView(email)))
+      case Some(email) => Future.successful(Ok(verifyEmailView(email, isContactPrefJourney = true)))
       case _ => handleNoEmail
     }
   }
@@ -119,7 +118,7 @@ class EmailVerificationController @Inject()(
   }
 
   private def handleNoEmail: Result = {
-    Redirect("/") //TODO Redirect to "What is the email address" page (BTAT-8061)
+    Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
   }
 
 }

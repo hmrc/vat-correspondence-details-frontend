@@ -395,7 +395,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect.url)
+            redirectURI(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
           )
         }
       }

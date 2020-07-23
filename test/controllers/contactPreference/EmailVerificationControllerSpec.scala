@@ -183,7 +183,7 @@ class EmailVerificationControllerSpec extends ControllerBaseSpec with MockEmailV
       }
     }
 
-    "redirect to the capture email page" when {
+    "redirect to the contact preference redirect route" when {
 
       "the user does not have an email in session" which {
         lazy val result = {
@@ -196,7 +196,7 @@ class EmailVerificationControllerSpec extends ControllerBaseSpec with MockEmailV
         }
 
         "redirects to the correct page" in {
-          redirectLocation(result) shouldBe Some("/") //TODO Needs updating once the page has been created
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
         }
       }
     }
@@ -274,7 +274,7 @@ class EmailVerificationControllerSpec extends ControllerBaseSpec with MockEmailV
       }
     }
 
-    "redirect to the capture email page" when {
+    "redirect to the contact preference redirect route" when {
 
       "the users email is not verified, but a request to verify successfully sends" which {
         lazy val result = {
@@ -287,7 +287,7 @@ class EmailVerificationControllerSpec extends ControllerBaseSpec with MockEmailV
         }
 
         "redirects to the correct route" in {
-          redirectLocation(result) shouldBe Some("/") //TODO Needs updating once the page has been created
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
         }
       }
     }
@@ -323,8 +323,8 @@ class EmailVerificationControllerSpec extends ControllerBaseSpec with MockEmailV
         status(result) shouldBe SEE_OTHER
       }
 
-      "redirect to the capture email page" in {
-        redirectLocation(result) shouldBe Some("/") //TODO Needs updating once the page has been created
+      "redirect to the contact preference redirect route" in {
+        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
       }
     }
 
