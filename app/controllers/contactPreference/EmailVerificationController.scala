@@ -103,15 +103,6 @@ class EmailVerificationController @Inject()(
   private[controllers] def sendUpdateRequest(email: String)(implicit user: User[_]): Future[Result] = {
     vatSubscriptionService.updateContactPrefEmail(user.vrn, email).map {
       case Right(_) =>
-        auditService.extendedAudit(
-          ChangedEmailAddressAuditModel(
-            None,
-            email,
-            user.vrn,
-            user.isAgent,
-            None
-          ), routes.EmailVerificationController.updateContactPrefEmail().url
-        )
         Redirect(controllers.email.routes.EmailChangeSuccessController.show())
       case Left(ErrorModel(CONFLICT, _)) =>
         logDebug("[EmailVerificationController][sendUpdateRequest] - There is a contact details update request " +
