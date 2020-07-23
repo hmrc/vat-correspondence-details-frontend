@@ -16,12 +16,12 @@
 
 package pages.contactPreference
 
-
-import pages.BasePageISpec
-import play.api.libs.ws.WSResponse
-import play.api.http.Status
+import forms.YesNoForm
+import models.{Yes, YesNo, No}
 import models.contactPreferences.ContactPreference.paper
-
+import pages.BasePageISpec
+import play.api.http.Status
+import play.api.libs.ws.WSResponse
 
 class AddEmailAddressPage extends BasePageISpec {
 
@@ -30,7 +30,6 @@ class AddEmailAddressPage extends BasePageISpec {
   "Calling the AddEmailAddress .show method" when {
 
     def show: WSResponse = get(path, formatCurrentContactPref(Some(paper)))
-
 
     "the user is authenticated" when {
 
@@ -75,6 +74,78 @@ class AddEmailAddressPage extends BasePageISpec {
 
         When("the AddEmailAddress page is called")
         val result = show
+
+        result should have(
+          httpStatus(Status.FORBIDDEN),
+          pageTitle(generateDocumentTitle("You can not use this service yet", isAgent = None))
+        )
+      }
+    }
+  }
+
+  "Calling the AddEmailAddress .submit method" when {
+
+    def submit(content: YesNo): WSResponse = post(path, formatCurrentContactPref(Some(paper)))(toFormData(YesNoForm.yesNoForm(""), content))
+
+    "the user is authenticated" when {
+
+      "the user selects Yes" should {
+
+        "redirect to ChangeEmailController" in {
+
+          given.user.isAuthenticated
+
+          When("the AddEmailAddress page is submitted")
+          val result = submit(Yes)
+
+          result should have(
+            httpStatus(Status.SEE_OTHER),
+            redirectURI("/vat-through-software/account/correspondence/contact-preference/change-email-address")
+          )
+        }
+      }
+
+      "the user selects No" should {
+
+        "redirect to BTA Manage Account" in {
+
+          given.user.isAuthenticated
+
+          When("the AddEmailAddress page is submitted")
+          val result = submit(No)
+
+          result should have(
+            httpStatus(Status.SEE_OTHER),
+            redirectURI("http://localhost:9020/business-account/manage-account/account-details")
+          )
+        }
+      }
+    }
+
+    "a user is an agent" should {
+
+      "redirect to BTA Manage Account" in {
+
+        given.user.isAuthenticatedAgent
+
+        When("the AddEmailAddress page is submitted")
+        val result = submit(Yes)
+
+        result should have(
+          httpStatus(Status.SEE_OTHER),
+          redirectURI("http://localhost:9149/vat-through-software/representative/client-vat-account")
+        )
+      }
+    }
+
+    "the user is not enrolled for MTD VAT" should {
+
+      "render the unauthorised page" in {
+
+        given.user.isNotEnrolled
+
+        When("the AddEmailAddress page is submitted")
+        val result = submit(Yes)
 
         result should have(
           httpStatus(Status.FORBIDDEN),

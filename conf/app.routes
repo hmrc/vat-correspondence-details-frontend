@@ -91,10 +91,13 @@ GET         /contact-preference-letter                       controllers.contact
 POST        /contact-preference-letter                       controllers.contactPreference.LetterPreferenceController.submit
 
 # contact preference add email
-GET         /contact-preference/add-email-address   controllers.contactPreference.AddEmailAddressController.show
+GET         /contact-preference/add-email-address       controllers.contactPreference.AddEmailAddressController.show
+POST        /contact-preference/add-email-address       controllers.contactPreference.AddEmailAddressController.submit
 
 # Contact preference redirect (for BTA)
 GET         /contact-preference-redirect                     controllers.contactPreference.ContactPreferenceRedirectController.redirect
+
+GET         /contact-preference/change-email-address    controllers.contactPreference.ChangeEmailController.show
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                    controllers.Assets.at(path="/public", file)

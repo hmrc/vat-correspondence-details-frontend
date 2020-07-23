@@ -18,13 +18,20 @@ package controllers.contactPreference
 
 import common.SessionKeys
 import controllers.ControllerBaseSpec
-import play.api.http.Status.{NOT_FOUND, OK}
-import play.api.test.Helpers._
+import forms.YesNoForm
+import forms.YesNoForm.{yes, yesNo}
+import models.contactPreferences.ContactPreference._
+import org.jsoup.Jsoup
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{redirectLocation, _}
 import views.html.contactPreference.AddEmailAddressView
 
 class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
   lazy val controller = new AddEmailAddressController(mockErrorHandler, inject[AddEmailAddressView])
+  lazy val requestWithSession: FakeRequest[AnyContentAsEmpty.type] = request.withSession(SessionKeys.currentContactPrefKey -> paper)
 
   "AddEmailAddressController .show is called" when {
 
@@ -36,7 +43,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
           lazy val result = {
             mockConfig.features.letterToConfirmedEmailEnabled(true)
-            controller.show(requestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
+            controller.show(requestWithSession.withSession(SessionKeys.contactPrefUpdate -> "true"))
           }
 
           "return an OK result" in {
@@ -54,14 +61,13 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
           "return an NOT_FOUND result" in {
             lazy val result = {
               mockConfig.features.letterToConfirmedEmailEnabled(false)
-              controller.show(requestWithPaperPref)
+              controller.show(requestWithSession)
             }
 
             status(result) shouldBe NOT_FOUND
           }
         }
       }
-
 
       "user has a digital preference" should {
         lazy val result = {
@@ -92,5 +98,104 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
       }
     }
   }
-}
 
+  "AddEmailAddressController .submit" when {
+
+    "user is authorised" when {
+
+      "the user currently has a digital preference" when {
+
+        "the letterToConfirmedEmailEnabled feature switch is off" should {
+
+          lazy val result = {
+            mockConfig.features.letterToConfirmedEmailEnabled(false)
+            controller.submit(requestWithSession)
+          }
+
+          "return a NOT_FOUND result" in {
+            status(result) shouldBe NOT_FOUND
+          }
+        }
+
+        "the letterToConfirmedEmailEnabled feature switch is on" when {
+
+          "'Yes' is submitted'" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              controller.submit(requestWithSession.withFormUrlEncodedBody(yesNo -> yes))
+            }
+
+            "return a SEE_OTHER result" in {
+              status(result) shouldBe SEE_OTHER
+            }
+
+            "redirect to confirmation page" in {
+              redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ChangeEmailController.show().url)
+            }
+          }
+
+          "'No' is submitted'" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              controller.submit()(requestWithSession.withFormUrlEncodedBody(yesNo -> YesNoForm.no))
+            }
+
+            "return a SEE_OTHER result" in {
+              status(result) shouldBe SEE_OTHER
+            }
+
+            "redirect to BTA" in {
+              redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
+            }
+          }
+
+          "Nothing is submitted (form has errors)" when {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              controller.submit()(requestWithSession.withFormUrlEncodedBody())
+            }
+
+            "return a BAD_REQUEST result" in {
+              status(result) shouldBe BAD_REQUEST
+            }
+
+            "render the view with errors" in {
+              Jsoup.parse(bodyOf(result)).title should include("Error:")
+            }
+          }
+        }
+      }
+
+      "the user currently has a paper preference" should {
+
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          controller.submit(request.withSession(SessionKeys.currentContactPrefKey -> digital))
+        }
+
+        "return a SEE_OTHER result" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirect to BTA" in {
+          redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
+        }
+      }
+    }
+
+    "user is unauthorised" should {
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockIndividualWithoutEnrolment()
+        controller.submit(requestWithSession)
+      }
+
+      "return a FORBIDDEN result" in {
+        status(result) shouldBe FORBIDDEN
+      }
+    }
+  }
+}
