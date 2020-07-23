@@ -43,65 +43,78 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
+  private val submitRoute: Call = controllers.contactPreference.routes.ChangeEmailController.submit()
+
   def show: Action[AnyContent] = (contactPreferencePredicate andThen inFlightChangePrefEmailPredicate).async { implicit user =>
 
-    val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
-      case Some(email) => Future.successful(Some(email))
-      case _ => vatSubscriptionService.getCustomerInfo(user.vrn) map {
+    if (appConfig.features.letterToConfirmedEmailEnabled()){
+      val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
+        case Some(email) => Future.successful(Some(email))
+        case _ => vatSubscriptionService.getCustomerInfo(user.vrn) map {
 
-        case Right(details) => Some(details.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""))
-        case _ => None
+          case Right(details) => Some(details.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""))
+          case _ => None
+        }
       }
-    }
 
-    val prepopulationEmail: Future[String] = validationEmail map { validation =>
-      user.session.get(SessionKeys.prepopulationEmailKey)
-        .getOrElse(validation.getOrElse(""))
-    }
-
-    for {
-      validation    <- validationEmail
-      prepopulation <- prepopulationEmail
-
-    } yield {
-      validation match {
-        case Some(valEmail) =>
-          Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false, valEmail))
-            .addingToSession(SessionKeys.validationEmailKey -> valEmail)
-        case _ => NotFound(authComps.errorHandler.notFoundTemplate)
+      val prepopulationEmail: Future[String] = validationEmail map { validation =>
+        user.session.get(SessionKeys.prepopulationEmailKey)
+          .getOrElse(validation.getOrElse(""))
       }
+
+      for {
+        validation    <- validationEmail
+        prepopulation <- prepopulationEmail
+
+      } yield {
+        validation match {
+          case Some(valEmail) =>
+            Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false, valEmail, submitRoute))
+              .addingToSession(SessionKeys.validationEmailKey -> valEmail)
+          case _ => errorHandler.showInternalServerError
+        }
+      }
+    } else {
+      Future.successful(errorHandler.showNotFoundError)
     }
+
   }
 
 
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen inFlightChangePrefEmailPredicate).async { implicit user =>
-    val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
-    val prepopulationEmail: Option[String] = user.session.get(SessionKeys.prepopulationEmailKey)
 
-    (validationEmail, prepopulationEmail) match {
-      case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
-        errorForm => {
-          val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
-          Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation)))
+    if (appConfig.features.letterToConfirmedEmailEnabled()) {
+      val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
+      val prepopulationEmail: Option[String] = user.session.get(SessionKeys.prepopulationEmailKey)
 
-        },
-        email     => {
-          auditService.extendedAudit(
-            AttemptedEmailAddressAuditModel(
-              Option(validation).filter(_.nonEmpty),
-              email,
-              user.vrn,
-              user.isAgent,
-              user.arn
-            ),
-            controllers.contactPreference.routes.ChangeEmailController.submit().url
-          )                                                       // TODO - BTAT-8081 confirmation controller redirect
-          Future.successful(Redirect("")
-            .addingToSession(SessionKeys.prepopulationEmailKey -> email))
-        }
-      )
-      case (None, _) => Future.successful(NotFound(errorHandler.notFoundTemplate))
+      (validationEmail, prepopulationEmail) match {
+        case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
+          errorForm => {
+            val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
+            Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation, submitRoute )))
+
+          },
+          email     => {
+            auditService.extendedAudit(
+              AttemptedEmailAddressAuditModel(
+                Option(validation).filter(_.nonEmpty),
+                email,
+                user.vrn,
+                user.isAgent,
+                user.arn
+              ),
+              controllers.contactPreference.routes.ChangeEmailController.submit().url
+            )                                                       // TODO - BTAT-8081 confirmation controller redirect
+            Future.successful(Redirect("")
+              .addingToSession(SessionKeys.prepopulationEmailKey -> email))
+          }
+        )
+        case (None, _) => Future.successful(errorHandler.showInternalServerError)
+      }
+    } else {
+      Future.successful(errorHandler.showNotFoundError)
     }
+
   }
 
 }

@@ -19,10 +19,11 @@
 @import forms.EmailForm._
 @import views.html.templates.inputs.Text
 @import views.html.templates.errors.ErrorSummary
+@import play.api.mvc.Call
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
-@(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, contactPrefChange: Call)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @questionContent = {
     <h1 id="page-heading" class="heading-large">@messages("captureEmail.title")</h1>
@@ -40,7 +41,7 @@
             <p>@messages("captureEmail.onlyAddEmail")</p>
         }
 
-        @form(action = controllers.email.routes.CaptureEmailController.submit) {
+        @form(action = contactPrefChange) {
             <div class="form-group">
             @text(
                 field = emailForm("email"),

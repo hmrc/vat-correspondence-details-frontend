@@ -43,6 +43,8 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
+  private val submitRoute: Call = controllers.email.routes.CaptureEmailController.submit()
+
   def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
       case Some(email) => Future.successful(Some(email))
@@ -64,7 +66,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
     } yield {
       validation match {
         case Some(valEmail) =>
-          Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false, valEmail))
+          Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false, valEmail, submitRoute))
           .addingToSession(SessionKeys.validationEmailKey -> valEmail)
         case _ => errorHandler.showInternalServerError
       }
@@ -79,7 +81,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
       case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
         errorForm => {
           val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
-          Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation)))
+          Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation, submitRoute)))
 
         },
         email     => {
