@@ -114,11 +114,11 @@ class EmailVerificationController @Inject()(
         )
         Redirect(controllers.email.routes.EmailChangeSuccessController.show())
       case Left(ErrorModel(CONFLICT, _)) =>
-        logDebug("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
+        logDebug("[EmailVerificationController][sendUpdateRequest] - There is a contact details update request " +
           "already in progress. Redirecting user to manage-vat overview page.")
         Redirect(appConfig.btaAccountDetailsUrl)
       case Left(error) =>
-        logWarn(s"[ConfirmWebsiteController][updateWebsite] - ${error.status}: ${error.message}")
+        logWarn(s"[EmailVerificationController][sendUpdateRequest] - ${error.status}: ${error.message}")
         errorHandler.showInternalServerError
     }
   }
