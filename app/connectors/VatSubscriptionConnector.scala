@@ -39,6 +39,9 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
   private[connectors] def updatePPOBUrl(vrn: String): String =
     s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/ppob"
 
+  private[connectors] def updateEmailUrl(vrn: String): String =
+    s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/contact-preference/email"
+
   private[connectors] def updateContactPreferenceUrl(vrn: String): String =
     s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/contact-preference"
 
@@ -73,6 +76,21 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
         result
       case httpError@Left(error) =>
         logWarn("[VatSubscriptionConnector][updatePPOB] received error - " + error.message)
+        httpError
+    }
+  }
+
+  def updateEmail(vrn: String, email: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpPutResult[UpdateEmailSuccess]] = {
+
+    import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailReads
+
+    val updateModel = UpdateEmailAddress(email)
+
+    http.PUT[UpdateEmailAddress, HttpPutResult[UpdateEmailSuccess]](updateEmailUrl(vrn), updateModel).map {
+      case result@Right(_) =>
+        result
+      case httpError@Left(error) =>
+        logWarn("[VatSubscriptionConnector][updateEmail] received error - " + error.message)
         httpError
     }
   }

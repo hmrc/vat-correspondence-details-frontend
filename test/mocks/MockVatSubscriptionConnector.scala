@@ -19,9 +19,10 @@ package mocks
 import assets.CustomerInfoConstants._
 import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
+import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import models.User
-import models.customerInformation.{PPOB, UpdatePPOBSuccess}
+import models.customerInformation.{PPOB, UpdateEmailSuccess, UpdatePPOBSuccess}
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -49,8 +50,19 @@ trait MockVatSubscriptionConnector extends MockFactory {
       .returns(result)
   }
 
+  def mockUpdateEmailResponse(vrn: String, email: String, result: Future[UpdateEmailResponse]): Unit = {
+    (connector.updateEmail(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(vrn, email, *, *)
+      .returns(result)
+  }
+
   def mockGetCustomerInfoSuccessResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Right(fullCustomerInfoModel)))
   def mockGetCustomerInfoFailureResponse(): Unit = mockGetCustomerInfoResponse(Future.successful(Left(invalidJsonError)))
+
+  def mockUpdateEmailSuccessResponse(vrn: String, email: String): Unit =
+    mockUpdateEmailResponse(vrn, email, Future.successful(Right(UpdateEmailSuccess("success"))))
+  def mockUpdateEmailFailureResponse(vrn: String, email: String): Unit =
+    mockUpdateEmailResponse(vrn, email, Future.successful(Left(invalidJsonError)))
 
   def mockUpdatePPOBSuccessResponse(): Unit = mockUpdatePPOBResponse(Future.successful(Right(UpdatePPOBSuccess("success"))))
   def mockUpdatePPOBFailureResponse(): Unit = mockUpdatePPOBResponse(Future.successful(Left(invalidJsonError)))

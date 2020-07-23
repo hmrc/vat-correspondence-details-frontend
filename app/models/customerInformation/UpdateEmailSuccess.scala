@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package assets
-import models.customerInformation.{UpdateEmailSuccess, UpdatePPOBSuccess}
+package models.customerInformation
 
-object UpdateEmailConstants {
-  val formBundle = "XA1234567"
-  val updatePPOBSuccess = UpdatePPOBSuccess(formBundle)
-  val updateEmailSuccess = UpdateEmailSuccess(formBundle)
+import play.api.libs.json.{Json, Reads}
+
+case class UpdateEmailSuccess(formBundle: String)
+
+object UpdateEmailSuccess {
+  implicit val reads: Reads[UpdateEmailSuccess] = Json.reads[UpdateEmailSuccess]
 }

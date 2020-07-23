@@ -38,13 +38,10 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
   val testInvalidEmail: String    = "invalidEmail"
   val view: CaptureEmailView = injector.instanceOf[CaptureEmailView]
 
-  def setup(result: GetCustomerInfoResponse): Any =
-    when(mockVatSubscriptionService.getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext]))
-    .thenReturn(Future.successful(result))
+  def mockVatCall(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)): Unit =
+    mockGetCustomerInfo("999999999")(result)
 
-  def target(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)): CaptureEmailController = {
-    setup(result)
-
+  def target(): CaptureEmailController = {
     new CaptureEmailController(
       mockVatSubscriptionService,
       mockErrorHandler,
@@ -77,11 +74,6 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           "prepopulate the form with the validation email" in {
             document.select("input").attr("value") shouldBe testValidationEmail
           }
-
-          "not call the VatSubscription service" in {
-            verify(mockVatSubscriptionService, never())
-              .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-          }
         }
 
         "the previous form value is retrieved from session" should {
@@ -104,11 +96,6 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           "prepopulate the form with the previously entered form value" in {
             document.select("input").attr("value") shouldBe testValidEmail
           }
-
-          "not call the VatSubscription service" in {
-            verify(mockVatSubscriptionService, never())
-              .getCustomerInfo(any[String])(any[HeaderCarrier], any[ExecutionContext])
-          }
         }
       }
 
@@ -116,7 +103,10 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the customerInfo call succeeds" should {
 
-          lazy val result = target().show(request)
+          lazy val result = {
+            mockVatCall()
+            target().show(request)
+          }
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return 200" in {
@@ -135,10 +125,13 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the customerInfo call fails" should {
 
-          lazy val result = target(Left(ErrorModel(
-            Status.INTERNAL_SERVER_ERROR,
-            "error"
-          ))).show(request)
+          lazy val result = {
+            mockVatCall(Left(ErrorModel(
+              Status.INTERNAL_SERVER_ERROR,
+              "error"
+            )))
+            target().show(request)
+          }
 
           "return 500" in {
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -186,8 +179,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
     "the inflight predicate is not mocked out and there is nothing in session" should {
 
       lazy val inflightTarget = {
-
-        setup(Right(fullCustomerInfoModel))
+        mockVatCall()
         new CaptureEmailController(
           mockVatSubscriptionService,
           mockErrorHandler,

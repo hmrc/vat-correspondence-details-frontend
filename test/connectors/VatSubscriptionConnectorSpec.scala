@@ -18,10 +18,11 @@ package connectors
 
 import controllers.ControllerBaseSpec
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import org.mockito.Mockito.{mock => mMock}
 
 class VatSubscriptionConnectorSpec extends ControllerBaseSpec {
 
-  lazy val connector = new VatSubscriptionConnector(mock[HttpClient], mockConfig)
+  lazy val connector = new VatSubscriptionConnector(mMock[HttpClient](classOf[HttpClient]), mockConfig)
 
   val testVrn: String = "123456789"
 

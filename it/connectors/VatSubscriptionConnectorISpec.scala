@@ -18,18 +18,20 @@ package connectors
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
+import connectors.httpParsers.ResponseHttpParser.HttpPutResult
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import helpers.IntegrationBaseSpec
 import models.User
 import models.customerInformation._
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import stubs.VatSubscriptionStub
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
 
@@ -93,6 +95,43 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
         result shouldBe expected
       }
     }
+  }
+
+  "Calling updateEmail" when {
+
+    lazy val email = "newemail@hostperson.com"
+
+    "valid json is returned from the endpoint" should {
+
+      "return am UpdateEmailSuccess model" in new Test {
+        override def setupStubs(): StubMapping = VatSubscriptionStub.stubUpdateEmail(email)
+
+        setupStubs()
+
+        val expected = Right(UpdateEmailSuccess("success"))
+        val result: HttpPutResult[UpdateEmailSuccess] = await(connector.updateEmail("123456789", email))
+
+        result shouldBe expected
+      }
+
+    }
+
+    "an error is returned from the endpoint" should {
+
+      "return an error model" in new Test {
+
+        override def setupStubs(): StubMapping = VatSubscriptionStub.stubUpdateEmailError(email)
+
+        setupStubs()
+
+        val expected = Left(ErrorModel(INTERNAL_SERVER_ERROR, Json.stringify(Json.obj("ha" -> "noway"))))
+        val result: HttpPutResult[UpdateEmailSuccess] = await(connector.updateEmail("123456789", email))
+
+        result shouldBe expected
+      }
+
+    }
+
   }
 
   "Calling updatePPOB" when {
