@@ -43,7 +43,7 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  private val submitRoute: Call = controllers.contactPreference.routes.ChangeEmailController.submit()
+  private def submitRoute: Call = controllers.contactPreference.routes.ChangeEmailController.submit()
 
   def show: Action[AnyContent] = (contactPreferencePredicate andThen inFlightChangePrefEmailPredicate).async { implicit user =>
 
@@ -104,8 +104,8 @@ class ChangeEmailController @Inject()(val vatSubscriptionService: VatSubscriptio
                 user.arn
               ),
               controllers.contactPreference.routes.ChangeEmailController.submit().url
-            )                                                       // TODO - BTAT-8081 confirmation controller redirect
-            Future.successful(Redirect("")
+            )
+            Future.successful(Redirect(controllers.email.routes.ConfirmEmailController.show())
               .addingToSession(SessionKeys.prepopulationEmailKey -> email))
           }
         )

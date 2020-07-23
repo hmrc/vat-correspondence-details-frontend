@@ -43,7 +43,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  private val submitRoute: Call = controllers.email.routes.CaptureEmailController.submit()
+  private def submitRoute: Call = controllers.email.routes.CaptureEmailController.submit()
 
   def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
     val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
