@@ -97,7 +97,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
             case Some(true) => Redirect(routes.VerifyEmailController.contactPrefShow())
             case Some(false) =>
               logWarn(
-                "[VerifyEmailController][sendVerification] - " +
+                "[VerifyEmailController][contactPrefSendVerification] - " +
                   "Unable to send email verification request. Service responded with 'already verified'"
               )
               Redirect("") // TO DO - Add route to new update email and contact pref action
