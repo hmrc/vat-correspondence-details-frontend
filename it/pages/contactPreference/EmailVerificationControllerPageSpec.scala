@@ -56,7 +56,7 @@ class EmailVerificationControllerPageSpec extends BasePageISpec {
 
       def show: WSResponse = get(verifyEmailPath, formatInflightChange(Some("false")))
 
-      "redirect to the Capture Email Address controller" in {
+      "redirect to the contact preference redirect route" in {
 
         given.user.isAuthenticated
 
@@ -65,7 +65,7 @@ class EmailVerificationControllerPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          redirectURI("/")
+          redirectURI(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
         )
       }
     }

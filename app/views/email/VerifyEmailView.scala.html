@@ -18,7 +18,13 @@
 
 @this(mainTemplate: MainTemplate)
 
-@(email: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(email: String, isContactPrefJourney: Boolean)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@linkContent = @{if(isContactPrefJourney) {
+    controllers.email.routes.VerifyEmailController.contactPrefSendVerification().url
+    } else {
+    controllers.email.routes.VerifyEmailController.emailSendVerification().url
+    }}
 
 @mainTemplate(title = messages("verifyEmail.title")) {
 
@@ -28,8 +34,10 @@
 
     <p>@messages("verifyEmail.lineTwo")</p>
 
-    <p>
-        @messages("verifyEmail.lineThree.1")
-        <a href='@controllers.email.routes.VerifyEmailController.sendVerification().url'>@messages("verifyEmail.lineThree.2")</a>@messages("common.fullstop")
-    </p>
+        <p>
+            @messages("verifyEmail.lineThree.1")
+            <a href=@linkContent>@messages("verifyEmail.lineThree.2")</a>@messages("common.fullstop")
+        </p>
+
+    <p>@messages("verifyEmail.lineFour")</p>
 }

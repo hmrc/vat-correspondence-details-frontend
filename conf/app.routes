@@ -17,10 +17,12 @@ GET         /update-email-address                            controllers.email.C
 GET         /contact-preference/confirm-email-address        controllers.email.ConfirmEmailController.showNoExistingEmail
 
 # verify email address
-GET         /verify-email-address                            controllers.email.VerifyEmailController.show
+GET         /verify-email-address                       controllers.email.VerifyEmailController.emailShow
+GET         /contact-preference/verify-email-address    controllers.email.VerifyEmailController.contactPrefShow
 
 # link to send email verification
-GET         /send-verification                               controllers.email.VerifyEmailController.sendVerification
+GET         /send-verification                          controllers.email.VerifyEmailController.emailSendVerification
+GET         /contact-preference/send-verification       controllers.email.VerifyEmailController.contactPrefSendVerification
 
 # email change successful
 GET         /email-address-confirmation                      controllers.email.EmailChangeSuccessController.show
