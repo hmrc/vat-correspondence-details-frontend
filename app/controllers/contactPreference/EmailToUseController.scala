@@ -66,7 +66,6 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
             case Some(email) => Ok(emailToUseView(form, email))
               .addingToSession(SessionKeys.validationEmailKey -> email)
               .addingToSession(SessionKeys.prepopulationEmailKey -> email)
-              .removingFromSession(SessionKeys.contactPrefConfirmed)
             case _ => errorHandler.showInternalServerError
           }
 
@@ -110,8 +109,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
     vatSubscriptionService.updateContactPreference(vrn, ContactPreference.digital) map {
     case Right(UpdatePPOBSuccess(_)) =>
       Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
-        .addingToSession( SessionKeys.letterToEmailChangeSuccessful -> "true",
-          SessionKeys.contactPrefConfirmed -> "true")
+        .addingToSession(SessionKeys.letterToEmailChangeSuccessful -> "true")
 
     case Left(ErrorModel(CONFLICT, _)) =>
       logWarn("[EmailToUseController][updateCommsPreference] - There is an update request " +

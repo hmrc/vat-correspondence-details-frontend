@@ -45,8 +45,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
   lazy val existingEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
     requestWithPaperPref.withSession(
       SessionKeys.validationEmailKey -> testValidationEmail,
-      SessionKeys.contactPrefUpdate -> "true",
-      SessionKeys.contactPrefConfirmed -> "true"
+      SessionKeys.contactPrefUpdate -> "true"
     )
 
   lazy val noEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
@@ -89,10 +88,6 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         "add the email address to session" in {
           session(result).get(SessionKeys.validationEmailKey) shouldBe Some(testValidationEmail)
           session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidationEmail)
-        }
-
-        s"not contain the ${SessionKeys.contactPrefConfirmed} key" in {
-          session(result).get(SessionKeys.contactPrefConfirmed) shouldBe None
         }
       }
 
