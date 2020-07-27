@@ -23,7 +23,7 @@
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
-@(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @questionContent = {
     <h1 id="page-heading" class="heading-large">@messages("captureEmail.title")</h1>
@@ -33,8 +33,8 @@
 
     @mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
 
-    @if(appConfig.features.letterToConfirmedEmailEnabled()) {
-            <a class="link-back" href="@controllers.contactPreference.routes.AddEmailAddressController..show().url">@messages("base.back")</a>
+    @if(letterToConfirmedEmail == true) {
+            <a class="link-back" href="@controllers.contactPreference.routes.AddEmailAddressController.show().url">@messages("base.back")</a>
 
     } else {
             <a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>

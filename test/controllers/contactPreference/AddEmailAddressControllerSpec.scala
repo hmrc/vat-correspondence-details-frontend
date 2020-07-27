@@ -131,7 +131,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
             }
 
             "redirect to confirmation page" in {
-              redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showEmail().url)
+              redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney().url)
             }
           }
 

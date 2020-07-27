@@ -65,8 +65,9 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
     } yield {
       validation match {
         case Some(valEmail) =>
-          Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false, valEmail, controllers.email.routes.CaptureEmailController.submit()))
-          .addingToSession(SessionKeys.validationEmailKey -> valEmail)
+          Ok(captureEmailView(emailForm(valEmail).fill(prepopulation),
+            emailNotChangedError = false, valEmail, controllers.email.routes.CaptureEmailController.submit(), false))
+            .addingToSession(SessionKeys.validationEmailKey -> valEmail)
         case _ => errorHandler.showInternalServerError
       }
     }
@@ -80,7 +81,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
       case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
         errorForm => {
           val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
-          Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation, controllers.email.routes.CaptureEmailController.submit())))
+          Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation, controllers.email.routes.CaptureEmailController.submit(),false)))
 
         },
         email     => {
@@ -102,7 +103,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
     }
   }
 
-  def showEmail: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
+  def showPrefJourney: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
 
     if (appConfig.features.letterToConfirmedEmailEnabled()){
       val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
@@ -126,7 +127,8 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
       } yield {
         validation match {
           case Some(valEmail) =>
-            Ok(captureEmailView(emailForm(valEmail).fill(prepopulation), emailNotChangedError = false, valEmail,controllers.email.routes.CaptureEmailController.submitEmail()))
+            Ok(captureEmailView(emailForm(valEmail).fill(prepopulation),
+              emailNotChangedError = false, valEmail,controllers.email.routes.CaptureEmailController.submitPrefJourney(),false))
               .addingToSession(SessionKeys.validationEmailKey -> valEmail)
           case _ => errorHandler.showInternalServerError
         }
@@ -137,7 +139,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
 
   }
 
-  def submitEmail: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
+  def submitPrefJourney: Action[AnyContent] = contactPreferencePredicate.async { implicit user =>
 
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
@@ -147,7 +149,8 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
         case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
           errorForm => {
             val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
-            Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation, controllers.email.routes.CaptureEmailController.submitEmail())))
+            Future.successful(BadRequest(captureEmailView(errorForm, notChanged, validation,
+              controllers.email.routes.CaptureEmailController.submitPrefJourney(), true)))
 
           },
           email     => {
@@ -159,7 +162,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
                 user.isAgent,
                 user.arn
               ),
-              controllers.email.routes.CaptureEmailController.submitEmail().url
+              controllers.email.routes.CaptureEmailController.submitPrefJourney().url
             )
             Future.successful(Redirect(controllers.email.routes.ConfirmEmailController.showNoExistingEmail())
               .addingToSession(SessionKeys.prepopulationEmailKey -> email))

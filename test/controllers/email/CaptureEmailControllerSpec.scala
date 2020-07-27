@@ -299,7 +299,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
             lazy val result ={
               mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().showEmail(request
+              target().showPrefJourney(request
                 .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
             }
             lazy val document = Jsoup.parse(bodyOf(result))
@@ -322,7 +322,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
             lazy val result = {
               mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().showEmail(request.withSession(
+              target().showPrefJourney(request.withSession(
                 common.SessionKeys.validationEmailKey -> testValidationEmail,
                 common.SessionKeys.prepopulationEmailKey -> testValidEmail)
               )
@@ -350,7 +350,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
             lazy val result = {
               mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
-              target().showEmail(request)
+              target().showPrefJourney(request)
             }
             lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -372,7 +372,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
             lazy val result =  {
               mockGetCustomerInfo("999999999")(Future.successful(Left(ErrorModel(Status.NOT_FOUND, "error"))))
-              target().showEmail(request)
+              target().showPrefJourney(request)
             }
 
             "return 404" in {
@@ -391,7 +391,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       "a user does not have a valid enrolment" should {
 
-        lazy val result = target().showEmail(request)
+        lazy val result = target().showPrefJourney(request)
 
         "return 403" in {
           mockIndividualWithoutEnrolment()
@@ -407,7 +407,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       "a user is not logged in" should {
 
-        lazy val result = target().submitEmail(request)
+        lazy val result = target().submitPrefJourney(request)
 
         "return 401" in {
           mockMissingBearerToken()
@@ -424,7 +424,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
     " letterToConfirmedEmail feature switch is off" should {
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
-        target().showEmail(request
+        target().showPrefJourney(request
           .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
       }
       "return NOT FOUND" in {
@@ -464,7 +464,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
             lazy val result = {
               mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().submitEmail(request
+              target().submitPrefJourney(request
                 .withFormUrlEncodedBody("email" -> testInvalidEmail)
                 .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
             }
@@ -482,7 +482,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "there is no email in session" when {
 
-          lazy val result = target().submitEmail(request)
+          lazy val result = target().submitPrefJourney(request)
 
           "render the error view" in {
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -497,7 +497,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       "a user does not have a valid enrolment" should {
 
-        lazy val result = target().submitEmail(request)
+        lazy val result = target().submitPrefJourney(request)
 
         "return 403" in {
           mockIndividualWithoutEnrolment()
@@ -529,7 +529,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
     " letterToConfirmedEmail feature switch is off" should {
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
-        target().submitEmail(request
+        target().submitPrefJourney(request
           .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
       }
       "return NOT FOUND" in {
