@@ -22,6 +22,7 @@ import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import views.ViewBaseSpec
 import views.html.email.CaptureEmailView
+import play.api.mvc.Call
 
 class CaptureEmailViewSpec extends ViewBaseSpec {
 
@@ -48,9 +49,13 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
     "the form has no errors" when {
 
-      "the user already has an email address in ETMP" should {
+      "the user already has an email address in ETMP and the letterToConfirmedEmail boolean is false" should {
         lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail),
-          emailNotChangedError = false, currentEmail = testEmail)(user, messages, mockConfig)
+          emailNotChangedError = false,
+          currentEmail = testEmail,
+          Call("POST","/vat-through-software/account/correspondence/change-email-address"),
+          letterToConfirmedEmail = false
+        )(user, messages, mockConfig)
 
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -116,9 +121,27 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         }
       }
 
+      "the letterToConfirmedEmail boolean when set to true" should {
+        lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail),
+          emailNotChangedError = false,
+          currentEmail = testEmail,
+          Call("POST","/vat-through-software/account/correspondence/change-email-address"),
+          letterToConfirmedEmail = true
+        )(user, messages, mockConfig)
+
+        lazy implicit val document: Document = Jsoup.parse(view.body)
+
+        "have a back link" which {
+
+          "directs to the AddEmailAddressController" in {
+            element(Selectors.backLink).attr("href") shouldBe "/vat-through-software/account/correspondence/contact-preference/add-email-address"
+          }
+        }
+      }
+
       "the user has no email address in ETMP" should {
         lazy val view: Html = injectedView(emailForm(testEmail),
-          emailNotChangedError = false, currentEmail = "")(user, messages, mockConfig)
+          emailNotChangedError = false, currentEmail = "", Call("",""),letterToConfirmedEmail = false)(user, messages, mockConfig)
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         "have the email text field with no pre-populated value" in {
@@ -139,7 +162,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
     "the form has the email unchanged error" should {
       lazy val view = injectedView(emailForm(testEmail).bind(Map("email" -> testEmail)),
-        emailNotChangedError = true, currentEmail = testEmail)(user, messages, mockConfig)
+        emailNotChangedError = true, currentEmail = testEmail, Call("",""), letterToConfirmedEmail = false)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {
@@ -170,7 +193,8 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
       lazy val view: Html = {
         mockConfig.features.btaEntryPointEnabled(false)
-        injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = testEmail)(user, messages, mockConfig)
+        injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = testEmail, Call("",""),
+          letterToConfirmedEmail = false)(user, messages, mockConfig)
       }
 
       lazy implicit val document: Document = Jsoup.parse(view.body)
