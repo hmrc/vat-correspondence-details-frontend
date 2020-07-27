@@ -18,6 +18,7 @@ package controllers.email
 
 import assets.BaseTestConstants._
 import audit.models.ChangedEmailAddressAuditModel
+import common.SessionKeys
 import controllers.ControllerBaseSpec
 import models.User
 import models.customerInformation.UpdatePPOBSuccess
@@ -29,6 +30,7 @@ import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import views.html.templates.CheckYourAnswersView
+import models.contactPreferences.ContactPreference._
 
 import scala.concurrent.Future
 
@@ -58,11 +60,35 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
     "there is an email in session" should {
 
-      "show the Confirm Email page" in {
-        mockIndividualAuthorised()
-        val result = TestConfirmEmailController.show(requestWithEmail)
+      mockIndividualAuthorised()
+      lazy val result = TestConfirmEmailController.show(requestWithEmail)
 
+      "return OK" in {
         status(result) shouldBe Status.OK
+      }
+
+      "render the Confirm Email page" which {
+        lazy val page = Jsoup.parse(bodyOf(result))
+
+        "has the correct question text" in {
+          page.select(".cya-question").text() shouldBe "Email address"
+        }
+
+        "has the correct email" in {
+          page.select(".cya-answer").text()  shouldBe testEmail
+        }
+
+        "has the correct change link URL" in {
+          page.select(".cya-change a").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show().url
+        }
+
+        "has the correct hidden text" in {
+          page.select(".cya-change a").attr("aria-label") shouldBe "Change the email address"
+        }
+
+        "has the correct continue URL" in {
+          page.select(".button").attr("href") shouldBe controllers.email.routes.ConfirmEmailController.updateEmailAddress().url
+        }
       }
     }
 
@@ -97,11 +123,38 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
     "there is an email in session" should {
 
-      "show the Confirm Email page" in {
-        mockIndividualAuthorised()
-        val result = TestConfirmEmailController.showNoExistingEmail(requestWithEmail)
+      mockIndividualAuthorised()
+      lazy val result = TestConfirmEmailController.showNoExistingEmail(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
 
+      "return OK" in {
         status(result) shouldBe Status.OK
+      }
+
+      "render the Confirm Email page" which {
+
+        lazy val page = Jsoup.parse(bodyOf(result))
+
+        "has the correct question text" in {
+          page.select(".cya-question").text() shouldBe "Email address"
+        }
+
+        "has the correct email" in {
+          page.select(".cya-answer").text()  shouldBe testEmail
+        }
+
+        "has the correct change link URL" in {
+          page.select(".cya-change a").attr("href") shouldBe
+            controllers.contactPreference.routes.ChangeEmailController.show().url
+        }
+
+        "has the correct hidden text" in {
+          page.select(".cya-change a").attr("aria-label") shouldBe "Change the email address"
+        }
+
+        "has the correct continue URL" in {
+          page.select(".button").attr("href") shouldBe
+            controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url
+        }
       }
     }
 
@@ -109,7 +162,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       lazy val result = {
         mockIndividualAuthorised()
-        TestConfirmEmailController.showNoExistingEmail(request)
+        TestConfirmEmailController.showNoExistingEmail(request.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 303" in {

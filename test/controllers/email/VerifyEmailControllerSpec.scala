@@ -28,8 +28,8 @@ import play.api.test.Helpers._
 import views.html.email.VerifyEmailView
 import assets.BaseTestConstants.vrn
 import models.errors.ErrorModel
-
 import scala.concurrent.Future
+import models.contactPreferences.ContactPreference._
 
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
@@ -189,7 +189,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
-        TestVerifyEmailController.contactPrefShow()(requestWithEmail)
+        TestVerifyEmailController.contactPrefShow()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 200 (OK)" in {
@@ -206,7 +206,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
-        TestVerifyEmailController.contactPrefShow()(emptyEmailSessionRequest)
+        TestVerifyEmailController.contactPrefShow()(emptyEmailSessionRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -234,7 +234,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
-        TestVerifyEmailController.contactPrefShow()(requestWithEmail)
+        TestVerifyEmailController.contactPrefShow()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return page not found (404)" in {
@@ -250,7 +250,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
         mockGetEmailVerificationState(testEmail)(Future.successful(Some(true)))
-        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -266,7 +266,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       lazy val result = {
         mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
         mockCreateEmailVerificationRequest(Some(false))
-        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       s"has a status of $SEE_OTHER" in {
@@ -284,7 +284,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         mockConfig.features.letterToConfirmedEmailEnabled(true)
         mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
         mockCreateEmailVerificationRequest(Some(true))
-        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -302,7 +302,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         mockConfig.features.letterToConfirmedEmailEnabled(true)
         mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
         mockCreateEmailVerificationRequest(None)
-        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 500 (INTERNAL_SERVER_ERROR)" in {
@@ -313,7 +313,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "there isn't an email in session" should {
 
       lazy val result = {
-        TestVerifyEmailController.contactPrefSendVerification()(emptyEmailSessionRequest)
+        TestVerifyEmailController.contactPrefSendVerification()(emptyEmailSessionRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -341,7 +341,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
-        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return page not found (404)" in {
@@ -419,7 +419,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
-        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return page not found (404)" in {

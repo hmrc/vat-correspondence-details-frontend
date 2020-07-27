@@ -17,6 +17,7 @@
 package pages.email
 
 import assets.BaseITConstants.internalServerErrorTitle
+import models.contactPreferences.ContactPreference.paper
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.libs.ws.WSResponse
@@ -240,7 +241,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
       "there is an email in session" should {
 
-        def show: WSResponse = get(verifyContactPrefPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
+        def show: WSResponse = get(verifyContactPrefPath, formatEmail(Some(email)) ++ formatCurrentContactPref(Some(paper)))
 
         "render the verify email view" in {
 
@@ -262,7 +263,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
     "there is not an email in session" should {
 
-      def show: WSResponse = get(verifyContactPrefPath, formatInflightChange(Some("false")))
+      def show: WSResponse = get(verifyContactPrefPath, formatCurrentContactPref(Some(paper)))
 
       "redirect to the contact preference redirect controller" in {
 
@@ -282,7 +283,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
       def show: WSResponse = get(verifyContactPrefPath, formatEmail(Some(email)))
 
-      "render the Agent unauthorised view" in {
+      "redirect to client VAT account" in {
 
         given.user.isAuthenticatedAgent
 
@@ -290,8 +291,8 @@ class VerifyEmailPageSpec extends BasePageISpec {
         val result = show
 
         result should have(
-          httpStatus(Status.UNAUTHORIZED),
-          elementText("h1")("You cannot change your client’s email address yet")
+          httpStatus(Status.SEE_OTHER),
+          redirectURI("http://localhost:9149/vat-through-software/representative/client-vat-account")
         )
       }
     }
@@ -323,7 +324,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         "redirect to the verify email page" in {
 
-          def show: WSResponse = get(contactPrefSendVerificationPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
+          def show: WSResponse = get(contactPrefSendVerificationPath, formatEmail(Some(email)) ++ formatCurrentContactPref(Some(paper)))
 
           given.user.isAuthenticated
 
@@ -341,7 +342,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         "return a false from the Email Verification service" should {
 
-          def show: WSResponse = get(contactPrefSendVerificationPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
+          def show: WSResponse = get(contactPrefSendVerificationPath, formatEmail(Some(email)) ++ formatCurrentContactPref(Some(paper)))
 
           "redirect to the Confirm Email controller" in {
 
@@ -362,7 +363,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
         "return None from the Email Verification service" should {
 
-          def show: WSResponse = get(contactPrefSendVerificationPath, formatEmail(Some(email)) ++ formatInflightChange(Some("false")))
+          def show: WSResponse = get(contactPrefSendVerificationPath, formatEmail(Some(email)) ++ formatCurrentContactPref(Some(paper)))
 
           "render the internal server error page" in {
 
@@ -384,9 +385,9 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
       "there is not an email in session" should {
 
-        def show: WSResponse = get(contactPrefSendVerificationPath, formatInflightChange(Some("false")))
+        def show: WSResponse = get(contactPrefSendVerificationPath, formatCurrentContactPref(Some(paper)))
 
-        "redirect to the congtact preference redirect controller" in {
+        "redirect to the contact preference redirect controller" in {
 
           given.user.isAuthenticated
 
@@ -405,7 +406,7 @@ class VerifyEmailPageSpec extends BasePageISpec {
 
       def show: WSResponse = get(contactPrefSendVerificationPath, formatEmail(Some(email)))
 
-      "render the unauthorised view" in {
+      "redirect to client VAT account" in {
 
         given.user.isAuthenticatedAgent
 
@@ -413,8 +414,8 @@ class VerifyEmailPageSpec extends BasePageISpec {
         val result = show
 
         result should have(
-          httpStatus(Status.UNAUTHORIZED),
-          elementText("h1")("You cannot change your client’s email address yet")
+          httpStatus(Status.SEE_OTHER),
+          redirectURI("http://localhost:9149/vat-through-software/representative/client-vat-account")
         )
       }
     }

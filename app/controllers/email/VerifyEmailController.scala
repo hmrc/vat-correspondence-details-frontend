@@ -75,7 +75,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
 
   }
 
-  def contactPrefShow: Action[AnyContent] = (blockAgentPredicate) { implicit user =>
+  def contactPrefShow: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate) { implicit user =>
 
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       extractSessionEmail match {
@@ -87,8 +87,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
     }
   }
 
-
-  def contactPrefSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
+  def contactPrefSendVerification: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
 
@@ -115,8 +114,6 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
       Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
-
-
 
   def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async {
     implicit user =>
