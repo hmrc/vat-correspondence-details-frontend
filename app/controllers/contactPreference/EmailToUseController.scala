@@ -93,7 +93,8 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
                 Future.successful(BadRequest(emailToUseView(error, email))),
               {
                 case Yes => updateCommsPreference(user.vrn)
-                case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.show()))
+                  //TODO: Update to be controllers.email.routes.CaptureEmailController.showPrefJourney()
+                case No => Future.successful(Redirect(controllers.contactPreference.routes.ChangeEmailController.show()))
               }
             )
             case _ => Future.successful(errorHandler.showInternalServerError)

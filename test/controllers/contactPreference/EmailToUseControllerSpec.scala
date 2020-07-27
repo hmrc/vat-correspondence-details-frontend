@@ -241,7 +241,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         }
 
         s"Redirect to the '${controllers.email.routes.CaptureEmailController.show().url}'" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ChangeEmailController.show().url)
         }
       }
 
