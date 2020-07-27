@@ -75,7 +75,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
             CheckYourAnswersViewModel(
               question = "checkYourAnswers.emailAddress",
               answer = email,
-              changeLink = controllers.contactPreference.routes.ChangeEmailController.show().url,
+              changeLink = controllers.email.routes.CaptureEmailController.showPrefJourney().url,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
               continueLink = controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url)
           )

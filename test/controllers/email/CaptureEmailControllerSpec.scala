@@ -20,16 +20,14 @@ import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
+import models.contactPreferences.ContactPreference._
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify, when}
 import play.api.http.Status
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.email.CaptureEmailView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
@@ -296,11 +294,12 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
           "the validation email is retrieved from session" should {
 
-
             lazy val result ={
               mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().showPrefJourney(request
-                .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
+              target().showPrefJourney(request.withSession(
+                SessionKeys.validationEmailKey -> testValidationEmail,
+                SessionKeys.currentContactPrefKey -> paper
+              ))
             }
             lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -323,9 +322,10 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
             lazy val result = {
               mockConfig.features.letterToConfirmedEmailEnabled(true)
               target().showPrefJourney(request.withSession(
-                common.SessionKeys.validationEmailKey -> testValidationEmail,
-                common.SessionKeys.prepopulationEmailKey -> testValidEmail)
-              )
+                SessionKeys.validationEmailKey -> testValidationEmail,
+                SessionKeys.prepopulationEmailKey -> testValidEmail,
+                SessionKeys.currentContactPrefKey -> paper
+              ))
             }
             lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -350,7 +350,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
             lazy val result = {
               mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
-              target().showPrefJourney(request)
+              target().showPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
             }
             lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -372,7 +372,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
             lazy val result =  {
               mockGetCustomerInfo("999999999")(Future.successful(Left(ErrorModel(Status.NOT_FOUND, "error"))))
-              target().showPrefJourney(request)
+              target().showPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
             }
 
             "return 404" in {
@@ -386,8 +386,6 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           }
         }
       }
-
-
 
       "a user does not have a valid enrolment" should {
 
@@ -404,7 +402,6 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         }
       }
 
-
       "a user is not logged in" should {
 
         lazy val result = target().submitPrefJourney(request)
@@ -419,18 +416,20 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           charset(result) shouldBe Some("utf-8")
         }
       }
-
     }
-    " letterToConfirmedEmail feature switch is off" should {
+
+    "letterToConfirmedEmail feature switch is off" should {
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
-        target().showPrefJourney(request
-          .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
+        target().showPrefJourney(request.withSession(
+          SessionKeys.validationEmailKey -> testValidationEmail,
+          SessionKeys.currentContactPrefKey -> paper
+        ))
       }
+
       "return NOT FOUND" in {
         status(result) shouldBe Status.NOT_FOUND
       }
-
     }
   }
 
@@ -448,7 +447,11 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
               mockConfig.features.letterToConfirmedEmailEnabled(true)
               target().submit(request
                 .withFormUrlEncodedBody("email" -> testValidEmail)
-                .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
+                .withSession(
+                  SessionKeys.validationEmailKey -> testValidationEmail,
+                  SessionKeys.currentContactPrefKey -> paper
+                )
+              )
             }
             "redirect to the confirm email view" in {
               status(result) shouldBe Status.SEE_OTHER
@@ -466,7 +469,11 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
               mockConfig.features.letterToConfirmedEmailEnabled(true)
               target().submitPrefJourney(request
                 .withFormUrlEncodedBody("email" -> testInvalidEmail)
-                .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
+                .withSession(
+                  SessionKeys.validationEmailKey -> testValidationEmail,
+                  SessionKeys.currentContactPrefKey -> paper
+                )
+              )
             }
 
             "reload the page with errors" in {
@@ -482,7 +489,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "there is no email in session" when {
 
-          lazy val result = target().submitPrefJourney(request)
+          lazy val result = target().submitPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
 
           "render the error view" in {
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -524,18 +531,21 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           charset(result) shouldBe Some("utf-8")
         }
       }
-
     }
-    " letterToConfirmedEmail feature switch is off" should {
+
+    "letterToConfirmedEmail feature switch is off" should {
+
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
-        target().submitPrefJourney(request
-          .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
+        target().submitPrefJourney(request.withSession(
+          SessionKeys.validationEmailKey -> testValidationEmail,
+          SessionKeys.currentContactPrefKey -> paper
+        ))
       }
+
       "return NOT FOUND" in {
         status(result) shouldBe Status.NOT_FOUND
       }
-
     }
   }
 }

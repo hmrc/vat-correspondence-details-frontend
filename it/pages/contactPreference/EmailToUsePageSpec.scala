@@ -171,7 +171,7 @@ class EmailToUsePageSpec extends BasePageISpec {
 
           res should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.contactPreference.routes.ChangeEmailController.show().url)
+            redirectURI(controllers.email.routes.CaptureEmailController.showPrefJourney().url)
           )
         }
       }

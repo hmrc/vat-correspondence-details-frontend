@@ -144,7 +144,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
         "has the correct change link URL" in {
           page.select(".cya-change a").attr("href") shouldBe
-            controllers.contactPreference.routes.ChangeEmailController.show().url
+            controllers.email.routes.CaptureEmailController.showPrefJourney().url
         }
 
         "has the correct hidden text" in {
