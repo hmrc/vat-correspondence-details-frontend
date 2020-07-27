@@ -12,6 +12,7 @@ POST        /change-email-address                            controllers.email.C
 # confirm email address
 GET         /confirm-email-address                           controllers.email.ConfirmEmailController.show
 GET         /update-email-address                            controllers.email.ConfirmEmailController.updateEmailAddress
+GET         /contact-preference/update-email-address         controllers.email.VerifyEmailController.updateContactPrefEmail
 
 # confirm email address where there is no existing email
 GET         /contact-preference/confirm-email-address        controllers.email.ConfirmEmailController.showNoExistingEmail
@@ -80,11 +81,6 @@ POST        /contact-preference-email                        controllers.contact
 GET         /preference-confirm-email                        controllers.contactPreference.EmailToUseController.show
 POST        /preference-confirm-email                        controllers.contactPreference.EmailToUseController.submit
 
-# check if email verification has been sent
-GET         /contact-preference/verify-email-address         controllers.contactPreference.EmailVerificationController.show()
-GET         /contact-preference/send-verification            controllers.contactPreference.EmailVerificationController.checkVerificationStatus
-GET         /contact-preference/update-email-address         controllers.contactPreference.EmailVerificationController.updateContactPrefEmail
-
 # email preference change successful
 GET         /confirmation-:changeType-preference             controllers.contactPreference.ContactPreferenceConfirmationController.show(changeType)
 
@@ -100,6 +96,3 @@ POST        /contact-preference/add-email-address       controllers.contactPrefe
 GET         /contact-preference-redirect                     controllers.contactPreference.ContactPreferenceRedirectController.redirect
 
 GET         /contact-preference/change-email-address    controllers.contactPreference.ChangeEmailController.show
-
-# Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                                    controllers.Assets.at(path="/public", file)
