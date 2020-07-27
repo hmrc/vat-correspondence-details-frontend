@@ -20,25 +20,35 @@ import common.SessionKeys
 import controllers.ControllerBaseSpec
 import mocks.MockEmailVerificationService
 import models.User
+import models.customerInformation._
 import play.api.http.Status
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.email.VerifyEmailView
+import assets.BaseTestConstants.vrn
+import models.errors.ErrorModel
+
+import scala.concurrent.Future
 
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyEmailController extends VerifyEmailController(
+
     mockEmailVerificationService,
     mockErrorHandler,
+    mockVatSubscriptionService,
     injector.instanceOf[VerifyEmailView]
   )
 
-  val testVatNumber: String = "999999999"
-  val testContinueUrl: String = "/someReturnUrl/verified"
-
   lazy val emptyEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(SessionKeys.prepopulationEmailKey -> "")
+
+  val ppobAddress = PPOBAddress("", None, None, None, None, None, "")
+
+  def mockCustomer(): Unit = mockGetCustomerInfo(vrn)(Future.successful(Right(CustomerInformation(
+    PPOB(ppobAddress, None, None), Some(PendingChanges(Some(PPOB(ppobAddress, None, None)), None)), None, None, None, None, Some("PAPER")
+  ))))
 
 
   "Calling the extractSessionEmail function in VerifyEmailController" when {
@@ -46,7 +56,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "there is an authenticated request from a user with an email in session" should {
 
       "result in an email address being retrieved if there is an email" in {
-        val userWithSession = User[AnyContent](testVatNumber)(requestWithEmail)
+        val userWithSession = User[AnyContent](vrn)(requestWithEmail)
         TestVerifyEmailController.extractSessionEmail(userWithSession) shouldBe Some(testEmail)
       }
     }
@@ -235,10 +245,44 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
   "Calling the contactPrefSendVerification action in VerifyEmailController" when {
 
-    "there is an email in session and the email request is successfully created" should {
+    "the email in session is verified" should {
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockGetEmailVerificationState(testEmail)(Future.successful(Some(true)))
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+      }
+
+      "return 303 (SEE_OTHER)" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the correct route" in {
+        redirectLocation(result) shouldBe Some(routes.VerifyEmailController.updateContactPrefEmail().url)
+      }
+    }
+
+    "the getVerifiedStatus returns false, but the createVerifiedRequest claims it is verified" which {
+      lazy val result = {
+        mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
+        mockCreateEmailVerificationRequest(Some(false))
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+      }
+
+      s"has a status of $SEE_OTHER" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "redirects to the correct route" in {
+        redirectLocation(result) shouldBe Some(routes.VerifyEmailController.updateContactPrefEmail().url)
+      }
+    }
+
+    "the users email is not verified, but a request to verify successfully sends" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
         mockCreateEmailVerificationRequest(Some(true))
         TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
       }
@@ -247,32 +291,16 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         status(result) shouldBe SEE_OTHER
       }
 
-      "redirect to the verify your email page" in {
+      "redirect to the verify email page" in {
         redirectLocation(result) shouldBe Some(routes.VerifyEmailController.contactPrefShow().url)
       }
     }
 
-    "there is an email in session and the email request is not created as already verified" should {
+    "the users email is not verified, and the request to verify returns nothing" should {
 
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(true)
-        mockCreateEmailVerificationRequest(Some(false))
-        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
-      }
-
-      "return 303 (SEE_OTHER)" in {
-        status(result) shouldBe SEE_OTHER
-      }
-
-      "redirect to the update email address and contact preference route" in {
-        redirectLocation(result) shouldBe Some("")
-      }
-    }
-
-    "there is an email in session and the email request returned an unexpected error" should {
-
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
+        mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
         mockCreateEmailVerificationRequest(None)
         TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
       }
@@ -318,6 +346,143 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       "return page not found (404)" in {
         status(result) shouldBe Status.NOT_FOUND
+      }
+    }
+  }
+
+  "Calling .updateContactPrefEmail" should {
+
+    "redirect to the email successful page" when {
+
+      "the user has a verified email" which {
+        lazy val updateEmailMockResponse = Future.successful(Right(UpdateEmailSuccess("success")))
+
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          mockCustomer()
+          mockGetEmailVerificationState(testEmail)(Future.successful(Some(true)))
+          mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+          TestVerifyEmailController.updateContactPrefEmail()(requestWithEmail)
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the correct page" in {
+          redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+        }
+      }
+    }
+
+    "redirect to the check verification status route" when {
+
+      "the user has an unverified email" which {
+
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          mockCustomer()
+          mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
+          TestVerifyEmailController.updateContactPrefEmail()(requestWithEmail)
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the correct route" in {
+          redirectLocation(result) shouldBe Some(routes.VerifyEmailController.contactPrefSendVerification().url)
+        }
+      }
+    }
+
+    "redirect to the contact preference redirect route" when {
+
+      "the user does not have an email in session" which {
+        lazy val result = {
+          mockConfig.features.letterToConfirmedEmailEnabled(true)
+          mockCustomer()
+          TestVerifyEmailController.updateContactPrefEmail()(request)
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the correct page" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+        }
+      }
+    }
+
+    "the letterToConfirmedEmailEnabled feature switch is off" should {
+
+      lazy val result = {
+        mockConfig.features.letterToConfirmedEmailEnabled(false)
+        TestVerifyEmailController.contactPrefSendVerification()(requestWithEmail)
+      }
+
+      "return page not found (404)" in {
+        status(result) shouldBe Status.NOT_FOUND
+      }
+    }
+  }
+
+  "Calling .sendUpdateRequest" should {
+
+    "redirect the user to the EmailChangeSuccess page" when {
+
+      "a successful response is returned" which {
+        lazy val updateEmailMockResponse = Future.successful(Right(UpdateEmailSuccess("success")))
+
+        lazy val result = {
+          mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+          TestVerifyEmailController.sendUpdateRequest(testEmail)(new User[AnyContent](vrn))
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the correct URL" in {
+          redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+        }
+      }
+    }
+
+    "redirect the user to the vat subscription service" when {
+
+      "a conflict error response is returned" which {
+        lazy val updateEmailMockResponse = Future.successful(Left(ErrorModel(CONFLICT, "NO")))
+
+        lazy val result = {
+          mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+          TestVerifyEmailController.sendUpdateRequest(testEmail)(new User[AnyContent](vrn))
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the correct URL" in {
+          redirectLocation(result) shouldBe Some("/bta-account-details")
+        }
+      }
+    }
+
+    "show an internal server error" when {
+
+      "a non-conflict error is returned" which {
+        lazy val updateEmailMockResponse = Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, "NO")))
+
+        lazy val result = {
+          mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+          TestVerifyEmailController.sendUpdateRequest(testEmail)(new User[AnyContent](vrn))
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
       }
     }
   }
