@@ -128,7 +128,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
         validation match {
           case Some(valEmail) =>
             Ok(captureEmailView(emailForm(valEmail).fill(prepopulation),
-              emailNotChangedError = false, valEmail,controllers.email.routes.CaptureEmailController.submitPrefJourney(),false))
+              emailNotChangedError = false, valEmail,controllers.email.routes.CaptureEmailController.submitPrefJourney(),true))
               .addingToSession(SessionKeys.validationEmailKey -> valEmail)
           case _ => errorHandler.showInternalServerError
         }

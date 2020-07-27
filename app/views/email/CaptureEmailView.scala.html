@@ -33,7 +33,7 @@
 
     @mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
 
-    @if(letterToConfirmedEmail == true) {
+    @if(letterToConfirmedEmail) {
             <a class="link-back" href="@controllers.contactPreference.routes.AddEmailAddressController.show().url">@messages("base.back")</a>
 
     } else {

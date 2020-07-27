@@ -139,25 +139,6 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         }
       }
 
-      "the letterToConfirmedEmail boolean when set to false" should {
-        lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail),
-          emailNotChangedError = false,
-          currentEmail = testEmail,
-          Call("POST","/vat-through-software/account/correspondence/change-email-address"),
-          letterToConfirmedEmail = false
-        )(user, messages, mockConfig)
-
-        lazy implicit val document: Document = Jsoup.parse(view.body)
-
-        "have a back link" which {
-
-          "directs back to the BTA details page" in {
-            element(Selectors.backLink).attr("href") shouldBe "/bta-account-details"
-          }
-        }
-      }
-
-
       "the user has no email address in ETMP" should {
         lazy val view: Html = injectedView(emailForm(testEmail),
           emailNotChangedError = false, currentEmail = "", Call("",""),letterToConfirmedEmail = false)(user, messages, mockConfig)
