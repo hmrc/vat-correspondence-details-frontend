@@ -60,11 +60,6 @@ abstract class BaseController(implicit authComps: AuthPredicateComponents,
     blockIfPendingPref = true
   )
 
-  val inFlightChangePrefEmailPredicate = new InFlightPredicate(
-    inFlightComps, routePrefix + controllers.contactPreference.routes.ChangeEmailController.show().url,
-    blockIfPendingPref = false
-  )
-
   val contactPrefComps = new ContactPrefPredicateComponents(
     inFlightComps.vatSubscriptionService,
     authComps.errorHandler,

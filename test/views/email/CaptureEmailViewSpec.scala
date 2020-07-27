@@ -51,7 +51,9 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
 
       "the user already has an email address in ETMP" should {
         lazy val view: Html = injectedView(emailForm(testEmail).fill(testEmail),
-          emailNotChangedError = false, currentEmail = testEmail, Call("POST","/vat-through-software/account/correspondence/change-email-address")
+          emailNotChangedError = false,
+          currentEmail = testEmail,
+          Call("POST","/vat-through-software/account/correspondence/change-email-address")
         )(user, messages, mockConfig)
 
         lazy implicit val document: Document = Jsoup.parse(view.body)

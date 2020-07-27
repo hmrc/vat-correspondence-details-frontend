@@ -95,4 +95,3 @@ POST        /contact-preference/add-email-address       controllers.contactPrefe
 # Contact preference redirect (for BTA)
 GET         /contact-preference-redirect                     controllers.contactPreference.ContactPreferenceRedirectController.redirect
 
-GET         /contact-preference/change-email-address    controllers.contactPreference.ChangeEmailController.show

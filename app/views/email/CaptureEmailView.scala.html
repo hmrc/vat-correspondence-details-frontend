@@ -23,7 +23,7 @@
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
-@(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, contactPrefChange: Call)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @questionContent = {
     <h1 id="page-heading" class="heading-large">@messages("captureEmail.title")</h1>
@@ -33,15 +33,19 @@
 
     @mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
 
-        <a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>
+    @if(appConfig.features.letterToConfirmedEmailEnabled()) {
+            <a class="link-back" href="@controllers.contactPreference.routes.AddEmailAddressController..show().url">@messages("base.back")</a>
+
+    } else {
+            <a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>
+    }
 
         @errorSummary(messages("common.error.heading"), emailForm)
 
         @if(currentEmail == "") {
             <p>@messages("captureEmail.onlyAddEmail")</p>
         }
-
-        @form(action = contactPrefChange) {
+        @form(action = submitFormAction) {
             <div class="form-group">
             @text(
                 field = emailForm("email"),

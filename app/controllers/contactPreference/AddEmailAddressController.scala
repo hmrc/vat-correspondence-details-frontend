@@ -53,7 +53,7 @@ class AddEmailAddressController @Inject()(val errorHandler: ErrorHandler,
         formWithErrors =>
           BadRequest(addEmailAddressView(formWithErrors)),
         {
-          case Yes => Redirect(controllers.contactPreference.routes.ChangeEmailController.show())
+          case Yes => Redirect(controllers.email.routes.CaptureEmailController.showEmail())
           case No => Redirect(appConfig.btaAccountDetailsUrl)
         }
       )
