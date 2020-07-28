@@ -25,7 +25,7 @@ import models.{No, Yes, YesNo}
 import pages.BasePageISpec
 import play.api.libs.ws.WSResponse
 import play.api.http.Status
-import stubs.VatSubscriptionStub
+import stubs.{EmailVerificationStub, VatSubscriptionStub}
 
 class EmailToUsePageSpec extends BasePageISpec {
 
@@ -149,6 +149,9 @@ class EmailToUsePageSpec extends BasePageISpec {
 
           When("a successful vat subscription response is stubbed")
           VatSubscriptionStub.stubUpdateContactPreference
+
+          And("the email verification call is stubbed")
+          EmailVerificationStub.stubEmailVerified("test@test.com")
 
           And("'Yes' is selected")
           val res = submit(Yes)

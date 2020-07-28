@@ -21,12 +21,11 @@ import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import forms.YesNoForm.yesNo
+import mocks.MockEmailVerificationService
 import models.contactPreferences.ContactPreference
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
@@ -35,7 +34,7 @@ import views.html.contactPreference.EmailToUseView
 
 import scala.concurrent.Future
 
-class EmailToUseControllerSpec extends ControllerBaseSpec {
+class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   def mockVatSubscriptionCall(): Unit =
     mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
@@ -60,9 +59,13 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     new EmailToUseController(
       mockVatSubscriptionService,
       mockErrorHandler,
-      view
+      view,
+      mockEmailVerificationService
     )
   }
+
+  private def mockVerifiedEmail() = mockGetEmailVerificationState(testValidationEmail)(Future.successful(Some(true)))
+  private def mockUnverifiedEmail() = mockGetEmailVerificationState(testValidationEmail)(Future.successful(Some(false)))
 
   "Calling the show action in EmailToUseController" when {
 
@@ -170,6 +173,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
             mockUpdateContactPreference(
               vrn, ContactPreference.digital)(Future(Right(UpdatePPOBSuccess("success")))
             )
+            mockVerifiedEmail()
             target().submit(yesRequest)
           }
 
@@ -190,6 +194,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
             mockUpdateContactPreference(
               vrn, ContactPreference.digital)(Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress")))
             )
+            mockVerifiedEmail()
             target().submit(yesRequest)
           }
 
@@ -209,6 +214,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
             mockIndividualAuthorised()
             mockUpdateContactPreference(vrn, ContactPreference.digital)(
               Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't update contact preference"))))
+            mockVerifiedEmail()
             target().submit(yesRequest)
           }
 
@@ -218,6 +224,65 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
           "show the internal server error page" in {
             messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+          }
+        }
+
+        "User has an unverified email address" when {
+
+          "a successful verification attempt is made" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              mockIndividualAuthorised()
+              mockUnverifiedEmail()
+              mockCreateEmailVerificationRequest(Future.successful(Some(true)))
+              target().submit(yesRequest)
+            }
+
+            "return 303" in {
+              status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "redirect the user to the manage-vat overview page" in {
+              redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyEmailController.contactPrefShow().url)
+            }
+
+          }
+
+          "a verification attempt is made, but the email is already verified" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              mockIndividualAuthorised()
+              mockUnverifiedEmail()
+              mockCreateEmailVerificationRequest(Future.successful(Some(false)))
+              target().submit(yesRequest)
+            }
+
+            "return 303" in {
+              status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "redirect the user to the manage-vat overview page" in {
+              redirectLocation(result) shouldBe Some(routes.EmailToUseController.submit().url)
+            }
+
+          }
+
+          "an error occurs while trying to send a verification request" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              mockIndividualAuthorised()
+              mockUnverifiedEmail()
+              mockCreateEmailVerificationRequest(Future.successful(None))
+              target().submit(yesRequest)
+            }
+
+            "return 303" in {
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+
           }
         }
       }
