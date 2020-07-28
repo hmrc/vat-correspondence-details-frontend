@@ -25,15 +25,14 @@
 
 @furtherContent = {
     <div>
-    <p> @messages("cPrefAddEmail.line1")</p>
-    <p> @messages("cPrefAddEmail.line2")</p>
+        <p> @messages("cPrefAddEmail.line1")</p>
+        <p> @messages("cPrefAddEmail.line2")</p>
 
-    <p>
-    <strong class="bold-small">
-        @messages("cPrefAddEmail.question")
-    </strong>
-    </p>
-
+        <p>
+            <strong class="bold-small">
+                @messages("cPrefAddEmail.question")
+            </strong>
+        </p>
     </div>
 }
 
@@ -45,23 +44,23 @@
 
     @errorSummary(messages("common.error.heading"), form)
 
-    @formWithCSRF(action = controllers.contactPreference.routes.AddEmailAddressController.show, 'novalidate -> "novalidate") {
+    @formWithCSRF(action = controllers.contactPreference.routes.AddEmailAddressController.submit, 'novalidate -> "novalidate") {
 
         <div id="@yesNo" class="form-group">
-         @radioGroup(
-        field = form(yesNo),
-        choices = Seq(
-        yes -> messages("common.yes"),
-        no  -> messages("common.no")),
-        question = messages("cPrefAddEmail.title"),
-        additionalContent = Some(furtherContent),
-        inline = false
-        )
+             @radioGroup(
+                field = form(yesNo),
+                choices = Seq(
+                    yes -> messages("common.yes"),
+                    no  -> messages("common.no")
+                ),
+                question = messages("cPrefAddEmail.title"),
+                additionalContent = Some(furtherContent),
+                inline = false
+            )
         </div>
 
         <button class="button" type="submit" id="continue">
-        @messages("common.continue")
-
+            @messages("common.continue")
         </button>
-        }
     }
+}

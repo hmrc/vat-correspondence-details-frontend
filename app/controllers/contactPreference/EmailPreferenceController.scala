@@ -42,21 +42,19 @@ class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptio
                                           executionContext: ExecutionContext,
                                           inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
 
-
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("emailPreference.error")
-
 
   def show: Action[AnyContent] = (contactPreferencePredicate andThen
                                   paperPrefPredicate andThen
                                   inFlightContactPrefPredicate).async { implicit user =>
     if(appConfig.features.letterToConfirmedEmailEnabled()) {
-          Future.successful(Ok(emailPreferenceView(formYesNo))
-            .removingFromSession(SessionKeys.contactPrefUpdate)
-            .addingToSession(SessionKeys.currentContactPrefKey -> paper))
-        } else {
-          Future.successful(NotFound(errorHandler.notFoundTemplate))
-        }
-      }
+      Future.successful(Ok(emailPreferenceView(formYesNo))
+        .removingFromSession(SessionKeys.contactPrefUpdate)
+        .addingToSession(SessionKeys.currentContactPrefKey -> paper))
+    } else {
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
+    }
+  }
 
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen
                                     paperPrefPredicate andThen
@@ -75,7 +73,6 @@ class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptio
                      Redirect(controllers.contactPreference.routes.AddEmailAddressController.show())
                  }
                  result.addingToSession(SessionKeys.contactPrefUpdate -> "true")
-
 
               case Left(_) =>
               Logger.warn("[EmailPreferenceController][.submit] Unable to retrieve email address")

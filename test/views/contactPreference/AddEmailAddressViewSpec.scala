@@ -30,6 +30,7 @@ class AddEmailAddressViewSpec extends ViewBaseSpec {
   object Selectors {
     val pageHeading = "#content h1"
     val backLink = "#content > article > a"
+    val form = "form"
     val button = ".button"
     val line1 = "#yes_no > div:nth-child(1) > fieldset:nth-child(1) > div:nth-child(2) > p:nth-child(1)"
     val line2 = "#yes_no > div:nth-child(1) > fieldset:nth-child(1) > div:nth-child(2) > p:nth-child(2)"
@@ -40,6 +41,7 @@ class AddEmailAddressViewSpec extends ViewBaseSpec {
   }
 
   "Once rendered, the add email address page" should {
+
     lazy val view = addEmailView(YesNoForm.yesNoForm(ContactPrefAddEmailMessages.title))(user, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -65,51 +67,45 @@ class AddEmailAddressViewSpec extends ViewBaseSpec {
       "should have the correct href" in {
         element(Selectors.backLink).attr("href") shouldBe routes.EmailPreferenceController.show().url
       }
-
-
-      "have the correct continue button text" in {
-        elementText(Selectors.button) shouldBe ContactPrefAddEmailMessages.continue
-      }
-
-      "have the correct radio buttons with yes/no answers" in {
-        elementText(Selectors.yesOption) shouldBe ContactPrefAddEmailMessages.yes
-        elementText(Selectors.noOption) shouldBe ContactPrefAddEmailMessages.no
-      }
-
-      "not display an error" in {
-        document.select(Selectors.error).isEmpty shouldBe true
-      }
     }
 
-    "The add email address page with errors" should {
-      lazy val view = addEmailView(YesNoForm.yesNoForm(ContactPrefAddEmailMessages.errorMessage).bind(Map("yes_no" -> "")))(
-        user, messages, mockConfig)
-      lazy implicit val document: Document = Jsoup.parse(view.body)
+    "have the correct continue button text" in {
+      elementText(Selectors.button) shouldBe ContactPrefAddEmailMessages.continue
+    }
 
-      "have the correct document title" in {
-        document.title shouldBe s"${ContactPrefAddEmailMessages.errorTitlePrefix} ${ContactPrefAddEmailMessages.title}"
-      }
+    "have the correct radio buttons with yes/no answers" in {
+      elementText(Selectors.yesOption) shouldBe ContactPrefAddEmailMessages.yes
+      elementText(Selectors.noOption) shouldBe ContactPrefAddEmailMessages.no
+    }
 
-      "have the correct page heading" in {
-        elementText(Selectors.pageHeading) shouldBe ContactPrefAddEmailMessages.heading
-      }
+    "not display an error" in {
+      document.select(Selectors.error).isEmpty shouldBe true
+    }
 
-      "display the correct error heading" in {
-        elementText(Selectors.errorHeading) shouldBe s"${ContactPrefAddEmailMessages.errorHeading} ${ContactPrefAddEmailMessages.errorMessage}"
-      }
+    "have the correct submit action URL" in {
+      element(Selectors.form).attr("action") shouldBe controllers.contactPreference.routes.AddEmailAddressController.submit().url
+    }
+  }
 
-      "have the correct radio buttons with yes/no answers" in {
-        elementText(Selectors.yesOption) shouldBe ContactPrefAddEmailMessages.yes
-        elementText(Selectors.noOption) shouldBe ContactPrefAddEmailMessages.no
-      }
+  "The add email address page with errors" should {
+    lazy val view = addEmailView(YesNoForm.yesNoForm(ContactPrefAddEmailMessages.errorMessage).bind(Map("yes_no" -> "")))(
+      user, messages, mockConfig)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
 
-      "have the correct continue button text" in {
-        elementText(Selectors.button) shouldBe ContactPrefAddEmailMessages.continue
-      }
+    "have the correct document title" in {
+      document.title shouldBe s"${ContactPrefAddEmailMessages.errorTitlePrefix} ${ContactPrefAddEmailMessages.title}"
+    }
 
-      "display the correct error message" in {
-        elementText(Selectors.error) shouldBe ContactPrefAddEmailMessages.errorMessage
-      }
+    "have the correct page heading" in {
+      elementText(Selectors.pageHeading) shouldBe ContactPrefAddEmailMessages.heading
+    }
+
+    "display the correct error heading" in {
+      elementText(Selectors.errorHeading) shouldBe s"${ContactPrefAddEmailMessages.errorHeading} ${ContactPrefAddEmailMessages.errorMessage}"
+    }
+
+    "display the correct error message" in {
+      elementText(Selectors.error) shouldBe ContactPrefAddEmailMessages.errorMessage
     }
   }
 }

@@ -75,7 +75,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
 
   }
 
-  def contactPrefShow: Action[AnyContent] = (blockAgentPredicate) { implicit user =>
+  def contactPrefShow: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate) { implicit user =>
 
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       extractSessionEmail match {
@@ -87,8 +87,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
     }
   }
 
-
-  def contactPrefSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
+  def contactPrefSendVerification: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
 
@@ -116,8 +115,6 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
     }
   }
 
-
-
   def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async {
     implicit user =>
 
@@ -142,6 +139,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
     vatSubscriptionService.updateContactPrefEmail(user.vrn, email).map {
       case Right(_) =>
         Redirect(controllers.email.routes.EmailChangeSuccessController.show())
+          .addingToSession(SessionKeys.emailChangeSuccessful -> "true")
       case Left(ErrorModel(CONFLICT, _)) =>
         logDebug("[EmailVerificationController][sendUpdateRequest] - There is a contact details update request " +
           "already in progress. Redirecting user to manage-vat overview page.")
