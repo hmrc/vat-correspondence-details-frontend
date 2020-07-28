@@ -372,6 +372,10 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         "redirects to the correct page" in {
           redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
         }
+
+        "add emailChangeSuccessful to session" in {
+          session(result).get(SessionKeys.emailChangeSuccessful) shouldBe Some("true")
+        }
       }
     }
 

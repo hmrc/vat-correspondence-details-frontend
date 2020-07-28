@@ -139,6 +139,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
     vatSubscriptionService.updateContactPrefEmail(user.vrn, email).map {
       case Right(_) =>
         Redirect(controllers.email.routes.EmailChangeSuccessController.show())
+          .addingToSession(SessionKeys.emailChangeSuccessful -> "true")
       case Left(ErrorModel(CONFLICT, _)) =>
         logDebug("[EmailVerificationController][sendUpdateRequest] - There is a contact details update request " +
           "already in progress. Redirecting user to manage-vat overview page.")
