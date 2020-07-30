@@ -16,18 +16,20 @@
 
 package controllers.email
 
+import assets.CustomerInfoConstants._
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import mocks.MockEmailVerificationService
 import models.User
 import models.customerInformation._
-import play.api.http.Status
+import play.api.http.{HeaderNames, Status}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.email.VerifyEmailView
 import assets.BaseTestConstants.vrn
 import models.errors.ErrorModel
+
 import scala.concurrent.Future
 import models.contactPreferences.ContactPreference._
 
@@ -489,5 +491,96 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         }
       }
     }
+  }
+
+  "Calling .btaVerifyEmailRedirect" when {
+
+    "the user has come from BTA" when {
+
+      "the user has an unverified email" should {
+
+        lazy val result = {
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
+            pendingChanges = None,
+            ppob = fullPPOBModel.copy(
+              contactDetails = Some(contactDetailsUnverifiedEmail)
+            )
+          ))))
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+          )
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the send-verification URL" in {
+          redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-verification")
+        }
+
+        "add the users email to session" in {
+          session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
+        }
+      }
+
+      "the user has a verified email" should {
+        lazy val result = {
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
+            pendingChanges = None
+          ))))
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+          )
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the send-verification URL" in {
+          redirectLocation(result) shouldBe Some("/bta-account-details")
+        }
+      }
+
+      "the user has no email" should {
+        lazy val result = {
+          mockCustomer()
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+          )
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the send-verification URL" in {
+          redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
+        }
+      }
+
+      "getCustomerInfo returns an error" should {
+        lazy val result = {
+          mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+          )
+        }
+
+        s"has a status of $INTERNAL_SERVER_ERROR" in {
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+      }
+    }
+
+    "the user has not come from BTA" should {
+      lazy val result = TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest)
+
+      "throw an ISE" in {
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
   }
 }

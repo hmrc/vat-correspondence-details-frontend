@@ -135,6 +135,32 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
       }
   }
 
+  def btaVerifyEmailRedirect(): Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async {
+    implicit user =>
+
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
+
+      if(user.headers.get("Referer").getOrElse("").contains(appConfig.btaAccountDetailsUrl)){
+        vatSubscriptionService.getCustomerInfo(user.vrn) map {
+          case Right(details) => (details.approvedEmail, details.ppob.contactDetails.flatMap(_.emailVerified)) match {
+            case (Some(_), Some(true)) =>
+              logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - emailVerified has come back as true. Returning user to BTA")
+              Redirect(appConfig.btaAccountDetailsUrl)
+            case (Some(email), _) => Redirect(routes.VerifyEmailController.emailSendVerification())
+              .addingToSession(SessionKeys.prepopulationEmailKey -> email)
+            case (_, _) =>
+              logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - user does not have an email. Redirecting to capture email page")
+              Redirect(routes.CaptureEmailController.show())
+          }
+          case _ => errorHandler.showInternalServerError
+        }
+      } else {
+        logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - user has not come from BTA account details page. Throwing ISE")
+        Future.successful(errorHandler.showInternalServerError)
+      }
+
+  }
+
   private[controllers] def sendUpdateRequest(email: String)(implicit user: User[_]): Future[Result] = {
     vatSubscriptionService.updateContactPrefEmail(user.vrn, email).map {
       case Right(_) =>

@@ -75,6 +75,8 @@ object CustomerInfoConstants {
     Some(true)
   )
 
+  val contactDetailsUnverifiedEmail: ContactDetails = fullContactDetailsModel.copy(emailVerified = Some(false))
+
   val fullEmailAddressModel: EmailAddress = EmailAddress(
     Some("test@email.com"),
     Some(true)
