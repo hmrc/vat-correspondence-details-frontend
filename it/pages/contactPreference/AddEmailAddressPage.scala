@@ -29,7 +29,7 @@ class AddEmailAddressPage extends BasePageISpec {
 
   "Calling the AddEmailAddress .show method" when {
 
-    def show: WSResponse = get(path, formatCurrentContactPref(Some(paper)))
+    def show: WSResponse = get(path, formatCurrentContactPref(Some(paper))++ formatInflightChange(Some("false")))
 
     "the user is authenticated" when {
 
@@ -85,7 +85,10 @@ class AddEmailAddressPage extends BasePageISpec {
 
   "Calling the AddEmailAddress .submit method" when {
 
-    def submit(content: YesNo): WSResponse = post(path, formatCurrentContactPref(Some(paper)))(toFormData(YesNoForm.yesNoForm(""), content))
+    def submit(content: YesNo): WSResponse = post(
+      path,
+      formatCurrentContactPref(Some(paper)) ++ formatInflightChange(Some("false"))
+    )(toFormData(YesNoForm.yesNoForm(""), content))
 
     "the user is authenticated" when {
 

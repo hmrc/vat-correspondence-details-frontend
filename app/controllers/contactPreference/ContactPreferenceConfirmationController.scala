@@ -38,7 +38,7 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
                                                         inFlightComps: InFlightPredicateComponents,
                                                         ec: ExecutionContext) extends BaseController {
 
-  def show(changeType: String): Action[AnyContent] = contactPreferencePredicate async { implicit user =>
+  def show(changeType: String): Action[AnyContent] = (contactPreferencePredicate andThen inFlightContactPrefPredicate) async { implicit user =>
       if (appConfig.features.letterToConfirmedEmailEnabled()) {
         changeType match {
           case "email" => sessionGuard(letterToEmailChangeSuccessful)

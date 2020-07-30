@@ -109,7 +109,10 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
     }
   }
 
-  def showPrefJourney: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def showPrefJourney: Action[AnyContent] = (
+    contactPreferencePredicate andThen
+      paperPrefPredicate andThen
+      inFlightContactPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()){
       for {
         validation    <- currentEmail
@@ -132,7 +135,10 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
     }
   }
 
-  def submitPrefJourney: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def submitPrefJourney: Action[AnyContent] = (
+    contactPreferencePredicate andThen
+      paperPrefPredicate andThen
+      inFlightContactPrefPredicate).async { implicit user =>
 
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       (sessionValidationEmail, sessionPrePopulationEmail) match {

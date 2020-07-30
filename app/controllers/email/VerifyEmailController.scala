@@ -75,7 +75,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
 
   }
 
-  def contactPrefShow: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate) { implicit user =>
+  def contactPrefShow: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate andThen inFlightContactPrefPredicate) { implicit user =>
 
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       extractSessionEmail match {
@@ -87,7 +87,10 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
     }
   }
 
-  def contactPrefSendVerification: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def contactPrefSendVerification: Action[AnyContent] = (
+    contactPreferencePredicate andThen
+      paperPrefPredicate andThen
+      inFlightContactPrefPredicate).async { implicit user =>
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
 
@@ -115,7 +118,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
     }
   }
 
-  def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async {
+  def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate andThen inFlightContactPrefPredicate).async {
     implicit user =>
 
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
