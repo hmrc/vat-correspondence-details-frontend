@@ -35,6 +35,8 @@
 
   @errorSummary(messages("common.error.heading"), form)
 
+    <a class="link-back" href="@appConfig.btaAccountDetailsUrl">@messages("base.back")</a>
+
   @formWithCSRF(action = controllers.contactPreference.routes.EmailPreferenceController.submit, 'novalidate -> "novalidate") {
     <div id="@yesNo" class="form-group">
       @radioGroup(

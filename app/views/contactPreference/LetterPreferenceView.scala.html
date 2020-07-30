@@ -24,7 +24,7 @@
 @(form: Form[YesNo], address: String)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @hint = {
-  <div class="secondary-text">
+  <div class="panel panel-border-wide">
     <p>@messages("letterPreference.hint")</p>
   </div>
 }
@@ -34,6 +34,8 @@
           else messages("letterPreference.title")) {
 
     @errorSummary(messages("common.error.heading"), form)
+
+    <a class="link-back" href="@appConfig.btaAccountDetailsUrl">@messages("base.back")</a>
 
     @formWithCSRF(action = controllers.contactPreference.routes.LetterPreferenceController.submit,
     'novalidate -> "novalidate") {

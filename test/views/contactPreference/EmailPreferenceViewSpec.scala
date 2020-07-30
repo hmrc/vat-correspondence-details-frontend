@@ -34,6 +34,7 @@ class EmailPreferenceViewSpec extends ViewBaseSpec {
     val hint = ".panel"
     val errorHeading = "#error-summary-display"
     val error = ".error-message"
+    val backLink = "#content > article > a"
   }
 
   "Once rendered, the email preference page" should {
@@ -63,6 +64,15 @@ class EmailPreferenceViewSpec extends ViewBaseSpec {
 
     "not display an error" in {
       document.select(Selectors.error).isEmpty shouldBe true
+    }
+    "have the correct back link" which {
+      "should have the correct text" in {
+        elementText(Selectors.backLink) shouldBe "Back"
+      }
+
+      "should have the correct href" in {
+        element(Selectors.backLink).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
+      }
     }
   }
 

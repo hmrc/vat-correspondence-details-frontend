@@ -35,6 +35,8 @@
 
     @errorSummary(messages("common.error.heading"), emailToUseForm)
 
+<a class="link-back" href="@controllers.contactPreference.routes.EmailPreferenceController.show()">@messages("base.back")</a>
+
     @form(action = controllers.contactPreference.routes.EmailToUseController.submit, 'novalidate -> "novalidate") {
 
         <div id="@yesNo" class="form-group">
