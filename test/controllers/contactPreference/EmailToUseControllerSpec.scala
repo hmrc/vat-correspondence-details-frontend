@@ -243,7 +243,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
               status(result) shouldBe Status.SEE_OTHER
             }
 
-            "redirect the user to the manage-vat overview page" in {
+            "redirect the user to the confirmation screen" in {
               redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyEmailController.contactPrefShow().url)
             }
 
@@ -263,7 +263,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
               status(result) shouldBe Status.SEE_OTHER
             }
 
-            "redirect the user to the manage-vat overview page" in {
+            "redirect the user to the form submit action" in {
               redirectLocation(result) shouldBe Some(routes.EmailToUseController.submit().url)
             }
 
@@ -279,7 +279,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
               target().submit(yesRequest)
             }
 
-            "return 303" in {
+            "return 500" in {
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
 
