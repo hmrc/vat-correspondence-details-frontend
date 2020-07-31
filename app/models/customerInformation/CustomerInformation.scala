@@ -47,6 +47,8 @@ case class CustomerInformation(ppob: PPOB,
   val sameMobile: Boolean = approvedMobile == pendingMobile
   val sameWebsite: Boolean = approvedWebsite == pendingWebsite
 
+  val pendingPpobChanges: Boolean = pendingChanges.fold(false)(_.ppob.isDefined)
+
   def entityName: Option[String] =
     (firstName, lastName, tradingName, organisationName) match {
       case (Some(first), Some(last), None, None) => Some(s"$first $last")
