@@ -539,7 +539,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
           status(result) shouldBe SEE_OTHER
         }
 
-        "redirects to the send-verification URL" in {
+        "redirects to BTA account details" in {
           redirectLocation(result) shouldBe Some("/bta-account-details")
         }
       }
@@ -556,7 +556,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
           status(result) shouldBe SEE_OTHER
         }
 
-        "redirects to the send-verification URL" in {
+        "redirects to the change email address page" in {
           redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
         }
       }
