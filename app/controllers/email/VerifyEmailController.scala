@@ -135,7 +135,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
       }
   }
 
-  def btaVerifyEmailRedirect(): Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async {
+  def btaVerifyEmailRedirect(): Action[AnyContent] = blockAgentPredicate.async {
     implicit user =>
 
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
@@ -148,6 +148,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
               Redirect(appConfig.btaAccountDetailsUrl)
             case (Some(email), _) => Redirect(routes.VerifyEmailController.emailSendVerification())
               .addingToSession(SessionKeys.prepopulationEmailKey -> email)
+              .addingToSession(SessionKeys.inFlightContactDetailsChangeKey -> s"${details.pendingPpobChanges}")
             case (_, _) =>
               logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - user does not have an email. Redirecting to capture email page")
               Redirect(routes.CaptureEmailController.show())

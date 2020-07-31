@@ -94,6 +94,17 @@ class CustomerInformationSpec extends UnitSpec {
     }
   }
 
+  "The pendingPpobChanges val" should {
+
+    "return true when there are pending ppob changes" in {
+      fullCustomerInfoModel.pendingPpobChanges shouldBe true
+    }
+
+    "return false when there are pending ppob changes" in {
+      modelNoPending.pendingPpobChanges shouldBe false
+    }
+  }
+
   "Calling .entityName" when {
 
     "the model contains a trading name" should {

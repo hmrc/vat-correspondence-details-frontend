@@ -519,8 +519,9 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
           redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-verification")
         }
 
-        "add the users email to session" in {
+        "add the session keys" in {
           session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("false")
         }
       }
 
