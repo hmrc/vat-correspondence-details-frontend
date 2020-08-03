@@ -43,7 +43,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct heading" in {
-          elementText("h1") shouldBe "What is the landline number?"
+          elementText("#heading-text") shouldBe "What is the landline number?"
         }
 
         "have a back link" which {
@@ -57,13 +57,9 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
           }
         }
 
-        "have the correct field hint" in {
-          elementText(s"$fieldLabel > span.form-hint") shouldBe
+        "have the correct hint text" in {
+          elementText("#heading-label") shouldBe
             "You need to enter the country code for international numbers, like 00441632 960000. You cannot enter a plus sign."
-        }
-
-        "have the correct visually hidden text" in {
-          elementText(s"$fieldLabel > label.visuallyhidden") shouldBe "What is the landline number?"
         }
 
         "have a link to remove the landline" which {

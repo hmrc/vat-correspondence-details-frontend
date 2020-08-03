@@ -24,9 +24,9 @@
 @(landlineForm: Form[String], currentLandline: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @questionContent = {
-    <h1 id="page-heading" class="heading-large">@messages("captureLandline.title")</h1>
-
-    <span class=form-hint>@messages("captureLandline.hint")</span>
+    <h1 id="page-heading">
+        <label id="heading-text" class="heading-large">@messages("captureLandline.title")</label>
+        <label id="heading-label" class="form-hint">@messages("captureLandline.hint")</label></h1>
 }
 
 @mainTemplate(
@@ -42,7 +42,7 @@
         <div class ="form-group">
         @text(
             field = landlineForm("landlineNumber"),
-            label = messages("captureLandline.title"),
+            label = "",
             additionalContent = Some(questionContent)
         )
         </div>

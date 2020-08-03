@@ -28,7 +28,8 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
   val injectedView: CaptureWebsiteView = injector.instanceOf[CaptureWebsiteView]
 
   private object Selectors {
-    val pageHeading = "#page-heading"
+    val pageHeading = "#heading-text"
+    val pageLabel: String = "#heading-label"
     val backLink = "#content > article > a"
     val form = "form"
     val websiteField = "#website"
@@ -36,7 +37,6 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
     val errorSummary = "#error-summary-heading"
     val websiteFormGroup = "#content > article > form > div:nth-child(1)"
     val removeWebsite = "#remove-website"
-    val fieldLabel: String = "#content > article > form > div > div > span.form-hint"
   }
 
   "Rendering the capture website page" when {
@@ -71,7 +71,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           }
 
           "have the correct hint text" in {
-            elementText(Selectors.fieldLabel) shouldBe "For example, www.abc.co..."
+            elementText(Selectors.pageLabel) shouldBe "For example, www.abc.co..."
           }
 
           "have the website form with the correct form action" in {

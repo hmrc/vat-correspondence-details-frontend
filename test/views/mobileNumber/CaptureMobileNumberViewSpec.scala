@@ -36,14 +36,13 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
         lazy val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
-        val fieldLabel: String = "#content > article > form  > div > div"
 
         "have the correct title" in {
           document.title shouldBe "What is the mobile number? - Business tax account - GOV.UK"
         }
 
         "have the correct heading" in {
-          elementText("h1") shouldBe "What is the mobile number?"
+          elementText("#heading-text") shouldBe "What is the mobile number?"
         }
 
         "have a back link" which {
@@ -58,12 +57,8 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct field hint" in {
-          elementText(s"$fieldLabel > span.form-hint") shouldBe
+          elementText("#page-label") shouldBe
             "You need to enter the country code for international numbers, like 00447946 123456. You cannot enter a plus sign."
-        }
-
-        "have the correct visually hidden text" in {
-          elementText(s"$fieldLabel > label.visuallyhidden") shouldBe "What is the mobile number?"
         }
 
         "have a link to remove the mobile" which {
