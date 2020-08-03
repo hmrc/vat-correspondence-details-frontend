@@ -33,10 +33,11 @@ class LetterPreferenceViewSpec extends ViewBaseSpec {
     val button = ".button"
     val yesOption = "div.multiple-choice:nth-child(1) > label"
     val noOption = "div.multiple-choice:nth-child(2) > label"
-    val hint = ".secondary-text"
+    val hint = ".panel"
     val errorHeading = "#error-summary-display h2"
     val errorSummaryMessage = "#yes_no-error-summary"
     val error = ".error-message"
+    val backLink = "#content > article > a"
   }
 
   "Once rendered, the Letters to PPOB view" should {
@@ -70,6 +71,15 @@ class LetterPreferenceViewSpec extends ViewBaseSpec {
 
     "not display an error" in {
       document.select(Selectors.error).isEmpty shouldBe true
+    }
+    "have the correct back link" which {
+      "should have the correct text" in {
+        elementText(Selectors.backLink) shouldBe "Back"
+      }
+
+      "should have the correct href" in {
+        element(Selectors.backLink).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
+      }
     }
   }
 
