@@ -43,7 +43,8 @@ class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
               emailPath,
               formatCurrentContactPref(Some(paper)) ++
                 formatValidationEmail(Some("asd@asd.com")) ++
-                formatLetterToEmailPrefConfirmation(Some("true"))
+                formatLetterToEmailPrefConfirmation(Some("true")) ++
+                formatInflightChange(Some("false"))
             )
 
             result should have(
@@ -70,7 +71,8 @@ class ContactPreferenceConfirmationPageSpec extends BasePageISpec {
             val result = get(
               letterPath,
               formatCurrentContactPref(Some(digital)) ++
-                formatEmailToLetterPrefConfirmation(Some("true"))
+                formatEmailToLetterPrefConfirmation(Some("true")) ++
+                formatInflightChange(Some("false"))
             )
 
             result should have(

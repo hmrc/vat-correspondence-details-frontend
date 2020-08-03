@@ -66,7 +66,9 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
     }
   }
 
-  def showNoExistingEmail: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate).async { implicit user =>
+  def showNoExistingEmail: Action[AnyContent] = (
+    contactPreferencePredicate andThen paperPrefPredicate andThen inFlightContactPrefPredicate
+    ).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>

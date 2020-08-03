@@ -29,7 +29,7 @@ class EmailChangeSuccessPageSpec extends BasePageISpec {
 
   val successEmailPath = "/email-address-confirmation"
 
-  val session: Map[String, String] = Map(SessionKeys.emailChangeSuccessful -> "true")
+  val session: Map[String, String] = Map(SessionKeys.emailChangeSuccessful -> "true") ++ formatInflightChange(Some("false"))
 
   "Calling the EmailChangeSuccessController.show method" when {
 
