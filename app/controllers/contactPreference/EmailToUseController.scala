@@ -29,17 +29,18 @@ import models.errors.ErrorModel
 import models.{No, User, Yes, YesNo}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, Result}
-import services.VatSubscriptionService
+import services.{EmailVerificationService, VatSubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.LoggerUtil.logWarn
 import views.html.contactPreference.EmailToUseView
-import utils.LoggerUtil.{logInfo, logWarn}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                      val errorHandler: ErrorHandler,
-                                     emailToUseView: EmailToUseView)
+                                     emailToUseView: EmailToUseView,
+                                     emailVerificationService: EmailVerificationService)
                                     (implicit val appConfig: AppConfig,
                                      authComps: AuthPredicateComponents,
                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -48,8 +49,8 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
 
   def show: Action[AnyContent] = (contactPreferencePredicate andThen
-                                  paperPrefPredicate andThen
-                                  inFlightContactPrefPredicate).async { implicit user =>
+    paperPrefPredicate andThen
+    inFlightContactPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       user.session.get(SessionKeys.contactPrefUpdate) match {
         case Some("true") =>
@@ -79,8 +80,8 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
 
 
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen
-                                    paperPrefPredicate andThen
-                                    inFlightContactPrefPredicate).async { implicit user =>
+    paperPrefPredicate andThen
+    inFlightContactPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
 
       user.session.get(SessionKeys.contactPrefUpdate) match {
@@ -92,7 +93,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
               error =>
                 Future.successful(BadRequest(emailToUseView(error, email))),
               {
-                case Yes => updateCommsPreference(user.vrn)
+                case Yes => handleEmailVerification(email)
                 case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney()))
               }
             )
@@ -105,18 +106,29 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
     }
   }
 
+  private def handleEmailVerification(email: String)(implicit user: User[_]): Future[Result] = {
+    emailVerificationService.isEmailVerified(email).flatMap {
+      case Some(true) => updateCommsPreference(user.vrn)
+      case _ => emailVerificationService.createEmailVerificationRequest(email, controllers.email.routes.VerifyEmailController.contactPrefShow().url).map {
+        case Some(true) => Redirect(controllers.email.routes.VerifyEmailController.contactPrefShow())
+        case Some(false) => Redirect(routes.EmailToUseController.submit())
+        case _ => errorHandler.showInternalServerError
+      }
+    }
+  }
+
   private def updateCommsPreference(vrn: String)(implicit hc: HeaderCarrier, user: User[_]): Future[Result] =
     vatSubscriptionService.updateContactPreference(vrn, ContactPreference.digital) map {
-    case Right(UpdatePPOBSuccess(_)) =>
-      Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
-        .addingToSession(SessionKeys.letterToEmailChangeSuccessful -> "true")
+      case Right(UpdatePPOBSuccess(_)) =>
+        Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
+          .addingToSession(SessionKeys.letterToEmailChangeSuccessful -> "true")
 
-    case Left(ErrorModel(CONFLICT, _)) =>
-      logWarn("[EmailToUseController][updateCommsPreference] - There is an update request " +
-        "already in progress. Redirecting user to manage-vat overview page.")
-      Redirect(appConfig.manageVatSubscriptionServicePath)
+      case Left(ErrorModel(CONFLICT, _)) =>
+        logWarn("[EmailToUseController][updateCommsPreference] - There is an update request " +
+          "already in progress. Redirecting user to manage-vat overview page.")
+        Redirect(appConfig.manageVatSubscriptionServicePath)
 
-    case Left(_) =>
-      errorHandler.showInternalServerError
-  }
+      case Left(_) =>
+        errorHandler.showInternalServerError
+    }
 }
