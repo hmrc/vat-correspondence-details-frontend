@@ -61,7 +61,7 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
       Some(VatSubscriptionStub.currentMobile),
       None,
       Some("testemail@test.com"),
-      None
+      Some(true)
     )),
     Some("www.pepsi.biz")
   )

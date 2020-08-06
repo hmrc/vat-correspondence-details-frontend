@@ -90,6 +90,7 @@ object VatSubscriptionStub extends WireMockMethods {
       ),
       "contactDetails" -> Json.obj(
         "emailAddress" -> "testemail@test.com",
+        "emailVerified" -> true,
         "primaryPhoneNumber" -> currentLandline,
         "mobileNumber" -> currentMobile
       ),

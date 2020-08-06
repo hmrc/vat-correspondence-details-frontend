@@ -25,7 +25,7 @@ import models.{No, Yes, YesNo}
 import pages.BasePageISpec
 import play.api.libs.ws.WSResponse
 import play.api.http.Status
-import stubs.{EmailVerificationStub, VatSubscriptionStub}
+import stubs.VatSubscriptionStub
 
 class EmailToUsePageSpec extends BasePageISpec {
 
@@ -143,15 +143,13 @@ class EmailToUsePageSpec extends BasePageISpec {
 
       "the user selects 'Yes'" should {
 
-        "redirect to the the Confirm Email page" in {
+        "redirect to the the confirmation page" in {
 
           given.user.isAuthenticated
 
           When("a successful vat subscription response is stubbed")
+          VatSubscriptionStub.stubCustomerInfo
           VatSubscriptionStub.stubUpdateContactPreference
-
-          And("the email verification call is stubbed")
-          EmailVerificationStub.stubEmailVerified("test@test.com")
 
           And("'Yes' is selected")
           val res = submit(Yes)
@@ -165,7 +163,7 @@ class EmailToUsePageSpec extends BasePageISpec {
 
       "the user selects 'No'" should {
 
-        "redirect to the the Confirm Email page" in {
+        "redirect to the the capture email address page" in {
 
           given.user.isAuthenticated
 

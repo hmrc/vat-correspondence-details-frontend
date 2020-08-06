@@ -118,24 +118,22 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
     }
   }
 
-  def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate andThen inFlightContactPrefPredicate).async {
-    implicit user =>
-
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
-
-      if (appConfig.features.letterToConfirmedEmailEnabled()) {
-        extractSessionEmail match {
-          case Some(email) => emailVerificationService.isEmailVerified(email).flatMap {
-            case Some(true) => sendUpdateRequest(email)
-            case _ =>
-              logDebug("[EmailVerificationController][checkVerificationStatus] Email has not yet been verified.")
-              Future.successful(Redirect(routes.VerifyEmailController.contactPrefSendVerification()))
-          }
-          case _ => Future.successful(handleNoEmail)
+  def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen
+                                                      paperPrefPredicate andThen
+                                                      inFlightContactPrefPredicate).async { implicit user =>
+    if (appConfig.features.letterToConfirmedEmailEnabled()) {
+      extractSessionEmail match {
+        case Some(email) => emailVerificationService.isEmailVerified(email).flatMap {
+          case Some(true) => sendUpdateRequest(email)
+          case _ =>
+            logDebug("[EmailVerificationController][checkVerificationStatus] Email has not yet been verified.")
+            Future.successful(Redirect(routes.VerifyEmailController.contactPrefSendVerification()))
         }
-      } else {
-        Future.successful(NotFound(errorHandler.notFoundTemplate))
+        case _ => Future.successful(handleNoEmail)
       }
+    } else {
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
+    }
   }
 
   def btaVerifyEmailRedirect(): Action[AnyContent] = blockAgentPredicate.async {
