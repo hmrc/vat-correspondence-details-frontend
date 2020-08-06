@@ -25,10 +25,8 @@
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@questionContent = {
-    <h1 id="page-heading" class="heading-large">@messages("captureEmail.title")</h1>
-
-    <span class=form-hint>@messages("captureEmail.hint")</span>
+@formHint = {
+  <span class="form-hint">@messages("captureEmail.hint")</span>
 }
 
     @mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
@@ -49,8 +47,8 @@
             <div class="form-group">
             @text(
                 field = emailForm("email"),
-                label = messages("captureEmail.title"),
-                additionalContent = Some(questionContent)
+                pageTitle = messages("captureEmail.title"),
+                additionalContent = Some(formHint)
             )
             </div>
 

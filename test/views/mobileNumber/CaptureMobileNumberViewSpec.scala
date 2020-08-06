@@ -35,14 +35,14 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
       "there are no errors in the form" should {
 
         lazy val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
-        implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
           document.title shouldBe "What is the mobile number? - Business tax account - GOV.UK"
         }
 
         "have the correct heading" in {
-          elementText("#heading-text") shouldBe "What is the mobile number?"
+          elementText("h1") shouldBe "What is the mobile number?"
         }
 
         "have a back link" which {
@@ -57,7 +57,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct field hint" in {
-          elementText("#page-label") shouldBe
+          elementText(".form-hint") shouldBe
             "You need to enter the country code for international numbers, like 00447946 123456. You cannot enter a plus sign."
         }
 
@@ -91,7 +91,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
       "there are errors in the form" should {
         lazy val view = injectedView(mobileNumberForm(testValidationMobile)
           .withError("mobileNumber", messages("captureMobile.error.notChanged")),testValidationMobile)(user, messages, mockConfig)
-        implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
           document.title shouldBe "Error: What is the mobile number? - Business tax account - GOV.UK"
@@ -119,7 +119,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
           mockConfig.features.btaEntryPointEnabled(false)
           injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(user, messages, mockConfig)
         }
-        lazy implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have a back link" which {
 
@@ -134,7 +134,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
 
       "there are no errors in the form" should {
         lazy val view = injectedView(mobileNumberForm(testValidationMobile),testValidationMobile)(agent, messages, mockConfig)
-        implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
           document.title shouldBe "What is the mobile number? - Your client’s VAT details - GOV.UK"

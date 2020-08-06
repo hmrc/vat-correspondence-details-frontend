@@ -28,14 +28,12 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
   val injectedView: CaptureWebsiteView = injector.instanceOf[CaptureWebsiteView]
 
   private object Selectors {
-    val pageHeading = "#heading-text"
-    val pageLabel: String = "#heading-label"
+    val pageHeading = "h1"
+    val formHint: String = ".form-hint"
     val backLink = "#content > article > a"
     val form = "form"
     val websiteField = "#website"
     val continueButton = "button"
-    val errorSummary = "#error-summary-heading"
-    val websiteFormGroup = "#content > article > form > div:nth-child(1)"
     val removeWebsite = "#remove-website"
   }
 
@@ -49,7 +47,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           lazy val view: Html =
             injectedView(websiteForm(testWebsite).fill(testWebsite), testWebsite)(user, messages, mockConfig)
 
-          lazy implicit val document: Document = Jsoup.parse(view.body)
+          implicit lazy val document: Document = Jsoup.parse(view.body)
 
           "have the correct document title" in {
             document.title shouldBe "What’s the website address? - Business tax account - GOV.UK"
@@ -71,7 +69,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           }
 
           "have the correct hint text" in {
-            elementText(Selectors.pageLabel) shouldBe "For example, www.abc.co..."
+            elementText(Selectors.formHint) shouldBe "For example, www.abc.co..."
           }
 
           "have the website form with the correct form action" in {
@@ -115,7 +113,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
         lazy val view = injectedView(websiteForm(testWebsite).bind(
           Map("website" -> testWebsite)
         ), testWebsite)(user, messages, mockConfig)
-        implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
           document.title shouldBe "Error: What’s the website address? - Business tax account - GOV.UK"
@@ -158,7 +156,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
 
       "there are no errors in the form" should {
         lazy val view = injectedView(websiteForm(testWebsite).fill(testWebsite), testWebsite)(agent, messages, mockConfig)
-        implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
           document.title shouldBe "What’s the website address? - Your client’s VAT details - GOV.UK"

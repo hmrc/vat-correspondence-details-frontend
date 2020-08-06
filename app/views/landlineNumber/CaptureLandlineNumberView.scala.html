@@ -23,10 +23,8 @@
 
 @(landlineForm: Form[String], currentLandline: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@questionContent = {
-    <h1 id="page-heading">
-        <label id="heading-text" class="heading-large">@messages("captureLandline.title")</label>
-        <label id="heading-label" class="form-hint">@messages("captureLandline.hint")</label></h1>
+@formHint = {
+  <span class="form-hint">@messages("captureLandline.hint")</span>
 }
 
 @mainTemplate(
@@ -39,11 +37,11 @@
     @errorSummary(messages("common.error.heading"), landlineForm)
 
     @form(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {
-        <div class ="form-group">
+        <div class="form-group">
         @text(
             field = landlineForm("landlineNumber"),
-            label = "",
-            additionalContent = Some(questionContent)
+            pageTitle = messages("captureLandline.title"),
+            additionalContent = Some(formHint)
         )
         </div>
 
