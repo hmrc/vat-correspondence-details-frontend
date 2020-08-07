@@ -23,10 +23,8 @@
 
 @(mobileNumberForm: Form[String], currentMobile: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@questionContent = {
-    <h1 id="page-heading" class="heading-large">@messages("captureMobile.title")</h1>
-
-    <span class=form-hint>@messages("captureMobile.hint")</span>
+@formHint = {
+  <span class="form-hint">@messages("captureMobile.hint")</span>
 }
 
 @mainTemplate(
@@ -40,11 +38,11 @@
 
     @form(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
 
-        <div class ="form-group">
+        <div class="form-group">
         @text(
             field = mobileNumberForm("mobileNumber"),
-            label = messages("captureMobile.title"),
-            additionalContent = Some(questionContent)
+            pageTitle = messages("captureMobile.title"),
+            additionalContent = Some(formHint)
         )
         </div>
 

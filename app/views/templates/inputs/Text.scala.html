@@ -17,24 +17,23 @@
 @this()
 
 @(field: Field,
-        label: String,
-        labelHidden: Boolean = true,
-        additionalContent: Option[Html] = None)(implicit messages: Messages)
+  pageTitle: String,
+  additionalContent: Option[Html] = None)(implicit messages: Messages)
 
 <div class="form-field@if(field.hasErrors){--error panel-border-narrow}">
 
-    @additionalContent.map { content => @content }
+  <h1 id="page-heading"><label for="@field.id" class="heading-large">@messages(pageTitle)</label></h1>
 
-    <label for="@field.id" class="form-label @if(labelHidden){visuallyhidden}">@label</label>
+  @additionalContent.map { content => @content }
 
-    @field.errors.headOption.map { error =>
-        <span class="error-message" role="tooltip">
-            @messages(error.message, error.args: _*)
-        </span>
-    }
+  @field.errors.headOption.map { error =>
+    <span class="error-message" role="tooltip">
+      @messages(error.message, error.args: _*)
+    </span>
+  }
 
-    <input class="form-control input--no-spinner"
-    name="@field.name"
-    id="@field.name"
-    value="@field.value.getOrElse("")"/>
+  <input class="form-control input--no-spinner"
+         name="@field.name"
+         id="@field.name"
+         value="@field.value.getOrElse("")"/>
 </div>

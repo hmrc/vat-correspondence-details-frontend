@@ -23,10 +23,8 @@
 
 @(websiteForm: Form[String], currentWebsite: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@questionContent = {
-    <h1 id="page-heading" class="heading-large">@messages("captureWebsite.title")</h1>
-
-    <span class=form-hint>@messages("captureWebsite.hint")</span>
+@formHint = {
+  <span class="form-hint">@messages("captureWebsite.hint")</span>
 }
 
 @mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title")) else messages("captureWebsite.title")) {
@@ -39,8 +37,8 @@
         <div class="form-group">
         @text(
             field = websiteForm("website"),
-            label = messages("captureWebsite.title"),
-            additionalContent = Some(questionContent)
+            pageTitle = messages("captureWebsite.title"),
+            additionalContent = Some(formHint)
         )
         </div>
 

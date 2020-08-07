@@ -27,8 +27,8 @@ class TextHelperSpec extends ViewBaseSpec {
   val injectedView: Text = inject[Text]
 
   val fieldName = "fieldName"
-  val label = "myLabel"
-  val field = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(), Some("text"))
+  val title = "Title"
+  val field: Field = Field(FeatureSwitchForm.form, fieldName, Seq(), None, Seq(), Some("text"))
 
   "The Text input form helper" when {
 
@@ -39,13 +39,13 @@ class TextHelperSpec extends ViewBaseSpec {
         val expectedMarkup = Html(
           s"""
              |<div class="form-field">
-             |  <label for="$fieldName" class="form-label visuallyhidden">$label</label>
+             |  <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
              |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
              |</div>
              |""".stripMargin
         )
 
-        val result = injectedView(field, label)
+        val result = injectedView(field, title)
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }
@@ -60,7 +60,7 @@ class TextHelperSpec extends ViewBaseSpec {
         val expectedMarkup = Html(
           s"""
              |<div class="form-field--error panel-border-narrow">
-             |  <label for="$fieldName" class="form-label visuallyhidden">$label</label>
+             |  <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
              |  <span class="error-message" role="tooltip">
              |    ERROR
              |  </span>
@@ -69,26 +69,7 @@ class TextHelperSpec extends ViewBaseSpec {
              |""".stripMargin
         )
 
-        val result = injectedView(errorField, label)
-
-        formatHtml(result) shouldBe formatHtml(expectedMarkup)
-      }
-    }
-
-    "labelHidden is set to false" should {
-
-      "not apply the visuallyhidden class to the label" in {
-
-        val expectedMarkup = Html(
-          s"""
-             |<div class="form-field">
-             |  <label for="$fieldName" class="form-label ">$label</label>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
-             |</div>
-             |""".stripMargin
-        )
-
-        val result = injectedView(field, label, labelHidden = false)
+        val result = injectedView(errorField, title)
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }
@@ -101,20 +82,17 @@ class TextHelperSpec extends ViewBaseSpec {
         val expectedMarkup = Html(
           s"""
              |<div class="form-field">
+             |  <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
              |  <p>Additional HTML</p>
-             |  <label for="$fieldName" class="form-label visuallyhidden">$label</label>
              |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
              |</div>
              |""".stripMargin
         )
 
-        val result =
-          injectedView(field, label, additionalContent = Some(Html("<p>Additional HTML</p>")))
+        val result = injectedView(field, title, additionalContent = Some(Html("<p>Additional HTML</p>")))
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }
     }
-
-
   }
 }

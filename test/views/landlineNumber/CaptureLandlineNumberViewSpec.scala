@@ -35,8 +35,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
       "there are no errors in the form" should {
 
         lazy val view = injectedView(landlineNumberForm(testValidationLandline), testValidationLandline)(user, messages, mockConfig)
-        implicit val document: Document = Jsoup.parse(view.body)
-        val fieldLabel: String = "#content > article > form > div > div"
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
           document.title shouldBe "What is the landline number? - Business tax account - GOV.UK"
@@ -57,13 +56,9 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
           }
         }
 
-        "have the correct field hint" in {
-          elementText(s"$fieldLabel > span.form-hint") shouldBe
+        "have the correct hint text" in {
+          elementText(".form-hint") shouldBe
             "You need to enter the country code for international numbers, like 00441632 960000. You cannot enter a plus sign."
-        }
-
-        "have the correct visually hidden text" in {
-          elementText(s"$fieldLabel > label.visuallyhidden") shouldBe "What is the landline number?"
         }
 
         "have a link to remove the landline" which {
@@ -97,7 +92,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
         lazy val view = injectedView(landlineNumberForm(testValidationLandline).bind(
           Map("landlineNumber" -> testValidationLandline)
         ), testValidationLandline)(user, messages, mockConfig)
-        implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
           document.title shouldBe "Error: What is the landline number? - Business tax account - GOV.UK"
@@ -125,7 +120,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
           mockConfig.features.btaEntryPointEnabled(false)
           injectedView(landlineNumberForm(testValidationLandline), testValidationLandline)(user, messages, mockConfig)
         }
-        lazy implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have a back link" which {
 
@@ -140,7 +135,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
 
       "there are no errors in the form" should {
         lazy val view = injectedView(landlineNumberForm(testValidationLandline), testValidationLandline)(agent, messages, mockConfig)
-        implicit val document: Document = Jsoup.parse(view.body)
+        implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
           document.title shouldBe "What is the landline number? - Your client’s VAT details - GOV.UK"

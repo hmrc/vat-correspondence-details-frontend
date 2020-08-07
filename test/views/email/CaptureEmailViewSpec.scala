@@ -35,7 +35,6 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val emailField = "#email"
     val continueButton = "button"
     val errorSummary = "#error-summary-heading"
-    val emailFormGroup = "#content > article > form > div:nth-child(1)"
     val removeEmail = "summary"
     val removeEmailDesc = ".panel-border-narrow"
     val removeEmailLink = ".panel-border-narrow a"
