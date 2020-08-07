@@ -160,6 +160,14 @@ object CustomerInfoConstants {
     Some(digital)
   )
 
+  val customerInfoEmailUnverified: CustomerInformation = fullCustomerInfoModel.copy(
+    ppob = fullPPOBModel.copy(
+      contactDetails = Some(fullContactDetailsModel.copy(
+        emailVerified = Some(false)
+      ))
+    )
+  )
+
   val minCustomerInfoModel: CustomerInformation = CustomerInformation(minPPOBModel, None, None, None, None, None, None)
 
   val customerInfoPendingAddressModel: CustomerInformation = fullCustomerInfoModel.copy(

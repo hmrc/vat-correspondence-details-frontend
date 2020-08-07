@@ -50,7 +50,7 @@ class EmailChangeSuccessPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.OK),
-          elementText("#preference-message")(Messages("changeSuccess.helpOne.digital"))
+          elementText("#preference-message")(Messages("changeSuccess.helpOne.emailVerified"))
         )
       }
     }

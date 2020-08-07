@@ -17,7 +17,7 @@
 package controllers.contactPreference
 
 import common.SessionKeys
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
@@ -29,8 +29,7 @@ import models.errors.ErrorModel
 import models.{No, User, Yes, YesNo}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, Result}
-import services.{EmailVerificationService, VatSubscriptionService}
-import uk.gov.hmrc.http.HeaderCarrier
+import services.VatSubscriptionService
 import utils.LoggerUtil.logWarn
 import views.html.contactPreference.EmailToUseView
 
@@ -38,9 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscriptionService,
-                                     val errorHandler: ErrorHandler,
-                                     emailToUseView: EmailToUseView,
-                                     emailVerificationService: EmailVerificationService)
+                                     emailToUseView: EmailToUseView)
                                     (implicit val appConfig: AppConfig,
                                      authComps: AuthPredicateComponents,
                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -49,8 +46,8 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
 
   def show: Action[AnyContent] = (contactPreferencePredicate andThen
-    paperPrefPredicate andThen
-    inFlightContactPrefPredicate).async { implicit user =>
+                                  paperPrefPredicate andThen
+                                  inFlightContactPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
       user.session.get(SessionKeys.contactPrefUpdate) match {
         case Some("true") =>
@@ -67,21 +64,21 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
             case Some(email) => Ok(emailToUseView(form, email))
               .addingToSession(SessionKeys.validationEmailKey -> email)
               .addingToSession(SessionKeys.prepopulationEmailKey -> email)
-            case _ => errorHandler.showInternalServerError
+            case _ => authComps.errorHandler.showInternalServerError
           }
 
         case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
       }
     } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
+      Future.successful(authComps.errorHandler.showNotFoundError)
     }
 
   }
 
 
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen
-    paperPrefPredicate andThen
-    inFlightContactPrefPredicate).async { implicit user =>
+                                    paperPrefPredicate andThen
+                                    inFlightContactPrefPredicate).async { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()) {
 
       user.session.get(SessionKeys.contactPrefUpdate) match {
@@ -93,32 +90,31 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
               error =>
                 Future.successful(BadRequest(emailToUseView(error, email))),
               {
-                case Yes => handleEmailVerification(email)
+                case Yes => handleDynamicRouting
                 case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney()))
               }
             )
-            case _ => Future.successful(errorHandler.showInternalServerError)
+            case _ => Future.successful(authComps.errorHandler.showInternalServerError)
           }
         case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
       }
     } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
+      Future.successful(authComps.errorHandler.showNotFoundError)
     }
   }
 
-  private def handleEmailVerification(email: String)(implicit user: User[_]): Future[Result] = {
-    emailVerificationService.isEmailVerified(email).flatMap {
-      case Some(true) => updateCommsPreference(user.vrn)
-      case _ => emailVerificationService.createEmailVerificationRequest(email, controllers.email.routes.VerifyEmailController.contactPrefShow().url).map {
-        case Some(true) => Redirect(controllers.email.routes.VerifyEmailController.contactPrefShow())
-        case Some(false) => Redirect(routes.EmailToUseController.submit())
-        case _ => errorHandler.showInternalServerError
-      }
+  private def handleDynamicRouting(implicit user: User[_]): Future[Result] =
+    vatSubscriptionService.getCustomerInfo(user.vrn).flatMap {
+      case Right(details) =>
+        details.ppob.contactDetails.flatMap(_.emailVerified) match {
+          case Some(true) => updateCommsPreference
+          case _ => Future.successful(Redirect(controllers.email.routes.VerifyEmailController.updateContactPrefEmail()))
+        }
+      case Left(_) => Future.successful(authComps.errorHandler.showInternalServerError)
     }
-  }
 
-  private def updateCommsPreference(vrn: String)(implicit hc: HeaderCarrier, user: User[_]): Future[Result] =
-    vatSubscriptionService.updateContactPreference(vrn, ContactPreference.digital) map {
+  private def updateCommsPreference(implicit user: User[_]): Future[Result] =
+    vatSubscriptionService.updateContactPreference(user.vrn, ContactPreference.digital) map {
       case Right(UpdatePPOBSuccess(_)) =>
         Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
           .addingToSession(SessionKeys.letterToEmailChangeSuccessful -> "true")
@@ -129,6 +125,6 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
         Redirect(appConfig.manageVatSubscriptionServicePath)
 
       case Left(_) =>
-        errorHandler.showInternalServerError
+        authComps.errorHandler.showInternalServerError
     }
 }

@@ -17,13 +17,13 @@
 package controllers.contactPreference
 
 import assets.BaseTestConstants._
-import assets.CustomerInfoConstants.fullCustomerInfoModel
+import assets.CustomerInfoConstants.{customerInfoEmailUnverified, fullCustomerInfoModel}
 import common.SessionKeys
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import controllers.ControllerBaseSpec
 import forms.YesNoForm.yesNo
-import mocks.MockEmailVerificationService
 import models.contactPreferences.ContactPreference
-import models.customerInformation.UpdatePPOBSuccess
+import models.customerInformation.{CustomerInformation, UpdatePPOBSuccess}
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -34,10 +34,10 @@ import views.html.contactPreference.EmailToUseView
 
 import scala.concurrent.Future
 
-class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
+class EmailToUseControllerSpec extends ControllerBaseSpec {
 
-  def mockVatSubscriptionCall(): Unit =
-    mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
+  def mockVatSubscriptionCall(result: HttpGetResult[CustomerInformation] = Right(fullCustomerInfoModel)): Unit =
+    mockGetCustomerInfo("999999999")(Future.successful(result))
 
   val testValidationEmail: String = "validation@example.com"
 
@@ -55,17 +55,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
 
   val view: EmailToUseView = injector.instanceOf[EmailToUseView]
 
-  def target(): EmailToUseController = {
-    new EmailToUseController(
-      mockVatSubscriptionService,
-      mockErrorHandler,
-      view,
-      mockEmailVerificationService
-    )
-  }
-
-  private def mockVerifiedEmail() = mockGetEmailVerificationState(testValidationEmail)(Future.successful(Some(true)))
-  private def mockUnverifiedEmail() = mockGetEmailVerificationState(testValidationEmail)(Future.successful(Some(false)))
+  def target(): EmailToUseController = new EmailToUseController(mockVatSubscriptionService, view)
 
   "Calling the show action in EmailToUseController" when {
 
@@ -75,7 +65,6 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
-          mockIndividualAuthorised()
           target().show()(existingEmailSessionRequest)
         }
 
@@ -99,7 +88,6 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
         lazy val result = {
           mockVatSubscriptionCall()
           mockConfig.features.letterToConfirmedEmailEnabled(true)
-          mockIndividualAuthorised()
           target().show()(noEmailSessionRequest)
         }
 
@@ -122,7 +110,6 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
-          mockIndividualAuthorised()
           target().show()(noPrefUpdateValueSessionRequest)
         }
 
@@ -133,7 +120,6 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
         "redirect to the preference select page" in {
           redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
         }
-
       }
     }
 
@@ -143,7 +129,6 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
 
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(false)
-          mockIndividualAuthorised()
           target().show()(existingEmailSessionRequest)
         }
         status(result) shouldBe Status.NOT_FOUND
@@ -165,77 +150,34 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
               SessionKeys.contactPrefUpdate -> "true"
             )
 
-        "the contact preference has been updated successfully" should {
+        "the user has a verified email address in ETMP" when {
 
-          lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            mockIndividualAuthorised()
-            mockUpdateContactPreference(
-              vrn, ContactPreference.digital)(Future(Right(UpdatePPOBSuccess("success")))
-            )
-            mockVerifiedEmail()
-            target().submit(yesRequest)
-          }
-
-          "return 303 (SEE OTHER)" in {
-            status(result) shouldBe Status.SEE_OTHER
-          }
-
-          s"Redirect to the '${controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url}'" in {
-            redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url)
-          }
-        }
-
-        "there was a conflict returned when trying to update the contact preference" should {
-
-          lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            mockIndividualAuthorised()
-            mockUpdateContactPreference(
-              vrn, ContactPreference.digital)(Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress")))
-            )
-            mockVerifiedEmail()
-            target().submit(yesRequest)
-          }
-
-          "return 303" in {
-            status(result) shouldBe Status.SEE_OTHER
-          }
-
-          "redirect the user to the manage-vat overview page" in {
-            redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
-          }
-        }
-
-        "there was an unexpected error trying to update the contact preference" should {
-
-          lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            mockIndividualAuthorised()
-            mockUpdateContactPreference(vrn, ContactPreference.digital)(
-              Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't update contact preference"))))
-            mockVerifiedEmail()
-            target().submit(yesRequest)
-          }
-
-          "return 500" in {
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-
-          "show the internal server error page" in {
-            messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
-          }
-        }
-
-        "User has an unverified email address" when {
-
-          "a successful verification attempt is made" should {
+          "the contact preference has been updated successfully" should {
 
             lazy val result = {
               mockConfig.features.letterToConfirmedEmailEnabled(true)
-              mockIndividualAuthorised()
-              mockUnverifiedEmail()
-              mockCreateEmailVerificationRequest(Future.successful(Some(true)))
+              mockVatSubscriptionCall()
+              mockUpdateContactPreference(vrn, ContactPreference.digital)(Future(Right(UpdatePPOBSuccess("success"))))
+              target().submit(yesRequest)
+            }
+
+            "return 303 (SEE OTHER)" in {
+              status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "redirect to the confirmation controller" in {
+              redirectLocation(result) shouldBe
+                Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url)
+            }
+          }
+
+          "there was a conflict returned when trying to update the contact preference" should {
+
+            lazy val result = {
+              mockConfig.features.letterToConfirmedEmailEnabled(true)
+              mockVatSubscriptionCall()
+              mockUpdateContactPreference(vrn, ContactPreference.digital)(
+                Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
               target().submit(yesRequest)
             }
 
@@ -243,39 +185,18 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
               status(result) shouldBe Status.SEE_OTHER
             }
 
-            "redirect the user to the confirmation screen" in {
-              redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyEmailController.contactPrefShow().url)
+            "redirect the user to the manage-vat overview page" in {
+              redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
             }
-
           }
 
-          "a verification attempt is made, but the email is already verified" should {
+          "there was an unexpected error trying to update the contact preference" should {
 
             lazy val result = {
               mockConfig.features.letterToConfirmedEmailEnabled(true)
-              mockIndividualAuthorised()
-              mockUnverifiedEmail()
-              mockCreateEmailVerificationRequest(Future.successful(Some(false)))
-              target().submit(yesRequest)
-            }
-
-            "return 303" in {
-              status(result) shouldBe Status.SEE_OTHER
-            }
-
-            "redirect the user to the form submit action" in {
-              redirectLocation(result) shouldBe Some(routes.EmailToUseController.submit().url)
-            }
-
-          }
-
-          "an error occurs while trying to send a verification request" should {
-
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              mockIndividualAuthorised()
-              mockUnverifiedEmail()
-              mockCreateEmailVerificationRequest(Future.successful(None))
+              mockVatSubscriptionCall()
+              mockUpdateContactPreference(vrn, ContactPreference.digital)(
+                Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't update contact preference"))))
               target().submit(yesRequest)
             }
 
@@ -283,6 +204,39 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
 
+            "show the internal server error page" in {
+              messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+            }
+          }
+        }
+
+        "the user does not have a verified email address in ETMP" should {
+
+          lazy val result = {
+            mockConfig.features.letterToConfirmedEmailEnabled(true)
+            mockVatSubscriptionCall(Right(customerInfoEmailUnverified))
+            target().submit(yesRequest)
+          }
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect the user to the verification route to update email and contact preference" in {
+            redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url)
+          }
+        }
+
+        "the customer info call fails" should {
+
+          lazy val result = {
+            mockConfig.features.letterToConfirmedEmailEnabled(true)
+            mockVatSubscriptionCall(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error")))
+            target().submit(yesRequest)
+          }
+
+          "return 500" in {
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
       }
@@ -343,7 +297,6 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
         "return an ISE" in {
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
-
       }
 
       s"the ${SessionKeys.contactPrefUpdate} key is not in session" should {
@@ -351,9 +304,8 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
         lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
           requestWithPaperPref
             .withFormUrlEncodedBody((yesNo, "yes"))
-            .withSession(
-              SessionKeys.validationEmailKey -> testValidationEmail
-            )
+            .withSession(SessionKeys.validationEmailKey -> testValidationEmail)
+
         lazy val result = {
           mockConfig.features.letterToConfirmedEmailEnabled(true)
           target().submit()(yesRequest)
@@ -371,14 +323,9 @@ class EmailToUseControllerSpec extends ControllerBaseSpec with MockEmailVerifica
 
     "the letterToConfirmedEmail switch is disabled" when {
 
-      lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-        requestWithPaperPref
-          .withFormUrlEncodedBody((yesNo, "no"))
-          .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail)
       lazy val result = {
         mockConfig.features.letterToConfirmedEmailEnabled(false)
-        mockIndividualAuthorised()
-        target().submit()(yesRequest)
+        target().submit()(requestWithPaperPref)
       }
 
       "return a 404" in {
