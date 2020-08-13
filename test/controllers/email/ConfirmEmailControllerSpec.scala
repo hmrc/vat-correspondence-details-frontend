@@ -119,12 +119,12 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     }
   }
 
-  "Calling the showNoExistingEmail action in ConfirmEmailController" when {
+  "Calling the showContactPref action in ConfirmEmailController" when {
 
     "there is an email in session" should {
 
       mockIndividualAuthorised()
-      lazy val result = TestConfirmEmailController.showNoExistingEmail(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
+      lazy val result = TestConfirmEmailController.showContactPref(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
 
       "return OK" in {
         status(result) shouldBe Status.OK
@@ -162,7 +162,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       lazy val result = {
         mockIndividualAuthorised()
-        TestConfirmEmailController.showNoExistingEmail(request.withSession(SessionKeys.currentContactPrefKey -> paper))
+        TestConfirmEmailController.showContactPref(request.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 303" in {
@@ -178,7 +178,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = TestConfirmEmailController.showNoExistingEmail(requestWithEmail)
+        val result = TestConfirmEmailController.showContactPref(requestWithEmail)
 
         status(result) shouldBe Status.FORBIDDEN
       }
