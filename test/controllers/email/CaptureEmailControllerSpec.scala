@@ -17,6 +17,7 @@
 package controllers.email
 
 import assets.CustomerInfoConstants.fullCustomerInfoModel
+import audit.models.{AttemptedContactPrefEmailAuditModel, AttemptedEmailAddressAuditModel}
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
@@ -219,6 +220,18 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           "add the new email to the session" in {
             session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidEmail)
           }
+
+          "audit the attempted email address change" in {
+            verifyExtendedAudit(
+              AttemptedEmailAddressAuditModel(
+                Some(testValidationEmail),
+                testValidEmail,
+                "999999999",
+                isAgent = false,
+                None
+              )
+            )
+          }
         }
 
         "the form is unsuccessfully submitted" should {
@@ -284,7 +297,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
     }
   }
 
-  "Calling the showEmail action" when {
+  "Calling the showPrefJourney action" when {
 
     "the letterToConfirmedEmail feature switch is turned on" when {
 
@@ -433,7 +446,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
     }
   }
 
-  "Calling the submitEmail action" when {
+  "Calling the submitPrefJourney action" when {
 
     "the letterToConfirmedEmail feature switch is turned on" when {
 
@@ -445,7 +458,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
             lazy val result = {
               mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().submit(request
+              target().submitPrefJourney(request
                 .withFormUrlEncodedBody("email" -> testValidEmail)
                 .withSession(
                   SessionKeys.validationEmailKey -> testValidationEmail,
@@ -455,11 +468,21 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
             }
             "redirect to the confirm email view" in {
               status(result) shouldBe Status.SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.email.routes.ConfirmEmailController.show().url)
+              redirectLocation(result) shouldBe Some(controllers.email.routes.ConfirmEmailController.showNoExistingEmail().url)
             }
 
             "add the new email to the session" in {
               session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidEmail)
+            }
+
+            "audit the attempted email address change" in {
+              verifyExtendedAudit(
+                AttemptedContactPrefEmailAuditModel(
+                  Some(testValidationEmail),
+                  testValidEmail,
+                  "999999999"
+                )
+              )
             }
           }
 

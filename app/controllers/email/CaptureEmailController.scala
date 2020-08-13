@@ -17,7 +17,7 @@
 package controllers.email
 
 import audit.AuditingService
-import audit.models.AttemptedEmailAddressAuditModel
+import audit.models.{AttemptedContactPrefEmailAuditModel, AttemptedEmailAddressAuditModel}
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
@@ -155,12 +155,10 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
           },
           email     => {
             auditService.extendedAudit(
-              AttemptedEmailAddressAuditModel(
+              AttemptedContactPrefEmailAuditModel(
                 Option(validation).filter(_.nonEmpty),
                 email,
-                user.vrn,
-                user.isAgent,
-                user.arn
+                user.vrn
               ),
               controllers.email.routes.CaptureEmailController.submitPrefJourney().url
             )
