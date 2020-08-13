@@ -162,7 +162,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
               ),
               controllers.email.routes.CaptureEmailController.submitPrefJourney().url
             )
-            Future.successful(Redirect(controllers.email.routes.ConfirmEmailController.showNoExistingEmail())
+            Future.successful(Redirect(controllers.email.routes.ConfirmEmailController.showContactPref())
               .addingToSession(SessionKeys.prepopulationEmailKey -> email))
           }
         )

@@ -468,7 +468,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
             }
             "redirect to the confirm email view" in {
               status(result) shouldBe Status.SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.email.routes.ConfirmEmailController.showNoExistingEmail().url)
+              redirectLocation(result) shouldBe Some(controllers.email.routes.ConfirmEmailController.showContactPref().url)
             }
 
             "add the new email to the session" in {

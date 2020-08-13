@@ -47,11 +47,11 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate){ implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
-        Future.successful(Ok(
+        Ok(
           confirmEmailView(
             CheckYourAnswersViewModel(
               question = "checkYourAnswers.emailAddress",
@@ -60,19 +60,19 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
               continueLink = routes.ConfirmEmailController.updateEmailAddress().url)
           )
-        ))
+        )
       case _ =>
-        Future.successful(Redirect(routes.CaptureEmailController.show()))
+        Redirect(routes.CaptureEmailController.show())
     }
   }
 
-  def showNoExistingEmail: Action[AnyContent] = (
+  def showContactPref: Action[AnyContent] = (
     contactPreferencePredicate andThen paperPrefPredicate andThen inFlightContactPrefPredicate
-    ).async { implicit user =>
+    ) { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>
-        Future.successful(Ok(
+        Ok(
           confirmEmailView(
             CheckYourAnswersViewModel(
               question = "checkYourAnswers.emailAddress",
@@ -81,9 +81,9 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
               continueLink = controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url)
           )
-        ))
+        )
       case _ =>
-        Future.successful(Redirect(routes.CaptureEmailController.show()))
+        Redirect(routes.CaptureEmailController.show())
     }
   }
 

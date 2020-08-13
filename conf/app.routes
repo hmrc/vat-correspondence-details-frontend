@@ -15,7 +15,7 @@ GET         /update-email-address                            controllers.email.C
 GET         /contact-preference/update-email-address         controllers.email.VerifyEmailController.updateContactPrefEmail
 
 # confirm email address where there is no existing email
-GET         /contact-preference/confirm-email-address        controllers.email.ConfirmEmailController.showNoExistingEmail
+GET         /contact-preference/confirm-email-address        controllers.email.ConfirmEmailController.showContactPref
 
 # verify email address
 GET         /verify-email-address                       controllers.email.VerifyEmailController.emailShow
