@@ -28,25 +28,28 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.email.VerifyEmailView
 import assets.BaseTestConstants.vrn
+import audit.models.ChangedContactPrefEmailAuditModel
 import models.errors.ErrorModel
 
 import scala.concurrent.Future
 import models.contactPreferences.ContactPreference._
+import org.mockito.Mockito.reset
 
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyEmailController extends VerifyEmailController(
-
     mockEmailVerificationService,
     mockErrorHandler,
     mockVatSubscriptionService,
-    injector.instanceOf[VerifyEmailView]
+    injector.instanceOf[VerifyEmailView],
+    mockAuditingService
   )
 
   lazy val emptyEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(SessionKeys.prepopulationEmailKey -> "")
 
-  val ppobAddress = PPOBAddress("", None, None, None, None, None, "")
+  val ppobAddress: PPOBAddress = PPOBAddress("", None, None, None, None, None, "")
+  val currentEmail = "current@email.com"
 
   def mockCustomer(): Unit = mockGetCustomerInfo(vrn)(Future.successful(Right(CustomerInformation(
     PPOB(ppobAddress, None, None), Some(PendingChanges(Some(PPOB(ppobAddress, None, None)), None)), None, None, None, None, Some("PAPER")
@@ -378,6 +381,14 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         "add emailChangeSuccessful to session" in {
           session(result).get(SessionKeys.emailChangeSuccessful) shouldBe Some("true")
         }
+
+        "audit the update of contact pref & email" in {
+          verifyExtendedAudit(ChangedContactPrefEmailAuditModel(
+            None,
+            testEmail,
+            vrn
+          ))
+        }
       }
     }
 
@@ -439,11 +450,14 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "redirect the user to the EmailChangeSuccess page" when {
 
       "a successful response is returned" which {
+
         lazy val updateEmailMockResponse = Future.successful(Right(UpdateEmailSuccess("success")))
 
         lazy val result = {
           mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
-          TestVerifyEmailController.sendUpdateRequest(testEmail)(new User[AnyContent](vrn))
+          TestVerifyEmailController.sendUpdateRequest(testEmail)(User(vrn)(request.withSession(
+            SessionKeys.validationEmailKey -> currentEmail
+          )))
         }
 
         s"has a status of $SEE_OTHER" in {
@@ -452,6 +466,14 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
         "redirects to the correct URL" in {
           redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+        }
+
+        "audit the update of contact pref & email" in {
+          verifyExtendedAudit(ChangedContactPrefEmailAuditModel(
+            Some(currentEmail),
+            testEmail,
+            vrn
+          ))
         }
       }
     }

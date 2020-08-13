@@ -16,6 +16,8 @@
 
 package controllers.email
 
+import audit.AuditingService
+import audit.models.ChangedContactPrefEmailAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicateComponents
@@ -37,7 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class VerifyEmailController @Inject()(val emailVerificationService: EmailVerificationService,
                                       val errorHandler: ErrorHandler,
                                       vatSubscriptionService: VatSubscriptionService,
-                                      verifyEmailView: VerifyEmailView)
+                                      verifyEmailView: VerifyEmailView,
+                                      auditService: AuditingService)
                                      (implicit val appConfig: AppConfig,
                                       mcc: MessagesControllerComponents,
                                       authComps: AuthPredicateComponents,
@@ -166,6 +169,11 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
   private[controllers] def sendUpdateRequest(email: String)(implicit user: User[_]): Future[Result] = {
     vatSubscriptionService.updateContactPrefEmail(user.vrn, email).map {
       case Right(_) =>
+        auditService.extendedAudit(ChangedContactPrefEmailAuditModel(
+          user.session.get(SessionKeys.validationEmailKey).filter(_.nonEmpty),
+          email,
+          user.vrn
+        ), routes.VerifyEmailController.updateContactPrefEmail().url)
         Redirect(controllers.email.routes.EmailChangeSuccessController.show())
           .addingToSession(SessionKeys.emailChangeSuccessful -> "true")
       case Left(ErrorModel(CONFLICT, _)) =>
