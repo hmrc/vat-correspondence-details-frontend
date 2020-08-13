@@ -16,6 +16,8 @@
 
 package controllers.contactPreference
 
+import audit.AuditingService
+import audit.models.PaperContactPreferenceAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
@@ -39,7 +41,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
                                             vatSubscriptionService: VatSubscriptionService,
-                                            val errorHandler: ErrorHandler)
+                                            val errorHandler: ErrorHandler,
+                                            auditService: AuditingService)
                                            (implicit val appConfig: AppConfig,
                                             ec: ExecutionContext,
                                             mcc: MessagesControllerComponents,
@@ -79,7 +82,7 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
           }
         },
         {
-          case Yes => updateCommsPreference(user.vrn)
+          case Yes => updateCommsPreference
           case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
         }
       )
@@ -88,18 +91,30 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
     }
   }
 
-  private def updateCommsPreference(vrn: String)(implicit hc: HeaderCarrier, user: User[_]): Future[Result] =
-    vatSubscriptionService.updateContactPreference(vrn, ContactPreference.paper) map {
+  private def updateCommsPreference(implicit hc: HeaderCarrier, user: User[_]): Future[Result] =
+    vatSubscriptionService.updateContactPreference(user.vrn, ContactPreference.paper) flatMap {
       case Right(UpdatePPOBSuccess(_)) =>
-        Redirect(routes.ContactPreferenceConfirmationController.show("letter").url)
-          .addingToSession(SessionKeys.emailToLetterChangeSuccessful -> "true")
+        vatSubscriptionService.getCustomerInfo(user.vrn) map {
+          case Right(details) =>
+            auditService.extendedAudit(
+              PaperContactPreferenceAuditModel(
+                displayAddress(details.ppob),
+                user.vrn
+              ),
+              controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber().url
+            )
+            Redirect(routes.ContactPreferenceConfirmationController.show("letter").url)
+              .addingToSession(SessionKeys.emailToLetterChangeSuccessful -> "true")
+          case _ => authComps.errorHandler.showInternalServerError
+        }
+
 
       case Left(ErrorModel(CONFLICT, _)) =>
         logWarn("[LetterPreferenceController][updateCommsPreference] - There is an update request " +
           "already in progress. Redirecting user to manage-vat overview page.")
-        Redirect(appConfig.manageVatSubscriptionServicePath)
+        Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
 
       case Left(_) =>
-        errorHandler.showInternalServerError
+        Future.successful(errorHandler.showInternalServerError)
     }
 }

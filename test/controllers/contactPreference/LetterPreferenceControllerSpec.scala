@@ -19,6 +19,7 @@ package controllers.contactPreference
 import assets.BaseTestConstants._
 import assets.CustomerInfoConstants._
 import assets.{CustomerInfoConstants, LetterPreferenceMessages}
+import audit.models.PaperContactPreferenceAuditModel
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
@@ -32,6 +33,7 @@ import play.api.http.Status
 import views.html.contactPreference.LetterPreferenceView
 import models.contactPreferences.ContactPreference._
 import models.customerInformation.UpdatePPOBSuccess
+import org.mockito.Mockito.reset
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
@@ -40,7 +42,7 @@ import scala.concurrent.Future
 class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 
   lazy val view: LetterPreferenceView = inject[LetterPreferenceView]
-  lazy val controller = new LetterPreferenceController(view, mockVatSubscriptionService, mockErrorHandler)
+  lazy val controller = new LetterPreferenceController(view, mockVatSubscriptionService, mockErrorHandler, mockAuditingService)
   lazy val requestWithSession: FakeRequest[AnyContentAsEmpty.type] = request.withSession((SessionKeys.currentContactPrefKey -> digital))
 
   "Calling .show()" when {
@@ -183,6 +185,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
               lazy val result = {
                 mockConfig.features.letterToConfirmedEmailEnabled(true)
                 mockIndividualAuthorised()
+                mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
                 mockUpdateContactPreference(
                   vrn, ContactPreference.paper)(Future(Right(UpdatePPOBSuccess("success")))
                 )
@@ -191,6 +194,18 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
               "return 303 (SEE OTHER)" in {
                 status(result) shouldBe Status.SEE_OTHER
+              }
+
+              "audit the change landline number event" in {
+                verifyExtendedAudit(
+                  PaperContactPreferenceAuditModel(
+                    "firstLine, codeOfMyPost",
+                    vrn,
+                    ContactPreference.digital,
+                    ContactPreference.paper
+                  )
+                )
+                reset(mockAuditingService)
               }
 
               s"Redirect to the '${controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url}'" in {

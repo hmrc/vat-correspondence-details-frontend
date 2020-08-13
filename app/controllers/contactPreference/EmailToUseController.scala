@@ -16,6 +16,8 @@
 
 package controllers.contactPreference
 
+import audit.AuditingService
+import audit.models.DigitalContactPreferenceAuditModel
 import common.SessionKeys
 import config.AppConfig
 import controllers.BaseController
@@ -37,7 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscriptionService,
-                                     emailToUseView: EmailToUseView)
+                                     emailToUseView: EmailToUseView,
+                                     auditService: AuditingService)
                                     (implicit val appConfig: AppConfig,
                                      authComps: AuthPredicateComponents,
                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -90,7 +93,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
               error =>
                 Future.successful(BadRequest(emailToUseView(error, email))),
               {
-                case Yes => handleDynamicRouting
+                case Yes => handleDynamicRouting(email)
                 case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney()))
               }
             )
@@ -103,19 +106,26 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
     }
   }
 
-  private def handleDynamicRouting(implicit user: User[_]): Future[Result] =
+  private def handleDynamicRouting(email: String)(implicit user: User[_]): Future[Result] =
     vatSubscriptionService.getCustomerInfo(user.vrn).flatMap {
       case Right(details) =>
         details.ppob.contactDetails.flatMap(_.emailVerified) match {
-          case Some(true) => updateCommsPreference
+          case Some(true) => updateCommsPreference(email)
           case _ => Future.successful(Redirect(controllers.email.routes.VerifyEmailController.updateContactPrefEmail()))
         }
       case Left(_) => Future.successful(authComps.errorHandler.showInternalServerError)
     }
 
-  private def updateCommsPreference(implicit user: User[_]): Future[Result] =
+  private def updateCommsPreference(email: String)(implicit user: User[_]): Future[Result] =
     vatSubscriptionService.updateContactPreference(user.vrn, ContactPreference.digital) map {
       case Right(UpdatePPOBSuccess(_)) =>
+        auditService.extendedAudit(
+          DigitalContactPreferenceAuditModel(
+            email,
+            user.vrn
+          ),
+          controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber().url
+        )
         Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
           .addingToSession(SessionKeys.letterToEmailChangeSuccessful -> "true")
 
