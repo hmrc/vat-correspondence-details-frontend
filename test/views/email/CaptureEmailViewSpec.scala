@@ -38,7 +38,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val removeEmail = "summary"
     val removeEmailDesc = ".panel-border-narrow"
     val removeEmailLink = ".panel-border-narrow a"
-    val onlyAddEmail = "#content > article > p"
+    val onlyAddEmail = "#content > article > form > div:nth-child(2) > div > p"
     val fieldLabel: String = "#content > article > form > div > div > span.form-hint"
     val hmrcPrivacyNotice: String = "#hmrc-privacy-notice"
     val hmrcPrivacyNoticeLink: String = "#hmrc-privacy-notice > a"

@@ -25,7 +25,10 @@
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@formHint = {
+@additionalContent = {
+    @if(currentEmail == "") {
+    <p>@messages("captureEmail.onlyAddEmail")</p>
+    }
   <span class="form-hint">@messages("captureEmail.hint")</span>
 }
 
@@ -40,15 +43,12 @@
 
         @errorSummary(messages("common.error.heading"), emailForm)
 
-        @if(currentEmail == "") {
-            <p>@messages("captureEmail.onlyAddEmail")</p>
-        }
         @form(action = submitFormAction) {
             <div class="form-group">
             @text(
                 field = emailForm("email"),
                 pageTitle = messages("captureEmail.title"),
-                additionalContent = Some(formHint)
+                additionalContent = Some(additionalContent)
             )
             </div>
 
