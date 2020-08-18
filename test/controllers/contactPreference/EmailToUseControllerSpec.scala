@@ -18,6 +18,7 @@ package controllers.contactPreference
 
 import assets.BaseTestConstants._
 import assets.CustomerInfoConstants.{customerInfoEmailUnverified, fullCustomerInfoModel}
+import audit.models.DigitalContactPreferenceAuditModel
 import common.SessionKeys
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import controllers.ControllerBaseSpec
@@ -26,6 +27,7 @@ import models.contactPreferences.ContactPreference
 import models.customerInformation.{CustomerInformation, UpdatePPOBSuccess}
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
@@ -55,7 +57,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
   val view: EmailToUseView = injector.instanceOf[EmailToUseView]
 
-  def target(): EmailToUseController = new EmailToUseController(mockVatSubscriptionService, view)
+  def target(): EmailToUseController = new EmailToUseController(mockVatSubscriptionService, view, mockAuditingService)
 
   "Calling the show action in EmailToUseController" when {
 
@@ -163,6 +165,18 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
             "return 303 (SEE OTHER)" in {
               status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "audit the change landline number event" in {
+              verifyExtendedAudit(
+                DigitalContactPreferenceAuditModel(
+                  testValidationEmail,
+                  vrn,
+                  ContactPreference.paper,
+                  ContactPreference.digital
+                )
+              )
+              reset(mockAuditingService)
             }
 
             "redirect to the confirmation controller" in {
