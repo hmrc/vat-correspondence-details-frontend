@@ -78,7 +78,6 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "uk.gov.hmrc" %% "auth-client" % authClientVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
-  "uk.gov.hmrc" %% "play-whitelist-filter" % playWhiteListFilterVersion,
   "com.typesafe.play" %% "play-json-joda" % playJsonJodaVersion
 )
 

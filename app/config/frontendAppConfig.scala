@@ -16,15 +16,13 @@
 
 package config
 
-import java.util.Base64
-
 import config.features.Features
 import config.{ConfigKeys => Keys}
 import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
-import play.api.Configuration
-import uk.gov.hmrc.play.binders.ContinueUrl
+import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
@@ -39,10 +37,6 @@ trait AppConfig {
   val unauthorisedSignOutUrl: String
   def routeToSwitchLanguage: String => Call
   def languageMap: Map[String, Lang]
-  val whitelistEnabled: Boolean
-  val whitelistedIps: Seq[String]
-  val whitelistExcludedPaths: Seq[Call]
-  val shutterPage: String
   val signInUrl: String
   val signInContinueUrl: String
   val govUkCommercialSoftware: String
@@ -98,7 +92,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   private lazy val signInBaseUrl: String = sc.getString(Keys.signInBaseUrl)
   private lazy val signInOrigin = sc.getString("appName")
   override lazy val signInUrl: String = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
-  override lazy val signInContinueUrl: String = ContinueUrl(manageVatSubscriptionServicePath).encodedUrl
+  override lazy val signInContinueUrl: String = SafeRedirectUrl(manageVatSubscriptionServicePath).encodedUrl
   override def feedbackSignOutUrl(identifier: String): String =
     s"$governmentGatewayHost/gg/sign-out?continue=${feedbackSurveyUrl(identifier)}"
   override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/gg/sign-out?continue=$signInContinueUrl"
@@ -108,17 +102,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.LanguageController.switchToLanguage(lang)
   override def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
-    "cymraeg" -> Lang("cy")
-  )
-
-  private def whitelistConfig(key: String): Seq[String] = Some(new String(Base64.getDecoder
-    .decode(sc.getString(key)), "UTF-8"))
-    .map(_.split(",")).getOrElse(Array.empty).toSeq
-
-  override lazy val whitelistEnabled: Boolean = sc.getBoolean(Keys.whitelistEnabled)
-  override lazy val whitelistedIps: Seq[String] = whitelistConfig(Keys.whitelistedIps)
-  override lazy val whitelistExcludedPaths: Seq[Call] = whitelistConfig(Keys.whitelistExcludedPaths).map(path => Call("GET", path))
-  override lazy val shutterPage: String = sc.getString(Keys.whitelistShutterPage)
+    "cymraeg" -> Lang("cy"))
 
   override lazy val govUkCommercialSoftware: String = sc.getString(Keys.govUkCommercialSoftware)
 
@@ -156,7 +140,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override def feedbackUrl(redirect: String): String =
     s"$contactFrontendService/contact/beta-feedback?service=$contactFormServiceIdentifier" +
-    s"&backUrl=${ContinueUrl(host + redirect).encodedUrl}"
+    s"&backUrl=${SafeRedirectUrl(host + redirect).encodedUrl}"
 
   override val accessibilityLinkUrl: String = sc.getString(Keys.vatSummaryFrontendServiceUrl) +
     sc.getString(Keys.vatSummaryAccessibilityUrl)
