@@ -232,3 +232,4 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     }
   }
 }
+
