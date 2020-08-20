@@ -3,6 +3,7 @@ base.back = Back
 base.confirmAndContinue = Confirm and continue
 base.finish = Finish
 base.pageTitle = {0} - {1} - GOV.UK
+base.clientFinish = Back to client’s details
 
 banner.newService = This is a new service – your
 banner.feedback = feedback

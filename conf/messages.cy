@@ -3,6 +3,7 @@ base.back = Yn ôl
 base.confirmAndContinue = Cadarnhau ac yn eich blaen
 base.finish = Gorffen
 base.pageTitle = {0} - {1} - GOV.UK
+base.clientFinish = Yn ôl i fanylion y cleient
 
 banner.newService = Gwasanaeth newydd yw hwn – bydd eich
 banner.feedback = adborth
