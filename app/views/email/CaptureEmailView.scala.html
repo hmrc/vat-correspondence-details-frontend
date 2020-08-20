@@ -32,14 +32,18 @@
   <span class="form-hint">@messages("captureEmail.hint")</span>
 }
 
-    @mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
+@mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
 
-    @if(letterToConfirmedEmail) {
-            <a class="link-back" href="@controllers.contactPreference.routes.AddEmailAddressController.show().url">@messages("base.back")</a>
+    @if(letterToConfirmedEmail){
+        @currentEmail match {
+        case "" => {
+        <a class="link-back" href="@controllers.contactPreference.routes.AddEmailAddressController.show().url">@messages("base.back")</a>}
+        case _ => {
+        <a class="link-back" href="@controllers.contactPreference.routes.EmailToUseController.show().url">@messages("base.back")</a>}
+        }
 
-    } else {
-            <a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>
-    }
+    } else {<a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>}
+
 
         @errorSummary(messages("common.error.heading"), emailForm)
 
