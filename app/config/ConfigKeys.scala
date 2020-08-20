@@ -30,10 +30,6 @@ object ConfigKeys {
 
   val signInBaseUrl: String = "signIn.url"
 
-  val whitelistEnabled: String = "whitelist.enabled"
-  val whitelistedIps: String = "whitelist.allowedIps"
-  val whitelistExcludedPaths: String = "whitelist.excludedPaths"
-  val whitelistShutterPage: String = "whitelist.shutter-page-url"
   val vatAgentClientLookupServiceUrl: String = "vat-agent-client-lookup-frontend.url"
   val vatAgentClientLookupServicePath: String = "vat-agent-client-lookup-frontend.path"
   val vatAgentClientLookupAgentHubPath: String = "vat-agent-client-lookup-frontend.agent-hub"
