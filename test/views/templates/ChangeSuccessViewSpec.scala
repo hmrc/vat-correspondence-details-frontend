@@ -60,11 +60,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Finish"
-          }
-
-          "have a finish button which navigates to the BTA Account Details page" in {
-            element(Selectors.button).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
+            elementText(Selectors.button) shouldBe "Back to client’s details"
           }
 
           "have the correct first paragraph" in {
@@ -144,7 +140,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Finish"
+            elementText(Selectors.button) shouldBe "Back to client’s details"
           }
 
           "have a finish button which navigates to the Change of Circs overview page" in {
@@ -176,7 +172,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Finish"
+            elementText(Selectors.button) shouldBe "Back to client’s details"
           }
 
           "have a finish button which navigates to the Change of Circs overview page" in {
@@ -208,7 +204,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Finish"
+            elementText(Selectors.button) shouldBe "Back to client’s details"
           }
 
           "have a finish button which navigates to the Change of Circs overview page" in {
