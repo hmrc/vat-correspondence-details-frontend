@@ -50,7 +50,6 @@
 
   @updateClient(model.businessName)
 
-  <p><a href="@appConfig.vatAgentClientLookupServicePath">@messages("common.changeClient")</a></p>
 
 } else {
 
@@ -80,5 +79,5 @@
     }
 }
 
-<a href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)" class="button" role="button">@messages("base.finish")</a>
+<a href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)" class="button" role="button">@messages("base.clientFinish")</a>
 }
