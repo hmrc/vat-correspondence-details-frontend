@@ -60,7 +60,11 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           }
 
           "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Back to client’s details"
+            elementText(Selectors.button) shouldBe "Finish"
+          }
+
+          "have a finish button which navigates to the BTA account details page" in {
+            element(Selectors.button).select("a").attr("href") shouldBe mockConfig.btaAccountDetailsUrl
           }
 
           "have the correct first paragraph" in {
