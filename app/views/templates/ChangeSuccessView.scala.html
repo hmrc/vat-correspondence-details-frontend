@@ -79,5 +79,9 @@
     }
 }
 
-<a href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)" class="button" role="button">@messages("base.clientFinish")</a>
+@if(user.isAgent) {
+    <a href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)" class="button" role="button">@messages("base.clientFinish")</a>
+} else {
+    <a href="@appConfig.dynamicJourneyEntryUrl(false)" class="button" role="button">@messages("base.finish")</a>
+}
 }
