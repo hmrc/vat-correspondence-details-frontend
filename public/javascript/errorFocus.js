@@ -1,6 +1,6 @@
 $(document).ready(function(){
-    var a = document.getElementById('error-summary-display');
-    if(a != null){
-        a.focus();
+    var error = document.getElementById('error-summary-display');
+    if(error != null){
+        error.focus();
     }
 });
