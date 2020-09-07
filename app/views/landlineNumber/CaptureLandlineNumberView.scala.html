@@ -24,7 +24,7 @@
 @(landlineForm: Form[String], currentLandline: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @formHint = {
-  <span class="form-hint">@messages("captureLandline.hint")</span>
+  <span id="form-hint" class="form-hint">@messages("captureLandline.hint")</span>
 }
 
 @mainTemplate(
@@ -37,13 +37,11 @@
     @errorSummary(messages("common.error.heading"), landlineForm)
 
     @form(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {
-        <div class="form-group">
         @text(
             field = landlineForm("landlineNumber"),
             pageTitle = messages("captureLandline.title"),
             additionalContent = Some(formHint)
         )
-        </div>
 
         @if(currentLandline != "") {
             <p><a id="remove-landline" href='@controllers.landlineNumber.routes.ConfirmRemoveLandlineController.show().url'>

@@ -24,7 +24,7 @@
 @(mobileNumberForm: Form[String], currentMobile: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @formHint = {
-  <span class="form-hint">@messages("captureMobile.hint")</span>
+  <span id="form-hint" class="form-hint">@messages("captureMobile.hint")</span>
 }
 
 @mainTemplate(
@@ -38,13 +38,11 @@
 
     @form(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
 
-        <div class="form-group">
         @text(
             field = mobileNumberForm("mobileNumber"),
             pageTitle = messages("captureMobile.title"),
             additionalContent = Some(formHint)
         )
-        </div>
 
         @if(currentMobile != "") {
             <p><a id="remove-mobile" href='@controllers.mobileNumber.routes.ConfirmRemoveMobileController.show().url'>

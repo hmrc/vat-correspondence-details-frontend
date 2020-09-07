@@ -110,7 +110,7 @@ class EmailToUseViewSpec extends ViewBaseSpec {
     }
 
     "display the correct error message" in {
-      elementText(Selectors.error) shouldBe viewMessages.errorMessage
+      elementText(Selectors.error) shouldBe s"${viewMessages.errorTitlePrefix} ${viewMessages.errorMessage}"
     }
   }
 

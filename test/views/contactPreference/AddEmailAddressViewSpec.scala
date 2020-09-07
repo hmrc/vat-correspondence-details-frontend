@@ -32,8 +32,9 @@ class AddEmailAddressViewSpec extends ViewBaseSpec {
     val backLink = "#content > article > a"
     val form = "form"
     val button = ".button"
-    val line1 = "#yes_no > div:nth-child(1) > fieldset:nth-child(1) > div:nth-child(2) > p:nth-child(1)"
-    val line2 = "#yes_no > div:nth-child(1) > fieldset:nth-child(1) > div:nth-child(2) > p:nth-child(2)"
+    val line1 = ".form-field > div:nth-child(2) > p:nth-child(1)"
+    val line2 = ".form-field > div:nth-child(2) > p:nth-child(2)"
+    val question = ".form-field > div:nth-child(2) > p:nth-child(3)"
     val yesOption = "div.multiple-choice:nth-child(1) > label"
     val noOption = "div.multiple-choice:nth-child(2) > label"
     val errorHeading = "#error-summary-display"
@@ -56,6 +57,10 @@ class AddEmailAddressViewSpec extends ViewBaseSpec {
     "have the correct paragraph content" in {
       elementText(Selectors.line1) shouldBe ContactPrefAddEmailMessages.info1
       elementText(Selectors.line2) shouldBe ContactPrefAddEmailMessages.info2
+    }
+
+    "have the correct question" in {
+      elementText(Selectors.question) shouldBe ContactPrefAddEmailMessages.question
     }
 
     "have a back link" which {
@@ -105,7 +110,7 @@ class AddEmailAddressViewSpec extends ViewBaseSpec {
     }
 
     "display the correct error message" in {
-      elementText(Selectors.error) shouldBe ContactPrefAddEmailMessages.errorMessage
+      elementText(Selectors.error) shouldBe s"${ContactPrefAddEmailMessages.errorTitlePrefix} ${ContactPrefAddEmailMessages.errorMessage}"
     }
   }
 }

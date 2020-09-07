@@ -38,7 +38,7 @@ class ErrorSummarySpec extends ViewBaseSpec {
              |<div class="flash error-summary error-summary--show" id="error-summary-display" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
              |  <h2 id="error-summary-heading" class="h3-heading">heading</h2>
              |  <ul class="js-error-summary-messages">
-             |    <li role="tooltip"> <a href="#email" id="email-error-summary" data-focuses="email"> Enter a different email address </a> </li>
+             |    <li class="error-summary-list"> <a href="#email" id="email-error-summary" data-focuses="email"> Enter a different email address </a> </li>
              |  </ul>
              |</div>
            """.stripMargin

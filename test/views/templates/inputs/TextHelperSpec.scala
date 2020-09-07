@@ -38,9 +38,13 @@ class TextHelperSpec extends ViewBaseSpec {
 
         val expectedMarkup = Html(
           s"""
-             |<div class="form-field">
-             |  <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |<div class="form-group">
+             |  <fieldset aria-describedby="form-hint">
+             |    <div class="form-field">
+             |      <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
+             |      <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |    </div>
+             |  </fieldset>
              |</div>
              |""".stripMargin
         )
@@ -59,12 +63,17 @@ class TextHelperSpec extends ViewBaseSpec {
 
         val expectedMarkup = Html(
           s"""
-             |<div class="form-field--error panel-border-narrow">
-             |  <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
-             |  <span class="error-message" role="tooltip">
-             |    ERROR
-             |  </span>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |<div class="form-group">
+             |  <fieldset aria-describedby="form-hint form-error">
+             |    <div class="form-field--error panel-border-narrow">
+             |      <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
+             |      <span id="form-error" class="error-message">
+             |        <span class="visuallyhidden">Error:</span>
+             |        ERROR
+             |      </span>
+             |      <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |    </div>
+             |  </fieldset>
              |</div>
              |""".stripMargin
         )
@@ -81,10 +90,14 @@ class TextHelperSpec extends ViewBaseSpec {
 
         val expectedMarkup = Html(
           s"""
-             |<div class="form-field">
-             |  <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
-             |  <p>Additional HTML</p>
-             |  <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |<div class="form-group">
+             |  <fieldset aria-describedby="form-hint">
+             |    <div class="form-field">
+             |      <h1 id="page-heading"><label for="$fieldName" class="heading-large">$title</label></h1>
+             |      <p>Additional HTML</p>
+             |      <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |    </div>
+             |  </fieldset>
              |</div>
              |""".stripMargin
         )

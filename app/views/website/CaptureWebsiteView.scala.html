@@ -24,7 +24,7 @@
 @(websiteForm: Form[String], currentWebsite: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @formHint = {
-  <span class="form-hint">@messages("captureWebsite.hint")</span>
+  <span id="form-hint" class="form-hint">@messages("captureWebsite.hint")</span>
 }
 
 @mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title")) else messages("captureWebsite.title")) {
@@ -34,13 +34,11 @@
     @errorSummary(messages("common.error.heading"), websiteForm)
 
     @form(action = controllers.website.routes.CaptureWebsiteController.submit, 'novalidate -> "novalidate") {
-        <div class="form-group">
         @text(
             field = websiteForm("website"),
             pageTitle = messages("captureWebsite.title"),
             additionalContent = Some(formHint)
         )
-        </div>
 
         @if(currentWebsite != ""){
           <p><a id="remove-website" href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>

@@ -105,7 +105,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-message") shouldBe "You have not made any changes to the mobile number"
+          elementText(".error-message") shouldBe "Error: You have not made any changes to the mobile number"
         }
 
         "display the error summary" in {

@@ -24,7 +24,7 @@
 @(form: Form[YesNo])(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @questionContent = {
-  <div class="panel panel-border-wide">
+  <div id="form-hint" class="panel panel-border-wide">
     @messages("emailPreference.hint")
   </div>
 }
@@ -38,7 +38,6 @@
     <a class="link-back" href="@appConfig.btaAccountDetailsUrl">@messages("base.back")</a>
 
   @formWithCSRF(action = controllers.contactPreference.routes.EmailPreferenceController.submit, 'novalidate -> "novalidate") {
-    <div id="@yesNo" class="form-group">
       @radioGroup(
         field = form(yesNo),
         choices = Seq(
@@ -48,7 +47,6 @@
         additionalContent = Some(questionContent),
         inline = false
       )
-    </div>
 
     <button class="button" type="submit" id="continue">
       @messages("common.continue")
