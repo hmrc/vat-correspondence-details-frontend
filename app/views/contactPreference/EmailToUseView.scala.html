@@ -24,7 +24,7 @@
 @(emailToUseForm: Form[YesNo], emailAddress: String)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @questionContent = {
-    <div class="panel panel-border-wide">
+    <div id="form-hint" class="panel panel-border-wide">
         @emailAddress
     </div>
 }
@@ -39,16 +39,14 @@
 
     @form(action = controllers.contactPreference.routes.EmailToUseController.submit, 'novalidate -> "novalidate") {
 
-        <div id="@yesNo" class="form-group">
-            @radioGroup(
-                field = emailToUseForm(yesNo),
-                choices = Seq(
-                yes -> messages("common.yes"),
-                no -> messages("common.no")),
-                question = messages("emailToUse.title"),
-                additionalContent = Some(questionContent)
-            )
-        </div>
+        @radioGroup(
+            field = emailToUseForm(yesNo),
+            choices = Seq(
+            yes -> messages("common.yes"),
+            no -> messages("common.no")),
+            question = messages("emailToUse.title"),
+            additionalContent = Some(questionContent)
+        )
 
         <button class="button" type ="submit" id="continue">
             @messages("common.continue")

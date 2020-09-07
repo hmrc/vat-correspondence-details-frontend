@@ -122,7 +122,7 @@ class LetterPreferenceViewSpec extends ViewBaseSpec {
     }
 
     "display the correct error message" in {
-      elementText(Selectors.error) shouldBe LetterPreferenceMessages.errorMessage
+      elementText(Selectors.error) shouldBe s"${LetterPreferenceMessages.errorTitlePrefix} ${LetterPreferenceMessages.errorMessage}"
     }
 
   }

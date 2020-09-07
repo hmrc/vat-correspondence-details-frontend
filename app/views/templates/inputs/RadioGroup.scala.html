@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.helper._
+@import forms.YesNoForm.yesNo
 
 @this()
 
@@ -24,28 +24,34 @@
   additionalContent: Option[Html] = None,
   inline: Boolean = false)(implicit messages: Messages)
 
-@elements = @{ FieldElements(field.id, field, null, Map(), messages) }
+<div id="@yesNo" class="form-group">
 
-<div @if(elements.hasErrors){ class="form-field--error"}>
+  <fieldset aria-describedby="form-hint@if(field.hasErrors){ form-error}">
 
-    <fieldset>
+    <div class="form-field@if(field.hasErrors){--error panel-border-narrow}">
+
         <legend>
             <h1 id="page-heading" class="heading-large">@question</h1>
         </legend>
 
         @additionalContent.map { content => @content }
 
-        @elements.errors.map { error => <span class="error-message">@messages(error)</span> }
+        @field.errors.headOption.map { error =>
+          <span id="form-error" class="error-message">
+            <span class="visuallyhidden">@messages("common.error")</span>
+            @messages(error.message)
+          </span>
+        }
 
         <div @if(inline){ class="inline"}>
             @choices.map { case (value, label) =>
 
-                @defining(s"${elements.field.name}-${value.toLowerCase}") { inputId =>
+                @defining(s"${field.name}-${value.toLowerCase}") { inputId =>
                     <div class="multiple-choice">
                         <input
                             type="radio"
                             id="@inputId"
-                            name="@elements.field.name"
+                            name="@field.name"
                             value="@value"
                             @field.value.filter( _ == value).map{_ => checked="checked"}/>
                         <label for="@inputId">@label</label>
@@ -53,5 +59,6 @@
                 }
             }
         </div>
-    </fieldset>
+    </div>
+  </fieldset>
 </div>

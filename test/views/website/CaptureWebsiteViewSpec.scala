@@ -127,7 +127,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-message") shouldBe "Enter a new website address"
+          elementText(".error-message") shouldBe "Error: Enter a new website address"
         }
 
         "display the error summary" in {

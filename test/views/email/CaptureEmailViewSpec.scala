@@ -39,7 +39,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
     val removeEmailDesc = ".panel-border-narrow"
     val removeEmailLink = ".panel-border-narrow a"
     val onlyAddEmail = ".form-field > p:nth-child(2)"
-    val fieldLabel: String = "#content > article > form > div > div > span.form-hint"
+    val fieldLabel: String = ".form-hint"
     val hmrcPrivacyNotice: String = "#hmrc-privacy-notice"
     val hmrcPrivacyNoticeLink: String = "#hmrc-privacy-notice > a"
   }
@@ -160,7 +160,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-message") shouldBe "Enter a different email address"
+          elementText(".error-message") shouldBe "Error: Enter a different email address"
         }
 
         "display the error summary" in {

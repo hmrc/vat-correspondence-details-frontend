@@ -20,20 +20,28 @@
   pageTitle: String,
   additionalContent: Option[Html] = None)(implicit messages: Messages)
 
-<div class="form-field@if(field.hasErrors){--error panel-border-narrow}">
+<div class="form-group">
 
-  <h1 id="page-heading"><label for="@field.id" class="heading-large">@messages(pageTitle)</label></h1>
+  <fieldset aria-describedby="form-hint@if(field.hasErrors){ form-error}">
 
-  @additionalContent.map { content => @content }
+    <div class="form-field@if(field.hasErrors){--error panel-border-narrow}">
 
-  @field.errors.headOption.map { error =>
-    <span class="error-message" role="tooltip">
-      @messages(error.message, error.args: _*)
-    </span>
-  }
+      <h1 id="page-heading"><label for="@field.id" class="heading-large">@messages(pageTitle)</label></h1>
 
-  <input class="form-control input--no-spinner"
-         name="@field.name"
-         id="@field.name"
-         value="@field.value.getOrElse("")"/>
+      @additionalContent.map { content => @content }
+
+      @field.errors.headOption.map { error =>
+        <span id="form-error" class="error-message">
+          <span class="visuallyhidden">@messages("common.error")</span>
+          @messages(error.message, error.args: _*)
+        </span>
+      }
+
+      <input class="form-control input--no-spinner"
+             name="@field.name"
+             id="@field.name"
+             value="@field.value.getOrElse("")"/>
+
+    </div>
+  </fieldset>
 </div>

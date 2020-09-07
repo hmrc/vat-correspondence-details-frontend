@@ -25,7 +25,7 @@
 
 @hint = {
   <div class="panel panel-border-wide">
-    <p>@messages("letterPreference.hint")</p>
+    <p id="form-hint">@messages("letterPreference.hint")</p>
   </div>
 }
 
@@ -39,7 +39,6 @@
 
     @formWithCSRF(action = controllers.contactPreference.routes.LetterPreferenceController.submit,
     'novalidate -> "novalidate") {
-    <div id="@yesNo" class="form-group">
       @radioGroup(
         field = form(yesNo),
         choices = Seq(
@@ -50,7 +49,6 @@
         additionalContent = Some(hint),
         inline = false
       )
-    </div>
 
     <button class="button" type="submit" id="continue">
       @messages("common.continue")

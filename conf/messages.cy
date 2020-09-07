@@ -14,6 +14,7 @@ common.clientService = Cyfrif Treth Busnes
 common.agentService = Manylion TAW eich cleient
 common.vat = TAW
 common.continue = Yn eich blaen
+common.error = Gwall:
 common.error.heading = Mae problem wedi codi
 common.error.prefixTitle = Gwall: {0}
 common.whatHappensNext = Yr hyn sy’n digwydd nesaf

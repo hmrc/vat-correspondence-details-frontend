@@ -14,6 +14,7 @@ common.clientService = Business tax account
 common.agentService = Your client’s VAT details
 common.vat = VAT
 common.continue = Continue
+common.error = Error:
 common.error.heading = There is a problem
 common.error.prefixTitle = Error: {0}
 common.whatHappensNext = What happens next

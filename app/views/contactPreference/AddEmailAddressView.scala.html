@@ -25,7 +25,7 @@
 
 @furtherContent = {
     <div>
-        <p> @messages("cPrefAddEmail.line1")</p>
+        <p id="form-hint"> @messages("cPrefAddEmail.line1")</p>
         <p> @messages("cPrefAddEmail.line2")</p>
 
         <p>
@@ -46,18 +46,16 @@
 
     @formWithCSRF(action = controllers.contactPreference.routes.AddEmailAddressController.submit, 'novalidate -> "novalidate") {
 
-        <div id="@yesNo" class="form-group">
-             @radioGroup(
-                field = form(yesNo),
-                choices = Seq(
-                    yes -> messages("common.yes"),
-                    no  -> messages("common.no")
-                ),
-                question = messages("cPrefAddEmail.title"),
-                additionalContent = Some(furtherContent),
-                inline = false
-            )
-        </div>
+         @radioGroup(
+            field = form(yesNo),
+            choices = Seq(
+                yes -> messages("common.yes"),
+                no  -> messages("common.no")
+            ),
+            question = messages("cPrefAddEmail.title"),
+            additionalContent = Some(furtherContent),
+            inline = false
+        )
 
         <button class="button" type="submit" id="continue">
             @messages("common.continue")
