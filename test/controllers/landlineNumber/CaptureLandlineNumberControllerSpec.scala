@@ -16,21 +16,14 @@
 
 package controllers.landlineNumber
 
-import assets.CustomerInfoConstants.fullCustomerInfoModel
 import assets.BaseTestConstants._
 import common.SessionKeys._
 import controllers.ControllerBaseSpec
 import mocks.MockVatSubscriptionService
-import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify}
 import play.api.http.Status
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.landlineNumber.CaptureLandlineNumberView
-
-import scala.concurrent.ExecutionContext
 
 class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
 

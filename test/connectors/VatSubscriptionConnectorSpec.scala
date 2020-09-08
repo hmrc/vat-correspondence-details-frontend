@@ -17,7 +17,7 @@
 package connectors
 
 import controllers.ControllerBaseSpec
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import org.mockito.Mockito.{mock => mMock}
 
 class VatSubscriptionConnectorSpec extends ControllerBaseSpec {

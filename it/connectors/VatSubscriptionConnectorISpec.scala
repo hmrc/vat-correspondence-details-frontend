@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import stubs.VatSubscriptionStub
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
 

@@ -27,14 +27,13 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import views.html.contactPreference.AddEmailAddressView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class AddEmailAddressController @Inject()(val errorHandler: ErrorHandler,
                                           addEmailAddressView: AddEmailAddressView)
                                          (implicit val appConfig: AppConfig,
                                           authComps: AuthPredicateComponents,
-                                          executionContext: ExecutionContext,
                                           inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("cPrefAddEmail.error")

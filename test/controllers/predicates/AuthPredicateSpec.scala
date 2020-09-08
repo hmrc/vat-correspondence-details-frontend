@@ -29,7 +29,7 @@ import scala.concurrent.Future
 class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
   val allowAgentPredicate: Action[AnyContent] = mockAuthPredicate.async {
-    implicit request => Future.successful(Ok("test"))
+    _ => Future.successful(Ok("test"))
   }
 
   "The AuthPredicateSpec" when {
@@ -53,7 +53,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
             val blockAgentPredicate: Action[AnyContent] =
               new AuthPredicate(mockAuthPredicateComponents, allowsAgents = false).async {
-                implicit request => Future.successful(Ok("test"))
+                _ => Future.successful(Ok("test"))
               }
 
             lazy val result = await(blockAgentPredicate(agent))
@@ -72,7 +72,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
             val blockAgentPredicate: Action[AnyContent] =
               new AuthPredicate(mockAuthPredicateComponents, allowsAgents = false, true).async {
-                implicit request => Future.successful(Ok("test"))
+                _ => Future.successful(Ok("test"))
               }
 
             lazy val result = await(blockAgentPredicate(agent))

@@ -16,20 +16,19 @@
 
 package controllers.landlineNumber
 
-import common.SessionKeys.{validationLandlineKey, prepopulationLandlineKey}
+import common.SessionKeys.{prepopulationLandlineKey, validationLandlineKey}
 import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.Inject
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import views.html.landlineNumber.ConfirmRemoveLandlineView
 
 import scala.concurrent.Future
 
 class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: ConfirmRemoveLandlineView)
                                                (implicit appConfig: AppConfig,
-                                                mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
                                                 inFlightComps: InFlightPredicateComponents) extends BaseController {
 

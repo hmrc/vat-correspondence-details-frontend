@@ -17,11 +17,15 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{CreateEmailVerificationRequestResponse, EmailAlreadyVerified, EmailVerificationRequestFailure, EmailVerificationRequestSent}
+import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{
+  CreateEmailVerificationRequestResponse,
+  EmailAlreadyVerified,
+  EmailVerificationRequestFailure,
+  EmailVerificationRequestSent
+}
 import connectors.httpParsers.GetEmailVerificationStateHttpParser._
 import helpers.IntegrationBaseSpec
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.libs.json.JsValue
 import stubs.EmailVerificationStub
 import uk.gov.hmrc.http.HeaderCarrier
 

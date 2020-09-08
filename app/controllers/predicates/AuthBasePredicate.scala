@@ -20,7 +20,7 @@ import common.EnrolmentKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 abstract class AuthBasePredicate(val mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 

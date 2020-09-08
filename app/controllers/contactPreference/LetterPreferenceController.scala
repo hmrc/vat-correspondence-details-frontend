@@ -31,7 +31,7 @@ import models.errors.ErrorModel
 import models.{No, User, Yes, YesNo}
 import play.api.Logger
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.VatSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggerUtil.logWarn
@@ -45,7 +45,6 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
                                             auditService: AuditingService)
                                            (implicit val appConfig: AppConfig,
                                             ec: ExecutionContext,
-                                            mcc: MessagesControllerComponents,
                                             authComps: AuthPredicateComponents,
                                             inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
 

@@ -27,7 +27,7 @@ import play.api.mvc._
 import services.VatSubscriptionService
 import views.html.landlineNumber.CaptureLandlineNumberView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatSubscriptionService,

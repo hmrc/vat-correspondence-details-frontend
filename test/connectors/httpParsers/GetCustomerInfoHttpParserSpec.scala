@@ -37,7 +37,7 @@ class GetCustomerInfoHttpParserSpec extends UnitSpec with TestUtil {
       "valid JSON is returned" should {
 
         "return a CustomerInformation model" in {
-          val response = HttpResponse(Status.OK, Some(fullCustomerInfoJson))
+          val response = HttpResponse(Status.OK, fullCustomerInfoJson.toString)
           val result = customerInfoResult(response)
           result shouldBe Right(fullCustomerInfoModel)
         }
@@ -46,7 +46,7 @@ class GetCustomerInfoHttpParserSpec extends UnitSpec with TestUtil {
       "invalid JSON is returned" should {
 
         "return an Error model with status code of 500 (INTERNAL_SERVER_ERROR)" in {
-          val response = HttpResponse(Status.OK, Some(Json.obj("fail" -> "nope")))
+          val response = HttpResponse(Status.OK, Json.obj("fail" -> "nope").toString)
           val result = customerInfoResult(response)
           result shouldBe Left(invalidJsonError)
         }
@@ -60,9 +60,9 @@ class GetCustomerInfoHttpParserSpec extends UnitSpec with TestUtil {
           "code" -> "NOT_FOUND",
           "reason" -> "The requested information could not be found."
         )
-        val response = HttpResponse(Status.NOT_FOUND, Some(notFoundJson))
+        val response = HttpResponse(Status.NOT_FOUND, notFoundJson.toString)
         val result = customerInfoResult(response)
-        result shouldBe Left(ErrorModel(Status.NOT_FOUND, Json.prettyPrint(notFoundJson)))
+        result shouldBe Left(ErrorModel(Status.NOT_FOUND, Json.stringify(notFoundJson)))
       }
     }
   }

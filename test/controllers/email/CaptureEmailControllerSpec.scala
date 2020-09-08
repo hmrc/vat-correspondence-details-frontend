@@ -22,13 +22,10 @@ import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
 import models.contactPreferences.ContactPreference._
-import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
 import views.html.email.CaptureEmailView
-
-import scala.concurrent.Future
 
 class CaptureEmailControllerSpec extends ControllerBaseSpec {
 

@@ -17,11 +17,9 @@
 package mocks
 
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import models.User
-import models.contactPreferences.ContactPreference
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.VatSubscriptionService
@@ -66,8 +64,8 @@ trait MockVatSubscriptionService extends MockFactory with BeforeAndAfterEach {
       .returning(response)
 
   def mockUpdateContactPreference(vrn: String, contactPref: String)(response: Future[UpdatePPOBResponse]): Unit =
-    (mockVatSubscriptionService.updateContactPreference(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
-      .expects(vrn, contactPref, *, *, *)
+    (mockVatSubscriptionService.updateContactPreference(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(vrn, contactPref, *, *)
       .returning(response)
 
   def mockGetCustomerInfo(vrn: String)(response: Future[GetCustomerInfoResponse]): Unit =

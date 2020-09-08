@@ -24,7 +24,7 @@ import models.User
 import models.contactPreferences.ContactPreference
 import models.customerInformation._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import utils.LoggerUtil.{logDebug, logWarn}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -97,8 +97,7 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
 
   def updateContactPreference(vrn: String, contactPreference: String)
                              (implicit hc: HeaderCarrier,
-                              ec: ExecutionContext,
-                              user: User[_]): Future[HttpPutResult[UpdatePPOBSuccess]] = {
+                              ec: ExecutionContext): Future[HttpPutResult[UpdatePPOBSuccess]] = {
 
     import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads
 
