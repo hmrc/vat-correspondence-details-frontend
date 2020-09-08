@@ -32,7 +32,7 @@ class CaptureMobileNumberPageSpec extends BasePageISpec {
 
   "Calling the Capture mobile number (.show) route" when {
 
-    def show: WSResponse = get(path, formatInflightChange(Some("false")))
+    def show: WSResponse = get(path, formatInflightChange(Some("false")) ++ Map(validationMobileKey -> currentMobile))
 
     "the user is authenticated" when {
 
@@ -49,16 +49,6 @@ class CaptureMobileNumberPageSpec extends BasePageISpec {
             httpStatus(Status.OK),
             pageTitle(generateDocumentTitle("captureMobile.title"))
            )
-        }
-
-        "add the existing mobile number to session" in {
-
-          given.user.isAuthenticated
-          stubCustomerInfo
-
-          val result = show
-
-          SessionCookieCrumbler.getSessionMap(result).get(validationMobileKey) shouldBe Some(currentMobile)
         }
       }
     }

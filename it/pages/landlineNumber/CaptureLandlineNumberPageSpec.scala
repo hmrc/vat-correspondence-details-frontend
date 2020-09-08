@@ -32,7 +32,7 @@ class CaptureLandlineNumberPageSpec extends BasePageISpec {
 
   "Calling the Capture landline number (.show) route" when {
 
-    def show: WSResponse = get(path, formatInflightChange(Some("false")))
+    def show: WSResponse = get(path, formatInflightChange(Some("false")) ++ Map(validationLandlineKey -> currentLandline))
 
     "the user is authenticated" when {
 
@@ -49,16 +49,6 @@ class CaptureLandlineNumberPageSpec extends BasePageISpec {
             httpStatus(Status.OK),
             pageTitle(generateDocumentTitle("captureLandline.title"))
            )
-        }
-
-        "add the existing landline number to session" in {
-
-          given.user.isAuthenticated
-          stubCustomerInfo
-
-          val result = show
-
-          SessionCookieCrumbler.getSessionMap(result).get(validationLandlineKey) shouldBe Some(currentLandline)
         }
       }
     }

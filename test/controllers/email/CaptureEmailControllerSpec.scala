@@ -100,46 +100,15 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       "there is no email in session" when {
 
-        "the customerInfo call succeeds" should {
+        lazy val result = target().show(request)
 
-          lazy val result = {
-            mockVatCall()
-            target().show(request)
-          }
-          lazy val document = Jsoup.parse(bodyOf(result))
-
-          "return 200" in {
-            status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
-          }
-
-          "prepopulate the form with the customerInfo result" in {
-            document.select("input").attr("value") shouldBe testValidEmail
-          }
+        "return 500" in {
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
-        "the customerInfo call fails" should {
-
-          lazy val result = {
-            mockVatCall(Left(ErrorModel(
-              Status.INTERNAL_SERVER_ERROR,
-              "error"
-            )))
-            target().show(request)
-          }
-
-          "return 500" in {
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
-          }
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
         }
       }
     }
@@ -167,30 +136,6 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       "return 401" in {
         mockMissingBearerToken()
         status(result) shouldBe Status.UNAUTHORIZED
-      }
-
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
-      }
-    }
-
-    "the inflight predicate is not mocked out and there is nothing in session" should {
-
-      lazy val inflightTarget = {
-        mockVatCall()
-        new CaptureEmailController(
-          mockVatSubscriptionService,
-          mockErrorHandler,
-          mockAuditingService,
-          view
-        )
-      }
-
-      lazy val result = inflightTarget.show(request)
-
-      "return 200" in {
-        status(result) shouldBe Status.OK
       }
 
       "return HTML" in {
@@ -359,43 +304,15 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "there is no email in session" when {
 
-          "the customerInfo call succeeds" should {
+          lazy val result = target().showPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
 
-            lazy val result = {
-              mockGetCustomerInfo("999999999")(Future.successful(Right(fullCustomerInfoModel)))
-              target().showPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
-            }
-            lazy val document = Jsoup.parse(bodyOf(result))
-
-            "return 200" in {
-              status(result) shouldBe Status.OK
-            }
-
-            "return HTML" in {
-              contentType(result) shouldBe Some("text/html")
-              charset(result) shouldBe Some("utf-8")
-            }
-
-            "prepopulate the form with the customerInfo result" in {
-              document.select("input").attr("value") shouldBe testValidEmail
-            }
+          "return 500" in {
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
 
-          "the customerInfo call fails" should {
-
-            lazy val result =  {
-              mockGetCustomerInfo("999999999")(Future.successful(Left(ErrorModel(Status.NOT_FOUND, "error"))))
-              target().showPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
-            }
-
-            "return 404" in {
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-            }
-
-            "return HTML" in {
-              contentType(result) shouldBe Some("text/html")
-              charset(result) shouldBe Some("utf-8")
-            }
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
           }
         }
       }

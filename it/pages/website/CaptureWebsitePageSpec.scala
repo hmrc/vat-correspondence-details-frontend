@@ -32,7 +32,7 @@ class CaptureWebsitePageSpec extends BasePageISpec {
 
   "Calling the Capture Website (.show) route" when {
 
-    def show: WSResponse = get(path, formatInflightChange(Some("false")))
+    def show: WSResponse = get(path, formatInflightChange(Some("false")) ++ Map(validationWebsiteKey -> currentWebsite))
 
     "the user is a authenticated" when {
 
@@ -50,17 +50,6 @@ class CaptureWebsitePageSpec extends BasePageISpec {
             httpStatus(Status.OK),
             pageTitle(generateDocumentTitle("captureWebsite.title"))
           )
-        }
-
-        "add the existing website to the session" in {
-
-          given.user.isAuthenticated
-
-          VatSubscriptionStub.stubCustomerInfo
-
-          val result = show
-
-          SessionCookieCrumbler.getSessionMap(result).get(validationWebsiteKey) shouldBe Some(currentWebsite)
         }
       }
     }

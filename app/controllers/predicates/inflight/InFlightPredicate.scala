@@ -16,7 +16,7 @@
 
 package controllers.predicates.inflight
 
-import common.SessionKeys.inFlightContactDetailsChangeKey
+import common.SessionKeys._
 import config.AppConfig
 import models.User
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -61,7 +61,13 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
           case _ =>
             logDebug("[InFlightPredicate][getCustomerInfoCall] - There are no in-flight changes. " +
               "Redirecting user to the start of the journey.")
-            Left(Redirect(redirectURL).addingToSession(inFlightContactDetailsChangeKey -> "false"))
+            Left(Redirect(redirectURL).addingToSession(
+              inFlightContactDetailsChangeKey -> "false",
+              validationEmailKey -> customerInfo.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""),
+              validationLandlineKey -> customerInfo.ppob.contactDetails.flatMap(_.phoneNumber).getOrElse(""),
+              validationMobileKey -> customerInfo.ppob.contactDetails.flatMap(_.mobileNumber).getOrElse(""),
+              validationWebsiteKey -> customerInfo.ppob.websiteAddress.getOrElse("")
+            ))
         }
       case Left(error) =>
         logWarn("[InFlightPredicate][getCustomerInfoCall] - " +
