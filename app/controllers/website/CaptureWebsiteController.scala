@@ -54,7 +54,6 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
         validationWebsite match {
           case Some(valWebsite) =>
             Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulationWebsite), valWebsite))
-              .addingToSession(SessionKeys.validationWebsiteKey -> valWebsite)
           case _ => errorHandler.showInternalServerError
         }
     } else {

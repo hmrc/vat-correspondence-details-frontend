@@ -55,7 +55,6 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
       validationLandline match {
         case Some(landline) =>
           Ok(captureLandlineNumberView(landlineNumberForm(landline).fill(prepopulationLandline), landline))
-            .addingToSession(SessionKeys.validationLandlineKey -> landline)
         case _ => errorHandler.showInternalServerError
       }
     } else {
