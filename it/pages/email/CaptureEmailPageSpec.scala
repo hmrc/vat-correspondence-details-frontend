@@ -31,18 +31,17 @@ class CaptureEmailPageSpec extends BasePageISpec {
 
   "Calling the Capture email (.show)" when {
 
-    def show: WSResponse = get(path, formatInflightChange(Some("false")))
+    def show: WSResponse = get(path, formatInflightChange(Some("false")) ++ Map(SessionKeys.validationEmailKey -> "email@address.com"))
+
+    def showNoEmail: WSResponse = get(path, formatInflightChange(Some("false")))
 
     "the user is authenticated" when {
 
-      "a success response is received for Customer Details which" should {
+      "an email is in session" should {
 
-        "contain an email address" in {
+        "display the capture email page" in {
 
           given.user.isAuthenticated
-
-          And("a successful response for an individual is stubbed")
-          VatSubscriptionStub.stubCustomerInfo
 
           When("the Capture email page is called")
           val result = show
@@ -52,38 +51,22 @@ class CaptureEmailPageSpec extends BasePageISpec {
             pageTitle(generateDocumentTitle("captureEmail.title"))
           )
         }
+      }
 
-        "not contain a valid response" in {
+      "there is not an email in session" should {
+
+        "display an internal server error" in {
 
           given.user.isAuthenticated
 
-          And("a success response for Customer Details is stubbed")
-          VatSubscriptionStub.stubCustomerInfoInvalidJson
-
           When("the Capture email page is called")
-          val result = show
+          val result = showNoEmail
 
           result should have(
             httpStatus(Status.INTERNAL_SERVER_ERROR),
             pageTitle(generateDocumentTitle(internalServerErrorTitle))
           )
         }
-      }
-
-      "an error response is received for Customer Details" in {
-
-        given.user.isAuthenticated
-
-        And("an error response for an individual is stubbed")
-        VatSubscriptionStub.stubCustomerInfoError
-
-        When("the Capture email page is called")
-        val result = show
-
-        result should have(
-          httpStatus(Status.INTERNAL_SERVER_ERROR),
-          pageTitle(generateDocumentTitle(internalServerErrorTitle))
-        )
       }
     }
 

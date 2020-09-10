@@ -40,37 +40,21 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
 
     if(appConfig.features.changeContactDetailsEnabled()) {
 
-      val validationLandline: Future[Option[String]] =
-        user.session.get(SessionKeys.validationLandlineKey) match {
-          case Some(landline) => Future.successful(Some(landline))
-          case _ =>
-            vatSubscriptionService.getCustomerInfo(user.vrn).map {
-              case Right(details) => Some(details.ppob.contactDetails.flatMap(_.phoneNumber).getOrElse(""))
-              case _ => None
-            }
-        }
+      val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
 
-      val prepopulationLandline: Future[String] = validationLandline.map { number =>
-        user.session.get(SessionKeys.prepopulationLandlineKey).getOrElse(number.getOrElse(""))
-      }
+      val prepopulationLandline: String = user.session.get(SessionKeys.prepopulationLandlineKey).getOrElse(validationLandline.getOrElse(""))
 
-      for {
-        validationLandlineResult <- validationLandline
-        prepopLandlineResult <- prepopulationLandline
-      } yield {
-        validationLandlineResult match {
-          case Some(landline) =>
-            Ok(captureLandlineNumberView(landlineNumberForm(landline).fill(prepopLandlineResult), landline))
-              .addingToSession(SessionKeys.validationLandlineKey -> landline)
-          case _ => errorHandler.showInternalServerError
-        }
+      validationLandline match {
+        case Some(landline) =>
+          Ok(captureLandlineNumberView(landlineNumberForm(landline).fill(prepopulationLandline), landline))
+        case _ => errorHandler.showInternalServerError
       }
     } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
+      NotFound(errorHandler.notFoundTemplate)
     }
   }
 

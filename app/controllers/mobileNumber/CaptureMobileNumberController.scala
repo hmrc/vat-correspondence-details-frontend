@@ -40,37 +40,21 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async { implicit user =>
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
 
     if(appConfig.features.changeContactDetailsEnabled()) {
 
-      val validationMobile: Future[Option[String]] =
-        user.session.get(SessionKeys.validationMobileKey) match {
-          case Some(mobile) => Future.successful(Some(mobile))
-          case _ =>
-            vatSubscriptionService.getCustomerInfo(user.vrn).map {
-              case Right(details) => Some(details.ppob.contactDetails.flatMap(_.mobileNumber).getOrElse(""))
-              case _ => None
-            }
-        }
+      val validationMobile: Option[String] = user.session.get(SessionKeys.validationMobileKey)
 
-      val prepopulationMobile: Future[String] = validationMobile.map { number =>
-        user.session.get(SessionKeys.prepopulationMobileKey).getOrElse(number.getOrElse(""))
-      }
+      val prepopulationMobile: String = user.session.get(SessionKeys.prepopulationMobileKey).getOrElse(validationMobile.getOrElse(""))
 
-      for {
-        validationMobileResult <- validationMobile
-        prepopMobileResult <- prepopulationMobile
-      } yield {
-        validationMobileResult match {
-          case Some(mobile) =>
-            Ok(captureMobileNumberView(mobileNumberForm(mobile).fill(prepopMobileResult),mobile))
-              .addingToSession(SessionKeys.validationMobileKey -> mobile)
-          case _ => errorHandler.showInternalServerError
-        }
+      validationMobile match {
+        case Some(mobile) =>
+          Ok(captureMobileNumberView(mobileNumberForm(mobile).fill(prepopulationMobile),mobile))
+        case _ => errorHandler.showInternalServerError
       }
     } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
+      NotFound(errorHandler.notFoundTemplate)
     }
   }
 

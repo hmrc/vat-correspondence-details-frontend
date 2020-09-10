@@ -17,11 +17,11 @@
 package controllers.predicates.inflight
 
 import assets.CustomerInfoConstants._
-import common.SessionKeys.inFlightContactDetailsChangeKey
+import common.SessionKeys._
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import mocks.MockAuth
 import models.User
-import models.customerInformation.PendingChanges
+import models.customerInformation.{PPOB, PendingChanges}
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -163,7 +163,7 @@ class InFlightPredicateSpec extends MockAuth {
       "the user has no inflight information" should {
 
         lazy val result = {
-          setup(Right(minCustomerInfoModel))
+          setup(Right(minCustomerInfoModel.copy(ppob = fullPPOBModel)))
           await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
         }
 
@@ -177,6 +177,22 @@ class InFlightPredicateSpec extends MockAuth {
 
         "add the inflight indicator 'false' to session" in {
           session(result).get(inFlightContactDetailsChangeKey) shouldBe Some("false")
+        }
+
+        "add the validationEmailKey to session" in {
+          session(result).get(validationEmailKey) shouldBe Some("pepsimac@gmail.com")
+        }
+
+        "add the validationLandlineKey to session" in {
+          session(result).get(validationLandlineKey) shouldBe Some("01234567890")
+        }
+
+        "add the validationMobileKey to session" in {
+          session(result).get(validationMobileKey) shouldBe Some("07707707707")
+        }
+
+        "add the validationWebsiteKey to session" in {
+          session(result).get(validationWebsiteKey) shouldBe Some("www.pepsi-mac.biz")
         }
       }
 

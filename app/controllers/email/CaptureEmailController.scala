@@ -47,34 +47,21 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
   private def sessionValidationEmail(implicit user: User[AnyContent]): Option[String] = user.session.get(SessionKeys.validationEmailKey)
   private def sessionPrePopulationEmail(implicit user: User[AnyContent]): Option[String] = user.session.get(SessionKeys.prepopulationEmailKey)
 
-  private def currentEmail(implicit user: User[AnyContent]): Future[Option[String]] = sessionValidationEmail match {
-    case Some(email) => Future.successful(Some(email))
-    case _ => vatSubscriptionService.getCustomerInfo(user.vrn) map {
-      case Right(details) => Some(details.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""))
-      case _ => None
-    }
-  }
+  private def prePopulationEmail(currentEmail: String)(implicit user: User[AnyContent]): String =
+    sessionPrePopulationEmail.getOrElse(currentEmail)
 
-  private def prePopulationEmail(currentEmail: Option[String])(implicit user: User[AnyContent]): String =
-    sessionPrePopulationEmail.getOrElse(currentEmail.getOrElse(""))
-
-  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
-    for {
-      validation    <- currentEmail
-      prePopulation  = prePopulationEmail(validation)
-    } yield {
-      validation match {
+  def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate) { implicit user =>
+    sessionValidationEmail match {
         case Some(valEmail) =>
           Ok(captureEmailView(
-            emailForm(valEmail).fill(prePopulation),
+            emailForm(valEmail).fill(prePopulationEmail(valEmail)),
             emailNotChangedError = false,
             valEmail,
             controllers.email.routes.CaptureEmailController.submit(),
             letterToConfirmedEmail = false
-          )).addingToSession(SessionKeys.validationEmailKey -> valEmail)
+          ))
         case _ => errorHandler.showInternalServerError
       }
-    }
   }
 
   def submit: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
@@ -112,26 +99,21 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
   def showPrefJourney: Action[AnyContent] = (
     contactPreferencePredicate andThen
       paperPrefPredicate andThen
-      inFlightContactPrefPredicate).async { implicit user =>
+      inFlightContactPrefPredicate) { implicit user =>
     if (appConfig.features.letterToConfirmedEmailEnabled()){
-      for {
-        validation    <- currentEmail
-        prePopulation  = prePopulationEmail(validation)
-      } yield {
-        validation match {
+      sessionValidationEmail match {
           case Some(valEmail) =>
             Ok(captureEmailView(
-              emailForm(valEmail).fill(prePopulation),
+              emailForm(valEmail).fill(prePopulationEmail(valEmail)),
               emailNotChangedError = false,
               valEmail,
               controllers.email.routes.CaptureEmailController.submitPrefJourney(),
               letterToConfirmedEmail = true
-            )).addingToSession(SessionKeys.validationEmailKey -> valEmail)
+            ))
           case _ => errorHandler.showInternalServerError
         }
-      }
     } else {
-      Future.successful(errorHandler.showNotFoundError)
+      errorHandler.showNotFoundError
     }
   }
 

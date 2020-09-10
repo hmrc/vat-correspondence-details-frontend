@@ -40,9 +40,6 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
     )
   }
 
-  private def mockVatSubscriptionCall(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)) =
-    mockGetCustomerInfo("999999999")(result)
-
   "Calling the show action" when {
 
     "a user is enrolled with a valid enrolment" when {
@@ -95,47 +92,15 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
     "there is no website in session" when {
 
-      "the customerInfo call succeeds" should {
+      lazy val result = target().show(request)
 
-        lazy val result = {
-          mockVatSubscriptionCall()
-          target().show(request)
-        }
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return 200" in {
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "prepopulate the form with the customerInfo result" in {
-          document.select("#website").attr("value") shouldBe "www.pepsi-mac.biz"
-        }
+      "return 500" in {
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
-      "the customerInfo call fails" should {
-
-        lazy val callReturn = Left(ErrorModel(
-          Status.INTERNAL_SERVER_ERROR,
-          "error"
-        ))
-        lazy val result = {
-          mockVatSubscriptionCall(callReturn)
-          target().show(request)
-        }
-
-        "return 500" in {
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
       }
     }
 

@@ -80,45 +80,17 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
       }
     }
 
-    "there is no mobile number in session" when {
+    "there is no mobile number in session" should {
 
-      "the customerInfo call succeeds" should {
+      lazy val result = controller.show(request)
 
-        lazy val result = {
-          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-          controller.show(request)
-        }
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return 200" in {
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "prepopulate the form with the customerInfo mobile result" in {
-          document.select("#mobileNumber").attr("value") shouldBe "07707707707"
-        }
+      "return 500" in {
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
-      "the customerInfo call fails" should {
-
-        lazy val result = {
-          mockGetCustomerInfo("999999999")(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
-          controller.show(request)
-        }
-
-        "return 500" in {
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
       }
     }
 
@@ -156,8 +128,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
       lazy val result = {
         mockAgentAuthorised()
-        mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-        controller.show(fakeRequestWithClientsVRN)
+        controller.show(fakeRequestWithSessionKeys)
       }
 
       "return 200" in {

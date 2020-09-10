@@ -42,35 +42,19 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
+  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
     if(appConfig.features.changeContactDetailsEnabled()) {
-      val validationWebsite: Future[Option[String]] = user.session.get(SessionKeys.validationWebsiteKey) match {
-        case Some(website) => Future.successful(Some(website))
-        case _ =>
-          vatSubscriptionService.getCustomerInfo(user.vrn) map {
-            case Right(details) => Some(details.ppob.websiteAddress.getOrElse(""))
-            case _ => None
-          }
-      }
+      val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey)
 
-      val prepopulationWebsite: Future[String] = validationWebsite map { validation =>
-        user.session.get(SessionKeys.prepopulationWebsiteKey)
-          .getOrElse(validation.getOrElse(""))
-      }
+      val prepopulationWebsite: String = user.session.get(SessionKeys.prepopulationWebsiteKey).getOrElse(validationWebsite.getOrElse(""))
 
-      for {
-        validation <- validationWebsite
-        prepopulation <- prepopulationWebsite
-      } yield {
-        validation match {
+        validationWebsite match {
           case Some(valWebsite) =>
-            Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulation), valWebsite))
-              .addingToSession(SessionKeys.validationWebsiteKey -> valWebsite)
+            Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulationWebsite), valWebsite))
           case _ => errorHandler.showInternalServerError
         }
-      }
     } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
+      NotFound(errorHandler.notFoundTemplate)
     }
   }
 
