@@ -44,11 +44,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
 
     if(appConfig.features.changeContactDetailsEnabled()) {
 
-      val validationLandline: Option[String] =
-        user.session.get(SessionKeys.validationLandlineKey) match {
-          case Some(landline) => Some(landline)
-          case _ => None
-        }
+      val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
 
       val prepopulationLandline: String = user.session.get(SessionKeys.prepopulationLandlineKey).getOrElse(validationLandline.getOrElse(""))
 

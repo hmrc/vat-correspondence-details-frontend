@@ -44,10 +44,7 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
 
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
     if(appConfig.features.changeContactDetailsEnabled()) {
-      val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey) match {
-        case Some(website) => Some(website)
-        case _ => None
-      }
+      val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey)
 
       val prepopulationWebsite: String = user.session.get(SessionKeys.prepopulationWebsiteKey).getOrElse(validationWebsite.getOrElse(""))
 

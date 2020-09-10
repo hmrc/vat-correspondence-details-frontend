@@ -44,11 +44,7 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
 
     if(appConfig.features.changeContactDetailsEnabled()) {
 
-      val validationMobile: Option[String] =
-        user.session.get(SessionKeys.validationMobileKey) match {
-          case Some(mobile) => Some(mobile)
-          case _ => None
-        }
+      val validationMobile: Option[String] = user.session.get(SessionKeys.validationMobileKey)
 
       val prepopulationMobile: String = user.session.get(SessionKeys.prepopulationMobileKey).getOrElse(validationMobile.getOrElse(""))
 

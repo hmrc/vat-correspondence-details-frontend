@@ -40,9 +40,6 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
     )
   }
 
-  private def mockVatSubscriptionCall(result: GetCustomerInfoResponse = Right(fullCustomerInfoModel)) =
-    mockGetCustomerInfo("999999999")(result)
-
   "Calling the show action" when {
 
     "a user is enrolled with a valid enrolment" when {
