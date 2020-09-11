@@ -16,24 +16,23 @@
 
 package controllers.email
 
+import assets.BaseTestConstants.vrn
 import assets.CustomerInfoConstants._
+import audit.models.ChangedContactPrefEmailAuditModel
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import mocks.MockEmailVerificationService
 import models.User
+import models.contactPreferences.ContactPreference._
 import models.customerInformation._
+import models.errors.ErrorModel
 import play.api.http.{HeaderNames, Status}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.email.VerifyEmailView
-import assets.BaseTestConstants.vrn
-import audit.models.ChangedContactPrefEmailAuditModel
-import models.errors.ErrorModel
 
 import scala.concurrent.Future
-import models.contactPreferences.ContactPreference._
-import org.mockito.Mockito.reset
 
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 

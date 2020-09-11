@@ -27,7 +27,7 @@ import models.contactPreferences.ContactPreference.paper
 import models.{No, Yes, YesNo}
 import play.api.Logger
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
 import views.html.contactPreference.EmailPreferenceView
 
@@ -38,7 +38,6 @@ class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptio
                                           emailPreferenceView: EmailPreferenceView)
                                          (implicit val appConfig: AppConfig,
                                           authComps: AuthPredicateComponents,
-                                          mcc: MessagesControllerComponents,
                                           executionContext: ExecutionContext,
                                           inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
 

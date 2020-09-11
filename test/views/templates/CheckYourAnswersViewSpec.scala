@@ -36,7 +36,7 @@ class CheckYourAnswersViewSpec extends ViewBaseSpec {
     )
 
     val injectedView: CheckYourAnswersView = inject[CheckYourAnswersView]
-    lazy val view = injectedView(viewModel)(request, messages, mockConfig, User("1111111111"))
+    lazy val view = injectedView(viewModel)(messages, mockConfig, User("1111111111"))
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct page title" in {

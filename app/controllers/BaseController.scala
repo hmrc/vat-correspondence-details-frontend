@@ -21,7 +21,7 @@ import controllers.predicates.inflight.{InFlightPredicate, InFlightPredicateComp
 import controllers.predicates.{AuthPredicate, AuthPredicateComponents}
 import models.contactPreferences.ContactPreference.{digital, paper}
 import play.api.i18n.I18nSupport
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 
 abstract class BaseController(implicit authComps: AuthPredicateComponents,

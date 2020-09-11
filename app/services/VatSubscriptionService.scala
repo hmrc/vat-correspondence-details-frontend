@@ -16,8 +16,10 @@
 
 package services
 
+import config.AppConfig
 import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
+import connectors.httpParsers.ResponseHttpParser.HttpPutResult
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import javax.inject.{Inject, Singleton}
 import models.User
@@ -25,12 +27,8 @@ import models.customerInformation.{ContactDetails, PPOB, UpdateEmailSuccess, Upd
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.LoggerUtil.logWarn
 
 import scala.concurrent.{ExecutionContext, Future}
-import config.AppConfig
-import connectors.httpParsers.ResponseHttpParser.{HttpGetResult, HttpPutResult}
-import models.contactPreferences.ContactPreference
 
 @Singleton
 class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emailVerificationService: EmailVerificationService)
@@ -109,7 +107,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     }
 
   def updateContactPreference(vrn: String, contactPreference: String)
-                             (implicit hc: HeaderCarrier, ec: ExecutionContext, user: User[_]): Future[UpdatePPOBResponse] =
+                             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdatePPOBResponse] =
         connector.updateContactPreference(vrn, contactPreference)
 
 }

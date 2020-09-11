@@ -17,11 +17,9 @@
 package controllers.mobileNumber
 
 import assets.BaseTestConstants._
-import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys._
 import controllers.ControllerBaseSpec
 import mocks.MockVatSubscriptionService
-import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._

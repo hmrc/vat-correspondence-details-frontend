@@ -17,7 +17,6 @@
 package assets
 
 import common.EnrolmentKeys
-import play.api.http.Status
 import uk.gov.hmrc.auth.core.Enrolment
 
 object BaseTestConstants {

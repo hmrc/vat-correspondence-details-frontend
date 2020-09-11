@@ -22,14 +22,13 @@ import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.Inject
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import views.html.mobileNumber.ConfirmRemoveMobileView
 
 import scala.concurrent.Future
 
 class ConfirmRemoveMobileController @Inject()(val confirmRemoveMobile: ConfirmRemoveMobileView)
                                              (implicit appConfig: AppConfig,
-                                                mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
                                                 inFlightComps: InFlightPredicateComponents) extends BaseController {
 

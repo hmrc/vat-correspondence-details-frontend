@@ -31,13 +31,13 @@ class UpdateEmailHttpParserSpec extends UnitSpec with EitherValues {
   "read" when {
     "the response status is OK" should {
       "return a updateEmailSuccess when the response Json can be parsed" in {
-        val httpResponse = HttpResponse(Status.OK, Some(Json.obj("formBundle" -> s"$formBundle")))
+        val httpResponse = HttpResponse(Status.OK, Json.obj("formBundle" -> s"$formBundle").toString)
 
         read("", "", httpResponse).right.value shouldBe updateEmailSuccess
       }
 
       "return the expected Left Error Model when the response Json cannot be parsed" in {
-        val httpResponse = HttpResponse(Status.OK, Some(Json.obj("notExpectedKey" -> s"$formBundle")))
+        val httpResponse = HttpResponse(Status.OK, Json.obj("notExpectedKey" -> s"$formBundle").toString)
 
         read("", "", httpResponse).left.value shouldBe ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
       }
@@ -46,7 +46,8 @@ class UpdateEmailHttpParserSpec extends UnitSpec with EitherValues {
     "the response status is INTERNAL_SERVER_ERROR" should {
       "return the expected Left Error Model" in {
         val httpResponse: HttpResponse = HttpResponse(
-          responseStatus = INTERNAL_SERVER_ERROR
+          INTERNAL_SERVER_ERROR,
+          ""
         )
         read("", "", httpResponse).left.value shouldBe ErrorModel(INTERNAL_SERVER_ERROR, httpResponse.body)
       }

@@ -16,7 +16,6 @@
 
 package controllers.predicates
 
-import assets.BaseTestConstants.internalServerErrorTitle
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status

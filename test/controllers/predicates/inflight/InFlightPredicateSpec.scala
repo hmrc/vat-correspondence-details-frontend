@@ -21,7 +21,7 @@ import common.SessionKeys._
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import mocks.MockAuth
 import models.User
-import models.customerInformation.{PPOB, PendingChanges}
+import models.customerInformation.PendingChanges
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status

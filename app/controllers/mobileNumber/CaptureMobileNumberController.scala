@@ -27,7 +27,7 @@ import play.api.mvc._
 import services.VatSubscriptionService
 import views.html.mobileNumber.CaptureMobileNumberView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSubscriptionService,

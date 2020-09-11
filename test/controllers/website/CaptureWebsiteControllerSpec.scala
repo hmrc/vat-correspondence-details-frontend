@@ -16,11 +16,8 @@
 
 package controllers.website
 
-import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys
-import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
-import models.errors.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._

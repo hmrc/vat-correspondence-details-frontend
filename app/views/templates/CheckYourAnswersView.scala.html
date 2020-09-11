@@ -18,7 +18,7 @@
 
 @this(mainTemplate: MainTemplate)
 
-@(model: CheckYourAnswersViewModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: User[_])
+@(model: CheckYourAnswersViewModel)(implicit messages: Messages, appConfig: config.AppConfig, user: User[_])
 
 @mainTemplate(title = messages("checkYourAnswers.title")) {
 

@@ -45,8 +45,8 @@ trait MockVatSubscriptionConnector extends MockFactory {
   }
 
   def mockUpdateContactPreferenceResponse(result: Future[UpdatePPOBResponse]): Unit = {
-    (connector.updateContactPreference(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
-      .expects(*, *, *, *, *)
+    (connector.updateContactPreference(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(*, *, *, *)
       .returns(result)
   }
 
