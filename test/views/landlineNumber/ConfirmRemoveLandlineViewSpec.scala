@@ -43,15 +43,16 @@ class ConfirmRemoveLandlineViewSpec extends ViewBaseSpec {
         elementText("h1") shouldBe s"Confirm you want to remove the landline number: $testValidationLandline"
       }
 
-      "have a continue button" which {
+      "have a form" which {
 
-        "has the correct text" in {
+        "has the correct action" in {
+          element("form").attr("action") shouldBe routes.ConfirmRemoveLandlineController.removeLandlineNumber().url
+        }
+
+        "has a continue button with the correct text" in {
           elementText(".button") shouldBe "Confirm and continue"
         }
 
-        "has the correct link location" in {
-          element(".button").attr("href") shouldBe routes.ConfirmRemoveLandlineController.removeLandlineNumber().url
-        }
       }
     }
 
