@@ -65,7 +65,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
         emailVerificationService.createEmailVerificationRequest(email, routes.ConfirmEmailController.updateEmailAddress().url).map{
           case Some(true) => Redirect(routes.VerifyEmailController.emailShow())
           case Some(false) =>
-            logWarn(
+            logDebug(
               "[VerifyEmailController][sendVerification] - " +
                 "Unable to send email verification request. Service responded with 'already verified'"
             )
