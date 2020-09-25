@@ -33,4 +33,5 @@ class Features @Inject()(config: Configuration) {
   val btaEntryPointEnabled = new Feature(ConfigKeys.btaEntryPointFeature, config)
   val letterToConfirmedEmailEnabled = new Feature(ConfigKeys.letterToConfirmedEmailFeature, config)
   val contactPrefMigrationEnabled = new Feature(ConfigKeys.contactPrefMigrationFeature, config)
+  val emailPinVerificationEnabled = new Feature(ConfigKeys.emailPinVerificationFeature, config)
 }
