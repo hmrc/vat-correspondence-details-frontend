@@ -39,7 +39,7 @@
     @form(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {
         @text(
             field = landlineForm("landlineNumber"),
-            pageTitle = messages("captureLandline.title"),
+            pageTitle = Some(messages("captureLandline.title")),
             additionalContent = Some(formHint)
         )
 

@@ -49,7 +49,7 @@ class TextHelperSpec extends ViewBaseSpec {
              |""".stripMargin
         )
 
-        val result = injectedView(field, title)
+        val result = injectedView(field, Some(title))
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }
@@ -78,7 +78,7 @@ class TextHelperSpec extends ViewBaseSpec {
              |""".stripMargin
         )
 
-        val result = injectedView(errorField, title)
+        val result = injectedView(errorField, Some(title))
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }
@@ -102,7 +102,29 @@ class TextHelperSpec extends ViewBaseSpec {
              |""".stripMargin
         )
 
-        val result = injectedView(field, title, additionalContent = Some(Html("<p>Additional HTML</p>")))
+        val result = injectedView(field, Some(title), additionalContent = Some(Html("<p>Additional HTML</p>")))
+
+        formatHtml(result) shouldBe formatHtml(expectedMarkup)
+      }
+    }
+
+    "there is no page title" should {
+
+      "render the provided content inside of the form" in {
+
+        val expectedMarkup = Html(
+          s"""
+             |<div class="form-group">
+             |  <fieldset aria-describedby="form-hint">
+             |    <div class="form-field">
+             |      <input class="form-control input--no-spinner" name="$fieldName" id="$fieldName" value="text">
+             |    </div>
+             |  </fieldset>
+             |</div>
+             |""".stripMargin
+        )
+
+        val result = injectedView(field, None)
 
         formatHtml(result) shouldBe formatHtml(expectedMarkup)
       }

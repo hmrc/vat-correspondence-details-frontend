@@ -36,7 +36,7 @@
     @form(action = controllers.website.routes.CaptureWebsiteController.submit, 'novalidate -> "novalidate") {
         @text(
             field = websiteForm("website"),
-            pageTitle = messages("captureWebsite.title"),
+            pageTitle = Some(messages("captureWebsite.title")),
             additionalContent = Some(formHint)
         )
 

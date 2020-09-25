@@ -1,0 +1,87 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import views.html.templates.errors.ErrorSummary
+@import views.html.templates.inputs.Text
+
+@this(mainTemplate: MainTemplate, text: Text, form: FormWithCSRF, errorSummary: ErrorSummary)
+
+@(email: String, passcodeForm: Form[String], contactPrefJourney: Boolean)(implicit request: User[_], messages: Messages, appConfig: AppConfig)
+
+@additionalContent = {
+  <h2 class="heading-small">@messages("passcode.confirmationCode")</h2>
+  <span id="form-hint" class="form-hint">@messages("passcode.formHint")</span>
+}
+
+@startJourneyUrl = @{
+  if(contactPrefJourney) {
+    controllers.email.routes.CaptureEmailController.showPrefJourney().url
+  } else {
+    controllers.email.routes.CaptureEmailController.show().url
+  }
+}
+
+@resendVerificationUrl = @{
+  if(contactPrefJourney) {
+    "#" //TODO - new controller action
+  } else {
+    "#" //TODO - new controller action
+  }
+}
+
+@mainTemplate(
+  title = if(passcodeForm.hasErrors) messages("common.error.prefixTitle", messages("passcode.title")) else messages("passcode.title")
+){
+
+  <a class="link-back" href=@startJourneyUrl>@messages("base.back")</a>
+
+  @errorSummary(messages("common.error.heading"), passcodeForm)
+
+  <h1 id="page-heading"><label for="@passcodeForm("passcode").id" class="heading-large">
+    @messages("passcode.title")
+  </label></h1>
+
+  <p>@messages("passcode.weHaveSent")
+    <span class="bold">@email</span>
+  </p>
+  <p class="panel panel-border-wide">@messages("passcode.newTabOrWindow")</p>
+
+  @form(action = Call("GET", "/test")) { <!-- TODO - new controller action -->
+    @text(
+      field = passcodeForm("passcode"),
+      pageTitle = None,
+      additionalContent = Some(additionalContent)
+    )
+  }
+
+  <details class="controlpanel">
+    <summary><span class="summary">@messages("passcode.notReceived")</span></summary>
+    <div class="panel panel-border-narrow">
+      <p>@messages("passcode.subjectLine")</p>
+      <p>@messages("passcode.stillNotArrived.1")
+        <a href=@resendVerificationUrl>@messages("passcode.stillNotArrived.2")</a>
+        @messages("passcode.stillNotArrived.3")
+        <a href=@startJourneyUrl>@messages("passcode.stillNotArrived.4")</a>@messages("common.fullstop")
+      </p>
+    </div>
+  </details>
+
+  <div class="form-group">
+    <button class="button" type="submit">@messages("common.continue")</button>
+  </div>
+}
