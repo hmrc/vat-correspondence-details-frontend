@@ -17,14 +17,12 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{
-  CreateEmailVerificationRequestResponse,
-  EmailAlreadyVerified,
-  EmailVerificationRequestFailure,
-  EmailVerificationRequestSent
-}
+import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{CreateEmailVerificationRequestResponse, EmailAlreadyVerified, EmailVerificationRequestFailure, EmailVerificationRequestSent}
 import connectors.httpParsers.GetEmailVerificationStateHttpParser._
+import connectors.httpParsers.RequestPasscodeHttpParser.{EmailIsAlreadyVerified, EmailVerificationPasscodeRequest, EmailVerificationPasscodeRequestSent}
+import connectors.httpParsers.ResponseHttpParser.HttpPostResult
 import helpers.IntegrationBaseSpec
+import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import stubs.EmailVerificationStub
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,16 +35,19 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
     implicit val hc: HeaderCarrier = HeaderCarrier()
   }
 
+  private val testEmail = "scala@gmail.com"
+  private val testContinueUrl = "/home"
+
 
   "Calling getEmailVerificationState" when {
 
     "the email is verified" should {
 
       "return an EmailVerified response" in new Test {
-        override def setupStubs(): StubMapping = EmailVerificationStub.stubEmailVerified("scala@gmail.com")
+        override def setupStubs(): StubMapping = EmailVerificationStub.stubEmailVerified(testEmail)
         setupStubs()
         val expected = Right(EmailVerified)
-        val result: GetEmailVerificationStateResponse = await(connector.getEmailVerificationState("scala@gmail.com"))
+        val result: GetEmailVerificationStateResponse = await(connector.getEmailVerificationState(testEmail))
 
         result shouldBe expected
       }
@@ -58,7 +59,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
         override def setupStubs(): StubMapping = EmailVerificationStub.stubEmailNotVerified
         setupStubs()
         val expected = Right(EmailNotVerified)
-        val result: GetEmailVerificationStateResponse = await(connector.getEmailVerificationState("scala@gmail.com"))
+        val result: GetEmailVerificationStateResponse = await(connector.getEmailVerificationState(testEmail))
 
         result shouldBe expected
       }
@@ -73,7 +74,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
           INTERNAL_SERVER_ERROR,
           EmailVerificationStub.internalServerErrorJson.toString
         ))
-        val result: GetEmailVerificationStateResponse = await(connector.getEmailVerificationState("scala@gmail.com"))
+        val result: GetEmailVerificationStateResponse = await(connector.getEmailVerificationState(testEmail))
 
         result shouldBe expected
       }
@@ -89,7 +90,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
         setupStubs()
         val expected = Right(EmailVerificationRequestSent)
         val result: CreateEmailVerificationRequestResponse =
-          await(connector.createEmailVerificationRequest("scala@gmail.com", "/home"))
+          await(connector.createEmailVerificationRequest(testEmail, testContinueUrl))
 
         result shouldBe expected
       }
@@ -102,7 +103,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
         setupStubs()
         val expected = Right(EmailAlreadyVerified)
         val result: CreateEmailVerificationRequestResponse =
-          await(connector.createEmailVerificationRequest("scala@gmail.com", "/home"))
+          await(connector.createEmailVerificationRequest(testEmail, testContinueUrl))
 
         result shouldBe expected
       }
@@ -118,8 +119,55 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
           EmailVerificationStub.internalServerErrorJson.toString
         ))
         val result: CreateEmailVerificationRequestResponse =
-          await(connector.createEmailVerificationRequest("scala@gmail.com", "/home"))
+          await(connector.createEmailVerificationRequest(testEmail, testContinueUrl))
 
+        result shouldBe expected
+      }
+    }
+  }
+
+  "Calling requestEmailPasscode" when {
+
+    "the call is successful" should {
+
+      "return an EmailVerificationPasscodeRequestSent" in new Test {
+        override def setupStubs(): StubMapping = EmailVerificationStub.stubPasscodeVerificationRequestSent
+
+        setupStubs()
+        val expected = Right(EmailVerificationPasscodeRequestSent)
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+
+        result shouldBe expected
+      }
+    }
+
+    "the email is already verified" should {
+
+      "return an EmailIsAlreadyVerified" in new Test {
+        override def setupStubs(): StubMapping = EmailVerificationStub.stubPasscodeEmailAlreadyVerified
+
+        setupStubs()
+        val expected = Right(EmailIsAlreadyVerified)
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+
+        result shouldBe expected
+      }
+    }
+
+    "the endpoint returns an unexpected status" should {
+
+      "return an Error" in new Test {
+        override def setupStubs(): StubMapping = EmailVerificationStub.stubPasscodeRequestError
+
+        setupStubs()
+        val expected = Left(ErrorModel(
+          INTERNAL_SERVER_ERROR,
+          EmailVerificationStub.internalServerErrorJson.toString
+        ))
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+
+
+        result shouldBe expected
         result shouldBe expected
       }
     }
