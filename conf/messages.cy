@@ -176,3 +176,5 @@ passcode.stillNotArrived.1 = Gwiriwch eich ffolder sbam neu sothach. Os nad ywâ€
 passcode.stillNotArrived.2 = ofyn am god newydd
 passcode.stillNotArrived.3 = neu
 passcode.stillNotArrived.4 = roi cyfeiriad e-bost arall
+passcode.error.empty = Nodwch y cod cadarnhau
+passcode.error.invalid = Nodwch y cod cadarnhau syâ€™n 6 chymeriad

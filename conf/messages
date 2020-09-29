@@ -179,3 +179,5 @@ passcode.stillNotArrived.1 = Check your spam or junk folder. If the email has st
 passcode.stillNotArrived.2 = request a new code
 passcode.stillNotArrived.3 = or
 passcode.stillNotArrived.4 = provide another email address
+passcode.error.empty = Enter the confirmation code
+passcode.error.invalid = Enter the 6 character confirmation code
