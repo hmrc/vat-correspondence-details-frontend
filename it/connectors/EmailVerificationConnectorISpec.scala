@@ -166,8 +166,6 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
         ))
         val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
 
-
-        result shouldBe expected
         result shouldBe expected
       }
     }
