@@ -18,13 +18,14 @@ package connectors
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
 import common.EmailVerificationKeys._
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.CreateEmailVerificationRequestResponse
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateResponse
+import connectors.httpParsers.RequestPasscodeHttpParser.EmailVerificationPasscodeRequest
+import connectors.httpParsers.ResponseHttpParser.HttpPostResult
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,4 +56,20 @@ class EmailVerificationConnector @Inject()(http: HttpClient,
 
     http.POST[JsObject, CreateEmailVerificationRequestResponse](createEmailVerificationRequestUrl, jsonBody)
   }
+
+
+  private val emailPinVerificationUrl: String = s"${appConfig.emailVerificationBaseUrl}/email-verification/request-passcode"
+
+  def requestEmailPasscode(emailAddress: String)
+                          (implicit hc: HeaderCarrier): Future[HttpPostResult[EmailVerificationPasscodeRequest]] = {
+    val jsonBody =
+      Json.obj(
+        "email" -> emailAddress,
+        "serviceName" -> "HMRC VAT"
+      )
+
+    http.POST[JsObject, HttpPostResult[EmailVerificationPasscodeRequest]](emailPinVerificationUrl, jsonBody)
+  }
+
+
 }

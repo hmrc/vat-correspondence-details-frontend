@@ -20,6 +20,7 @@ import config.AppConfig
 import connectors.EmailVerificationConnector
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{EmailAlreadyVerified, EmailVerificationRequestSent}
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.{EmailNotVerified, EmailVerified}
+import connectors.httpParsers.RequestPasscodeHttpParser.{EmailIsAlreadyVerified, EmailVerificationPasscodeRequestSent}
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -59,5 +60,13 @@ class EmailVerificationService @Inject()(emailVerificationConnector: EmailVerifi
       }
     } else {
       Future.successful(Some(false))
+    }
+
+  def createEmailPasscodeRequest(email: String)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+
+    emailVerificationConnector.requestEmailPasscode(email) map {
+      case Right(EmailVerificationPasscodeRequestSent) => Some(true)
+      case Right(EmailIsAlreadyVerified) => Some(false)
+      case _ => None
     }
 }

@@ -18,7 +18,9 @@ package services
 
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{EmailAlreadyVerified, EmailVerificationRequestFailure, EmailVerificationRequestSent}
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.{EmailNotVerified, EmailVerified, GetEmailVerificationStateErrorResponse}
+import connectors.httpParsers.RequestPasscodeHttpParser.{EmailIsAlreadyVerified, EmailVerificationPasscodeRequestSent}
 import mocks.MockEmailVerificationConnector
+import models.errors.ErrorModel
 import org.mockito.Mockito.{never, verify}
 import org.scalatest.EitherValues
 import play.api.http.Status._
@@ -165,6 +167,48 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
     "not call the email verification connector" in {
       res
       verify(mockEmailVerificationConnector, never()).getEmailVerificationState(testEmail)
+    }
+  }
+
+  "Creating an email verification passcode request" when {
+
+    "the email verification passcode request is sent successfully" should {
+
+      "return Some(true)" in {
+
+        mockRequestEmailPasscode(Future.successful(Right(EmailVerificationPasscodeRequestSent)))
+        val res: Option[Boolean] = {
+          mockConfig.features.emailPinVerificationEnabled(true)
+          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail))
+        }
+        res shouldBe Some(true)
+      }
+    }
+
+    "the email address has already been verified" should {
+
+      "return Some(false)" in {
+
+        mockRequestEmailPasscode(Future.successful(Right(EmailIsAlreadyVerified)))
+        val res: Option[Boolean] = {
+          mockConfig.features.emailPinVerificationEnabled(true)
+          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail))
+        }
+        res shouldBe Some(false)
+      }
+    }
+
+    "the email verification passcode request fails" should {
+
+      "return None" in {
+
+        mockRequestEmailPasscode(Future.successful(Left(ErrorModel(BAD_REQUEST, ""))))
+        val res: Option[Boolean] = {
+          mockConfig.features.emailPinVerificationEnabled(true)
+          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail))
+        }
+        res shouldBe None
+      }
     }
   }
 }

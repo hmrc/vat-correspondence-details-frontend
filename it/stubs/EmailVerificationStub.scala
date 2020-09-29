@@ -25,6 +25,7 @@ object EmailVerificationStub extends WireMockMethods {
 
   private val emailVerificationStateUri = "/email-verification/verified-email-check"
   private val emailVerificationRequestUri = "/email-verification/verification-requests"
+  private val emailVerificationPasscodeRequestUri = "/email-verification/request-passcode"
 
   def stubEmailVerified(emailAddress: String): StubMapping =
     when(
@@ -60,6 +61,22 @@ object EmailVerificationStub extends WireMockMethods {
     """{
       |  "code": "UNEXPECTED_ERROR",
       |  "message":"An unexpected error occurred."
+      |}""".stripMargin
+  )
+
+  def stubPasscodeVerificationRequestSent: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
+    .thenReturn(status = CREATED)
+
+  def stubPasscodeEmailAlreadyVerified: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
+    .thenReturn(status = CONFLICT, body = alreadyVerifiedJson)
+
+  def stubPasscodeRequestError: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
+    .thenReturn(status = INTERNAL_SERVER_ERROR, body = internalServerErrorJson)
+
+  val alreadyVerifiedJson: JsValue = Json.parse(
+    """{
+      |  "code": "EMAIL_VERIFIED_ALREADY",
+      |  "message":"Email already verified"
       |}""".stripMargin
   )
 }
