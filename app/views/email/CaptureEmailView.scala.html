@@ -49,7 +49,7 @@
         @form(action = submitFormAction) {
             @text(
                 field = emailForm("email"),
-                pageTitle = messages("captureEmail.title"),
+                pageTitle = Some(messages("captureEmail.title")),
                 additionalContent = Some(additionalContent)
             )
 

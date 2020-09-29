@@ -167,3 +167,15 @@ cPrefAddEmail.error = Select yes if you want to add an email address
 contactPrefConfirmation.title = You have asked us to change how we contact you about VAT
 contactPrefConfirmation.contactYou = If we can accept the change, we will contact you about VAT at:
 contactPrefConfirmation.stillNeedLetters = We’ll still need to send you some letters in the post because the law tells us to.
+
+passcode.title = Enter code to confirm your email address
+passcode.weHaveSent = We have sent a code to:
+passcode.newTabOrWindow = Open a new tab or window if you need to access your emails online.
+passcode.confirmationCode = Confirmation code
+passcode.formHint = For example, DNCLRK
+passcode.notReceived = I have not received the email
+passcode.subjectLine = The email might take a few minutes to arrive. Its subject line is: ‘Confirm your email address - VAT account’.
+passcode.stillNotArrived.1 = Check your spam or junk folder. If the email has still not arrived, you can
+passcode.stillNotArrived.2 = request a new code
+passcode.stillNotArrived.3 = or
+passcode.stillNotArrived.4 = provide another email address

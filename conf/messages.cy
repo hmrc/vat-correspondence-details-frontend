@@ -164,3 +164,15 @@ cPrefAddEmail.error = Dewiswch ‘Iawn’ os ydych am ychwanegu cyfeiriad e-bost
 contactPrefConfirmation.title = Rydych wedi gofyn i ni newid sut yr ydym yn cysylltu â chi ynghylch TAW
 contactPrefConfirmation.contactYou = Os gallwn dderbyn y newid, byddwn yn cysylltu â chi ynghylch TAW yn:
 contactPrefConfirmation.stillNeedLetters = Bydd angen i ni anfon rhai llythyrau atoch drwy’r post o hyd oherwydd bod y gyfraith yn dweud wrthym am wneud hynny.
+
+passcode.title = Nodwch y cod i gadarnhau eich cyfeiriad e-bost
+passcode.weHaveSent = Rydym wedi anfon cod i:
+passcode.newTabOrWindow = Agorwch dab neu ffenestr newydd os oes angen i chi gael mynediad at eich e-byst ar-lein.
+passcode.confirmationCode = Cod cadarnhau
+passcode.formHint = Er enghraifft, DNCLRK
+passcode.notReceived = Nid wyf wedi cael yr e-bost
+passcode.subjectLine = Gall yr e-bost gymryd ychydig o funudau i gyrraedd. Llinell pwnc yr e-bost yw: ‘Cadarnhau’ch cyfeiriad e-bost - cyfrif TAW’ / ‘Confirm your email address - VAT account’.
+passcode.stillNotArrived.1 = Gwiriwch eich ffolder sbam neu sothach. Os nad yw’r e-bost wedi cyrraedd o hyd, gallwch
+passcode.stillNotArrived.2 = ofyn am god newydd
+passcode.stillNotArrived.3 = neu
+passcode.stillNotArrived.4 = roi cyfeiriad e-bost arall
