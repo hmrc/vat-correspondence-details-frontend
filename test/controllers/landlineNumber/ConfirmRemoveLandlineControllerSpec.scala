@@ -17,7 +17,8 @@
 package controllers.landlineNumber
 
 import assets.BaseTestConstants.testValidationLandline
-import common.SessionKeys.{validationLandlineKey, prepopulationLandlineKey}
+import common.SessionKeys.{prepopulationLandlineKey, validationLandlineKey}
+import config.ErrorHandler
 import controllers.ControllerBaseSpec
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
@@ -27,7 +28,7 @@ import views.html.landlineNumber.ConfirmRemoveLandlineView
 
 class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
 
-  val controller = new ConfirmRemoveLandlineController(inject[ConfirmRemoveLandlineView])
+  val controller = new ConfirmRemoveLandlineController(inject[ConfirmRemoveLandlineView], inject[ErrorHandler])
   val requestWithLandline: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(validationLandlineKey -> testValidationLandline)
 
@@ -69,20 +70,33 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
 
   "Calling the removeLandlineNumber() action in ConfirmRemoveLandlineController" when {
 
-    "there is a validation landline number in session" should {
+    "there is a validation landline number in session" when {
 
-      lazy val result = controller.removeLandlineNumber()(requestWithLandline)
+      "the form has errors" should {
 
-      "return 303" in {
-        status(result) shouldBe Status.SEE_OTHER
+        lazy val result = controller.removeLandlineNumber()(requestWithLandline)
+
+        "return 400" in {
+          status(result) shouldBe Status.BAD_REQUEST
+        }
       }
 
-      "redirect to the updateLandlineNumber() action in ConfirmLandlineNumberController" in {
-        redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.updateLandlineNumber().url)
-      }
+      "the form is submitted successfully" should {
 
-      "add a blank prepopulation landline to the session" in {
-        session(result).get(prepopulationLandlineKey) shouldBe Some("")
+        lazy val result = controller.removeLandlineNumber()(requestWithLandline
+          .withFormUrlEncodedBody("value" -> "foo"))
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect to the updateLandlineNumber() action in ConfirmLandlineNumberController" in {
+          redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.updateLandlineNumber().url)
+        }
+
+        "add a blank prepopulation landline to the session" in {
+          session(result).get(prepopulationLandlineKey) shouldBe Some("")
+        }
       }
     }
 

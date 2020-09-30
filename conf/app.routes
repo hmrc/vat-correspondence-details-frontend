@@ -18,12 +18,12 @@ GET         /contact-preference/update-email-address         controllers.email.V
 GET         /contact-preference/confirm-email-address        controllers.email.ConfirmEmailController.showContactPref
 
 # verify email address
-GET         /verify-email-address                       controllers.email.VerifyEmailController.emailShow
-GET         /contact-preference/verify-email-address    controllers.email.VerifyEmailController.contactPrefShow
+GET         /verify-email-address                            controllers.email.VerifyEmailController.emailShow
+GET         /contact-preference/verify-email-address         controllers.email.VerifyEmailController.contactPrefShow
 
 # link to send email verification
-GET         /send-verification                          controllers.email.VerifyEmailController.emailSendVerification
-GET         /contact-preference/send-verification       controllers.email.VerifyEmailController.contactPrefSendVerification
+GET         /send-verification                               controllers.email.VerifyEmailController.emailSendVerification
+GET         /contact-preference/send-verification            controllers.email.VerifyEmailController.contactPrefSendVerification
 
 # email change successful
 GET         /email-address-confirmation                      controllers.email.EmailChangeSuccessController.show
@@ -53,7 +53,7 @@ GET         /update-new-landline-number                      controllers.landlin
 
 # remove landline number
 GET         /confirm-remove-landline-number                  controllers.landlineNumber.ConfirmRemoveLandlineController.show
-GET         /update-remove-landline-number                   controllers.landlineNumber.ConfirmRemoveLandlineController.removeLandlineNumber
+POST        /update-remove-landline-number                   controllers.landlineNumber.ConfirmRemoveLandlineController.removeLandlineNumber
 
 # landline number change successful
 GET         /landline-number-confirmation                    controllers.ChangeSuccessController.landlineNumber
@@ -83,8 +83,8 @@ POST        /preference-confirm-email                        controllers.contact
 
 
 # change preference email address
-GET         /contact-preference/change-email-address       controllers.email.CaptureEmailController.showPrefJourney
-POST        /contact-preference/change-email-address       controllers.email.CaptureEmailController.submitPrefJourney
+GET         /contact-preference/change-email-address         controllers.email.CaptureEmailController.showPrefJourney
+POST        /contact-preference/change-email-address         controllers.email.CaptureEmailController.submitPrefJourney
 
 # email preference change successful
 GET         /confirmation-:changeType-preference             controllers.contactPreference.ContactPreferenceConfirmationController.show(changeType)
@@ -94,8 +94,8 @@ GET         /contact-preference-letter                       controllers.contact
 POST        /contact-preference-letter                       controllers.contactPreference.LetterPreferenceController.submit
 
 # contact preference add email
-GET         /contact-preference/add-email-address       controllers.contactPreference.AddEmailAddressController.show
-POST        /contact-preference/add-email-address       controllers.contactPreference.AddEmailAddressController.submit
+GET         /contact-preference/add-email-address            controllers.contactPreference.AddEmailAddressController.show
+POST        /contact-preference/add-email-address            controllers.contactPreference.AddEmailAddressController.submit
 
 # Contact preference redirect (for BTA)
 GET         /contact-preference-redirect                     controllers.contactPreference.ContactPreferenceRedirectController.redirect

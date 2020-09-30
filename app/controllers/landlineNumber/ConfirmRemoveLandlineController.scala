@@ -16,18 +16,20 @@
 
 package controllers.landlineNumber
 
-import common.SessionKeys.{prepopulationLandlineKey, validationLandlineKey}
-import config.AppConfig
+import common.SessionKeys._
+import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent}
 import views.html.landlineNumber.ConfirmRemoveLandlineView
+import forms.RemovalForm._
 
 import scala.concurrent.Future
 
-class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: ConfirmRemoveLandlineView)
+class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: ConfirmRemoveLandlineView,
+                                                errorHandler: ErrorHandler)
                                                (implicit appConfig: AppConfig,
                                                 authComps: AuthPredicateComponents,
                                                 inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -41,13 +43,23 @@ class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: Confi
     }
   }
 
-  def removeLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async { implicit user =>
+  def removeLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) {
+    implicit user =>
     user.session.get(validationLandlineKey) match {
       case Some(_) =>
-        Future.successful(Redirect(routes.ConfirmLandlineNumberController.updateLandlineNumber())
-            .addingToSession(prepopulationLandlineKey -> ""))
+        removalForm.bindFromRequest.fold(
+          formWithErrors => {
+            errorHandler.showBadRequestError
+          },
+
+          formSuccess => {
+            Redirect(controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber())
+              .addingToSession(prepopulationLandlineKey -> "")
+          }
+        )
       case None =>
-        Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
+        Redirect(routes.CaptureLandlineNumberController.show())
+
     }
   }
 }
