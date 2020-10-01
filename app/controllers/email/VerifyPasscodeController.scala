@@ -98,7 +98,7 @@ class VerifyPasscodeController @Inject()(val emailVerificationService: EmailVeri
       if (appConfig.features.emailPinVerificationEnabled()) {
         extractSessionEmail match {
           case Some(email) => emailVerificationService.isEmailVerified(email).map {
-            case Some(true) => Redirect(routes.VerifyEmailController.updateContactPrefEmail())
+            case Some(true) => Redirect(routes.VerifyPasscodeController.updateContactPrefEmail())
             case _ => Ok("")
           }
           case _ => Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))

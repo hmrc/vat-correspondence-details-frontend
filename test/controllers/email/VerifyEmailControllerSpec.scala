@@ -518,7 +518,36 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
     "the user has come from BTA" when {
 
-      "the user has an unverified email" should {
+      "the user has an unverified email and the passcode feature is enabled" should {
+
+        lazy val result = {
+          mockConfig.features.emailPinVerificationEnabled(true)
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
+            pendingChanges = None,
+            ppob = fullPPOBModel.copy(
+              contactDetails = Some(contactDetailsUnverifiedEmail)
+            )
+          ))))
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+          )
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the send-passcode URL" in {
+          redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-passcode")
+        }
+
+        "add the session keys" in {
+          session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("false")
+        }
+      }
+
+      "the user has an unverified email and the passcode feature is disabled" should {
 
         lazy val result = {
           mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
@@ -603,6 +632,5 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
-
   }
 }
