@@ -59,6 +59,7 @@ trait AppConfig {
   def feedbackUrl(redirect: String): String
   val accessibilityLinkUrl: String
   val btaAccountDetailsUrl: String
+  val trackingConsentUrl: String
   def dynamicJourneyEntryUrl(isAgent: Boolean): String =
     if(features.btaEntryPointEnabled() && !isAgent) btaAccountDetailsUrl else manageVatSubscriptionServicePath
 }
@@ -146,4 +147,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
     sc.getString(Keys.vatSummaryAccessibilityUrl)
 
   override val btaAccountDetailsUrl: String = sc.getString(Keys.btaHost) + sc.getString(Keys.btaAccountDetailsUrl)
+
+  val trackingConsentUrl: String = sc.getString(Keys.trackingConsentUrl)
 }

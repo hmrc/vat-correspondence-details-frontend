@@ -95,6 +95,9 @@
 @afterHeader = {}
 
 @scriptElement = {
+    <!--[if !IE]>-->
+    <script type="text/javascript" src="@appConfig.trackingConsentUrl"></script>
+    <!--<![endif]-->
   <script type="text/javascript" src=@routes.Assets.at("javascript/errorFocus.js?2")></script>
   <script type="text/javascript" src='@routes.Assets.at("javascript/vat-corr-v1.js")'></script>
   <script>

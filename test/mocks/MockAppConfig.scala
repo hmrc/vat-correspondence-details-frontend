@@ -66,4 +66,6 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val accessibilityLinkUrl: String = "/vat-through-software/accessibility-statement"
 
   override val btaAccountDetailsUrl: String = "/bta-account-details"
+
+  override val trackingConsentUrl: String ="/tracking"
 }
