@@ -71,4 +71,6 @@ object ConfigKeys {
   val btaAccountDetailsUrl: String = "business-tax-account.accountDetails"
 
   val contactPrefMigrationFeature: String = "features.contactPrefMigration.enabled"
+
+  val trackingConsentUrl: String = "tracking-consent-frontend.url"
 }
