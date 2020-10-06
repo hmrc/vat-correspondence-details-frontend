@@ -26,6 +26,7 @@ import play.api.http.Status
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.email.PasscodeView
 
 import scala.concurrent.Future
 
@@ -33,22 +34,36 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
   object TestVerifyPasscodeController extends VerifyPasscodeController(
     mockEmailVerificationService,
-    mockErrorHandler
+    mockErrorHandler,
+    inject[PasscodeView]
   )
 
-  lazy val emptyEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.prepopulationEmailKey -> "")
+  lazy val paperRequestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
+    requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper)
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    mockConfig.features.emailPinVerificationEnabled(true)
+  }
 
   "Calling the extractSessionEmail function in VerifyPasscodeController" when {
 
-      "there is an authenticated request from a user with an email in session" should {
+    "the user has an email address in session" should {
 
-        "result in an email address being retrieved if there is an email" in {
-          val userWithSession = User[AnyContent](vrn)(requestWithEmail)
-          TestVerifyPasscodeController.extractSessionEmail(userWithSession) shouldBe Some(testEmail)
-        }
+      "return the email address" in {
+        val userWithSession = User[AnyContent](vrn)(requestWithEmail)
+        TestVerifyPasscodeController.extractSessionEmail(userWithSession) shouldBe Some(testEmail)
       }
     }
+
+    "the user does not have an email address in session" should {
+
+      "return None" in {
+        val user = User[AnyContent](vrn)(request)
+        TestVerifyPasscodeController.extractSessionEmail(user) shouldBe None
+      }
+    }
+  }
 
   "Calling the emailShow action in VerifyPasscodeController" when {
 
@@ -56,10 +71,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there is an email in session" should {
 
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
-          TestVerifyPasscodeController.emailShow()(requestWithEmail)
-        }
+        lazy val result = TestVerifyPasscodeController.emailShow()(requestWithEmail)
 
         "return 200 (OK)" in {
           status(result) shouldBe Status.OK
@@ -68,10 +80,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there isn't an email in session" should {
 
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
-          TestVerifyPasscodeController.emailShow()(emptyEmailSessionRequest)
-        }
+        lazy val result = TestVerifyPasscodeController.emailShow()(request)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
@@ -96,30 +105,95 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
     }
   }
 
+  "Calling the emailSubmit action" when {
+
+    "the emailPinVerification feature switch is enabled" when {
+
+      "there is an email in session" when {
+
+        "the form is successfully submitted" should {
+
+          lazy val result = TestVerifyPasscodeController.emailSubmit(requestWithEmail
+            .withFormUrlEncodedBody("passcode" -> "PASSME"))
+
+          "return 200" in {
+            status(result) shouldBe Status.OK
+          }
+        }
+
+        "the form is unsuccessfully submitted" should {
+
+          lazy val result = TestVerifyPasscodeController.emailSubmit(requestWithEmail
+            .withFormUrlEncodedBody("passcode" -> "FAIL"))
+
+          "return 400" in {
+            status(result) shouldBe Status.BAD_REQUEST
+          }
+        }
+      }
+
+      "there is no email in session" when {
+
+        lazy val result = TestVerifyPasscodeController.emailSubmit(request)
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect to the first page in the journey" in {
+          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
+        }
+      }
+    }
+
+    "the emailPinVerification feature switch is disabled" should {
+
+      lazy val result = {
+        mockConfig.features.emailPinVerificationEnabled(false)
+        TestVerifyPasscodeController.emailSubmit()(requestWithEmail)
+      }
+
+      "return a NOT FOUND error" in {
+        status(result) shouldBe Status.NOT_FOUND
+      }
+    }
+  }
+
   "Calling the emailSendVerification action in VerifyPasscodeController" when {
 
     "the emailPinVerification feature switch is enabled" when {
 
-      "there is an email in session" should {
+      "the email in session is verified" should {
 
         lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
-          mockCreateEmailVerificationRequest(Some(true))
+          mockGetEmailVerificationState(testEmail)(Future.successful(Some(true)))
           TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
         }
 
-        "return OK" in {
-          status(result) shouldBe OK
+        "return 303 (SEE_OTHER)" in {
+          status(result) shouldBe SEE_OTHER
         }
 
+        "redirect to the correct route" in {
+          redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress().url)
+        }
+      }
+
+      "the email in session isn't verified" which {
+
+        lazy val result = {
+          mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
+          TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
+        }
+
+        "return 200 (OK)" in {
+          status(result) shouldBe Status.OK
+        }
       }
 
       "there isn't an email in session" should {
 
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
-          TestVerifyPasscodeController.emailSendVerification()(emptyEmailSessionRequest)
-        }
+        lazy val result = TestVerifyPasscodeController.emailSendVerification()(request)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
@@ -150,24 +224,16 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there is an email in session" should {
 
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
-          mockCreateEmailVerificationRequest(Some(true))
-          TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail)
-        }
+        lazy val result = TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail)
 
         "return OK" in {
           status(result) shouldBe OK
         }
-
       }
 
       "there isn't an email in session" should {
 
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
-          TestVerifyPasscodeController.updateEmailAddress()(emptyEmailSessionRequest)
-        }
+        lazy val result = TestVerifyPasscodeController.updateEmailAddress()(request)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
@@ -196,46 +262,95 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
     "the emailPinVerification feature switch is enabled" when {
 
-        "there is an email in session" should {
+      "there is an email in session" should {
 
-          lazy val result = {
-            mockConfig.features.emailPinVerificationEnabled(true)
-            TestVerifyPasscodeController.contactPrefShow()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
-          }
+        lazy val result = TestVerifyPasscodeController.contactPrefShow()(paperRequestWithEmail)
 
-          "return 200 (OK)" in {
+        "return 200 (OK)" in {
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "there isn't an email in session" should {
+
+        lazy val result = TestVerifyPasscodeController.contactPrefShow()(requestWithPaperPref)
+
+        "return 303 (SEE_OTHER)" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirect to the start of the contact preference journey" in {
+          redirectLocation(result) shouldBe
+            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+        }
+      }
+
+      "the emailPinVerification feature switch is disabled" should {
+
+        lazy val result = {
+          mockConfig.features.emailPinVerificationEnabled(false)
+          TestVerifyPasscodeController.contactPrefShow()(paperRequestWithEmail)
+        }
+
+        "return a NOT FOUND error" in {
+          status(result) shouldBe Status.NOT_FOUND
+        }
+      }
+    }
+  }
+
+  "Calling the contactPrefSubmit action" when {
+
+    "the emailPinVerification feature switch is enabled" when {
+
+      "there is an email in session" when {
+
+        "the form is successfully submitted" should {
+
+          lazy val result = TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+            .withFormUrlEncodedBody("passcode" -> "PASSME"))
+
+          "return 200" in {
             status(result) shouldBe Status.OK
           }
-
         }
 
-        "there isn't an email in session" should {
+        "the form is unsuccessfully submitted" should {
 
-          lazy val result = {
-            mockConfig.features.emailPinVerificationEnabled(true)
-            TestVerifyPasscodeController.contactPrefShow()(emptyEmailSessionRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
-          }
+          lazy val result = TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+            .withFormUrlEncodedBody("passcode" -> "FAIL"))
 
-          "return 303 (SEE_OTHER)" in {
-            status(result) shouldBe SEE_OTHER
-          }
-
-          "redirect to the start of the contact preference journey" in {
-            redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+          "return 400" in {
+            status(result) shouldBe Status.BAD_REQUEST
           }
         }
+      }
 
-        "the emailPinVerification feature switch is disabled" should {
+      "there is no email in session" when {
 
-          lazy val result = {
-            mockConfig.features.emailPinVerificationEnabled(false)
-            TestVerifyPasscodeController.contactPrefShow()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
-          }
+        lazy val result = TestVerifyPasscodeController.contactPrefSubmit(requestWithPaperPref)
 
-          "return a NOT FOUND error" in {
-            status(result) shouldBe Status.NOT_FOUND
-          }
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
         }
+
+        "redirect to the first page in the journey" in {
+          redirectLocation(result) shouldBe
+            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+        }
+      }
+    }
+
+    "the emailPinVerification feature switch is disabled" should {
+
+      lazy val result = {
+        mockConfig.features.emailPinVerificationEnabled(false)
+        TestVerifyPasscodeController.contactPrefSubmit()(paperRequestWithEmail)
+      }
+
+      "return a NOT FOUND error" in {
+        status(result) shouldBe Status.NOT_FOUND
+      }
     }
   }
 
@@ -246,9 +361,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
       "the email in session is verified" should {
 
         lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
           mockGetEmailVerificationState(testEmail)(Future.successful(Some(true)))
-          TestVerifyPasscodeController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
+          TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
         }
 
         "return 303 (SEE_OTHER)" in {
@@ -263,31 +377,26 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
       "the email in session isn't verified" which {
 
         lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
           mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
-          mockCreateEmailVerificationRequest(Some(false))
-          TestVerifyPasscodeController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
+          TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
         }
 
         "return 200 (OK)" in {
           status(result) shouldBe Status.OK
         }
-
       }
 
       "there isn't an email in session" should {
 
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(true)
-          TestVerifyPasscodeController.contactPrefSendVerification()(emptyEmailSessionRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
-        }
+        lazy val result = TestVerifyPasscodeController.contactPrefSendVerification()(requestWithPaperPref)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
         }
 
         "redirect to the contact preference redirect route" in {
-          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+          redirectLocation(result) shouldBe
+            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
         }
       }
 
@@ -295,7 +404,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         lazy val result = {
           mockConfig.features.emailPinVerificationEnabled(false)
-          TestVerifyPasscodeController.contactPrefSendVerification()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
+          TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
         }
 
         "return a NOT FOUND error" in {
@@ -310,31 +419,24 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "there is an email in session" should {
 
-          lazy val result = {
-            mockConfig.features.emailPinVerificationEnabled(true)
-            mockCreateEmailVerificationRequest(Some(true))
-            TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
-          }
+          lazy val result = TestVerifyPasscodeController.updateEmailAddress()(paperRequestWithEmail)
 
           "return OK" in {
             status(result) shouldBe OK
           }
-
         }
 
         "there isn't an email in session" should {
 
-          lazy val result = {
-            mockConfig.features.emailPinVerificationEnabled(true)
-            TestVerifyPasscodeController.updateContactPrefEmail()(emptyEmailSessionRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
-          }
+          lazy val result = TestVerifyPasscodeController.updateContactPrefEmail()(requestWithPaperPref)
 
           "return 303 (SEE_OTHER)" in {
             status(result) shouldBe SEE_OTHER
           }
 
           "redirect to the capture email route" in {
-            redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+            redirectLocation(result) shouldBe
+              Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
           }
         }
 
@@ -342,7 +444,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockConfig.features.emailPinVerificationEnabled(false)
-            TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
+            TestVerifyPasscodeController.updateEmailAddress()(paperRequestWithEmail)
           }
 
           "return a NOT FOUND error" in {

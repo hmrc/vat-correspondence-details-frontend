@@ -26,19 +26,21 @@ GET         /send-verification                               controllers.email.V
 GET         /contact-preference/send-verification            controllers.email.VerifyEmailController.contactPrefSendVerification
 
 # verify passcode
-GET         /email-enter-code                           controllers.email.VerifyPasscodeController.emailShow
-GET         /contact-preference/email-enter-code        controllers.email.VerifyPasscodeController.contactPrefShow
+GET         /email-enter-code                                controllers.email.VerifyPasscodeController.emailShow
+POST        /email-enter-code                                controllers.email.VerifyPasscodeController.emailSubmit
+GET         /contact-preference/email-enter-code             controllers.email.VerifyPasscodeController.contactPrefShow
+POST        /contact-preference/email-enter-code             controllers.email.VerifyPasscodeController.contactPrefSubmit
 
 # confirm passcode
 GET         /update-email-address-code                       controllers.email.VerifyPasscodeController.updateEmailAddress
 GET         /contact-preference/update-email-address-code    controllers.email.VerifyPasscodeController.updateContactPrefEmail
 
 # link to send passcode verification
-GET         /send-passcode                              controllers.email.VerifyPasscodeController.emailSendVerification
-GET         /contact-preference/send-passcode           controllers.email.VerifyPasscodeController.contactPrefSendVerification
+GET         /send-passcode                                   controllers.email.VerifyPasscodeController.emailSendVerification
+GET         /contact-preference/send-passcode                controllers.email.VerifyPasscodeController.contactPrefSendVerification
 
 # email change successful
-GET         /email-address-confirmation                 controllers.email.EmailChangeSuccessController.show
+GET         /email-address-confirmation                      controllers.email.EmailChangeSuccessController.show
 
 # capture website
 GET         /new-website-address                             controllers.website.CaptureWebsiteController.show
