@@ -25,8 +25,20 @@ GET         /contact-preference/verify-email-address         controllers.email.V
 GET         /send-verification                               controllers.email.VerifyEmailController.emailSendVerification
 GET         /contact-preference/send-verification            controllers.email.VerifyEmailController.contactPrefSendVerification
 
+# verify passcode
+GET         /email-enter-code                           controllers.email.VerifyPasscodeController.emailShow
+GET         /contact-preference/email-enter-code        controllers.email.VerifyPasscodeController.contactPrefShow
+
+# confirm passcode
+GET         /update-email-address-code                       controllers.email.VerifyPasscodeController.updateEmailAddress
+GET         /contact-preference/update-email-address-code    controllers.email.VerifyPasscodeController.updateContactPrefEmail
+
+# link to send passcode verification
+GET         /send-passcode                              controllers.email.VerifyPasscodeController.emailSendVerification
+GET         /contact-preference/send-passcode           controllers.email.VerifyPasscodeController.contactPrefSendVerification
+
 # email change successful
-GET         /email-address-confirmation                      controllers.email.EmailChangeSuccessController.show
+GET         /email-address-confirmation                 controllers.email.EmailChangeSuccessController.show
 
 # capture website
 GET         /new-website-address                             controllers.website.CaptureWebsiteController.show
@@ -80,7 +92,6 @@ POST        /contact-preference-email                        controllers.contact
 # contact preference confirm email
 GET         /preference-confirm-email                        controllers.contactPreference.EmailToUseController.show
 POST        /preference-confirm-email                        controllers.contactPreference.EmailToUseController.submit
-
 
 # change preference email address
 GET         /contact-preference/change-email-address         controllers.email.CaptureEmailController.showPrefJourney

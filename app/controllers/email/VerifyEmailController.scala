@@ -150,6 +150,10 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
             case (Some(_), Some(true)) =>
               logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - emailVerified has come back as true. Returning user to BTA")
               Redirect(appConfig.btaAccountDetailsUrl)
+            case (Some(email), _) if appConfig.features.emailPinVerificationEnabled() =>
+              Redirect(routes.VerifyPasscodeController.emailSendVerification())
+              .addingToSession(SessionKeys.prepopulationEmailKey -> email)
+              .addingToSession(SessionKeys.inFlightContactDetailsChangeKey -> s"${details.pendingPpobChanges}")
             case (Some(email), _) => Redirect(routes.VerifyEmailController.emailSendVerification())
               .addingToSession(SessionKeys.prepopulationEmailKey -> email)
               .addingToSession(SessionKeys.inFlightContactDetailsChangeKey -> s"${details.pendingPpobChanges}")
