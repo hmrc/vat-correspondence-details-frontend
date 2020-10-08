@@ -21,29 +21,30 @@ import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
+import forms.PasscodeForm
 import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{EmailVerificationService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import views.html.email.PasscodeView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class VerifyPasscodeController @Inject()(val emailVerificationService: EmailVerificationService,
-                                         val errorHandler: ErrorHandler)
+class VerifyPasscodeController @Inject()(errorHandler: ErrorHandler,
+                                         passcodeView: PasscodeView)
                                         (implicit val appConfig: AppConfig,
-                                      mcc: MessagesControllerComponents,
-                                      authComps: AuthPredicateComponents,
-                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                         mcc: MessagesControllerComponents,
+                                         authComps: AuthPredicateComponents,
+                                         inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def emailShow: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate) { implicit user =>
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(email) => Ok("") //TODO
+        case Some(email) => Ok(passcodeView(email, PasscodeForm.form, contactPrefJourney = false))
         case _ => Redirect(routes.CaptureEmailController.show())
       }
     } else {
@@ -51,12 +52,28 @@ class VerifyPasscodeController @Inject()(val emailVerificationService: EmailVeri
     }
   }
 
-  def emailSendVerification: Action[AnyContent] = blockAgentPredicate { implicit user =>
-
+  def emailSubmit: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate) { implicit user =>
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(email) => Ok("") //TODO
+        case Some(email) => PasscodeForm.form.bindFromRequest().fold(
+          error => {
+            BadRequest(passcodeView(email, error, contactPrefJourney = false))
+          },
+          _ => {
+            Ok("Success") // TODO
+          }
+        )
+        case _ => Redirect(routes.CaptureEmailController.show())
+      }
+    } else {
+      NotFound(errorHandler.notFoundTemplate(user))
+    }
+  }
 
+  def emailSendVerification: Action[AnyContent] = blockAgentPredicate{ implicit user =>
+    if (appConfig.features.emailPinVerificationEnabled()) {
+      extractSessionEmail match {
+        case Some(_) => Ok("") //TODO
         case _ => Redirect(routes.CaptureEmailController.show())
       }
     } else {
@@ -67,7 +84,7 @@ class VerifyPasscodeController @Inject()(val emailVerificationService: EmailVeri
   def updateEmailAddress(): Action[AnyContent] = blockAgentPredicate { implicit user =>
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(email) => Ok("") //TODO
+        case Some(_) => Ok("") //TODO
         case _ => Redirect(routes.CaptureEmailController.show())
       }
     } else {
@@ -75,45 +92,59 @@ class VerifyPasscodeController @Inject()(val emailVerificationService: EmailVeri
     }
   }
 
-  def contactPrefShow: Action[AnyContent] = (
-    contactPreferencePredicate andThen paperPrefPredicate andThen inFlightContactPrefPredicate) { implicit user =>
-
-      if (appConfig.features.emailPinVerificationEnabled()) {
-        extractSessionEmail match {
-          case Some(email) => Ok("") //TODO
-          case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
-        }
-      } else {
-        NotFound(errorHandler.notFoundTemplate(user))
+  def contactPrefShow: Action[AnyContent] = (contactPreferencePredicate andThen
+                                             paperPrefPredicate andThen
+                                             inFlightContactPrefPredicate) { implicit user =>
+    if (appConfig.features.emailPinVerificationEnabled()) {
+      extractSessionEmail match {
+        case Some(email) => Ok(passcodeView(email, PasscodeForm.form, contactPrefJourney = true))
+        case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
       }
+    } else {
+      NotFound(errorHandler.notFoundTemplate(user))
     }
+  }
 
-  def contactPrefSendVerification: Action[AnyContent] = (
-    contactPreferencePredicate andThen
-      paperPrefPredicate andThen
-      inFlightContactPrefPredicate).async { implicit user =>
+  def contactPrefSubmit: Action[AnyContent] = (contactPreferencePredicate andThen
+                                               paperPrefPredicate andThen
+                                               inFlightContactPrefPredicate) { implicit user =>
+    if (appConfig.features.emailPinVerificationEnabled()) {
+      extractSessionEmail match {
+        case Some(email) => PasscodeForm.form.bindFromRequest().fold(
+          error => {
+            BadRequest(passcodeView(email, error, contactPrefJourney = true))
+          },
+          _ => {
+            Ok("Success") // TODO
+          }
+        )
+        case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
+      }
+    } else {
+      NotFound(errorHandler.notFoundTemplate(user))
+    }
+  }
+
+  def contactPrefSendVerification: Action[AnyContent] = (contactPreferencePredicate andThen
+                                                         paperPrefPredicate) { implicit user =>
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
 
-      if (appConfig.features.emailPinVerificationEnabled()) {
-        extractSessionEmail match {
-          case Some(email) => emailVerificationService.isEmailVerified(email).map {
-            case Some(true) => Redirect(routes.VerifyPasscodeController.updateContactPrefEmail())
-            case _ => Ok("")
-          }
-          case _ => Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
-        }
-      } else {
-        Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
-      }
-    }
-
-  def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen
-                                                      paperPrefPredicate andThen
-                                                      inFlightContactPrefPredicate) { implicit user =>
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(email) => Ok("") //TODO
+        case Some(_) => Ok("") //TODO
+        case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
+      }
+    } else {
+      NotFound(errorHandler.notFoundTemplate(user))
+    }
+  }
+
+  def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen
+                                                      paperPrefPredicate) { implicit user =>
+    if (appConfig.features.emailPinVerificationEnabled()) {
+      extractSessionEmail match {
+        case Some(_) => Ok("") //TODO
         case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
       }
     } else {
@@ -121,8 +152,6 @@ class VerifyPasscodeController @Inject()(val emailVerificationService: EmailVeri
     }
   }
 
-  def extractSessionEmail(implicit user: User[AnyContent]): Option[String] = {
-    user.session.get(SessionKeys.prepopulationEmailKey).filter(_.nonEmpty).orElse(None)
-  }
-
+  def extractSessionEmail(implicit user: User[AnyContent]): Option[String] =
+    user.session.get(SessionKeys.prepopulationEmailKey).filter(_.nonEmpty)
 }

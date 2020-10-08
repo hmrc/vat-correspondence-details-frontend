@@ -16,10 +16,11 @@
 
 package views.email
 
+import controllers.email.routes
+import forms.PasscodeForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.data.{Form, FormError}
-import play.api.data.Forms.nonEmptyText
+import play.api.data.Form
 import play.twirl.api.Html
 import views.ViewBaseSpec
 import views.html.email.PasscodeView
@@ -27,7 +28,7 @@ import views.html.email.PasscodeView
 class PasscodeViewSpec extends ViewBaseSpec {
 
   val injectedView: PasscodeView = inject[PasscodeView]
-  val testForm: Form[String] = Form("passcode" -> nonEmptyText) //TODO - replace with real form
+  val testForm: Form[String] = PasscodeForm.form
 
   "The passcode view in the change of email journey" should {
 
@@ -90,7 +91,8 @@ class PasscodeViewSpec extends ViewBaseSpec {
       }
 
       "has the correct destination" in {
-        element("details div p:nth-child(2) a:nth-child(1)").attr("href") shouldBe "#"
+        element("details div p:nth-child(2) a:nth-child(1)").attr("href") shouldBe
+          routes.VerifyPasscodeController.emailSendVerification().url
       }
     }
 
@@ -102,7 +104,7 @@ class PasscodeViewSpec extends ViewBaseSpec {
 
       "has the correct destination" in {
         element("details div p:nth-child(2) a:nth-child(2)").attr("href") shouldBe
-          controllers.email.routes.CaptureEmailController.show().url
+          routes.CaptureEmailController.show().url
       }
     }
 
@@ -126,7 +128,8 @@ class PasscodeViewSpec extends ViewBaseSpec {
     "have a link to resend the passcode" which {
 
       "has the correct destination" in {
-        element("details div p:nth-child(2) a:nth-child(1)").attr("href") shouldBe "#"
+        element("details div p:nth-child(2) a:nth-child(1)").attr("href") shouldBe
+          routes.VerifyPasscodeController.contactPrefSendVerification().url
       }
     }
 
@@ -134,14 +137,14 @@ class PasscodeViewSpec extends ViewBaseSpec {
 
       "has the correct destination" in {
         element("details div p:nth-child(2) a:nth-child(2)").attr("href") shouldBe
-          controllers.email.routes.CaptureEmailController.showPrefJourney().url
+          routes.CaptureEmailController.showPrefJourney().url
       }
     }
   }
 
   "The passcode view when there are errors in the form" should {
 
-    val errorForm = testForm.withError(FormError("passcode", "Test error")) //TODO - replace with real form
+    val errorForm = testForm.bind(Map("passcode" -> "F"))
     lazy val view: Html = injectedView(testEmail, errorForm, contactPrefJourney = true)(user, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -156,7 +159,7 @@ class PasscodeViewSpec extends ViewBaseSpec {
       }
 
       "has the correct error message" in {
-        elementText("#passcode-error-summary") shouldBe "Test error"
+        elementText("#passcode-error-summary") shouldBe "Enter the 6 character confirmation code"
       }
 
       "has a link to the input with the error" in {
@@ -165,7 +168,7 @@ class PasscodeViewSpec extends ViewBaseSpec {
     }
 
     "have the correct error notification text above the input box" in {
-      elementText(".error-message") shouldBe "Error: Test error"
+      elementText(".error-message") shouldBe "Error: Enter the 6 character confirmation code"
     }
   }
 }

@@ -38,9 +38,17 @@
 
 @resendVerificationUrl = @{
   if(contactPrefJourney) {
-    "#" //TODO - new controller action
+    controllers.email.routes.VerifyPasscodeController.contactPrefSendVerification().url
   } else {
-    "#" //TODO - new controller action
+    controllers.email.routes.VerifyPasscodeController.emailSendVerification().url
+  }
+}
+
+@formSubmissionAction = @{
+  if(contactPrefJourney) {
+    controllers.email.routes.VerifyPasscodeController.contactPrefSubmit()
+  } else {
+    controllers.email.routes.VerifyPasscodeController.emailSubmit()
   }
 }
 
@@ -61,27 +69,27 @@
   </p>
   <p class="panel panel-border-wide">@messages("passcode.newTabOrWindow")</p>
 
-  @form(action = Call("GET", "/test")) { <!-- TODO - new controller action -->
+  @form(action = formSubmissionAction) {
     @text(
       field = passcodeForm("passcode"),
       pageTitle = None,
       additionalContent = Some(additionalContent)
     )
-  }
 
-  <details class="controlpanel">
-    <summary><span class="summary">@messages("passcode.notReceived")</span></summary>
-    <div class="panel panel-border-narrow">
-      <p>@messages("passcode.subjectLine")</p>
-      <p>@messages("passcode.stillNotArrived.1")
-        <a href=@resendVerificationUrl>@messages("passcode.stillNotArrived.2")</a>
-        @messages("passcode.stillNotArrived.3")
-        <a href=@startJourneyUrl>@messages("passcode.stillNotArrived.4")</a>@messages("common.fullstop")
-      </p>
+    <details class="controlpanel">
+      <summary><span class="summary">@messages("passcode.notReceived")</span></summary>
+      <div class="panel panel-border-narrow">
+        <p>@messages("passcode.subjectLine")</p>
+        <p>@messages("passcode.stillNotArrived.1")
+          <a href=@resendVerificationUrl>@messages("passcode.stillNotArrived.2")</a>
+          @messages("passcode.stillNotArrived.3")
+          <a href=@startJourneyUrl>@messages("passcode.stillNotArrived.4")</a>@messages("common.fullstop")
+        </p>
+      </div>
+    </details>
+
+    <div class="form-group">
+      <button class="button" type="submit">@messages("common.continue")</button>
     </div>
-  </details>
-
-  <div class="form-group">
-    <button class="button" type="submit">@messages("common.continue")</button>
-  </div>
+  }
 }
