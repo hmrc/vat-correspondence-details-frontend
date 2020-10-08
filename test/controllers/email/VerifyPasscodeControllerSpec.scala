@@ -28,12 +28,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.email.PasscodeView
 
-import scala.concurrent.Future
-
 class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyPasscodeController extends VerifyPasscodeController(
-    mockEmailVerificationService,
     mockErrorHandler,
     inject[PasscodeView]
   )
@@ -163,31 +160,12 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
     "the emailPinVerification feature switch is enabled" when {
 
-      "the email in session is verified" should {
+      "there is an email in session" should {
 
-        lazy val result = {
-          mockGetEmailVerificationState(testEmail)(Future.successful(Some(true)))
-          TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
-        }
-
-        "return 303 (SEE_OTHER)" in {
-          status(result) shouldBe SEE_OTHER
-        }
-
-        "redirect to the correct route" in {
-          redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress().url)
-        }
-      }
-
-      "the email in session isn't verified" which {
-
-        lazy val result = {
-          mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
-          TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
-        }
+        lazy val result = TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
 
         "return 200 (OK)" in {
-          status(result) shouldBe Status.OK
+          status(result) shouldBe OK
         }
       }
 
@@ -358,28 +336,9 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
     "the emailPinVerification feature switch is enabled" when {
 
-      "the email in session is verified" should {
+      "there is an email in session" should {
 
-        lazy val result = {
-          mockGetEmailVerificationState(testEmail)(Future.successful(Some(true)))
-          TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
-        }
-
-        "return 303 (SEE_OTHER)" in {
-          status(result) shouldBe SEE_OTHER
-        }
-
-        "redirect to the correct route" in {
-          redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail().url)
-        }
-      }
-
-      "the email in session isn't verified" which {
-
-        lazy val result = {
-          mockGetEmailVerificationState(testEmail)(Future.successful(Some(false)))
-          TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
-        }
+        lazy val result = TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
 
         "return 200 (OK)" in {
           status(result) shouldBe Status.OK

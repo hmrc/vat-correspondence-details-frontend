@@ -25,16 +25,14 @@ import forms.PasscodeForm
 import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.EmailVerificationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import views.html.email.PasscodeView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerificationService,
-                                         errorHandler: ErrorHandler,
+class VerifyPasscodeController @Inject()(errorHandler: ErrorHandler,
                                          passcodeView: PasscodeView)
                                         (implicit val appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
@@ -61,7 +59,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           error => {
             BadRequest(passcodeView(email, error, contactPrefJourney = false))
           },
-          passcode => {
+          _ => {
             Ok("Success") // TODO
           }
         )
@@ -72,24 +70,21 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
     }
   }
 
-  def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
+  def emailSendVerification: Action[AnyContent] = blockAgentPredicate{ implicit user =>
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(email) => emailVerificationService.isEmailVerified(email).map {
-          case Some(true) => Redirect(routes.VerifyPasscodeController.updateEmailAddress())
-          case _ => Ok("") //TODO
-        }
-        case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
+        case Some(_) => Ok("") //TODO
+        case _ => Redirect(routes.CaptureEmailController.show())
       }
     } else {
-        Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
+        NotFound(errorHandler.notFoundTemplate(user))
       }
     }
 
   def updateEmailAddress(): Action[AnyContent] = blockAgentPredicate { implicit user =>
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(email) => Ok("") //TODO
+        case Some(_) => Ok("") //TODO
         case _ => Redirect(routes.CaptureEmailController.show())
       }
     } else {
@@ -119,7 +114,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           error => {
             BadRequest(passcodeView(email, error, contactPrefJourney = true))
           },
-          passcode => {
+          _ => {
             Ok("Success") // TODO
           }
         )
@@ -131,20 +126,17 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
   }
 
   def contactPrefSendVerification: Action[AnyContent] = (contactPreferencePredicate andThen
-                                                         paperPrefPredicate).async { implicit user =>
+                                                         paperPrefPredicate) { implicit user =>
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
 
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(email) => emailVerificationService.isEmailVerified(email).map {
-          case Some(true) => Redirect(routes.VerifyPasscodeController.updateContactPrefEmail())
-          case _ => Ok("") //TODO
-        }
-        case _ => Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
+        case Some(_) => Ok("") //TODO
+        case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
       }
     } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
+      NotFound(errorHandler.notFoundTemplate(user))
     }
   }
 
@@ -152,7 +144,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
                                                       paperPrefPredicate) { implicit user =>
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(email) => Ok("") //TODO
+        case Some(_) => Ok("") //TODO
         case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
       }
     } else {
