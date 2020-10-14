@@ -62,9 +62,9 @@ class EmailVerificationService @Inject()(emailVerificationConnector: EmailVerifi
       Future.successful(Some(false))
     }
 
-  def createEmailPasscodeRequest(email: String)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+  def createEmailPasscodeRequest(email: String, lang: String)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
 
-    emailVerificationConnector.requestEmailPasscode(email) map {
+    emailVerificationConnector.requestEmailPasscode(email, lang) map {
       case Right(EmailVerificationPasscodeRequestSent) => Some(true)
       case Right(EmailIsAlreadyVerified) => Some(false)
       case _ => None

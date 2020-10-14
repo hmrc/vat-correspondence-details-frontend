@@ -135,7 +135,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
 
         setupStubs()
         val expected = Right(EmailVerificationPasscodeRequestSent)
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
 
         result shouldBe expected
       }
@@ -148,7 +148,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
 
         setupStubs()
         val expected = Right(EmailIsAlreadyVerified)
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
 
         result shouldBe expected
       }
@@ -164,7 +164,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
           INTERNAL_SERVER_ERROR,
           EmailVerificationStub.internalServerErrorJson.toString
         ))
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
 
         result shouldBe expected
       }

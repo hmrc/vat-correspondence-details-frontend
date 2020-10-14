@@ -57,19 +57,17 @@ class EmailVerificationConnector @Inject()(http: HttpClient,
     http.POST[JsObject, CreateEmailVerificationRequestResponse](createEmailVerificationRequestUrl, jsonBody)
   }
 
-
   private val emailPinVerificationUrl: String = s"${appConfig.emailVerificationBaseUrl}/email-verification/request-passcode"
 
-  def requestEmailPasscode(emailAddress: String)
+  def requestEmailPasscode(emailAddress: String, lang: String)
                           (implicit hc: HeaderCarrier): Future[HttpPostResult[EmailVerificationPasscodeRequest]] = {
     val jsonBody =
       Json.obj(
         "email" -> emailAddress,
-        "serviceName" -> "HMRC VAT"
+        "serviceName" -> "HMRC VAT",
+        "lang" -> lang
       )
 
     http.POST[JsObject, HttpPostResult[EmailVerificationPasscodeRequest]](emailPinVerificationUrl, jsonBody)
   }
-
-
 }
