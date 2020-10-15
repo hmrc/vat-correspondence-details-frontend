@@ -66,6 +66,7 @@ object ConfigKeys {
 
   val vatSummaryFrontendServiceUrl: String = "vat-summary-frontend.url"
   val vatSummaryAccessibilityUrl: String = "vat-summary-frontend.accessibilityUrl"
+  val vatSummaryFrontendOverviewUrl: String = "vat-summary-frontend.vatOverviewUrl"
 
   val btaHost: String = "business-tax-account.url"
   val btaAccountDetailsUrl: String = "business-tax-account.accountDetails"
