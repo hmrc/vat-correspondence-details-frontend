@@ -16,8 +16,11 @@
 
 package mocks
 
+import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import connectors.httpParsers.VerifyPasscodeHttpParser.VerifyPasscodeRequest
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import services.EmailVerificationService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,13 +39,14 @@ trait MockEmailVerificationService extends MockitoSugar with BeforeAndAfterEach 
   val mockEmailVerificationService: EmailVerificationService = mock[EmailVerificationService]
 
   def mockGetEmailVerificationState(emailAddress: String)(response: Future[Option[Boolean]]): Unit =
-    when(mockEmailVerificationService.isEmailVerified(
-      ArgumentMatchers.eq(emailAddress)
-    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+    when(mockEmailVerificationService
+      .isEmailVerified(ArgumentMatchers.eq(emailAddress))(any[HeaderCarrier])) thenReturn response
 
   def mockCreateEmailVerificationRequest(response: Option[Boolean]): Unit =
-    when(mockEmailVerificationService.createEmailVerificationRequest(
-      ArgumentMatchers.any(),
-      ArgumentMatchers.any()
-    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn Future.successful(response)
+    when(mockEmailVerificationService
+      .createEmailVerificationRequest(any(), any())(any[HeaderCarrier])) thenReturn Future.successful(response)
+
+  def mockVerifyPasscodeRequest(response: HttpGetResult[VerifyPasscodeRequest]): Unit =
+    when(mockEmailVerificationService
+      .verifyPasscode(any(), any())(any[HeaderCarrier])) thenReturn Future.successful(response)
 }

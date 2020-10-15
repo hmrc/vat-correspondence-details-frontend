@@ -18,8 +18,9 @@ package pages.email
 
 import forms.PasscodeForm
 import pages.BasePageISpec
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import stubs.EmailVerificationStub
 
 class PasscodePageSpec extends BasePageISpec {
 
@@ -54,14 +55,16 @@ class PasscodePageSpec extends BasePageISpec {
 
     "the correct passcode is submitted" should {
 
-      "redirect to manage customer details" in {
+      "redirect to the confirmation screen" in {
         given.user.isAuthenticated
+        EmailVerificationStub.stubVerifyPasscodeCreated
 
         When("I submit the passcode form with the correct passcode")
         val res = submit("123456")
 
         res should have(
-          httpStatus(OK)
+          httpStatus(SEE_OTHER),
+          pageTitle("")
         )
       }
     }
@@ -116,14 +119,16 @@ class PasscodePageSpec extends BasePageISpec {
 
     "the correct passcode is submitted" should {
 
-      "redirect to manage customer details" in {
+      "redirect to the confirmation screen" in {
         given.user.isAuthenticated
+        EmailVerificationStub.stubVerifyPasscodeCreated
 
         When("I submit the passcode form with the correct passcode")
         val res = submit("123456")
 
         res should have(
-          httpStatus(OK)
+          httpStatus(SEE_OTHER),
+          pageTitle("")
         )
       }
     }

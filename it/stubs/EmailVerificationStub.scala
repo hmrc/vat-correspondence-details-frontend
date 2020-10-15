@@ -26,6 +26,7 @@ object EmailVerificationStub extends WireMockMethods {
   private val emailVerificationStateUri = "/email-verification/verified-email-check"
   private val emailVerificationRequestUri = "/email-verification/verification-requests"
   private val emailVerificationPasscodeRequestUri = "/email-verification/request-passcode"
+  private val emailVerificationVerifyPasscodeUri = "/email-verification/verify-passcode"
 
   def stubEmailVerified(emailAddress: String): StubMapping =
     when(
@@ -46,6 +47,15 @@ object EmailVerificationStub extends WireMockMethods {
     .thenReturn(status = CONFLICT)
 
   def stubVerificationRequestError: StubMapping = when(method = POST, uri = emailVerificationRequestUri)
+    .thenReturn(status = INTERNAL_SERVER_ERROR, body = internalServerErrorJson)
+
+  def stubVerifyPasscodeCreated: StubMapping = when(method = POST, uri = emailVerificationVerifyPasscodeUri)
+    .thenReturn(status = CREATED)
+
+  def stubVerifyPasscodeNotFound: StubMapping = when(method = POST, uri = emailVerificationVerifyPasscodeUri)
+    .thenReturn(status = NOT_FOUND, body = verifyPasscodeNotFoundJson)
+
+  def stubVerifyPasscodeUnexpected: StubMapping = when(method = POST, uri = emailVerificationVerifyPasscodeUri)
     .thenReturn(status = INTERNAL_SERVER_ERROR, body = internalServerErrorJson)
 
   val emailVerifiedResponseJson: JsValue = Json.parse("""{"email": "scala@test.com"}""")
@@ -77,6 +87,13 @@ object EmailVerificationStub extends WireMockMethods {
     """{
       |  "code": "EMAIL_VERIFIED_ALREADY",
       |  "message":"Email already verified"
+      |}""".stripMargin
+  )
+
+  val verifyPasscodeNotFoundJson: JsValue = Json.parse(
+    """{
+      |  "code": "PASSCODE_NOT_FOUND",
+      |  "message": "Passcode not found"
       |}""".stripMargin
   )
 }
