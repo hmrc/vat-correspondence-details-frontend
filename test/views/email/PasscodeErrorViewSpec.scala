@@ -37,7 +37,7 @@ class PasscodeErrorViewSpec extends ViewBaseSpec {
     }
 
     "have the correct heading" in {
-      document.getElementsByClass("heading-large").text() shouldBe "You need to start again"
+      elementText(".heading-large") shouldBe "You need to start again"
     }
 
     "have the correct text for the first paragraph" in {
@@ -52,6 +52,11 @@ class PasscodeErrorViewSpec extends ViewBaseSpec {
 
       "has the correct text" in {
         elementText("#content > article > p:nth-child(3) > a") shouldBe "Return to your VAT account"
+      }
+
+      "have the correct href" in {
+        element("#content > article > p:nth-child(3) > a").attr("href") shouldBe
+          mockConfig.vatOverviewUrl
       }
     }
   }

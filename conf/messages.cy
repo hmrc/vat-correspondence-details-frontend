@@ -180,6 +180,6 @@ passcode.error.empty = Nodwch y cod cadarnhau
 passcode.error.invalid = Nodwch y cod cadarnhau sy’n 6 chymeriad
 
 passcode.attempts.title = You need to start again
-passcode.attempts.information = This is because you have entered the wrong code too many times
+passcode.attempts.information = This is because you have entered the wrong code too many times.
 passcode.attempts.vatAccount = Return to your VAT account
-passcode.attempts.retry = to start the process again
+passcode.attempts.retry = to start the process again.

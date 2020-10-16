@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import views.html.templates.inputs.Text
 
-@this(mainTemplate: MainTemplate, text: Text, form: FormWithCSRF)
+@this(mainTemplate: MainTemplate)
 
 @()(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
@@ -26,11 +26,11 @@
 
 <h1 class="heading-large">@messages("passcode.attempts.title")</h1>
 
-    <p>@messages("passcode.attempts.information")@messages("common.fullstop")</p>
+    <p>@messages("passcode.attempts.information")</p>
 
     <p>
     <a href="@appConfig.vatOverviewUrl">@messages("passcode.attempts.vatAccount")</a>
-        @messages("passcode.attempts.retry")@messages("common.fullstop")
+        @messages("passcode.attempts.retry")
     </p>
 
 }
