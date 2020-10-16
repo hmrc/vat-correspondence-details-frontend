@@ -58,6 +58,7 @@ trait AppConfig {
   def contactPreferencesUrl(vrn: String): String
   def feedbackUrl(redirect: String): String
   val accessibilityLinkUrl: String
+  val vatOverviewUrl: String
   val btaAccountDetailsUrl: String
   val trackingConsentUrl: String
   def dynamicJourneyEntryUrl(isAgent: Boolean): String =
@@ -145,6 +146,9 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override val accessibilityLinkUrl: String = sc.getString(Keys.vatSummaryFrontendServiceUrl) +
     sc.getString(Keys.vatSummaryAccessibilityUrl)
+
+  override val vatOverviewUrl: String = sc.getString(Keys.vatSummaryFrontendServiceUrl) +
+    sc.getString(Keys.vatSummaryFrontendOverviewUrl)
 
   override val btaAccountDetailsUrl: String = sc.getString(Keys.btaHost) + sc.getString(Keys.btaAccountDetailsUrl)
 
