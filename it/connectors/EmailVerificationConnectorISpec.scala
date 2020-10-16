@@ -17,10 +17,11 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{CreateEmailVerificationRequestResponse, EmailAlreadyVerified, EmailVerificationRequestFailure, EmailVerificationRequestSent}
+import connectors.httpParsers.CreateEmailVerificationRequestHttpParser._
 import connectors.httpParsers.GetEmailVerificationStateHttpParser._
-import connectors.httpParsers.RequestPasscodeHttpParser.{EmailIsAlreadyVerified, EmailVerificationPasscodeRequest, EmailVerificationPasscodeRequestSent}
+import connectors.httpParsers.RequestPasscodeHttpParser._
 import connectors.httpParsers.ResponseHttpParser.HttpPostResult
+import connectors.httpParsers.VerifyPasscodeHttpParser._
 import helpers.IntegrationBaseSpec
 import models.errors.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -135,7 +136,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
 
         setupStubs()
         val expected = Right(EmailVerificationPasscodeRequestSent)
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
 
         result shouldBe expected
       }
@@ -148,7 +149,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
 
         setupStubs()
         val expected = Right(EmailIsAlreadyVerified)
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
 
         result shouldBe expected
       }
@@ -164,7 +165,52 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
           INTERNAL_SERVER_ERROR,
           EmailVerificationStub.internalServerErrorJson.toString
         ))
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail))
+        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
+
+        result shouldBe expected
+      }
+    }
+  }
+
+  "Calling verifyEmailPasscode" when {
+
+    "the call returns an expected response with no JSON body" should {
+
+      "pass back the correct response" in new Test {
+        override def setupStubs(): StubMapping = EmailVerificationStub.stubVerifyPasscodeCreated
+
+        setupStubs()
+        val expected = Right(SuccessfullyVerified)
+        val result: HttpPostResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
+
+        result shouldBe expected
+      }
+    }
+
+    "the call returns an expected response with a JSON body" should {
+
+      "pass back the correct response" in new Test {
+        override def setupStubs(): StubMapping = EmailVerificationStub.stubVerifyPasscodeNotFound
+
+        setupStubs()
+        val expected = Right(PasscodeNotFound)
+        val result: HttpPostResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
+
+        result shouldBe expected
+      }
+    }
+
+    "the call returns an unexpected response" should {
+
+      "pass back the correct response" in new Test {
+        override def setupStubs(): StubMapping = EmailVerificationStub.stubVerifyPasscodeUnexpected
+
+        setupStubs()
+        val expected = Left(ErrorModel(
+          INTERNAL_SERVER_ERROR,
+          EmailVerificationStub.internalServerErrorJson.toString
+        ))
+        val result: HttpPostResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
 
         result shouldBe expected
       }

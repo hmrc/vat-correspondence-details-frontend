@@ -26,6 +26,7 @@ import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.CreateEma
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateResponse
 import connectors.httpParsers.RequestPasscodeHttpParser.EmailVerificationPasscodeRequest
 import connectors.httpParsers.ResponseHttpParser.HttpPostResult
+import connectors.httpParsers.VerifyPasscodeHttpParser.VerifyPasscodeRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,19 +58,29 @@ class EmailVerificationConnector @Inject()(http: HttpClient,
     http.POST[JsObject, CreateEmailVerificationRequestResponse](createEmailVerificationRequestUrl, jsonBody)
   }
 
+  private val requestPasscodeUrl: String = s"${appConfig.emailVerificationBaseUrl}/email-verification/request-passcode"
 
-  private val emailPinVerificationUrl: String = s"${appConfig.emailVerificationBaseUrl}/email-verification/request-passcode"
-
-  def requestEmailPasscode(emailAddress: String)
+  def requestEmailPasscode(emailAddress: String, lang: String)
                           (implicit hc: HeaderCarrier): Future[HttpPostResult[EmailVerificationPasscodeRequest]] = {
     val jsonBody =
       Json.obj(
         "email" -> emailAddress,
-        "serviceName" -> "HMRC VAT"
+        "serviceName" -> "HMRC VAT",
+        "lang" -> lang
       )
 
-    http.POST[JsObject, HttpPostResult[EmailVerificationPasscodeRequest]](emailPinVerificationUrl, jsonBody)
+    http.POST[JsObject, HttpPostResult[EmailVerificationPasscodeRequest]](requestPasscodeUrl, jsonBody)
   }
 
+  private val verifyPasscodeUrl: String = s"${appConfig.emailVerificationBaseUrl}/email-verification/verify-passcode"
 
+  def verifyPasscode(emailAddress: String, passcode: String)
+                    (implicit hc: HeaderCarrier): Future[HttpPostResult[VerifyPasscodeRequest]] = {
+    val jsonBody = Json.obj(
+      "email" -> emailAddress,
+      "passcode" -> passcode
+    )
+
+    http.POST[JsObject, HttpPostResult[VerifyPasscodeRequest]](verifyPasscodeUrl, jsonBody)
+  }
 }

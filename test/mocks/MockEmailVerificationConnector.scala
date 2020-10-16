@@ -52,5 +52,5 @@ trait MockEmailVerificationConnector extends MockitoSugar with BeforeAndAfterEac
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
 
   def mockRequestEmailPasscode(response: Future[HttpPostResult[EmailVerificationPasscodeRequest]]): Unit =
-    when(mockEmailVerificationConnector.requestEmailPasscode(any[String])(any[HeaderCarrier])) thenReturn response
+    when(mockEmailVerificationConnector.requestEmailPasscode(any[String], any[String])(any[HeaderCarrier])) thenReturn response
 }

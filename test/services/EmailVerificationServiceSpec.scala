@@ -179,7 +179,7 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
         mockRequestEmailPasscode(Future.successful(Right(EmailVerificationPasscodeRequestSent)))
         val res: Option[Boolean] = {
           mockConfig.features.emailPinVerificationEnabled(true)
-          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail))
+          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail, "en"))
         }
         res shouldBe Some(true)
       }
@@ -192,7 +192,7 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
         mockRequestEmailPasscode(Future.successful(Right(EmailIsAlreadyVerified)))
         val res: Option[Boolean] = {
           mockConfig.features.emailPinVerificationEnabled(true)
-          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail))
+          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail, "en"))
         }
         res shouldBe Some(false)
       }
@@ -205,7 +205,7 @@ class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationCo
         mockRequestEmailPasscode(Future.successful(Left(ErrorModel(BAD_REQUEST, ""))))
         val res: Option[Boolean] = {
           mockConfig.features.emailPinVerificationEnabled(true)
-          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail))
+          await(TestStoreEmailService.createEmailPasscodeRequest(testEmail, "en"))
         }
         res shouldBe None
       }

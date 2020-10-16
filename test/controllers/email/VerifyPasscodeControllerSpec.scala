@@ -18,10 +18,12 @@ package controllers.email
 
 import assets.BaseTestConstants.vrn
 import common.SessionKeys
+import connectors.httpParsers.VerifyPasscodeHttpParser._
 import controllers.ControllerBaseSpec
 import mocks.MockEmailVerificationService
 import models.User
 import models.contactPreferences.ContactPreference._
+import models.errors.ErrorModel
 import play.api.http.Status
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
@@ -31,6 +33,7 @@ import views.html.email.PasscodeView
 class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyPasscodeController extends VerifyPasscodeController(
+    mockEmailVerificationService,
     mockErrorHandler,
     inject[PasscodeView]
   )
@@ -108,13 +111,66 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there is an email in session" when {
 
-        "the form is successfully submitted" should {
+        "the form is successfully submitted" when {
 
-          lazy val result = TestVerifyPasscodeController.emailSubmit(requestWithEmail
-            .withFormUrlEncodedBody("passcode" -> "PASSME"))
+          "the email verification service returns SuccessfullyVerified" should {
 
-          "return 200" in {
-            status(result) shouldBe Status.OK
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(SuccessfullyVerified))
+              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 303" in {
+              status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "redirect to the updateEmailAddress action" in {
+              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress().url)
+            }
+          }
+
+          "the email verification service returns AlreadyVerified" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(AlreadyVerified))
+              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 303" in {
+              status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "redirect to the updateEmailAddress action" in {
+              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress().url)
+            }
+          }
+
+          "the email verification service returns TooManyAttempts" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(TooManyAttempts))
+              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 200" in {
+              status(result) shouldBe Status.OK
+            }
+          }
+
+          "the email verification service returns an unexpected error" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Err0r")))
+              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 500" in {
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
           }
         }
 
@@ -283,13 +339,66 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there is an email in session" when {
 
-        "the form is successfully submitted" should {
+        "the form is successfully submitted" when {
 
-          lazy val result = TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
-            .withFormUrlEncodedBody("passcode" -> "PASSME"))
+          "the email verification service returns SuccessfullyVerified" should {
 
-          "return 200" in {
-            status(result) shouldBe Status.OK
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(SuccessfullyVerified))
+              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 303" in {
+              status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "redirect to the updateContactPrefEmail action" in {
+              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail().url)
+            }
+          }
+
+          "the email verification service returns AlreadyVerified" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(AlreadyVerified))
+              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 303" in {
+              status(result) shouldBe Status.SEE_OTHER
+            }
+
+            "redirect to the updateContactPrefEmail action" in {
+              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail().url)
+            }
+          }
+
+          "the email verification service returns TooManyAttempts" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(TooManyAttempts))
+              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 200" in {
+              status(result) shouldBe Status.OK
+            }
+          }
+
+          "the email verification service returns an unexpected error" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Err0r")))
+              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 500" in {
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
           }
         }
 
