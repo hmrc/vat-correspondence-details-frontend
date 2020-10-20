@@ -84,6 +84,23 @@ class PasscodePageSpec extends BasePageISpec {
         )
       }
     }
+
+    "too many incorrect passcodes are submitted" should {
+
+      "show the passcode error view" in {
+        given.user.isAuthenticated
+        EmailVerificationStub.stubPasscodeAttemptsExceeded
+
+        When("I submit the passcode form with an incorrect passcode several times")
+
+        val res = submit("444444")
+
+        res should have(
+          httpStatus(BAD_REQUEST),
+          elementText(".heading-large")("You need to start again")
+        )
+      }
+    }
   }
 
   val contactPrefPath = s"/contact-preference$path"
@@ -145,6 +162,23 @@ class PasscodePageSpec extends BasePageISpec {
           httpStatus(BAD_REQUEST),
           elementText("#passcode-error-summary")("Enter the 6 character confirmation code"),
           elementText(".form-field--error .error-message")("Error: Enter the 6 character confirmation code")
+        )
+      }
+    }
+
+    "too many incorrect passcodes are submitted" should {
+
+      "show the passcode error view" in {
+        given.user.isAuthenticated
+        EmailVerificationStub.stubPasscodeAttemptsExceeded
+
+        When("I submit the passcode form with an incorrect passcode several times")
+
+        val res = submit("444444")
+
+        res should have(
+          httpStatus(BAD_REQUEST),
+          elementText(".heading-large")("You need to start again")
         )
       }
     }
