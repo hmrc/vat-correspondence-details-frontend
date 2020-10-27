@@ -28,14 +28,15 @@ import play.api.http.Status
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.email.PasscodeView
+import views.html.email.{PasscodeErrorView, PasscodeView}
 
 class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyPasscodeController extends VerifyPasscodeController(
     mockEmailVerificationService,
     mockErrorHandler,
-    inject[PasscodeView]
+    inject[PasscodeView],
+    inject[PasscodeErrorView]
   )
 
   lazy val paperRequestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
@@ -155,8 +156,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
-            "return 200" in {
-              status(result) shouldBe Status.OK
+            "return 400" in {
+              status(result) shouldBe Status.BAD_REQUEST
             }
           }
 
@@ -383,8 +384,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
-            "return 200" in {
-              status(result) shouldBe Status.OK
+            "return 400" in {
+              status(result) shouldBe Status.BAD_REQUEST
             }
           }
 

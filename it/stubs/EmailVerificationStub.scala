@@ -58,6 +58,18 @@ object EmailVerificationStub extends WireMockMethods {
   def stubVerifyPasscodeUnexpected: StubMapping = when(method = POST, uri = emailVerificationVerifyPasscodeUri)
     .thenReturn(status = INTERNAL_SERVER_ERROR, body = internalServerErrorJson)
 
+  def stubPasscodeAttemptsExceeded: StubMapping = when(method = POST, uri = emailVerificationVerifyPasscodeUri)
+    .thenReturn(status = FORBIDDEN, body = tooManyAttempts)
+
+  def stubPasscodeVerificationRequestSent: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
+    .thenReturn(status = CREATED)
+
+  def stubPasscodeEmailAlreadyVerified: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
+    .thenReturn(status = CONFLICT, body = alreadyVerifiedJson)
+
+  def stubPasscodeRequestError: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
+    .thenReturn(status = INTERNAL_SERVER_ERROR, body = internalServerErrorJson)
+
   val emailVerifiedResponseJson: JsValue = Json.parse("""{"email": "scala@test.com"}""")
 
   val emailVerificationNotFoundJson: JsValue = Json.parse(
@@ -74,15 +86,6 @@ object EmailVerificationStub extends WireMockMethods {
       |}""".stripMargin
   )
 
-  def stubPasscodeVerificationRequestSent: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
-    .thenReturn(status = CREATED)
-
-  def stubPasscodeEmailAlreadyVerified: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
-    .thenReturn(status = CONFLICT, body = alreadyVerifiedJson)
-
-  def stubPasscodeRequestError: StubMapping = when(method = POST, uri = emailVerificationPasscodeRequestUri)
-    .thenReturn(status = INTERNAL_SERVER_ERROR, body = internalServerErrorJson)
-
   val alreadyVerifiedJson: JsValue = Json.parse(
     """{
       |  "code": "EMAIL_VERIFIED_ALREADY",
@@ -94,6 +97,13 @@ object EmailVerificationStub extends WireMockMethods {
     """{
       |  "code": "PASSCODE_NOT_FOUND",
       |  "message": "Passcode not found"
+      |}""".stripMargin
+  )
+
+  val tooManyAttempts: JsValue = Json.parse(
+    """{
+      |  "code": "MAX_PASSCODE_ATTEMPTS_EXCEEDED",
+      |  "message": "Max attempts per session exceeded"
       |}""".stripMargin
   )
 }

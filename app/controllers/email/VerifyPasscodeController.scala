@@ -27,14 +27,15 @@ import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.EmailVerificationService
-import views.html.email.PasscodeView
+import views.html.email.{PasscodeErrorView, PasscodeView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerificationService,
                                          errorHandler: ErrorHandler,
-                                         passcodeView: PasscodeView)
+                                         passcodeView: PasscodeView,
+                                        passcodeErrorView: PasscodeErrorView)
                                         (implicit val appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
                                          authComps: AuthPredicateComponents,
@@ -64,7 +65,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
             emailVerificationService.verifyPasscode(email, passcode).map {
               case Right(SuccessfullyVerified) | Right(AlreadyVerified) =>
                 Redirect(routes.VerifyPasscodeController.updateEmailAddress())
-              case Right(TooManyAttempts) => Ok("Success") // TODO
+              case Right(TooManyAttempts) => BadRequest(passcodeErrorView())
               case _ => errorHandler.showInternalServerError
             }
           }
@@ -124,7 +125,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
             emailVerificationService.verifyPasscode(email, passcode).map {
               case Right(SuccessfullyVerified) | Right(AlreadyVerified) =>
                 Redirect(routes.VerifyPasscodeController.updateContactPrefEmail())
-              case Right(TooManyAttempts) => Ok("Success") // TODO
+              case Right(TooManyAttempts) => BadRequest(passcodeErrorView())
               case _ => errorHandler.showInternalServerError
             }
           }
