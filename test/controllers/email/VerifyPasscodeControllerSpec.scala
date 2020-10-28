@@ -161,6 +161,19 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             }
           }
 
+          "the email verification service returns PasscodeNotFound" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(PasscodeNotFound))
+              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "580008"))
+            }
+
+            "return 400" in {
+              status(result) shouldBe Status.BAD_REQUEST
+            }
+          }
+
           "the email verification service returns an unexpected error" should {
 
             lazy val result = {
@@ -382,6 +395,19 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
               mockVerifyPasscodeRequest(Right(TooManyAttempts))
               TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
+            "return 400" in {
+              status(result) shouldBe Status.BAD_REQUEST
+            }
+          }
+
+          "the email verification service returns PasscodeNotFound" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(PasscodeNotFound))
+              TestVerifyPasscodeController.emailSubmit(paperRequestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "580008"))
             }
 
             "return 400" in {
