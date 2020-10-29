@@ -179,7 +179,8 @@ passcode.stillNotArrived.4 = roi cyfeiriad e-bost arall
 passcode.error.empty = Nodwch y cod cadarnhau
 passcode.error.invalid = Nodwch y cod cadarnhau sy’n 6 chymeriad
 
-passcode.attempts.title = You need to start again
-passcode.attempts.information = This is because you have entered the wrong code too many times.
-passcode.attempts.vatAccount = Return to your VAT account
-passcode.attempts.retry = to start the process again.
+passcode.error.title = You need to start again
+passcode.error.tooManyAttempts = This is because you have entered the wrong code too many times.
+passcode.error.expired = The code we sent you has expired.
+passcode.error.vatAccount = Return to your VAT account
+passcode.error.retry = to start the process again.

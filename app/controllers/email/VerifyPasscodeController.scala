@@ -65,7 +65,8 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
             emailVerificationService.verifyPasscode(email, passcode).map {
               case Right(SuccessfullyVerified) | Right(AlreadyVerified) =>
                 Redirect(routes.VerifyPasscodeController.updateEmailAddress())
-              case Right(TooManyAttempts) => BadRequest(passcodeErrorView())
+              case Right(TooManyAttempts) => BadRequest(passcodeErrorView("passcode.error.tooManyAttempts"))
+              case Right(PasscodeNotFound) => BadRequest(passcodeErrorView("passcode.error.expired"))
               case _ => errorHandler.showInternalServerError
             }
           }
@@ -125,7 +126,8 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
             emailVerificationService.verifyPasscode(email, passcode).map {
               case Right(SuccessfullyVerified) | Right(AlreadyVerified) =>
                 Redirect(routes.VerifyPasscodeController.updateContactPrefEmail())
-              case Right(TooManyAttempts) => BadRequest(passcodeErrorView())
+              case Right(TooManyAttempts) => BadRequest(passcodeErrorView("passcode.error.tooManyAttempts"))
+              case Right(PasscodeNotFound) => BadRequest(passcodeErrorView("passcode.error.expired"))
               case _ => errorHandler.showInternalServerError
             }
           }
