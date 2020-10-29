@@ -206,7 +206,7 @@ class PasscodePageSpec extends BasePageISpec {
         given.user.isAuthenticated
         EmailVerificationStub.stubVerifyPasscodeNotFound
 
-        When("I submit the passcode form with an incorrect passcode several times")
+        When("I submit the passcode form with an expired passcode")
 
         val res = submit("444444")
 
