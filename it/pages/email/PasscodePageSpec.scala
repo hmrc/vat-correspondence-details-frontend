@@ -69,12 +69,12 @@ class PasscodePageSpec extends BasePageISpec {
       }
     }
 
-    "an incorrect passcode is submitted" should {
+    "an invalid passcode is submitted" should {
 
-      "redirect to manage customer details" in {
+      "reload the page with a form error" in {
         given.user.isAuthenticated
 
-        When("I submit passcode form with the incorrect passcode")
+        When("I submit the passcode form with an invalid passcode")
         val res = submit("1234567890")
 
         res should have(
@@ -115,6 +115,23 @@ class PasscodePageSpec extends BasePageISpec {
         res should have(
           httpStatus(BAD_REQUEST),
           elementText("#content > article > p:nth-child(2)")("The code we sent you has expired.")
+        )
+      }
+    }
+
+    "an incorrect passcode is submitted" should {
+
+      "reload the page with a form error" in {
+        given.user.isAuthenticated
+        EmailVerificationStub.stubIncorrectPasscode
+
+        When("I submit the passcode form with an incorrect passcode")
+        val res = submit("123456")
+
+        res should have(
+          httpStatus(BAD_REQUEST),
+          elementText("#passcode-error-summary")("Enter the 6 character confirmation code"),
+          elementText(".form-field--error .error-message")("Error: Enter the 6 character confirmation code")
         )
       }
     }
@@ -167,12 +184,12 @@ class PasscodePageSpec extends BasePageISpec {
       }
     }
 
-    "an incorrect passcode is submitted" should {
+    "an invalid passcode is submitted" should {
 
-      "redirect to manage customer details" in {
+      "reload the page with a form error" in {
         given.user.isAuthenticated
 
-        When("I submit passcode form with the incorrect passcode")
+        When("I submit the passcode form with an invalid passcode")
         val res = submit("1234567890")
 
         res should have(
@@ -213,6 +230,23 @@ class PasscodePageSpec extends BasePageISpec {
         res should have(
           httpStatus(BAD_REQUEST),
           elementText("#content > article > p:nth-child(2)")("The code we sent you has expired.")
+        )
+      }
+    }
+
+    "an incorrect passcode is submitted" should {
+
+      "reload the page with a form error" in {
+        given.user.isAuthenticated
+        EmailVerificationStub.stubIncorrectPasscode
+
+        When("I submit the passcode form with an incorrect passcode")
+        val res = submit("123456")
+
+        res should have(
+          httpStatus(BAD_REQUEST),
+          elementText("#passcode-error-summary")("Enter the 6 character confirmation code"),
+          elementText(".form-field--error .error-message")("Error: Enter the 6 character confirmation code")
         )
       }
     }

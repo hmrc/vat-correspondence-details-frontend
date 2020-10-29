@@ -169,6 +169,18 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
                 .withFormUrlEncodedBody("passcode" -> "580008"))
             }
 
+              "return 400" in {
+                status(result) shouldBe Status.BAD_REQUEST
+              }
+            }
+
+          "the email verification service returns IncorrectPasscode" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(IncorrectPasscode))
+              TestVerifyPasscodeController.emailSubmit(requestWithEmail.withFormUrlEncodedBody("passcode" -> "PASSME"))
+            }
+
             "return 400" in {
               status(result) shouldBe Status.BAD_REQUEST
             }
@@ -406,8 +418,21 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(PasscodeNotFound))
-              TestVerifyPasscodeController.emailSubmit(paperRequestWithEmail
+              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "580008"))
+            }
+
+            "return 400" in {
+              status(result) shouldBe Status.BAD_REQUEST
+            }
+          }
+
+          "the email verification service returns IncorrectPasscode" should {
+
+            lazy val result = {
+              mockVerifyPasscodeRequest(Right(IncorrectPasscode))
+              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+                .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
             "return 400" in {
