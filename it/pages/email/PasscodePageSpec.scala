@@ -97,7 +97,24 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText(".heading-large")("You need to start again")
+          elementText("#content > article > p:nth-child(2)")("This is because you have entered the wrong code too many times.")
+        )
+      }
+    }
+
+    "the passcode was not found or has expired" should {
+
+      "show the passcode error view" in {
+        given.user.isAuthenticated
+        EmailVerificationStub.stubVerifyPasscodeNotFound
+
+        When("I submit the passcode form with an incorrect passcode several times")
+
+        val res = submit("444444")
+
+        res should have(
+          httpStatus(BAD_REQUEST),
+          elementText("#content > article > p:nth-child(2)")("The code we sent you has expired.")
         )
       }
     }
@@ -178,7 +195,24 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText(".heading-large")("You need to start again")
+          elementText("#content > article > p:nth-child(2)")("This is because you have entered the wrong code too many times.")
+        )
+      }
+    }
+
+    "the passcode was not found or has expired" should {
+
+      "show the passcode error view" in {
+        given.user.isAuthenticated
+        EmailVerificationStub.stubVerifyPasscodeNotFound
+
+        When("I submit the passcode form with an incorrect passcode several times")
+
+        val res = submit("444444")
+
+        res should have(
+          httpStatus(BAD_REQUEST),
+          elementText("#content > article > p:nth-child(2)")("The code we sent you has expired.")
         )
       }
     }
