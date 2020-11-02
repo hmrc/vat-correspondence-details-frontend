@@ -179,8 +179,8 @@ passcode.stillNotArrived.4 = roi cyfeiriad e-bost arall
 passcode.error.empty = Nodwch y cod cadarnhau
 passcode.error.invalid = Nodwch y cod cadarnhau sy’n 6 chymeriad
 
-passcode.error.title = You need to start again
-passcode.error.tooManyAttempts = This is because you have entered the wrong code too many times.
-passcode.error.expired = The code we sent you has expired.
-passcode.error.vatAccount = Return to your VAT account
-passcode.error.retry = to start the process again.
+passcode.error.title = Mae’n rhaid i chi ddechrau eto
+passcode.error.tooManyAttempts = Y rheswm am hyn yw eich bod wedi nodi’r cod anghywir gormod o weithiau.
+passcode.error.expired = Mae’r cod a anfonom atoch wedi dod i ben.
+passcode.error.vatAccount = Ewch yn ôl i’ch cyfrif TAW
+passcode.error.retry = er mwyn dechrau’r broses eto.
