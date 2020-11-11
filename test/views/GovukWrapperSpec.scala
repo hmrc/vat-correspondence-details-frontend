@@ -41,7 +41,7 @@ class GovukWrapperSpec extends ViewBaseSpec {
       }
 
       "have the correct text for Accessibility link" in {
-        elementText(accessibilityLinkSelector) shouldBe "Accessibility"
+        elementText(accessibilityLinkSelector) shouldBe "Accessibility statement"
       }
     }
   }

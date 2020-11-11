@@ -19,16 +19,16 @@ import play.sbt.routes.RoutesKeys
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import uk.gov.hmrc.{SbtArtifactory, SbtAutoBuildPlugin}
+import uk.gov.hmrc.SbtAutoBuildPlugin
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "2.24.0"
-val govTemplateVersion         = "5.56.0-play-26"
-val playPartialsVersion        = "6.11.0-play-26"
+val bootstrapPlayVersion       = "3.0.0"
+val govTemplateVersion         = "5.58.0-play-26"
+val playPartialsVersion        = "7.0.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
-val playUiVersion              = "8.11.0-play-26"
-val playLanguageVersion        = "4.3.0-play-26"
+val playUiVersion              = "8.14.0-play-26"
+val playLanguageVersion        = "4.4.0-play-26"
 val scalaTestPlusVersion       = "3.1.3"
 val hmrcTestVersion            = "3.9.0-play-26"
 val scalatestVersion           = "3.0.8"
@@ -103,7 +103,7 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {
 }
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(PlayKeys.playDefaultPort := 9148)
   .settings(coverageSettings: _*)
