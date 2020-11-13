@@ -43,14 +43,14 @@ class ConfirmRemoveMobileViewSpec extends ViewBaseSpec {
         elementText("h1") shouldBe s"Confirm you want to remove the mobile number: $testValidationMobile"
       }
 
-      "have a continue button" which {
+      "have a form" which {
 
-        "has the correct text" in {
-          elementText(".button") shouldBe "Confirm and continue"
+        "has the correct action" in {
+          element("form").attr("action") shouldBe routes.ConfirmRemoveMobileController.removeMobileNumber().url
         }
 
-        "has the correct link location" in {
-          element(".button").attr("href") shouldBe routes.ConfirmRemoveMobileController.removeMobileNumber().url
+        "has a continue button with the correct text" in {
+          elementText(".button") shouldBe "Confirm and continue"
         }
       }
     }

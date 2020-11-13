@@ -55,7 +55,7 @@ GET         /website-address-confirmation                    controllers.ChangeS
 
 # remove website address
 GET         /remove-website-address                          controllers.website.ConfirmRemoveWebsiteController.show
-GET         /update-remove-website-address                   controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
+POST        /update-remove-website-address                   controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
 
 # capture landline number
 GET         /new-landline-number                             controllers.landlineNumber.CaptureLandlineNumberController.show
@@ -82,7 +82,7 @@ GET         /update-new-mobile-number                        controllers.mobileN
 
 # remove mobile number
 GET         /confirm-remove-mobile-number                    controllers.mobileNumber.ConfirmRemoveMobileController.show
-GET         /update-remove-mobile-number                     controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
+POST        /update-remove-mobile-number                     controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
 
 # mobile number change successful
 GET         /mobile-number-confirmation                      controllers.ChangeSuccessController.mobileNumber

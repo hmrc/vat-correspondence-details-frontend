@@ -16,6 +16,7 @@
 
 package views.website
 
+import controllers.website.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.ViewBaseSpec
@@ -34,7 +35,7 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec {
 
   "The Confirm Website view" when {
 
-    "the user is a principle entity" should {
+    "the user is a principal entity" should {
 
       lazy val view = injectedView(testWebsite)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -58,13 +59,18 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec {
         }
       }
 
-      "have a continue button" which {
+      "have a form" which {
 
-        "has the correct text" in {
-          elementText(Selectors.continueButton) shouldBe "Confirm and continue"
+        "has the correct action" in {
+          element("form").attr("action") shouldBe routes.ConfirmRemoveWebsiteController.removeWebsiteAddress().url
+        }
+
+        "has a continue button with the correct text" in {
+          elementText(".button") shouldBe "Confirm and continue"
         }
       }
     }
+
     "the user is an agent" should {
 
       "there are no errors in the form" should {

@@ -28,11 +28,7 @@
   <h1 class="heading-large">@messages("confirmRemoveLandline.heading", landline)</h1>
 
   @form(action = controllers.landlineNumber.routes.ConfirmRemoveLandlineController.removeLandlineNumber) {
-
-    <div class="form-group">
-      <input type="hidden" name="value" value="submit">
-      <button class="button" type="submit">@messages("base.confirmAndContinue")</button>
-    </div>
-
+    <input type="hidden" name="value" value="submit">
+    <button class="button" type="submit">@messages("base.confirmAndContinue")</button>
   }
 }
