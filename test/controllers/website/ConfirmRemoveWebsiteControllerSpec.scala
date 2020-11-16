@@ -16,38 +16,20 @@
 
 package controllers.website
 
-import assets.BaseTestConstants.vrn
 import common.SessionKeys
 import controllers.ControllerBaseSpec
-import models.User
 import play.api.http.Status
-import play.api.mvc.{AnyContent, AnyContentAsEmpty}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.website.ConfirmRemoveWebsiteView
 
 class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
 
-  lazy val controller = new ConfirmRemoveWebsiteController(
-    mockErrorHandler,
-    mockVatSubscriptionService,
-    injector.instanceOf[ConfirmRemoveWebsiteView]
-  )
+  lazy val controller = new ConfirmRemoveWebsiteController(injector.instanceOf[ConfirmRemoveWebsiteView])
 
   lazy val requestWithValidationWebsiteKey: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(SessionKeys.validationWebsiteKey -> testWebsite)
-
-  "Calling the extractWebsite function in ConfirmRemoveWebsiteController" when {
-
-    "there is an authenticated request from a user with an website address in session" should {
-
-      "result in an website address being retrieved if there is an website" in {
-        val user = User[AnyContent](vrn, active = true, None)(requestWithValidationWebsiteKey)
-
-        controller.extractSessionWebsiteAddress(user) shouldBe Some(testWebsite)
-      }
-    }
-  }
 
   "Calling the show action in ConfirmRemoveWebsiteController" when {
 
@@ -87,20 +69,33 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
 
   "Calling the removeWebsiteAddress() action in ConfirmRemoveWebsiteController" when {
 
-    "there is a validation website address in session" should {
+    "there is a validation website address in session" when {
 
-      lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsiteKey)
+      "the form has errors" should {
 
-      "return 303" in {
-        status(result) shouldBe Status.SEE_OTHER
+        lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsiteKey)
+
+        "return 400" in {
+          status(result) shouldBe Status.BAD_REQUEST
+        }
       }
 
-      "redirect to the updateWebsite() action in ConfirmWebsiteController" in {
-        redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.updateWebsite().url)
-      }
+      "the form is submitted successfully" should {
 
-      "add a blank value to the prepopulation session key" in {
-        session(result).get(SessionKeys.prepopulationWebsiteKey) shouldBe Some("")
+        lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsiteKey
+          .withFormUrlEncodedBody("value" -> "foo"))
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect to the updateWebsite() action in ConfirmWebsiteController" in {
+          redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.updateWebsite().url)
+        }
+
+        "add a blank value to the prepopulation session key" in {
+          session(result).get(SessionKeys.prepopulationWebsiteKey) shouldBe Some("")
+        }
       }
     }
 

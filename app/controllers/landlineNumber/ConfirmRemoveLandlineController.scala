@@ -17,7 +17,7 @@
 package controllers.landlineNumber
 
 import common.SessionKeys._
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
@@ -28,14 +28,13 @@ import forms.RemovalForm._
 
 import scala.concurrent.Future
 
-class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: ConfirmRemoveLandlineView,
-                                                errorHandler: ErrorHandler)
+class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: ConfirmRemoveLandlineView)
                                                (implicit appConfig: AppConfig,
                                                 authComps: AuthPredicateComponents,
                                                 inFlightComps: InFlightPredicateComponents) extends BaseController {
 
   def show(): Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async { implicit user =>
-    user.session.get(validationLandlineKey) match {
+    user.session.get(validationLandlineKey).filter(_.nonEmpty) match {
       case Some(landline) =>
         Future.successful(Ok(confirmRemoveLandline(landline)))
       case None =>
@@ -43,16 +42,15 @@ class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: Confi
     }
   }
 
-  def removeLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) {
-    implicit user =>
-    user.session.get(validationLandlineKey) match {
+  def removeLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen
+                                                    inFlightLandlineNumberPredicate) { implicit user =>
+    user.session.get(validationLandlineKey).filter(_.nonEmpty) match {
       case Some(_) =>
         removalForm.bindFromRequest.fold(
-          formWithErrors => {
-            errorHandler.showBadRequestError
+          _ => {
+            authComps.errorHandler.showBadRequestError
           },
-
-          formSuccess => {
+          _ => {
             Redirect(controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber())
               .addingToSession(prepopulationLandlineKey -> "")
           }

@@ -21,33 +21,40 @@ import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
+import forms.RemovalForm.removalForm
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent}
 import views.html.mobileNumber.ConfirmRemoveMobileView
 
-import scala.concurrent.Future
-
 class ConfirmRemoveMobileController @Inject()(val confirmRemoveMobile: ConfirmRemoveMobileView)
                                              (implicit appConfig: AppConfig,
-                                                authComps: AuthPredicateComponents,
-                                                inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                              authComps: AuthPredicateComponents,
+                                              inFlightComps: InFlightPredicateComponents) extends BaseController {
 
-  def show(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async { implicit user =>
-    user.session.get(validationMobileKey) match {
+  def show(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
+    user.session.get(validationMobileKey).filter(_.nonEmpty) match {
       case Some(mobile) =>
-        Future.successful(Ok(confirmRemoveMobile(mobile)))
+        Ok(confirmRemoveMobile(mobile))
       case None =>
-        Future.successful(Redirect(routes.CaptureMobileNumberController.show()))
+        Redirect(routes.CaptureMobileNumberController.show())
     }
   }
 
-  def removeMobileNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async { implicit user =>
-    user.session.get(validationMobileKey) match {
+  def removeMobileNumber(): Action[AnyContent] = (allowAgentPredicate andThen
+                                                  inFlightMobileNumberPredicate) { implicit user =>
+    user.session.get(validationMobileKey).filter(_.nonEmpty) match {
       case Some(_) =>
-        Future.successful(Redirect(routes.ConfirmMobileNumberController.updateMobileNumber())
-            .addingToSession(prepopulationMobileKey -> ""))
+        removalForm.bindFromRequest.fold(
+          _ => {
+            authComps.errorHandler.showBadRequestError
+          },
+          _ => {
+            Redirect(routes.ConfirmMobileNumberController.updateMobileNumber())
+              .addingToSession(prepopulationMobileKey -> "")
+          }
+        )
       case None =>
-        Future.successful(Redirect(routes.CaptureMobileNumberController.show()))
+        Redirect(routes.CaptureMobileNumberController.show())
     }
   }
 }

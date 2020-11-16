@@ -69,20 +69,32 @@ class ConfirmRemoveMobileControllerSpec extends ControllerBaseSpec {
 
   "Calling the removeMobileNumber() action in ConfirmRemoveMobileController" when {
 
-    "there is a validation mobile number in session" should {
+    "there is a validation mobile number in session" when {
 
-      lazy val result = controller.removeMobileNumber()(requestWithMobile)
+      "the form has errors" should {
 
-      "return 303" in {
-        status(result) shouldBe Status.SEE_OTHER
+        lazy val result = controller.removeMobileNumber()(requestWithMobile)
+
+        "return 400" in {
+          status(result) shouldBe Status.BAD_REQUEST
+        }
       }
 
-      "redirect to the updateMobileNumber() action in ConfirmMobileNumberController" in {
-        redirectLocation(result) shouldBe Some(routes.ConfirmMobileNumberController.updateMobileNumber().url)
-      }
+      "the form is submitted successfully" should {
 
-      "add a blank prepopulation mobile to the session" in {
-        session(result).get(prepopulationMobileKey) shouldBe Some("")
+        lazy val result = controller.removeMobileNumber()(requestWithMobile.withFormUrlEncodedBody("value" -> "foo"))
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect to the updateMobileNumber() action in ConfirmMobileNumberController" in {
+          redirectLocation(result) shouldBe Some(routes.ConfirmMobileNumberController.updateMobileNumber().url)
+        }
+
+        "add a blank prepopulation mobile to the session" in {
+          session(result).get(prepopulationMobileKey) shouldBe Some("")
+        }
       }
     }
 

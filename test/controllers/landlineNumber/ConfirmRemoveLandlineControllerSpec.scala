@@ -18,7 +18,6 @@ package controllers.landlineNumber
 
 import assets.BaseTestConstants.testValidationLandline
 import common.SessionKeys.{prepopulationLandlineKey, validationLandlineKey}
-import config.ErrorHandler
 import controllers.ControllerBaseSpec
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
@@ -28,7 +27,7 @@ import views.html.landlineNumber.ConfirmRemoveLandlineView
 
 class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
 
-  val controller = new ConfirmRemoveLandlineController(inject[ConfirmRemoveLandlineView], inject[ErrorHandler])
+  val controller = new ConfirmRemoveLandlineController(inject[ConfirmRemoveLandlineView])
   val requestWithLandline: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(validationLandlineKey -> testValidationLandline)
 
