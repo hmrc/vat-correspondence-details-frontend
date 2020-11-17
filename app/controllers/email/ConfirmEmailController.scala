@@ -83,7 +83,11 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               answer = email,
               changeLink = controllers.email.routes.CaptureEmailController.showPrefJourney().url,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
-              continueLink = controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url)
+              continueLink = if (appConfig.features.emailPinVerificationEnabled()) {
+                controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url
+              } else {
+                controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url
+              })
           )
         )
       case _ =>

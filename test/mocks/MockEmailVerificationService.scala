@@ -49,4 +49,8 @@ trait MockEmailVerificationService extends MockitoSugar with BeforeAndAfterEach 
   def mockVerifyPasscodeRequest(response: HttpGetResult[VerifyPasscodeRequest]): Unit =
     when(mockEmailVerificationService
       .verifyPasscode(any(), any())(any[HeaderCarrier])) thenReturn Future.successful(response)
+
+  def mockCreateEmailPasscodeRequest(response: Option[Boolean]): Unit =
+    when(mockEmailVerificationService
+    .createEmailPasscodeRequest(any(), any())(any[HeaderCarrier])) thenReturn Future.successful(response)
 }

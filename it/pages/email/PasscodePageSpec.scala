@@ -16,15 +16,18 @@
 
 package pages.email
 
+import assets.BaseITConstants.internalServerErrorTitle
 import forms.PasscodeForm
 import pages.BasePageISpec
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 import stubs.EmailVerificationStub
 
 class PasscodePageSpec extends BasePageISpec {
 
+  val sendPasscodePath = "/send-passcode"
   val path = "/email-enter-code"
+  val email = "test@test.com"
 
   "Calling the .emailShow action" should {
 
@@ -248,6 +251,92 @@ class PasscodePageSpec extends BasePageISpec {
           elementText("#passcode-error-summary")("Enter the 6 character confirmation code"),
           elementText(".form-field--error .error-message")("Error: Enter the 6 character confirmation code")
         )
+      }
+    }
+  }
+
+  "Calling the .emailSendVerification action" when {
+
+    "there is an email in session" when {
+
+      def request: WSResponse = get(sendPasscodePath, formatEmail(Some(email)))
+
+      "the email verification service returns Some(true)" should {
+
+        "redirect to the verify passcode page" in {
+
+          given.user.isAuthenticated
+
+          And("a successful response for an individual is stubbed")
+          EmailVerificationStub.stubPasscodeVerificationRequestSent
+
+          When("the verify passcode page is called")
+          val result = request
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.email.routes.VerifyPasscodeController.emailShow().url)
+          )
+        }
+      }
+
+      "the email verification service returns Some(false)" should {
+
+        def request: WSResponse = get(sendPasscodePath, formatEmail(Some(email)))
+
+        "redirect to the updateEmailAddress action" in {
+
+          given.user.isAuthenticated
+
+          And("a conflict response comes back from the verification service")
+          EmailVerificationStub.stubPasscodeEmailAlreadyVerified
+
+          When("The verify email page is called")
+          val result = request
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.email.routes.VerifyPasscodeController.updateEmailAddress().url)
+          )
+        }
+      }
+
+      "the email verification service returns None" should {
+
+        def request: WSResponse = get(sendPasscodePath, formatEmail(Some(email)))
+
+        "render the internal server error page" in {
+
+          given.user.isAuthenticated
+
+          And("an error from the email verification service is stubbed")
+          EmailVerificationStub.stubPasscodeRequestError
+
+          When("the verify passcode page is called")
+          val result = request
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle(generateDocumentTitle(internalServerErrorTitle))
+          )
+        }
+      }
+    }
+
+    "there isn't an email in session" should {
+
+      def request: WSResponse = get(sendPasscodePath, formatEmail(None))
+
+      "redirect to the capture email address page" in {
+
+        given.user.isAuthenticated
+
+        When("the verify passcode page is called")
+        val result = request
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.email.routes.CaptureEmailController.show().url))
       }
     }
   }

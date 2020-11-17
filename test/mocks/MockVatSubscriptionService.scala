@@ -72,4 +72,9 @@ trait MockVatSubscriptionService extends MockFactory with BeforeAndAfterEach {
     (mockVatSubscriptionService.getCustomerInfo(_: String)(_: HeaderCarrier, _: ExecutionContext))
       .expects(vrn, *, *)
       .returning(response)
+
+  def mockUpdateEmail()(response: Future[UpdatePPOBResponse]): Unit =
+    (mockVatSubscriptionService.updateEmail(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))
+      .expects(*, *, *, *, *)
+      .returning(response)
 }

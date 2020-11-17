@@ -16,7 +16,10 @@
 
 package controllers.email
 
+import audit.AuditingService
+import audit.models.{ChangedContactPrefEmailAuditModel, ChangedEmailAddressAuditModel}
 import common.SessionKeys
+import common.SessionKeys.{emailChangeSuccessful, inFlightContactDetailsChangeKey, prepopulationEmailKey, validationEmailKey}
 import config.{AppConfig, ErrorHandler}
 import connectors.httpParsers.VerifyPasscodeHttpParser._
 import controllers.BaseController
@@ -25,8 +28,11 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.PasscodeForm
 import javax.inject.{Inject, Singleton}
 import models.User
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.EmailVerificationService
+import models.customerInformation.UpdatePPOBSuccess
+import models.errors.ErrorModel
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.{EmailVerificationService, VatSubscriptionService}
+import utils.LoggerUtil.{logDebug, logInfo, logWarn}
 import views.html.email.{PasscodeErrorView, PasscodeView}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,7 +41,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerificationService,
                                          errorHandler: ErrorHandler,
                                          passcodeView: PasscodeView,
-                                        passcodeErrorView: PasscodeErrorView)
+                                         passcodeErrorView: PasscodeErrorView,
+                                         vatSubscriptionService: VatSubscriptionService,
+                                         auditService: AuditingService)
                                         (implicit val appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
                                          authComps: AuthPredicateComponents,
@@ -84,25 +92,68 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
     }
   }
 
-  def emailSendVerification: Action[AnyContent] = blockAgentPredicate { implicit user =>
-    if (appConfig.features.emailPinVerificationEnabled()) {
-      extractSessionEmail match {
-        case Some(_) => Ok("") //TODO
-        case _ => Redirect(routes.CaptureEmailController.show())
-      }
-    } else {
-        NotFound(errorHandler.notFoundTemplate(user))
-      }
-    }
+  def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
 
-  def updateEmailAddress(): Action[AnyContent] = blockAgentPredicate { implicit user =>
+    val langCookieValue = user.cookies.get("PLAY_LANG").map(_.value).getOrElse("en")
+
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(_) => Ok("") //TODO
-        case _ => Redirect(routes.CaptureEmailController.show())
+        case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
+          case Some(true) => Redirect(routes.VerifyPasscodeController.emailShow())
+          case Some(false) =>
+            logDebug(
+            "[VerifyPasscodeController][emailSendVerification] - " +
+              "Unable to send email verification request. Service responded with 'already verified'"
+            )
+            Redirect(routes.VerifyPasscodeController.updateEmailAddress())
+          case _ =>  errorHandler.showInternalServerError
+        }
+        case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
       }
     } else {
-      NotFound(errorHandler.notFoundTemplate)
+        Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
+    }
+  }
+
+  def updateEmailAddress(): Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+    if(appConfig.features.emailPinVerificationEnabled()) {
+      extractSessionEmail(user) match {
+        case Some(email) =>
+          vatSubscriptionService.updateEmail(user.vrn, email) map {
+            case Right(UpdatePPOBSuccess(message)) if message.isEmpty =>
+              Redirect(routes.VerifyPasscodeController.emailSendVerification())
+
+            case Right(UpdatePPOBSuccess(_)) =>
+              auditService.extendedAudit(
+                ChangedEmailAddressAuditModel(
+                  user.session.get(validationEmailKey),
+                  email,
+                  user.vrn,
+                  user.isAgent,
+                  user.arn
+                ),
+                controllers.email.routes.ConfirmEmailController.updateEmailAddress().url
+              )
+              Redirect(routes.EmailChangeSuccessController.show())
+                .removingFromSession(prepopulationEmailKey, validationEmailKey)
+                .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
+
+            case Left(ErrorModel(CONFLICT, _)) =>
+              logWarn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
+                "already in progress. Redirecting user to manage-vat overview page.")
+              Redirect(appConfig.manageVatSubscriptionServicePath)
+                .addingToSession(inFlightContactDetailsChangeKey -> "true")
+
+            case Left(_) =>
+              errorHandler.showInternalServerError
+          }
+
+        case _ =>
+          logInfo("[VerifyPasscodeController][updateEmailAddress] - No email address found in session")
+          Future.successful(Redirect(routes.CaptureEmailController.show()))
+      }
+    } else {
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
     }
   }
 
@@ -153,27 +204,67 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
   }
 
   def contactPrefSendVerification: Action[AnyContent] = (contactPreferencePredicate andThen
-                                                         paperPrefPredicate) { implicit user =>
+                                                         paperPrefPredicate andThen
+                                                         inFlightContactPrefPredicate).async { implicit user =>
+
+    val langCookieValue = user.cookies.get("PLAY_LANG").map(_.value).getOrElse("en")
 
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(_) => Ok("") //TODO
-        case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
+        case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
+          case Some(true) => Redirect(routes.VerifyPasscodeController.contactPrefShow())
+          case Some(false) =>
+            logDebug(
+              "[VerifyPasscodeController][contactPrefSendVerification] - " +
+                "Unable to send verification request. Service responded with 'already verified'"
+            )
+            Redirect(routes.VerifyPasscodeController.updateContactPrefEmail())
+          case _ =>  errorHandler.showInternalServerError
+        }
+        case _ => Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
       }
     } else {
-      NotFound(errorHandler.notFoundTemplate(user))
+      Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
     }
   }
 
+
   def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen
-                                                      paperPrefPredicate) { implicit user =>
+                                                      paperPrefPredicate andThen
+                                                      inFlightContactPrefPredicate).async { implicit user =>
     if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
-        case Some(_) => Ok("") //TODO
-        case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
+        case Some(email) => emailVerificationService.isEmailVerified(email).flatMap {
+          case Some(true) => sendUpdateRequest(email)
+          case _ =>
+            logDebug("[VerifyPasscodeController][updateContactPrefEmail] Email has not yet been verified.")
+            Future.successful(Redirect(routes.VerifyPasscodeController.contactPrefSendVerification()))
+        }
+        case _ =>
+          Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
       }
     } else {
-      NotFound(errorHandler.notFoundTemplate)
+      Future.successful(NotFound(errorHandler.notFoundTemplate))
+    }
+  }
+
+  private[controllers] def sendUpdateRequest(email: String)(implicit user: User[_]): Future[Result] = {
+    vatSubscriptionService.updateContactPrefEmail(user.vrn, email).map {
+      case Right(_) =>
+        auditService.extendedAudit(ChangedContactPrefEmailAuditModel(
+          user.session.get(SessionKeys.validationEmailKey).filter(_.nonEmpty),
+          email,
+          user.vrn
+        ), routes.VerifyPasscodeController.updateContactPrefEmail().url)
+        Redirect(controllers.email.routes.EmailChangeSuccessController.show())
+          .addingToSession(SessionKeys.emailChangeSuccessful -> "true")
+      case Left(ErrorModel(CONFLICT, _)) =>
+        logDebug("[VerifyPasscodeController][sendUpdateRequest] - There is a contact details update request " +
+          "already in progress. Redirecting user to manage-vat overview page.")
+        Redirect(appConfig.btaAccountDetailsUrl)
+      case Left(error) =>
+        logWarn(s"[VerifyPasscodeController][sendUpdateRequest] - ${error.status}: ${error.message}")
+        errorHandler.showInternalServerError
     }
   }
 
