@@ -93,10 +93,10 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
   }
 
   def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
-
-    val langCookieValue = user.cookies.get("PLAY_LANG").map(_.value).getOrElse("en")
-
     if (appConfig.features.emailPinVerificationEnabled()) {
+
+      val langCookieValue = user.cookies.get("PLAY_LANG").map(_.value).getOrElse("en")
+
       extractSessionEmail match {
         case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
           case Some(true) => Redirect(routes.VerifyPasscodeController.emailShow())

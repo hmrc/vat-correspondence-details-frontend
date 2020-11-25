@@ -58,22 +58,26 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
 
   def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
+    if (appConfig.features.emailPinVerificationEnabled()) {
+      Future.successful(Redirect(routes.VerifyPasscodeController.emailSendVerification()))
+    } else {
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
 
-    extractSessionEmail match {
-      case Some(email) =>
-        emailVerificationService.createEmailVerificationRequest(email, routes.ConfirmEmailController.updateEmailAddress().url).map{
-          case Some(true) => Redirect(routes.VerifyEmailController.emailShow())
-          case Some(false) =>
-            logDebug(
-              "[VerifyEmailController][sendVerification] - " +
-                "Unable to send email verification request. Service responded with 'already verified'"
-            )
-            Redirect(routes.ConfirmEmailController.updateEmailAddress())
-          case _ =>  errorHandler.showInternalServerError
-        }
+      extractSessionEmail match {
+        case Some(email) =>
+          emailVerificationService.createEmailVerificationRequest(email, routes.ConfirmEmailController.updateEmailAddress().url).map {
+            case Some(true) => Redirect(routes.VerifyEmailController.emailShow())
+            case Some(false) =>
+              logDebug(
+                "[VerifyEmailController][sendVerification] - " +
+                  "Unable to send email verification request. Service responded with 'already verified'"
+              )
+              Redirect(routes.ConfirmEmailController.updateEmailAddress())
+            case _ => errorHandler.showInternalServerError
+          }
 
-      case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
+        case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
+      }
     }
 
   }
