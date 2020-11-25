@@ -25,6 +25,11 @@ import stubs.{EmailVerificationStub, VatSubscriptionStub}
 
 class VerifyEmailPageSpec extends BasePageISpec {
 
+  override def servicesConfig: Map[String, String] = {
+    super.servicesConfig +
+    ("features.useEmailPinVerification.enabled" -> "false")
+  }
+
   val verifyEmailPath = "/verify-email-address"
   val sendVerificationPath = "/send-verification"
   val verifyContactPrefPath = "/contact-preference/verify-email-address"

@@ -111,7 +111,11 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
       case Right(details) =>
         details.ppob.contactDetails.flatMap(_.emailVerified) match {
           case Some(true) => updateCommsPreference(email)
-          case _ => Future.successful(Redirect(controllers.email.routes.VerifyEmailController.updateContactPrefEmail()))
+          case _ => if (appConfig.features.emailPinVerificationEnabled()) {
+            Future.successful(Redirect(controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail()))
+          } else {
+            Future.successful(Redirect(controllers.email.routes.VerifyEmailController.updateContactPrefEmail()))
+          }
         }
       case Left(_) => Future.successful(authComps.errorHandler.showInternalServerError)
     }
