@@ -96,8 +96,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override lazy val signInUrl: String = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
   override lazy val signInContinueUrl: String = SafeRedirectUrl(manageVatSubscriptionServicePath).encodedUrl
   override def feedbackSignOutUrl(identifier: String): String =
-    s"$governmentGatewayHost/gg/sign-out?continue=${feedbackSurveyUrl(identifier)}"
-  override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/gg/sign-out?continue=$signInContinueUrl"
+    s"$governmentGatewayHost/bas-gateway/sign-out?continue=${feedbackSurveyUrl(identifier)}"
+  override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/bas-gateway/sign-out?continue=$signInContinueUrl"
 
   override lazy val emailVerificationBaseUrl: String = sc.baseUrl(Keys.emailVerificationBaseUrl)
 
