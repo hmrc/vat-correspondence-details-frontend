@@ -148,6 +148,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(TestController.show())
   }
 
   "When the contactPrefMigration feature switch is turned off" when {

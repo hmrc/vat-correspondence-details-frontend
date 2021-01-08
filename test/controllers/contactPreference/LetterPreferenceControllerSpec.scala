@@ -154,6 +154,8 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
         status(result) shouldBe FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.show())
   }
 
   "calling .submit()" when {
@@ -332,6 +334,8 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
         status(result) shouldBe FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.submit())
   }
 
   "Calling .displayAddress()" when {

@@ -51,7 +51,15 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   val currentEmail = "current@email.com"
 
   def mockCustomer(): Unit = mockGetCustomerInfo(vrn)(Future.successful(Right(CustomerInformation(
-    PPOB(ppobAddress, None, None), Some(PendingChanges(Some(PPOB(ppobAddress, None, None)), None)), None, None, None, None, Some("PAPER")
+    PPOB(ppobAddress, None, None),
+    Some(PendingChanges(Some(PPOB(ppobAddress, None, None)), None)),
+    None,
+    None,
+    None,
+    None,
+    Some("PAPER"),
+    isInsolvent = false,
+    Some(true)
   ))))
 
 
@@ -82,6 +90,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
       }
+
+      insolvencyCheck(TestVerifyEmailController.emailShow())
     }
 
     "there isn't an email in session" should {
@@ -185,6 +195,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(TestVerifyEmailController.emailSendVerification())
   }
 
   "Calling the contactPrefShow action in VerifyEmailController" when {
@@ -245,6 +257,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(TestVerifyEmailController.contactPrefShow())
   }
 
   "Calling the contactPrefSendVerification action in VerifyEmailController" when {
@@ -352,6 +366,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(TestVerifyEmailController.contactPrefSendVerification())
   }
 
   "Calling .updateContactPrefEmail" should {
@@ -442,6 +458,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(TestVerifyEmailController.updateContactPrefEmail())
   }
 
   "Calling .sendUpdateRequest" should {
@@ -632,5 +650,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
+
+    insolvencyCheck(TestVerifyEmailController.btaVerifyEmailRedirect())
   }
 }

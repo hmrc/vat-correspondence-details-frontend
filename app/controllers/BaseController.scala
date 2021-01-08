@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 abstract class BaseController(implicit authComps: AuthPredicateComponents,
                               inFlightComps: InFlightPredicateComponents) extends FrontendController(authComps.mcc) with I18nSupport {
 
-  val allowAgentPredicate = new AuthPredicate(authComps, allowsAgents = true)
+  val allowAgentPredicate: AuthPredicate = new AuthPredicate(authComps, allowsAgents = true)
   val blockAgentPredicate = new AuthPredicate(authComps, allowsAgents = false)
   val contactPreferencePredicate = new AuthPredicate(authComps, allowsAgents = false, isChangePrefJourney = true)
 

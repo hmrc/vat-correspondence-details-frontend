@@ -157,7 +157,9 @@ object CustomerInfoConstants {
     Some("Mac"),
     Some("PepsiMac Ltd"),
     Some("PepsiMac"),
-    Some(digital)
+    Some(digital),
+    isInsolvent = false,
+    continueToTrade = Some(true)
   )
 
   val customerInfoEmailUnverified: CustomerInformation = fullCustomerInfoModel.copy(
@@ -168,7 +170,8 @@ object CustomerInfoConstants {
     )
   )
 
-  val minCustomerInfoModel: CustomerInformation = CustomerInformation(minPPOBModel, None, None, None, None, None, None)
+  val minCustomerInfoModel: CustomerInformation =
+    CustomerInformation(minPPOBModel, None, None, None, None, None, None, isInsolvent = false, None)
 
   val customerInfoPendingAddressModel: CustomerInformation = fullCustomerInfoModel.copy(
     pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
@@ -204,6 +207,10 @@ object CustomerInfoConstants {
     pendingChanges = Some(PendingChanges(None, Some(digital)))
   )
 
+  val customerInfoInsolvent: CustomerInformation = fullCustomerInfoModel.copy(
+    isInsolvent = true, continueToTrade = Some(false)
+  )
+
   val customerInfoPaperPrefModel: CustomerInformation = fullCustomerInfoModel.copy(commsPreference = Some(paper))
 
   val fullCustomerInfoJson: JsObject = Json.obj(
@@ -213,11 +220,19 @@ object CustomerInfoConstants {
       "firstName" -> "Pepsi",
       "lastName" -> "Mac",
       "organisationName" -> "PepsiMac Ltd",
-      "tradingName" -> "PepsiMac"
+      "tradingName" -> "PepsiMac",
+      "isInsolvent" -> false,
+      "continueToTrade" -> true
     ),
-    "commsPreference" -> digital
+    "commsPreference" -> digital,
+
   )
-  val minCustomerInfoJson: JsObject = Json.obj("ppob" -> minPPOBJson)
+  val minCustomerInfoJson: JsObject = Json.obj(
+    "ppob" -> minPPOBJson,
+    "customerDetails" -> Json.obj(
+      "isInsolvent" -> false
+    )
+  )
 
   val invalidJsonError: ErrorModel = ErrorModel(Status.INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
 }

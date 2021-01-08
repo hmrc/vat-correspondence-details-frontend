@@ -155,6 +155,8 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(controller.show())
   }
 
   "Calling the submit action" when {
@@ -243,5 +245,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(controller.submit())
   }
 }

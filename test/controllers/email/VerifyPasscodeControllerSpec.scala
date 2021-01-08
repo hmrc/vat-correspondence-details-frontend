@@ -109,6 +109,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(TestVerifyPasscodeController.emailShow())
   }
 
   "Calling the emailSubmit action" when {
@@ -241,6 +243,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(TestVerifyPasscodeController.emailSubmit())
   }
 
   "Calling the emailSendVerification action in VerifyPasscodeController" when {
@@ -319,6 +323,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
       }
     }
+
+    insolvencyCheck(TestVerifyPasscodeController.emailSendVerification())
   }
 
   "Calling the updateEmailAddress action in VerifyPasscodeController" when {
@@ -412,6 +418,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
       }
     }
+
+    insolvencyCheck(TestVerifyPasscodeController.updateEmailAddress())
   }
 
   "Calling the contactPrefShow action in VerifyPasscodeController" when {
@@ -453,6 +461,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
       }
     }
+
+    insolvencyCheck(TestVerifyPasscodeController.contactPrefShow())
   }
 
   "Calling the contactPrefSubmit action" when {
@@ -587,6 +597,8 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(TestVerifyPasscodeController.contactPrefSubmit())
   }
 
   "Calling the contactPrefSendVerification action in VerifyPasscodeController" when {
@@ -668,115 +680,119 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
       }
     }
 
-    "Calling the updateContactPrefEmail action in VerifyPasscodeController" when {
+    insolvencyCheck(TestVerifyPasscodeController.contactPrefSendVerification())
+  }
 
-      "the emailPinVerification feature switch is enabled" when {
+  "Calling the updateContactPrefEmail action in VerifyPasscodeController" when {
 
-        "there is an email in session" when {
+    "the emailPinVerification feature switch is enabled" when {
 
-          "the email is verified" when {
+      "there is an email in session" when {
 
-            "the vat subscription service returns a Right" should {
+        "the email is verified" when {
 
-              lazy val updateEmailMockResponse = Future.successful(Right(UpdateEmailSuccess("success")))
+          "the vat subscription service returns a Right" should {
 
-              lazy val result = {
-                mockGetEmailVerificationState(testEmail)(Future(Some(true)))
-                mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
-                TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
-              }
-
-              "return SEE_OTHER" in {
-                status(result) shouldBe SEE_OTHER
-              }
-
-              "redirect to the email change success route" in {
-                redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
-              }
-            }
-
-            "the vat subscription service returns a conflict error" should {
-
-              lazy val updateEmailMockResponse = Future.successful(Left(ErrorModel(CONFLICT, "")))
-
-              lazy val result = {
-                mockGetEmailVerificationState(testEmail)(Future(Some(true)))
-                mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
-                TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
-              }
-
-              "return SEE_OTHER" in {
-                status(result) shouldBe SEE_OTHER
-              }
-
-              "have the correct redirect location" in {
-                redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
-              }
-            }
-
-            "the vat subscription service returns an unexpected error" should {
-
-              lazy val updateEmailMockResponse = Future.successful(Left(ErrorModel(1, "")))
-
-              lazy val result = {
-                mockGetEmailVerificationState(testEmail)(Future(Some(true)))
-                mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
-                TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
-              }
-
-              "return an internal server error" in {
-                status(result) shouldBe INTERNAL_SERVER_ERROR
-              }
-            }
-          }
-
-          "the email isn't verified" should {
+            lazy val updateEmailMockResponse = Future.successful(Right(UpdateEmailSuccess("success")))
 
             lazy val result = {
-              mockGetEmailVerificationState(testEmail)(Future(Some(false)))
+              mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+              mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
               TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
             }
 
-            "return a 303" in {
+            "return SEE_OTHER" in {
+              status(result) shouldBe SEE_OTHER
+            }
+
+            "redirect to the email change success route" in {
+              redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+            }
+          }
+
+          "the vat subscription service returns a conflict error" should {
+
+            lazy val updateEmailMockResponse = Future.successful(Left(ErrorModel(CONFLICT, "")))
+
+            lazy val result = {
+              mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+              mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+              TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
+            }
+
+            "return SEE_OTHER" in {
               status(result) shouldBe SEE_OTHER
             }
 
             "have the correct redirect location" in {
-              redirectLocation(result) shouldBe
-                Some(controllers.email.routes.VerifyPasscodeController.contactPrefSendVerification().url)
+              redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
+            }
+          }
+
+          "the vat subscription service returns an unexpected error" should {
+
+            lazy val updateEmailMockResponse = Future.successful(Left(ErrorModel(1, "")))
+
+            lazy val result = {
+              mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+              mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+              TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
+            }
+
+            "return an internal server error" in {
+              status(result) shouldBe INTERNAL_SERVER_ERROR
             }
           }
         }
 
-        "there isn't an email in session" should {
+        "the email isn't verified" should {
 
           lazy val result = {
-            mockGetEmailVerificationState("")(Future(Some(false)))
-            TestVerifyPasscodeController.updateContactPrefEmail()(requestWithPaperPref)
+            mockGetEmailVerificationState(testEmail)(Future(Some(false)))
+            TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
           }
 
-          "return 303 (SEE_OTHER)" in {
+          "return a 303" in {
             status(result) shouldBe SEE_OTHER
           }
 
-          "redirect to the capture email route" in {
+          "have the correct redirect location" in {
             redirectLocation(result) shouldBe
-              Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
-          }
-        }
-
-        "the emailPinVerification feature switch is disabled" should {
-
-          lazy val result = {
-            mockConfig.features.emailPinVerificationEnabled(false)
-            TestVerifyPasscodeController.updateEmailAddress()(paperRequestWithEmail)
-          }
-
-          "return a NOT FOUND error" in {
-            status(result) shouldBe Status.NOT_FOUND
+              Some(controllers.email.routes.VerifyPasscodeController.contactPrefSendVerification().url)
           }
         }
       }
+
+      "there isn't an email in session" should {
+
+        lazy val result = {
+          mockGetEmailVerificationState("")(Future(Some(false)))
+          TestVerifyPasscodeController.updateContactPrefEmail()(requestWithPaperPref)
+        }
+
+        "return 303 (SEE_OTHER)" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirect to the capture email route" in {
+          redirectLocation(result) shouldBe
+            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+        }
+      }
+
+      "the emailPinVerification feature switch is disabled" should {
+
+        lazy val result = {
+          mockConfig.features.emailPinVerificationEnabled(false)
+          TestVerifyPasscodeController.updateEmailAddress()(paperRequestWithEmail)
+        }
+
+        "return a NOT FOUND error" in {
+          status(result) shouldBe Status.NOT_FOUND
+        }
+      }
     }
+
+    insolvencyCheck(TestVerifyPasscodeController.updateContactPrefEmail())
   }
 }

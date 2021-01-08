@@ -65,6 +65,8 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.show())
   }
 
   "Calling the removeLandlineNumber() action in ConfirmRemoveLandlineController" when {
@@ -123,5 +125,7 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.removeLandlineNumber())
   }
 }

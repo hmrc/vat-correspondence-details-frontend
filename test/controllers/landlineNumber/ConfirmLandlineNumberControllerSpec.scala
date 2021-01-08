@@ -79,6 +79,8 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.show())
   }
 
   "Calling the updateLandlineNumber() action in ConfirmLandlineNumberController" when {
@@ -186,5 +188,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.updateLandlineNumber())
   }
 }

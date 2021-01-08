@@ -55,7 +55,6 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
         "prepopulate the form with the user's current mobile" in {
           document.select("#mobileNumber").attr("value") shouldBe testValidationMobile
         }
-
       }
     }
 
@@ -155,6 +154,8 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(controller.show)
   }
 
   "Calling the submit action" when {
@@ -197,6 +198,8 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
             charset(result) shouldBe Some("utf-8")
           }
         }
+
+        insolvencyCheck(controller.submit)
       }
 
       "there are no contact numbers in session" when {

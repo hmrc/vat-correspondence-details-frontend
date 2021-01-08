@@ -51,6 +51,8 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
       }
     }
 
+    insolvencyCheck(controller.show())
+
     ".submit is called" should {
 
       "return an NOT_FOUND result" in {
@@ -177,4 +179,6 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
       }
     }
   }
+
+  insolvencyCheck(controller.submit())
 }

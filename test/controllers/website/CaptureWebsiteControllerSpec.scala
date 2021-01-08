@@ -148,6 +148,8 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(target().show())
   }
 
   "Calling the submit action" when {
@@ -234,5 +236,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(target().submit)
   }
 }

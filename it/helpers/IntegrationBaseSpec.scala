@@ -16,6 +16,7 @@
 
 package helpers
 
+import common.SessionKeys
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterAll
@@ -114,11 +115,11 @@ trait IntegrationBaseSpec extends CustomMatchers with GuiceOneServerPerSuite wit
   def document(response: WSResponse): Document = Jsoup.parse(response.body)
 
   def get(path: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = await(
-    buildRequest(path, additionalCookies).get()
+    buildRequest(path, additionalCookies ++ Map(SessionKeys.insolventWithoutAccessKey -> "false")).get()
   )
 
   def post(path: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = await(
-    buildRequest(path, additionalCookies).post(body)
+    buildRequest(path, additionalCookies ++ Map(SessionKeys.insolventWithoutAccessKey -> "false")).post(body)
   )
 
   def toFormData[T](form: Form[T], data: T): Map[String, Seq[String]] =

@@ -136,6 +136,8 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(target().show())
   }
 
   "Calling the submit action in EmailToUseController" when {
@@ -346,5 +348,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(target().submit())
   }
 }

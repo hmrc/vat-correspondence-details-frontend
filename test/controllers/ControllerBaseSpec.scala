@@ -33,5 +33,16 @@ trait ControllerBaseSpec extends MockAuth with MockHttp with MockAuditingService
       }
     }
   }
+
+  def insolvencyCheck(controllerAction: Action[AnyContent]): Unit = {
+
+    "the user is insolvent and not continuing to trade" should {
+
+      "return 403 (Forbidden)" in {
+        val result = controllerAction(insolventRequest)
+        status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+  }
 }
 

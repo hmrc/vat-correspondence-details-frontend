@@ -65,6 +65,8 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.show)
   }
 
   "Calling the removeWebsiteAddress() action in ConfirmRemoveWebsiteController" when {
@@ -123,5 +125,7 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.removeWebsiteAddress())
   }
 }

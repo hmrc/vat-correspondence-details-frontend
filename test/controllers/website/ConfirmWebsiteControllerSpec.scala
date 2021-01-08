@@ -89,6 +89,8 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         mockConfig.features.changeContactDetailsEnabled(true)
       }
     }
+
+    insolvencyCheck(controller.show)
   }
 
   "Calling the updateWebsite() action in ConfirmWebsiteController" when {
@@ -179,5 +181,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.updateWebsite())
   }
 }

@@ -79,6 +79,8 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.show)
   }
 
   "Calling the updateMobileNumber() action in ConfirmMobileNumberController" when {
@@ -186,5 +188,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.updateMobileNumber())
   }
 }

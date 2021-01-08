@@ -164,5 +164,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
         }
       }
     }
+
+    insolvencyCheck(controller.show("email"))
   }
 }

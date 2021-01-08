@@ -16,13 +16,17 @@
 
 package controllers.predicates
 
+import assets.BaseTestConstants.{errorModel, vrn}
+import assets.CustomerInfoConstants.{customerInfoInsolvent, fullCustomerInfoModel}
+import common.SessionKeys
 import mocks.MockAuth
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
-import utils.MaterializerSupport
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.MaterializerSupport
 
 import scala.concurrent.Future
 
@@ -32,7 +36,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
     _ => Future.successful(Ok("test"))
   }
 
-  "The AuthPredicateSpec" when {
+  "The AuthPredicate" when {
 
     "the user is an Agent" when {
 
@@ -158,11 +162,81 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
     "the user is an Individual (Principle Entity)" when {
 
-      "they have an active HMRC-MTD-VAT enrolment" should {
+      "they have an active HMRC-MTD-VAT enrolment" when {
 
-        "return OK (200)" in {
-          mockIndividualAuthorised()
-          status(allowAgentPredicate(request)) shouldBe Status.OK
+        "the insolventWithoutAccessKey session value is present" when {
+
+          "it is set to true" should {
+
+            "return the Forbidden status (403)" in {
+              mockIndividualAuthorised()
+              status(allowAgentPredicate(insolventRequest)) shouldBe Status.FORBIDDEN
+            }
+
+          }
+
+          "it is set to false" should {
+
+            "return 200 (OK)" in {
+              mockIndividualAuthorised()
+              status(allowAgentPredicate(request)) shouldBe Status.OK
+            }
+          }
+        }
+
+        "the insolventWithoutAccessKey session value is not present" when {
+
+          "the CustomerInfo call is successful" when {
+
+            "the user is insolvent and not continuing to trade" should {
+
+              val result = {
+                mockIndividualAuthorised()
+                mockGetCustomerInfo(vrn)(Right(customerInfoInsolvent))
+                allowAgentPredicate(FakeRequest())
+              }
+
+              "return Forbidden (403)" in {
+                status(result) shouldBe Status.FORBIDDEN
+              }
+
+              "add the insolvent session value" in {
+                session(result).get(SessionKeys.insolventWithoutAccessKey) shouldBe Some("true")
+              }
+            }
+
+            "the user is not insolvent and can continue to trade" should {
+
+              val result = {
+                mockIndividualAuthorised()
+                mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+                allowAgentPredicate(FakeRequest())
+              }
+
+              "return OK (200)" in {
+                status(result) shouldBe Status.OK
+              }
+
+              "add the insolvent session value" in {
+                session(result).get(SessionKeys.insolventWithoutAccessKey) shouldBe Some("false")
+              }
+
+            }
+          }
+
+          "the CustomerInfo call fails" should {
+
+            val result = {
+              mockIndividualAuthorised()
+              mockGetCustomerInfo(vrn)(Left(errorModel))
+              allowAgentPredicate(FakeRequest())
+            }
+
+            "return an Internal Server Error (500)" in {
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+
+          }
         }
       }
 
@@ -178,6 +252,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         "render the Not Signed Up page" in {
           messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Business tax account - GOV.UK"
         }
+
       }
     }
   }

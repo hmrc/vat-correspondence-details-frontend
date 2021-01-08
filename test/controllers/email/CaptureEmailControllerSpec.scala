@@ -140,6 +140,8 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(target().show())
   }
 
   "Calling the submit action" when {
@@ -237,6 +239,8 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(target().submit())
   }
 
   "Calling the showPrefJourney action" when {
@@ -358,6 +362,8 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(target().showPrefJourney())
   }
 
   "Calling the submitPrefJourney action" when {
@@ -484,5 +490,8 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.NOT_FOUND
       }
     }
+
+    insolvencyCheck(target().submitPrefJourney())
+
   }
 }

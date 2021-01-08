@@ -58,7 +58,8 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
   val testWebsite = "https://www.test-website.co.uk"
 
   implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    inFlightContactDetailsChangeKey -> "false"
+    inFlightContactDetailsChangeKey -> "false",
+    insolventWithoutAccessKey -> "false"
   )
   lazy val requestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(prepopulationEmailKey -> testEmail)
@@ -114,6 +115,10 @@ trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
 
   lazy val requestWithPaperPref: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     currentContactPrefKey -> paper
+  )
+
+  lazy val insolventRequest: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+    insolventWithoutAccessKey -> "true"
   )
 
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)

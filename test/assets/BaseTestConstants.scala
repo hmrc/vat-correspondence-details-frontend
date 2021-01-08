@@ -17,6 +17,7 @@
 package assets
 
 import common.EnrolmentKeys
+import models.errors.ErrorModel
 import uk.gov.hmrc.auth.core.Enrolment
 
 object BaseTestConstants {
@@ -26,6 +27,7 @@ object BaseTestConstants {
   val testMtdVatEnrolment: Enrolment = Enrolment(EnrolmentKeys.vatEnrolmentId).withIdentifier(EnrolmentKeys.vatIdentifierId, vrn)
   val formBundle = "XA1234567"
   val internalServerErrorTitle = "There is a problem with the service - Business tax account - GOV.UK"
+  val errorModel: ErrorModel = ErrorModel(1, "Error")
 
   val testValidationLandline: String = "01952123456"
   val testPrepopLandline: String = "01952654321"

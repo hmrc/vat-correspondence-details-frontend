@@ -123,4 +123,6 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
   }
 
+  insolvencyCheck(controller.redirect())
+
 }

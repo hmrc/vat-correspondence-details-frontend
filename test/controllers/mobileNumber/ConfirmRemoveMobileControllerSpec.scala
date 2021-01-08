@@ -65,6 +65,8 @@ class ConfirmRemoveMobileControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.show())
   }
 
   "Calling the removeMobileNumber() action in ConfirmRemoveMobileController" when {
@@ -122,5 +124,7 @@ class ConfirmRemoveMobileControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.removeMobileNumber())
   }
 }

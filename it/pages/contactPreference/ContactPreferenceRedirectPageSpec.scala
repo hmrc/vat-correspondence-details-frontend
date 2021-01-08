@@ -36,6 +36,10 @@ class ContactPreferenceRedirectPageSpec extends BasePageISpec {
               "countryCode" -> "UK"
             )
           ),
+          "customerDetails" -> Json.obj(
+            "isInsolvent" -> false,
+            "continueToTrade" -> true
+          ),
           "commsPreference" -> "PAPER"
         ))
 
@@ -69,6 +73,10 @@ class ContactPreferenceRedirectPageSpec extends BasePageISpec {
               "line1" -> "12 some street name",
               "countryCode" -> "UK"
             )
+          ),
+          "customerDetails" -> Json.obj(
+            "isInsolvent" -> false,
+            "continueToTrade" -> true
           ),
           "commsPreference" -> "DIGITAL"
         ))
