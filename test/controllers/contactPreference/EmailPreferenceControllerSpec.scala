@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,8 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe NOT_FOUND
       }
     }
+
+    insolvencyCheck(controller.show())
 
     ".submit is called" should {
 
@@ -177,4 +179,6 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
       }
     }
   }
+
+  insolvencyCheck(controller.submit())
 }

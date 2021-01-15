@@ -96,6 +96,10 @@ object VatSubscriptionStub extends WireMockMethods {
       ),
       "websiteAddress" -> "www.pepsi.biz"
     ),
+    "customerDetails" -> Json.obj(
+      "isInsolvent" -> false,
+      "continueToTrade" -> true
+    ),
     "commsPreference" -> "DIGITAL"
   )
 
@@ -105,6 +109,9 @@ object VatSubscriptionStub extends WireMockMethods {
         "line1" -> "firstLine",
         "countryCode" -> "codeOfMyCountry"
       )
+    ),
+    "customerDetails" -> Json.obj(
+      "isInsolvent" -> false
     )
   )
 

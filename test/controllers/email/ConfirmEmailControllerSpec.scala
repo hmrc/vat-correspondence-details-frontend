@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     injector.instanceOf[CheckYourAnswersView]
   )
 
-  "Calling the extractEmail function in ConfirmEmailController" when {
+  "Calling the extractSessionEmail function in ConfirmEmailController" when {
 
     "there is an authenticated request from a user with an email in session" should {
 
@@ -117,6 +117,8 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(TestConfirmEmailController.show())
   }
 
   "Calling the showContactPref action in ConfirmEmailController" when {
@@ -183,6 +185,8 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(TestConfirmEmailController.showContactPref())
   }
 
   "Calling the updateEmailAddress() action in ConfirmEmailController" when {
@@ -289,5 +293,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(TestConfirmEmailController.updateEmailAddress())
   }
 }

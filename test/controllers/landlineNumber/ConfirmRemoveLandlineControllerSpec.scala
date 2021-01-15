@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,8 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.show())
   }
 
   "Calling the removeLandlineNumber() action in ConfirmRemoveLandlineController" when {
@@ -123,5 +125,7 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.FORBIDDEN
       }
     }
+
+    insolvencyCheck(controller.removeLandlineNumber())
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package controllers.predicates
 
-import common.EnrolmentKeys
+import common.{EnrolmentKeys, SessionKeys}
 import config.AppConfig
 import models.User
 import play.api.i18n.MessagesApi
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolments, NoActiveSession}
 import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolments, NoActiveSession}
 import utils.LoggerUtil.{logDebug, logWarn}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -69,7 +69,8 @@ class AuthPredicate(authComps: AuthPredicateComponents,
     }
   }
 
-  private[AuthPredicate] def checkAgentEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
+  private[AuthPredicate] def checkAgentEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])
+                                                   (implicit request: Request[A]) =
     if (enrolments.enrolments.exists(_.key == EnrolmentKeys.agentEnrolmentId)) {
       logDebug("[AuthPredicate][checkAgentEnrolment] - Authenticating as agent")
       authComps.authenticateAsAgentWithClient.invokeBlock(request, block)
@@ -79,10 +80,30 @@ class AuthPredicate(authComps: AuthPredicateComponents,
       Future.successful(Forbidden(authComps.unauthorisedAgentView()))
     }
 
-  private[AuthPredicate] def checkVatEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])(implicit request: Request[A]) =
+  private[AuthPredicate] def checkVatEnrolment[A](enrolments: Enrolments, block: User[A] => Future[Result])
+                                                 (implicit request: Request[A]) =
     if (enrolments.enrolments.exists(_.key == EnrolmentKeys.vatEnrolmentId)) {
-      logDebug("[AuthPredicate][checkVatEnrolment] - Authenticated as principle")
-      block(User(enrolments))
+
+      val user = User(enrolments)
+
+      request.session.get(SessionKeys.insolventWithoutAccessKey) match {
+        case Some("true") => Future.successful(Forbidden(authComps.notSignedUpView()))
+        case Some("false") => block(user)
+        case _ => authComps.vatSubscriptionService.getCustomerInfo(user.vrn).flatMap {
+          case Right(info) if info.isInsolventWithoutAccess =>
+            logDebug("[AuthPredicate][checkVatEnrolment] - User is insolvent and not continuing to trade")
+            Future.successful(Forbidden(authComps.notSignedUpView())
+              .addingToSession(SessionKeys.insolventWithoutAccessKey -> "true"))
+          case Right(_) =>
+            logDebug("[AuthPredicate][checkVatEnrolment] - Authenticated as principle")
+            block(user).map(result => result
+              .addingToSession(SessionKeys.insolventWithoutAccessKey -> "false"))
+          case _ =>
+            logDebug("[AuthPredicate][checkVatEnrolment] - " +
+              "Failure obtaining insolvency status from Customer Info API")
+            Future.successful(authComps.errorHandler.showInternalServerError)
+        }
+      }
     } else {
       logDebug(s"[AuthPredicate][checkVatEnrolment] - Non-agent without HMRC-MTD-VAT enrolment. $enrolments")
       Future.successful(Forbidden(authComps.notSignedUpView()))

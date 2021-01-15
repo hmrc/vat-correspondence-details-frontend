@@ -31,7 +31,9 @@ class CaptureEmailPageSpec extends BasePageISpec {
 
   "Calling the Capture email (.show)" when {
 
-    def show: WSResponse = get(path, formatInflightChange(Some("false")) ++ Map(SessionKeys.validationEmailKey -> "email@address.com"))
+    def show: WSResponse = get(path, formatInflightChange(Some("false")) ++ Map(
+      SessionKeys.validationEmailKey -> "email@address.com",
+      SessionKeys.insolventWithoutAccessKey -> "false"))
 
     def showNoEmail: WSResponse = get(path, formatInflightChange(Some("false")))
 

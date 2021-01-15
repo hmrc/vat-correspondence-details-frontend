@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import assets.BaseTestConstants._
 import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import mocks.MockHttp
 import models.contactPreferences.ContactPreference
-import models.errors.ErrorModel
 import utils.TestUtil
 
 import scala.concurrent.Future
@@ -42,8 +41,6 @@ class ContactPreferenceConnectorSpec extends TestUtil with MockHttp {
     }
 
     "the service returns an error" should {
-
-      val errorModel: ErrorModel = ErrorModel(1, "Error")
 
       "return an ErrorModel" in {
         setupMockHttpGet(mockConfig.contactPreferencesUrl(vrn))(Left(errorModel))

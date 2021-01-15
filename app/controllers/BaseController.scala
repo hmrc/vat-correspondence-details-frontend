@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 abstract class BaseController(implicit authComps: AuthPredicateComponents,
                               inFlightComps: InFlightPredicateComponents) extends FrontendController(authComps.mcc) with I18nSupport {
 
-  val allowAgentPredicate = new AuthPredicate(authComps, allowsAgents = true)
+  val allowAgentPredicate: AuthPredicate = new AuthPredicate(authComps, allowsAgents = true)
   val blockAgentPredicate = new AuthPredicate(authComps, allowsAgents = false)
   val contactPreferencePredicate = new AuthPredicate(authComps, allowsAgents = false, isChangePrefJourney = true)
 

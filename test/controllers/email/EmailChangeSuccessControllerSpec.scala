@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,6 +148,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         charset(result) shouldBe Some("utf-8")
       }
     }
+
+    insolvencyCheck(TestController.show())
   }
 
   "When the contactPrefMigration feature switch is turned off" when {

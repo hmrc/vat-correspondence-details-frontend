@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,17 @@ trait ControllerBaseSpec extends MockAuth with MockHttp with MockAuditingService
         mockMissingBearerToken()
         val result = controllerAction(request)
         status(result) shouldBe Status.UNAUTHORIZED
+      }
+    }
+  }
+
+  def insolvencyCheck(controllerAction: Action[AnyContent]): Unit = {
+
+    "the user is insolvent and not continuing to trade" should {
+
+      "return 403 (Forbidden)" in {
+        val result = controllerAction(insolventRequest)
+        status(result) shouldBe Status.FORBIDDEN
       }
     }
   }

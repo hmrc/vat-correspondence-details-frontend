@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ case class CustomerInformation(ppob: PPOB,
                                lastName: Option[String],
                                organisationName: Option[String],
                                tradingName: Option[String],
-                               commsPreference: Option[String]) {
+                               commsPreference: Option[String],
+                               isInsolvent: Boolean,
+                               continueToTrade: Option[Boolean]) {
 
   val approvedAddress: PPOBAddress = ppob.address
   val pendingAddress: Option[PPOBAddress] = pendingChanges.flatMap(_.ppob.map(_.address))
@@ -55,6 +57,11 @@ case class CustomerInformation(ppob: PPOB,
       case (None, None, None, orgName) => orgName
       case _ => tradingName
     }
+
+  val isInsolventWithoutAccess: Boolean = continueToTrade match {
+    case Some(false) => isInsolvent
+    case _ => false
+  }
 }
 
 object CustomerInformation {
@@ -65,6 +72,8 @@ object CustomerInformation {
   private val lastNamePath = JsPath \ "customerDetails" \ "lastName"
   private val organisationNamePath = JsPath \ "customerDetails" \ "organisationName"
   private val tradingNamePath = JsPath \ "customerDetails" \ "tradingName"
+  private val isInsolventPath = JsPath \ "customerDetails" \ "isInsolvent"
+  private val continueToTradePath = JsPath \ "customerDetails" \ "continueToTrade"
   private val commsPreferencePath = JsPath \ "commsPreference"
 
   implicit val reads: Reads[CustomerInformation] = (
@@ -74,6 +83,8 @@ object CustomerInformation {
     lastNamePath.readNullable[String].orElse(Reads.pure(None)) and
     organisationNamePath.readNullable[String].orElse(Reads.pure(None)) and
     tradingNamePath.readNullable[String].orElse(Reads.pure(None)) and
-    commsPreferencePath.readNullable[String].orElse(Reads.pure(None))
+    commsPreferencePath.readNullable[String].orElse(Reads.pure(None)) and
+    isInsolventPath.read[Boolean] and
+    continueToTradePath.readNullable[Boolean].orElse(Reads.pure(None))
   )(CustomerInformation.apply _)
 }
