@@ -159,7 +159,8 @@ object CustomerInfoConstants {
     Some("PepsiMac"),
     Some(digital),
     isInsolvent = false,
-    continueToTrade = Some(true)
+    continueToTrade = Some(true),
+    insolvencyType = None
   )
 
   val customerInfoEmailUnverified: CustomerInformation = fullCustomerInfoModel.copy(
@@ -171,7 +172,7 @@ object CustomerInfoConstants {
   )
 
   val minCustomerInfoModel: CustomerInformation =
-    CustomerInformation(minPPOBModel, None, None, None, None, None, None, isInsolvent = false, None)
+    CustomerInformation(minPPOBModel, None, None, None, None, None, None, isInsolvent = false, None, None)
 
   val customerInfoPendingAddressModel: CustomerInformation = fullCustomerInfoModel.copy(
     pendingChanges = Some(PendingChanges(Some(fullPPOBModel.copy(
@@ -209,6 +210,10 @@ object CustomerInfoConstants {
 
   val customerInfoInsolvent: CustomerInformation = fullCustomerInfoModel.copy(
     isInsolvent = true, continueToTrade = Some(false)
+  )
+
+  val customerInfoInsolventContinueToTrade: CustomerInformation = fullCustomerInfoModel.copy(
+    isInsolvent = true, continueToTrade = Some(true)
   )
 
   val customerInfoPaperPrefModel: CustomerInformation = fullCustomerInfoModel.copy(commsPreference = Some(paper))

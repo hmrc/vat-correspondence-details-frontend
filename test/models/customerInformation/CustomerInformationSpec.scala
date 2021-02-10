@@ -141,4 +141,52 @@ class CustomerInformationSpec extends UnitSpec {
       }
     }
   }
+
+  "Calling .isInsolventWithoutAccess" when {
+
+    "the user is insolvent and not continuing to trade" should {
+
+      "return true if there is no insolvency type" in {
+        customerInfoInsolvent.isInsolventWithoutAccess shouldBe true
+      }
+
+      "return false if the insolvency type is allowed" in {
+        CustomerInformation.allowedInsolvencyTypes.foreach { iType =>
+          customerInfoInsolvent.copy(insolvencyType = Some(iType)).isInsolventWithoutAccess shouldBe false
+        }
+      }
+
+      "return true if the insolvency type is blocked" in {
+        CustomerInformation.blockedInsolvencyTypes.foreach { iType =>
+          customerInfoInsolvent.copy(insolvencyType = Some(iType)).isInsolventWithoutAccess shouldBe true
+        }
+      }
+    }
+
+    "the user is insolvent and is continuing to trade" should {
+
+      "return false for a user with no insolvency type" in {
+        customerInfoInsolventContinueToTrade.isInsolventWithoutAccess shouldBe false
+      }
+
+      "return false for a user with an allowed insolvency type" in {
+        CustomerInformation.allowedInsolvencyTypes.foreach { iType =>
+          customerInfoInsolventContinueToTrade.copy(insolvencyType = Some(iType)).isInsolventWithoutAccess shouldBe false
+        }
+      }
+
+      "return true for a user with a blocked insolvency type" in {
+        CustomerInformation.blockedInsolvencyTypes.foreach { iType =>
+          customerInfoInsolventContinueToTrade.copy(insolvencyType = Some(iType)).isInsolventWithoutAccess shouldBe true
+        }
+      }
+    }
+
+    "there is no continueToTrade field" should {
+
+      "return false for users with no insolvency type" in {
+        minCustomerInfoModel.isInsolventWithoutAccess shouldBe false
+      }
+    }
+  }
 }
