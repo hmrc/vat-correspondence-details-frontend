@@ -59,7 +59,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     None,
     Some("PAPER"),
     isInsolvent = false,
-    Some(true)
+    Some(true),
+    None
   ))))
 
 
