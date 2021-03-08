@@ -23,12 +23,12 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "3.1.0"
-val govTemplateVersion         = "5.60.0-play-26"
-val playPartialsVersion        = "7.0.0-play-26"
+val bootstrapPlayVersion       = "3.4.0"
+val govTemplateVersion         = "5.63.0-play-26"
+val playPartialsVersion        = "7.1.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
-val playUiVersion              = "8.18.0-play-26"
-val playLanguageVersion        = "4.5.0-play-26"
+val playUiVersion              = "9.0.0-play-26"
+val playLanguageVersion        = "4.10.0-play-26"
 val scalaTestPlusVersion       = "3.1.3"
 val hmrcTestVersion            = "3.9.0-play-26"
 val scalatestVersion           = "3.0.8"
