@@ -87,7 +87,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         }
 
         "has the correct continue URL" in {
-          page.select(".button").attr("href") shouldBe controllers.email.routes.ConfirmEmailController.updateEmailAddress().url
+          page.select(".button").attr("href") shouldBe controllers.email.routes.VerifyPasscodeController.updateEmailAddress().url
         }
       }
     }
@@ -155,7 +155,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
         "has the correct continue URL" in {
           page.select(".button").attr("href") shouldBe
-            controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url
+            controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url
         }
       }
     }

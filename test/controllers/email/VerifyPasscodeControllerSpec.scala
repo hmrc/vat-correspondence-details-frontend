@@ -47,11 +47,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
   lazy val paperRequestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
     requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper)
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    mockConfig.features.emailPinVerificationEnabled(true)
-  }
-
   "Calling the extractSessionEmail function in VerifyPasscodeController" when {
 
     "the user has an email address in session" should {
@@ -95,18 +90,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         "redirect to the capture email page" in {
           redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
         }
-      }
-    }
-
-    "the emailPinVerification feature switch is disabled" should {
-
-      lazy val result = {
-        mockConfig.features.emailPinVerificationEnabled(false)
-        TestVerifyPasscodeController.emailShow()(requestWithEmail)
-      }
-
-      "return a NOT FOUND error" in {
-        status(result) shouldBe Status.NOT_FOUND
       }
     }
 
@@ -231,19 +214,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
       }
     }
-
-    "the emailPinVerification feature switch is disabled" should {
-
-      lazy val result = {
-        mockConfig.features.emailPinVerificationEnabled(false)
-        TestVerifyPasscodeController.emailSubmit()(requestWithEmail)
-      }
-
-      "return a NOT FOUND error" in {
-        status(result) shouldBe Status.NOT_FOUND
-      }
-    }
-
     insolvencyCheck(TestVerifyPasscodeController.emailSubmit())
   }
 
@@ -308,18 +278,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "redirect to the capture email route" in {
           redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
-        }
-      }
-
-      "the emailPinVerification feature switch is disabled" should {
-
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(false)
-          TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
-        }
-
-        "return a NOT FOUND error" in {
-          status(result) shouldBe Status.NOT_FOUND
         }
       }
     }
@@ -405,18 +363,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
           redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
         }
       }
-
-      "the emailPinVerification feature switch is disabled" should {
-
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(false)
-          TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail)
-        }
-
-        "return a NOT FOUND error" in {
-          status(result) shouldBe Status.NOT_FOUND
-        }
-      }
     }
 
     insolvencyCheck(TestVerifyPasscodeController.updateEmailAddress())
@@ -446,18 +392,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         "redirect to the start of the contact preference journey" in {
           redirectLocation(result) shouldBe
             Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
-        }
-      }
-
-      "the emailPinVerification feature switch is disabled" should {
-
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(false)
-          TestVerifyPasscodeController.contactPrefShow()(paperRequestWithEmail)
-        }
-
-        "return a NOT FOUND error" in {
-          status(result) shouldBe Status.NOT_FOUND
         }
       }
     }
@@ -586,18 +520,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
       }
     }
 
-    "the emailPinVerification feature switch is disabled" should {
-
-      lazy val result = {
-        mockConfig.features.emailPinVerificationEnabled(false)
-        TestVerifyPasscodeController.contactPrefSubmit()(paperRequestWithEmail)
-      }
-
-      "return a NOT FOUND error" in {
-        status(result) shouldBe Status.NOT_FOUND
-      }
-    }
-
     insolvencyCheck(TestVerifyPasscodeController.contactPrefSubmit())
   }
 
@@ -664,18 +586,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         "redirect to the contact preference redirect route" in {
           redirectLocation(result) shouldBe
             Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
-        }
-      }
-
-      "the emailPinVerification feature switch is disabled" should {
-
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(false)
-          TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
-        }
-
-        "return a NOT FOUND error" in {
-          status(result) shouldBe Status.NOT_FOUND
         }
       }
     }
@@ -777,18 +687,6 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         "redirect to the capture email route" in {
           redirectLocation(result) shouldBe
             Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
-        }
-      }
-
-      "the emailPinVerification feature switch is disabled" should {
-
-        lazy val result = {
-          mockConfig.features.emailPinVerificationEnabled(false)
-          TestVerifyPasscodeController.updateEmailAddress()(paperRequestWithEmail)
-        }
-
-        "return a NOT FOUND error" in {
-          status(result) shouldBe Status.NOT_FOUND
         }
       }
     }

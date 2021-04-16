@@ -58,27 +58,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
 
   def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
 
-    if (appConfig.features.emailPinVerificationEnabled()) {
-      Future.successful(Redirect(routes.VerifyPasscodeController.emailSendVerification()))
-    } else {
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
-
-      extractSessionEmail match {
-        case Some(email) =>
-          emailVerificationService.createEmailVerificationRequest(email, routes.ConfirmEmailController.updateEmailAddress().url).map {
-            case Some(true) => Redirect(routes.VerifyEmailController.emailShow())
-            case Some(false) =>
-              logDebug(
-                "[VerifyEmailController][sendVerification] - " +
-                  "Unable to send email verification request. Service responded with 'already verified'"
-              )
-              Redirect(routes.ConfirmEmailController.updateEmailAddress())
-            case _ => errorHandler.showInternalServerError
-          }
-
-        case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
-      }
-    }
+    Future.successful(Redirect(routes.VerifyPasscodeController.emailSendVerification()))
 
   }
 
@@ -154,11 +134,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
             case (Some(_), Some(true)) =>
               logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - emailVerified has come back as true. Returning user to BTA")
               Redirect(appConfig.btaAccountDetailsUrl)
-            case (Some(email), _) if appConfig.features.emailPinVerificationEnabled() =>
-              Redirect(routes.VerifyPasscodeController.emailSendVerification())
-              .addingToSession(SessionKeys.prepopulationEmailKey -> email)
-              .addingToSession(SessionKeys.inFlightContactDetailsChangeKey -> s"${details.pendingPpobChanges}")
-            case (Some(email), _) => Redirect(routes.VerifyEmailController.emailSendVerification())
+            case (Some(email), _)  => Redirect(routes.VerifyPasscodeController.emailSendVerification())
               .addingToSession(SessionKeys.prepopulationEmailKey -> email)
               .addingToSession(SessionKeys.inFlightContactDetailsChangeKey -> s"${details.pendingPpobChanges}")
             case (_, _) =>

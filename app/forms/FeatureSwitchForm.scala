@@ -34,8 +34,7 @@ object FeatureSwitchForm {
       ConfigKeys.bulkPaperOffFeature -> boolean,
       ConfigKeys.btaEntryPointFeature -> boolean,
       ConfigKeys.letterToConfirmedEmailFeature -> boolean,
-      ConfigKeys.contactPrefMigrationFeature -> boolean,
-      ConfigKeys.emailPinVerificationFeature -> boolean
+      ConfigKeys.contactPrefMigrationFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }

@@ -26,6 +26,5 @@ case class FeatureSwitchModel(agentAccess: Boolean,
                               bulkPaperOff: Boolean,
                               btaEntryPoint: Boolean,
                               letterToConfirmedEmail: Boolean,
-                              contactPrefMigration: Boolean,
-                              emailPinVerificationEnabled: Boolean)
+                              contactPrefMigration: Boolean)
 
