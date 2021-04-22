@@ -58,6 +58,24 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     None
   ))))
 
+  "Calling the emailSendVerification action in VerifyEmailController" when {
+
+    "there is an email in session and the email request is successfully created" should {
+
+      lazy val result = {
+        mockCreateEmailVerificationRequest(Some(true))
+        TestVerifyEmailController.emailSendVerification()(requestWithEmail)
+      }
+
+      "return 303 (SEE_OTHER)" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the verify your email page" in {
+        redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailSendVerification().url)
+      }
+    }
+  }
 
   "Calling the extractSessionEmail function in VerifyEmailController" when {
 
@@ -139,24 +157,6 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         }
       }
 
-      "Calling the emailSendVerification action in VerifyEmailController" when {
-
-        "there is an email in session and the email request is successfully created" should {
-
-          lazy val result = {
-            mockCreateEmailVerificationRequest(Some(true))
-            TestVerifyEmailController.emailSendVerification()(requestWithEmail)
-          }
-
-          "return 303 (SEE_OTHER)" in {
-            status(result) shouldBe SEE_OTHER
-          }
-
-          "redirect to the verify your email page" in {
-            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailSendVerification().url)
-          }
-        }
-
         "getCustomerInfo returns an error" should {
           lazy val result = {
             mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
@@ -182,4 +182,3 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       insolvencyCheck(TestVerifyEmailController.btaVerifyEmailRedirect())
     }
   }
-}
