@@ -102,14 +102,6 @@ checkYourAnswers.websiteAddress.edit = Change the website address
 checkYourAnswers.mobileNumber = Mobile number
 checkYourAnswers.mobileNumber.edit = Change the mobile number
 
-verifyEmail.title = Confirm your email address
-verifyEmail.heading = Confirm your email address
-verifyEmail.lineOne = We’ve sent an email to {0}
-verifyEmail.lineTwo = You need to click the link in our email within 15 minutes. This will confirm your email address.
-verifyEmail.lineThree.1 = Check your junk folder. If it’s not there we can
-verifyEmail.lineThree.2 = send it again
-verifyEmail.lineFour = If you also asked us to change the way we contact you about VAT, we’ll do this at the same time.
-
 emailPreference.title = Do you want us to send you emails instead of letters?
 emailPreference.hint = We currently send messages about your VAT by letter.
 emailPreference.error = Select yes if you want communications by email

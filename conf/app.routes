@@ -12,18 +12,11 @@ POST        /change-email-address                            controllers.email.C
 # confirm email address
 GET         /confirm-email-address                           controllers.email.ConfirmEmailController.show
 GET         /update-email-address                            controllers.email.ConfirmEmailController.updateEmailAddress
-GET         /contact-preference/update-email-address         controllers.email.VerifyEmailController.updateContactPrefEmail
-
 # confirm email address where there is no existing email
 GET         /contact-preference/confirm-email-address        controllers.email.ConfirmEmailController.showContactPref
 
-# verify email address
-GET         /verify-email-address                            controllers.email.VerifyEmailController.emailShow
-GET         /contact-preference/verify-email-address         controllers.email.VerifyEmailController.contactPrefShow
-
 # link to send email verification
 GET         /send-verification                               controllers.email.VerifyEmailController.emailSendVerification
-GET         /contact-preference/send-verification            controllers.email.VerifyEmailController.contactPrefSendVerification
 
 # verify passcode
 GET         /email-enter-code                                controllers.email.VerifyPasscodeController.emailShow
