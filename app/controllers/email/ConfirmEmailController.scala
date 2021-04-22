@@ -58,11 +58,8 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               answer = email,
               changeLink = routes.CaptureEmailController.show().url,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
-              continueLink = if (appConfig.features.emailPinVerificationEnabled()) {
-                routes.VerifyPasscodeController.updateEmailAddress().url
-              } else {
-                routes.ConfirmEmailController.updateEmailAddress().url
-              })
+              continueLink =routes.VerifyPasscodeController.updateEmailAddress().url
+              )
           )
         )
       case _ =>
@@ -83,11 +80,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               answer = email,
               changeLink = controllers.email.routes.CaptureEmailController.showPrefJourney().url,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
-              continueLink = if (appConfig.features.emailPinVerificationEnabled()) {
-                controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url
-              } else {
-                controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url
-              })
+              continueLink = controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url)
           )
         )
       case _ =>

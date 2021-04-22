@@ -90,13 +90,6 @@ checkYourAnswers.websiteAddress.edit = Newid cyfeiriad y wefan
 checkYourAnswers.mobileNumber = Rhif ffôn symudol
 checkYourAnswers.mobileNumber.edit = Newid y rhif ffôn symudol
 
-verifyEmail.title = Cadarnhau’ch cyfeiriad e-bost
-verifyEmail.heading = Cadarnhau’ch cyfeiriad e-bost
-verifyEmail.lineOne = Rydym wedi anfon e-bost at {0}
-verifyEmail.lineTwo = Mae angen i chi glicio’r cysylltiad yn yr e-bost cyn pen 15 munud. Bydd hyn yn cadarnhau’ch cyfeiriad e-bost.
-verifyEmail.lineThree.1 = Chwiliwch yn eich ffolder sothach. Os nad yw’r e-bost yno, gallwn
-verifyEmail.lineThree.2 = ei anfon eto
-verifyEmail.lineFour = Os gwnaethoch hefyd ofyn i ni newid y ffordd rydym yn cysylltu â chi ynghylch TAW, byddwn yn gwneud hynny ar yr un pryd.
 
 emailPreference.title = A ydych am i ni anfon e-byst atoch yn hytrach na llythyrau?
 emailPreference.hint = Ar hyn o bryd, rydym yn anfon negeseuon ynghylch eich TAW atoch drwy lythyr.

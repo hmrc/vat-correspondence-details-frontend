@@ -239,7 +239,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           }
 
           "redirect the user to the verification route to update email and contact preference" in {
-            redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyEmailController.updateContactPrefEmail().url)
+            redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url)
           }
         }
 

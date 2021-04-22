@@ -52,18 +52,13 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def emailShow: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate) { implicit user =>
-    if (appConfig.features.emailPinVerificationEnabled()) {
-      extractSessionEmail match {
+    extractSessionEmail match {
         case Some(email) => Ok(passcodeView(email, PasscodeForm.form, contactPrefJourney = false))
         case _ => Redirect(routes.CaptureEmailController.show())
       }
-    } else {
-      NotFound(errorHandler.notFoundTemplate(user))
     }
-  }
 
   def emailSubmit: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
-    if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
         case Some(email) => PasscodeForm.form.bindFromRequest().fold(
           error => {
@@ -87,16 +82,10 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         )
         case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
       }
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
-    }
   }
 
   def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
-    if (appConfig.features.emailPinVerificationEnabled()) {
-
       val langCookieValue = user.cookies.get("PLAY_LANG").map(_.value).getOrElse("en")
-
       extractSessionEmail match {
         case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
           case Some(true) => Redirect(routes.VerifyPasscodeController.emailShow())
@@ -110,13 +99,9 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         }
         case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
       }
-    } else {
-        Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
-    }
   }
 
   def updateEmailAddress(): Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
-    if(appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail(user) match {
         case Some(email) =>
           vatSubscriptionService.updateEmail(user.vrn, email) map {
@@ -152,28 +137,20 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           logInfo("[VerifyPasscodeController][updateEmailAddress] - No email address found in session")
           Future.successful(Redirect(routes.CaptureEmailController.show()))
       }
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
-    }
   }
 
   def contactPrefShow: Action[AnyContent] = (contactPreferencePredicate andThen
                                              paperPrefPredicate andThen
                                              inFlightContactPrefPredicate) { implicit user =>
-    if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
         case Some(email) => Ok(passcodeView(email, PasscodeForm.form, contactPrefJourney = true))
         case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
       }
-    } else {
-      NotFound(errorHandler.notFoundTemplate(user))
-    }
   }
 
   def contactPrefSubmit: Action[AnyContent] = (contactPreferencePredicate andThen
                                                paperPrefPredicate andThen
                                                inFlightContactPrefPredicate).async { implicit user =>
-    if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
         case Some(email) => PasscodeForm.form.bindFromRequest().fold(
           error => {
@@ -198,9 +175,6 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         case _ =>
           Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
       }
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
-    }
   }
 
   def contactPrefSendVerification: Action[AnyContent] = (contactPreferencePredicate andThen
@@ -209,8 +183,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
 
     val langCookieValue = user.cookies.get("PLAY_LANG").map(_.value).getOrElse("en")
 
-    if (appConfig.features.emailPinVerificationEnabled()) {
-      extractSessionEmail match {
+     extractSessionEmail match {
         case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
           case Some(true) => Redirect(routes.VerifyPasscodeController.contactPrefShow())
           case Some(false) =>
@@ -223,16 +196,12 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         }
         case _ => Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
       }
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate(user)))
-    }
   }
 
 
   def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen
                                                       paperPrefPredicate andThen
                                                       inFlightContactPrefPredicate).async { implicit user =>
-    if (appConfig.features.emailPinVerificationEnabled()) {
       extractSessionEmail match {
         case Some(email) => emailVerificationService.isEmailVerified(email).flatMap {
           case Some(true) => sendUpdateRequest(email)
@@ -243,9 +212,6 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         case _ =>
           Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
       }
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
-    }
   }
 
   private[controllers] def sendUpdateRequest(email: String)(implicit user: User[_]): Future[Result] = {
