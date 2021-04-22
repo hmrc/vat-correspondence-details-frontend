@@ -36,8 +36,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   object TestVerifyEmailController extends VerifyEmailController(
     mockEmailVerificationService,
     mockErrorHandler,
-    mockVatSubscriptionService,
-    mockAuditingService
+    mockVatSubscriptionService
   )
 
   lazy val emptyEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
@@ -71,72 +70,90 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     }
   }
 
-    "Calling .btaVerifyEmailRedirect" when {
+  "Calling .btaVerifyEmailRedirect" when {
 
-      "the user has come from BTA" when {
+    "the user has come from BTA" when {
 
-        "the user has an unverified email and the passcode feature is enabled" should {
+      "the user has an unverified email " should {
 
-          lazy val result = {
-            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
-              pendingChanges = None,
-              ppob = fullPPOBModel.copy(
-                contactDetails = Some(contactDetailsUnverifiedEmail)
-              )
-            ))))
-            TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
-              .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+        lazy val result = {
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
+            pendingChanges = None,
+            ppob = fullPPOBModel.copy(
+              contactDetails = Some(contactDetailsUnverifiedEmail)
             )
-          }
-
-          s"has a status of $SEE_OTHER" in {
-            status(result) shouldBe SEE_OTHER
-          }
-
-          "redirects to the send-passcode URL" in {
-            redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-passcode")
-          }
-
-          "add the session keys" in {
-            session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
-            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("false")
-          }
+          ))))
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+          )
         }
 
-
-        "the user has a verified email" should {
-          lazy val result = {
-            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
-              pendingChanges = None
-            ))))
-            TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
-              .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
-            )
-          }
-
-          s"has a status of $SEE_OTHER" in {
-            status(result) shouldBe SEE_OTHER
-          }
-
-          "redirects to BTA account details" in {
-            redirectLocation(result) shouldBe Some("/bta-account-details")
-          }
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
         }
 
-        "the user has no email" should {
+        "redirects to the send-passcode URL" in {
+          redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/send-passcode")
+        }
+
+        "add the session keys" in {
+          session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("false")
+        }
+      }
+
+
+      "the user has a verified email" should {
+        lazy val result = {
+          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
+            pendingChanges = None
+          ))))
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+          )
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to BTA account details" in {
+          redirectLocation(result) shouldBe Some("/bta-account-details")
+        }
+      }
+
+      "the user has no email" should {
+        lazy val result = {
+          mockCustomer()
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
+          )
+        }
+
+        s"has a status of $SEE_OTHER" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "redirects to the change email address page" in {
+          redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
+        }
+      }
+
+      "Calling the emailSendVerification action in VerifyEmailController" when {
+
+        "there is an email in session and the email request is successfully created" should {
+
           lazy val result = {
-            mockCustomer()
-            TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
-              .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
-            )
+            mockCreateEmailVerificationRequest(Some(true))
+            TestVerifyEmailController.emailSendVerification()(requestWithEmail)
           }
 
-          s"has a status of $SEE_OTHER" in {
+          "return 303 (SEE_OTHER)" in {
             status(result) shouldBe SEE_OTHER
           }
 
-          "redirects to the change email address page" in {
-            redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/change-email-address")
+          "redirect to the verify your email page" in {
+            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailSendVerification().url)
           }
         }
 
@@ -164,4 +181,5 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       insolvencyCheck(TestVerifyEmailController.btaVerifyEmailRedirect())
     }
+  }
 }

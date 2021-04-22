@@ -16,7 +16,6 @@
 
 package controllers.email
 
-import audit.AuditingService
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicateComponents
@@ -28,15 +27,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{EmailVerificationService, VatSubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import utils.LoggerUtil.{logDebug}
+import utils.LoggerUtil.logDebug
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VerifyEmailController @Inject()(val emailVerificationService: EmailVerificationService,
                                       val errorHandler: ErrorHandler,
-                                      vatSubscriptionService: VatSubscriptionService,
-                                      auditService: AuditingService)
+                                      vatSubscriptionService: VatSubscriptionService)
                                      (implicit val appConfig: AppConfig,
                                       mcc: MessagesControllerComponents,
                                       authComps: AuthPredicateComponents,
@@ -44,7 +42,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
+  def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async {
 
     Future.successful(Redirect(routes.VerifyPasscodeController.emailSendVerification()))
 
