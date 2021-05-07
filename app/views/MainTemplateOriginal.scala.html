@@ -15,48 +15,28 @@
  *@
 
 @import config.AppConfig
-@import play.twirl.api.HtmlFormat
-@import uk.gov.hmrc.play.views.html.layouts.TrackingConsentSnippet
-@import uk.gov.hmrc.govukfrontend.views.html.components.Header
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFoote
+@import uk.gov.hmrc.play.views.html.layouts.Sidebar
+@import uk.gov.hmrc.play.views.html.layouts.Article
 
-@this(govukTemplate: GovukTemplate,
-        govukLayout: GovukLayout,
-        hmrcLanguageSelect: HmrcLanguageSelect,
-        hmrcTimeoutDialog: HmrcTimeoutDialog,
-        govukPhaseBanner: GovukPhaseBanner,
-        govukHeader: GovukHeader,
-        hmrcStandardFooter: HmrcStandardFooter,
-        hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
-        trackingConsentSnippet: TrackingConsentSnippet)
+@this(govukWrapper: GovukWrapper, article: Article, sidebar: Sidebar)
 
-@(pageTitle: String,
+@(title: String,
+  sidebarLinks: Option[Html] = None,
+  contentHeader: Option[Html] = None,
+  bodyClasses: Option[String] = None,
+  mainClass: Option[String] = None,
+  scriptElem: Option[Html] = None,
   serviceName: Option[String] = None,
   showSignOut: Boolean = true,
   feedbackOnSignOut: Boolean = true
   )(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
 
-@navTitle = @{
-    serviceName.fold{
-        ServiceNameUtil.generateHeader
-    }{
-        name => name
-    }
-}
+@serviceInfoContent = {}
 
-@scripts = {
-    <script src='@routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
-    <script src='@routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
-
-    <script>window.GOVUKFrontend.initAll();</script>
-    <script>window.HMRCFrontend.initAll();</script>
-}
-
-@phaseBannerContent = {
-    @messages("banner.newService")
-        <a id="beta-banner-feedback" class="govuk-link" href="@appConfig.feedbackUrl(request.uri)">
-    @messages("banner.feedback")</a>
-    @messages("banner.feedbackImprove")
+@sidebarContent = {
+  @if(sidebarLinks.isDefined) {
+    @sidebar(sidebarLinks.get, Some("sidebar"))
+  }
 }
 
 @govukWrapper(appConfig = appConfig,
