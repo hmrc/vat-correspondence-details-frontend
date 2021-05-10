@@ -20,7 +20,7 @@
 @import views.html.templates.errors.ErrorSummary
 @import play.api.mvc.Call
 
-@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
+@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 

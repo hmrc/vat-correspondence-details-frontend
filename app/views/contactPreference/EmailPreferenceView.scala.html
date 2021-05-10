@@ -19,7 +19,7 @@
 @import forms.YesNoForm._
 @import views.html.templates.errors.ErrorSummary
 
-@this(mainTemplate: MainTemplate, radioGroup: RadioGroup, errorSummary: ErrorSummary, formWithCSRF: FormWithCSRF)
+@this(mainTemplate: MainTemplateOriginal, radioGroup: RadioGroup, errorSummary: ErrorSummary, formWithCSRF: FormWithCSRF)
 
 @(form: Form[YesNo])(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 

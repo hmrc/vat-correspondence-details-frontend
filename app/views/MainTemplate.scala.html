@@ -14,42 +14,52 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import play.twirl.api.HtmlFormat
+@import config.AppConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 @import uk.gov.hmrc.play.views.html.layouts.TrackingConsentSnippet
-@import uk.gov.hmrc.govukfrontend.views.html.components.Header
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFoote
+@import models.User
+@import layouts.GovUkTemplate
+@import uk.gov.hmrc.play.views.html.layouts.{HeadWithTrackingConsent, HeaderNav, Footer, ServiceInfo, MainContentHeader, MainContent, Sidebar, Article, FooterLinks}
+@import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
+@import views.utils.ServiceNameUtil
 
 @this(govukTemplate: GovukTemplate,
-        govukLayout: GovukLayout,
-        hmrcLanguageSelect: HmrcLanguageSelect,
-        hmrcTimeoutDialog: HmrcTimeoutDialog,
-        govukPhaseBanner: GovukPhaseBanner,
-        govukHeader: GovukHeader,
-        hmrcStandardFooter: HmrcStandardFooter,
-        hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
-        trackingConsentSnippet: TrackingConsentSnippet)
+    govukLayout: GovukLayout,
+    hmrcLanguageSelect: HmrcLanguageSelect,
+    hmrcTimeoutDialog: HmrcTimeoutDialog,
+    govukPhaseBanner: GovukPhaseBanner,
+    govukHeader: GovukHeader,
+    hmrcStandardFooter: HmrcStandardFooter,
+    hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
+    trackingConsentSnippet: TrackingConsentSnippet)
 
-@(pageTitle: String,
-  serviceName: Option[String] = None,
-  showSignOut: Boolean = true,
-  feedbackOnSignOut: Boolean = true
-  )(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
+@(title: String,
+    showLogout: Boolean = true,
+    appConfig: config.AppConfig,
+    feedbackOnSignOut: Boolean = true,
+    serviceInfoContent: Html = HtmlFormat.empty,
+    user: Option[User] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages)
 
-@navTitle = @{
-    serviceName.fold{
-        ServiceNameUtil.generateHeader
-    }{
-        name => name
-    }
+@dynamicNavTitle = @{
+    user.fold(messages("navTitle.vat"))(u => if(u.isAgent) messages("navTitle.agent") else messages("navTitle.nonAgent"))
 }
 
 @scripts = {
+    <script type="text/javascript" src=@routes.Assets.at("javascript/errorFocus.js?2")></script>
+    <script type="text/javascript" src='@routes.Assets.at("javascript/vat-corr-v1.js")'></script>
     <script src='@routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
     <script src='@routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
-
     <script>window.GOVUKFrontend.initAll();</script>
     <script>window.HMRCFrontend.initAll();</script>
+}
+
+@getHelpHtml = @{
+    hmrcReportTechnicalIssue(ReportTechnicalIssue(
+    serviceCode = appConfig.contactFormServiceIdentifier,
+    language = if (messages.lang.code == "cy") Cy else En
+    ))
 }
 
 @phaseBannerContent = {
@@ -59,15 +69,72 @@
     @messages("banner.feedbackImprove")
 }
 
-@govukWrapper(appConfig = appConfig,
-              title = title,
-              mainClass = mainClass,
-              bodyClasses = bodyClasses,
-              sidebar = sidebarContent,
-              contentHeader = contentHeader,
-              mainBody = article(mainContent),
-              serviceInfoContent = serviceInfoContent,
-              scriptElem = scriptElem,
-              serviceName = serviceName,
-              showSignOut = showSignOut,
-              feedbackOnSignOut = feedbackOnSignOut)
+@languageSelect = {
+    @hmrcLanguageSelect(LanguageSelect(
+        language = if (messages.lang.language == "en") En else Cy,
+        languageLinks =
+            En -> appConfig.routeToSwitchLanguage("english").url,
+            Cy -> appConfig.routeToSwitchLanguage("cymraeg").url
+    ))
+}
+
+@beforeContentHtml = {
+    @govukPhaseBanner(PhaseBanner(
+    tag = Some(Tag(content = Text(messages("banner.phaseName")))),
+    content = HtmlContent(phaseBannerContent)
+))
+<div class="govuk-body govuk-!-margin-bottom-0">
+    @serviceInfoContent
+</div>
+    @languageSelect
+}
+
+@content = {
+<div id="content" class="govuk-!-margin-bottom-6">
+    @mainContent
+</div>
+@getHelpHtml
+}
+
+@head = {
+@trackingConsentSnippet(nonce = None)
+
+<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/application.css")'>
+
+@if(showLogout) {
+    @hmrcTimeoutDialog(TimeoutDialog(
+    timeout = Some(appConfig.timeoutPeriod),
+    countdown = Some(appConfig.timeoutCountdown),
+    signOutUrl = Some(routes.SignOutController.timeout().url),
+    keepAliveUrl = Some("#"),
+    signOutButtonText = Some(messages("base.signOut"))
+        ))
+    }
+}
+
+@header = {
+    @govukHeader(Header(
+    serviceName = Some(dynamicNavTitle),
+    serviceUrl = Some("#"),
+    navigation =
+    if(showLogout)
+    Some(Seq(HeaderNavigation(
+    text = Some(messages("base.signOut")),
+    href = Some(routes.SignOutController.signOut(feedbackOnSignOut).url)
+    )))
+else None
+))
+@userResearchBanner(appConfig)
+}
+
+@govukTemplate(
+    htmlLang = Some(messages.lang.code),
+    pageTitle = Some(messages("base.pageTitle", title, dynamicNavTitle)),
+    headBlock = Some(head),
+    headerBlock = header,
+    beforeContentBlock = Some(beforeContentHtml),
+    footerBlock = hmrcStandardFooter(
+    accessibilityStatementUrl = Some(controllers.routes.AccessibilityStatementController.show().url)
+),
+    bodyEndBlock = Some(scripts)
+)(content)

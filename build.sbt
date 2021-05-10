@@ -24,6 +24,8 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 val appName = "vat-correspondence-details-frontend"
 
 val bootstrapPlayVersion       = "4.2.0"
+val playFrontendGovUk          = "0.71.0-play-26"
+val playFrontendHmrc           = "0.58.0-play-26"
 val govTemplateVersion         = "5.63.0-play-26"
 val playPartialsVersion        = "7.1.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
@@ -73,6 +75,8 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 val compile = Seq(
   ws,
   "uk.gov.hmrc"       %% "bootstrap-frontend-play-26" % bootstrapPlayVersion,
+  "uk.gov.hmrc"       %% "play-frontend-govuk"        % playFrontendGovUk,
+  "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc,
   "uk.gov.hmrc"       %% "govuk-template"             % govTemplateVersion,
   "uk.gov.hmrc"       %% "play-ui"                    % playUiVersion,
   "uk.gov.hmrc"       %% "play-partials"              % playPartialsVersion,
