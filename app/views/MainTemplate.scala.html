@@ -15,14 +15,9 @@
  *@
 
 @import play.twirl.api.HtmlFormat
-@import config.AppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 @import uk.gov.hmrc.play.views.html.layouts.TrackingConsentSnippet
-@import models.User
-@import layouts.GovUkTemplate
-@import uk.gov.hmrc.play.views.html.layouts.{HeadWithTrackingConsent, HeaderNav, Footer, ServiceInfo, MainContentHeader, MainContent, Sidebar, Article, FooterLinks}
-@import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import views.utils.ServiceNameUtil
 
 @this(govukTemplate: GovukTemplate,
@@ -35,15 +30,18 @@
     hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
     trackingConsentSnippet: TrackingConsentSnippet)
 
-@(title: String,
+@(pageTitle: String,
+    serviceName: Option[String] = None,
     showLogout: Boolean = true,
-    appConfig: config.AppConfig,
     feedbackOnSignOut: Boolean = true,
-    serviceInfoContent: Html = HtmlFormat.empty,
-    user: Option[User] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages)
+    serviceInfoContent: Html = HtmlFormat.empty)(mainContent: Html)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@dynamicNavTitle = @{
-    user.fold(messages("navTitle.vat"))(u => if(u.isAgent) messages("navTitle.agent") else messages("navTitle.nonAgent"))
+@navTitle = @{
+    serviceName.fold{
+        ServiceNameUtil.generateHeader
+    }{
+        name => name
+    }
 }
 
 @scripts = {
@@ -89,13 +87,6 @@
     @languageSelect
 }
 
-@content = {
-<div id="content" class="govuk-!-margin-bottom-6">
-    @mainContent
-</div>
-@getHelpHtml
-}
-
 @head = {
 @trackingConsentSnippet(nonce = None)
 
@@ -105,7 +96,7 @@
     @hmrcTimeoutDialog(TimeoutDialog(
     timeout = Some(appConfig.timeoutPeriod),
     countdown = Some(appConfig.timeoutCountdown),
-    signOutUrl = Some(routes.SignOutController.timeout().url),
+    signOutUrl = Some(routes.SignOutController.signOut(feedbackOnSignOut).url),
     keepAliveUrl = Some("#"),
     signOutButtonText = Some(messages("base.signOut"))
         ))
@@ -114,7 +105,7 @@
 
 @header = {
     @govukHeader(Header(
-    serviceName = Some(dynamicNavTitle),
+    serviceName = Some(navTitle),
     serviceUrl = Some("#"),
     navigation =
     if(showLogout)
@@ -124,17 +115,20 @@
     )))
 else None
 ))
-@userResearchBanner(appConfig)
+}
+
+@content = {
+<div id="content" class="govuk-!-margin-bottom-6">
+    @mainContent
+</div>
+@getHelpHtml
 }
 
 @govukTemplate(
-    htmlLang = Some(messages.lang.code),
-    pageTitle = Some(messages("base.pageTitle", title, dynamicNavTitle)),
+    pageTitle = Some(messages("base.pageTitle", pageTitle, navTitle)),
     headBlock = Some(head),
     headerBlock = header,
     beforeContentBlock = Some(beforeContentHtml),
-    footerBlock = hmrcStandardFooter(
-    accessibilityStatementUrl = Some(controllers.routes.AccessibilityStatementController.show().url)
-),
+    footerBlock = hmrcStandardFooter(accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl)),
     bodyEndBlock = Some(scripts)
 )(content)

@@ -23,7 +23,7 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "4.2.0"
+val bootstrapPlayVersion       = "3.4.0"
 val playFrontendGovUk          = "0.71.0-play-26"
 val playFrontendHmrc           = "0.58.0-play-26"
 val govTemplateVersion         = "5.63.0-play-26"
@@ -95,6 +95,13 @@ def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "com.typesafe.play"      %% "play-test"                   % PlayVersion.current   % scope,
   "org.mockito"            %  "mockito-core"                % mockitoVersion        % scope,
   "com.github.tomakehurst" %  "wiremock-jre8"               % wiremockVersion       % scope
+)
+
+TwirlKeys.templateImports ++= Seq(
+  "uk.gov.hmrc.govukfrontend.views.html.components._",
+  "uk.gov.hmrc.govukfrontend.views.html.helpers._",
+  "uk.gov.hmrc.hmrcfrontend.views.html.components._",
+  "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {

@@ -73,4 +73,7 @@ object ConfigKeys {
   val contactPrefMigrationFeature: String = "features.contactPrefMigration.enabled"
 
   val gtmContainer: String = "tracking-consent-frontend.gtm.container"
+
+  val accessibilityStatementHost: String = "accessibility-statement.host"
+  val accessibilityStatementUrl: String = "accessibility-statement.url"
 }
