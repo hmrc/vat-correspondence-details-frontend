@@ -61,8 +61,9 @@ trait AppConfig {
   val vatOverviewUrl: String
   val btaAccountDetailsUrl: String
   val gtmContainer: String
-  def dynamicJourneyEntryUrl(isAgent: Boolean): String =
+  def dynamicJourneyEntryUrl(isAgent: Boolean): String = {
     if(features.btaEntryPointEnabled() && !isAgent) btaAccountDetailsUrl else manageVatSubscriptionServicePath
+  }
 }
 
 @Singleton

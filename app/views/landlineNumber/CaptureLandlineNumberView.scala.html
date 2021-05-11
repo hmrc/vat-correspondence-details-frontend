@@ -19,7 +19,7 @@
 @import views.html.templates.inputs.Text
 @import views.html.templates.errors.ErrorSummary
 
-@this(mainTemplate: MainTemplate, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
+@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
 
 @(landlineForm: Form[String], currentLandline: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 

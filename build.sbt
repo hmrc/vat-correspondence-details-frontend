@@ -24,6 +24,8 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 val appName = "vat-correspondence-details-frontend"
 
 val bootstrapPlayVersion       = "3.4.0"
+val playFrontendGovUk          = "0.71.0-play-26"
+val playFrontendHmrc           = "0.58.0-play-26"
 val govTemplateVersion         = "5.63.0-play-26"
 val playPartialsVersion        = "7.1.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
@@ -73,6 +75,8 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 val compile = Seq(
   ws,
   "uk.gov.hmrc"       %% "bootstrap-frontend-play-26" % bootstrapPlayVersion,
+  "uk.gov.hmrc"       %% "play-frontend-govuk"        % playFrontendGovUk,
+  "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc,
   "uk.gov.hmrc"       %% "govuk-template"             % govTemplateVersion,
   "uk.gov.hmrc"       %% "play-ui"                    % playUiVersion,
   "uk.gov.hmrc"       %% "play-partials"              % playPartialsVersion,
@@ -91,6 +95,13 @@ def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "com.typesafe.play"      %% "play-test"                   % PlayVersion.current   % scope,
   "org.mockito"            %  "mockito-core"                % mockitoVersion        % scope,
   "com.github.tomakehurst" %  "wiremock-jre8"               % wiremockVersion       % scope
+)
+
+TwirlKeys.templateImports ++= Seq(
+  "uk.gov.hmrc.govukfrontend.views.html.components._",
+  "uk.gov.hmrc.govukfrontend.views.html.helpers._",
+  "uk.gov.hmrc.hmrcfrontend.views.html.components._",
+  "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {

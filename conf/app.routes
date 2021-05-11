@@ -107,3 +107,5 @@ POST        /contact-preference/add-email-address            controllers.contact
 GET         /contact-preference-redirect                     controllers.contactPreference.ContactPreferenceRedirectController.redirect
 GET         /verify-redirect                                 controllers.email.VerifyEmailController.btaVerifyEmailRedirect
 
+->         /govuk-frontend                                   govuk.Routes
+->         /hmrc-frontend                                    hmrcfrontend.Routes

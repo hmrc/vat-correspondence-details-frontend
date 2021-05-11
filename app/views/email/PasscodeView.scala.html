@@ -19,7 +19,7 @@
 @import views.html.templates.errors.ErrorSummary
 @import views.html.templates.inputs.Text
 
-@this(mainTemplate: MainTemplate, text: Text, form: FormWithCSRF, errorSummary: ErrorSummary)
+@this(mainTemplate: MainTemplateOriginal, text: Text, form: FormWithCSRF, errorSummary: ErrorSummary)
 
 @(email: String, passcodeForm: Form[String], contactPrefJourney: Boolean)(implicit request: User[_], messages: Messages, appConfig: AppConfig)
 
