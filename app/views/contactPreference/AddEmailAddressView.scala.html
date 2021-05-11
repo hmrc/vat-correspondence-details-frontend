@@ -14,51 +14,74 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.inputs.RadioGroup
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
-@import forms.YesNoForm._
-@import views.html.templates.errors.ErrorSummary
-
-@this(mainTemplate: MainTemplateOriginal, radioGroup: RadioGroup, errorSummary: ErrorSummary, formWithCSRF: FormWithCSRF)
+@this(mainTemplate: MainTemplate,
+    formWithCSRF: FormWithCSRF,
+    govukBackLink: GovukBackLink,
+    govukErrorSummary : GovukErrorSummary,
+    govukInsetText : GovukInsetText,
+    govukRadios : GovukRadios,
+    govukButton: GovukButton)
 
 @(form: Form[YesNo])(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
-@furtherContent = {
-    <div>
-        <p id="form-hint"> @messages("cPrefAddEmail.line1")</p>
-        <p> @messages("cPrefAddEmail.line2")</p>
-
-        <p>
-            <strong class="bold-small">
-                @messages("cPrefAddEmail.question")
-            </strong>
-        </p>
-    </div>
-}
-
 @mainTemplate(
-    title = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("cPrefAddEmail.title"))
+    pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("cPrefAddEmail.title"))
     else messages("cPrefAddEmail.title")) {
 
-    <a class="link-back" href="@controllers.contactPreference.routes.EmailPreferenceController.show().url">@messages("base.back")</a>
+    @govukBackLink(BackLink(
+        href = controllers.contactPreference.routes.EmailPreferenceController.show().url,
+        content = Text(messages("base.back"))
+    ))
 
-    @errorSummary(messages("common.error.heading"), form)
+    @if(form.hasErrors) {
+        @govukErrorSummary(ErrorSummary(
+                errorList = Seq(
+                ErrorLink(
+                href = Some("#yes_no"),
+                content = Text(messages("cPrefAddEmail.error"))
+            )),
+                title = Text(messages("common.error.heading"))
+            ))
+    }
 
-    @formWithCSRF(action = controllers.contactPreference.routes.AddEmailAddressController.submit, 'novalidate -> "novalidate") {
+    <h1 class="govuk-heading-l">@messages("cPrefAddEmail.title")</h1>
 
-         @radioGroup(
-            field = form(yesNo),
-            choices = Seq(
-                yes -> messages("common.yes"),
-                no  -> messages("common.no")
-            ),
-            question = messages("cPrefAddEmail.title"),
-            additionalContent = Some(furtherContent),
-            inline = false
+    <div>
+        <p class="govuk-body"> @messages("cPrefAddEmail.line1")</p>
+        <p class="govuk-body"> @messages("cPrefAddEmail.line2")</p>
+    </div>
+
+    @formWithCSRF(action = controllers.contactPreference.routes.AddEmailAddressController.submit) {
+
+    @govukRadios(Radios(
+        idPrefix = Some("yes_no"),
+        classes = "govuk-fieldset__legend--l",
+        name = "yes_no",
+        fieldset = Some(Fieldset(
+        legend = Some(Legend(
+        content = Text(messages("cPrefAddEmail.question")),
+        classes = "govuk-fieldset__legend--m",
+        isPageHeading = false
+        ))
+    )),
+    items = Seq(
+        RadioItem(
+            content = Text(messages("common.yes")),
+            value = Some("yes"),
+        ),
+        RadioItem(
+            content = Text(messages("common.no")),
+            value = Some("no"),
         )
+    ),
+        errorMessage = form("yes_no").error.map { err =>
+        ErrorMessage(content = Text(messages(err.message)))
+       }
+    ))
 
-        <button class="button" type="submit" id="continue">
-            @messages("common.continue")
-        </button>
+        @govukButton(Button(
+            content = Text(messages("common.continue"))
+        ))
+
     }
 }
