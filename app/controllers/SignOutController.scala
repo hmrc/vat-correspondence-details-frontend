@@ -51,8 +51,4 @@ class SignOutController @Inject()(val mcc: MessagesControllerComponents,
       Future.successful(Redirect(appConfig.unauthorisedSignOutUrl))
     }
   }
-
-  val timeout: Action[AnyContent] = Action {
-    Redirect(appConfig.unauthorisedSignOutUrl)
-  }
 }

@@ -45,8 +45,6 @@
 }
 
 @scripts = {
-    <script type="text/javascript" src=@routes.Assets.at("javascript/errorFocus.js?2")></script>
-    <script type="text/javascript" src='@routes.Assets.at("javascript/vat-corr-v1.js")'></script>
     <script src='@routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
     <script src='@routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
     <script>window.GOVUKFrontend.initAll();</script>
@@ -129,6 +127,6 @@ else None
     headBlock = Some(head),
     headerBlock = header,
     beforeContentBlock = Some(beforeContentHtml),
-    footerBlock = hmrcStandardFooter(accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl)),
+    footerBlock = hmrcStandardFooter(accessibilityStatementUrl = Some(appConfig.accessibilityLinkUrl)),
     bodyEndBlock = Some(scripts)
 )(content)

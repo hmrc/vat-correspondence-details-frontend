@@ -61,7 +61,6 @@ trait AppConfig {
   val vatOverviewUrl: String
   val btaAccountDetailsUrl: String
   val gtmContainer: String
-  val accessibilityStatementUrl: String
   def dynamicJourneyEntryUrl(isAgent: Boolean): String = {
     if(features.btaEntryPointEnabled() && !isAgent) btaAccountDetailsUrl else manageVatSubscriptionServicePath
   }
@@ -155,8 +154,4 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override val btaAccountDetailsUrl: String = sc.getString(Keys.btaHost) + sc.getString(Keys.btaAccountDetailsUrl)
 
   override val gtmContainer: String = sc.getString(Keys.gtmContainer)
-
-  private lazy val accessibilityStatementHost: String = sc.getString(Keys.accessibilityStatementHost)
-  override lazy val accessibilityStatementUrl: String =
-    accessibilityStatementHost + sc.getString(Keys.accessibilityStatementUrl)
 }
