@@ -20,21 +20,20 @@
 @import uk.gov.hmrc.play.views.html.layouts.TrackingConsentSnippet
 @import views.utils.ServiceNameUtil
 
-@this(govukTemplate: GovukTemplate,
-    govukLayout: GovukLayout,
-    hmrcLanguageSelect: HmrcLanguageSelect,
-    hmrcTimeoutDialog: HmrcTimeoutDialog,
-    govukPhaseBanner: GovukPhaseBanner,
-    govukHeader: GovukHeader,
-    hmrcStandardFooter: HmrcStandardFooter,
-    hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
-    trackingConsentSnippet: TrackingConsentSnippet)
+@this(govukLayout: GovukLayout,
+      hmrcLanguageSelect: HmrcLanguageSelect,
+      hmrcTimeoutDialog: HmrcTimeoutDialog,
+      govukPhaseBanner: GovukPhaseBanner,
+      govukHeader: GovukHeader,
+      hmrcStandardFooter: HmrcStandardFooter,
+      hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
+      trackingConsentSnippet: TrackingConsentSnippet)
 
 @(pageTitle: String,
-    serviceName: Option[String] = None,
-    showLogout: Boolean = true,
-    feedbackOnSignOut: Boolean = true,
-    serviceInfoContent: Html = HtmlFormat.empty)(mainContent: Html)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+  serviceName: Option[String] = None,
+  showLogout: Boolean = true,
+  feedbackOnSignOut: Boolean = true,
+  serviceInfoContent: Html = HtmlFormat.empty)(mainContent: Html)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
 @navTitle = @{
     serviceName.fold{
@@ -122,11 +121,11 @@ else None
 @getHelpHtml
 }
 
-@govukTemplate(
+@govukLayout(
     pageTitle = Some(messages("base.pageTitle", pageTitle, navTitle)),
     headBlock = Some(head),
-    headerBlock = header,
+    headerBlock = Some(header),
     beforeContentBlock = Some(beforeContentHtml),
-    footerBlock = hmrcStandardFooter(accessibilityStatementUrl = Some(appConfig.accessibilityLinkUrl)),
+    footerBlock = Some(hmrcStandardFooter(accessibilityStatementUrl = Some(appConfig.accessibilityLinkUrl))),
     bodyEndBlock = Some(scripts)
 )(content)
