@@ -86,7 +86,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
               }
 
               "show first line of address and postcode" in {
-                page.select("label[for=yes_no-yes]").text() should include("firstLine, codeOfMyPost")
+                page.select("label[for=yes_no]").text() should include("firstLine, codeOfMyPost")
               }
             }
 
@@ -105,7 +105,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
               }
 
               "show first line of address" in {
-                page.select("label[for=yes_no-yes]").text() should include("firstLine")
+                page.select("label[for=yes_no]").text() should include("firstLine")
               }
             }
           }
