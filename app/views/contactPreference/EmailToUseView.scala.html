@@ -15,42 +15,77 @@
  *@
 
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
-@import views.html.templates.errors.ErrorSummary
-@import templates.inputs.RadioGroup
-@import forms.YesNoForm._
 
-@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF, errorSummary: ErrorSummary, radioGroup: RadioGroup)
+@this(mainTemplate: MainTemplate,
+      form: FormWithCSRF,
+      govukInsetText: GovukInsetText,
+      govukRadios: GovukRadios,
+      govukErrorSummary: GovukErrorSummary,
+      govukButton: GovukButton)
 
-@(emailToUseForm: Form[YesNo], emailAddress: String)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
+@(emailToUseForm: Form[YesNo],
+  emailAddress: String)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @questionContent = {
-    <div id="form-hint" class="panel panel-border-wide">
-        @emailAddress
-    </div>
+  @govukInsetText(InsetText(
+    id = Some("form-hint"),
+    content = Text(emailAddress)
+  ))
 }
 
 @mainTemplate(
-    title = if(emailToUseForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("emailToUse.title"))
-        else messages("emailToUse.title")) {
+  pageTitle = if(emailToUseForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("emailToUse.title"))
+    else messages("emailToUse.title")) {
 
-    @errorSummary(messages("common.error.heading"), emailToUseForm)
+  @if(emailToUseForm.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+      errorList = Seq(
+        ErrorLink(
+          href = Some("#yes_no"),
+          content = Text(messages(emailToUseForm.errors.head.message))
+        )),
+      title = Text(messages("common.error.heading"))
+    ))
+  }
 
-<a class="link-back" href="@controllers.contactPreference.routes.EmailPreferenceController.show()">@messages("base.back")</a>
+<a class="govuk-back-link"
+   href="@controllers.contactPreference.routes.EmailPreferenceController.show()">
+  @messages("base.back")
+</a>
 
-    @form(action = controllers.contactPreference.routes.EmailToUseController.submit, 'novalidate -> "novalidate") {
+  @form(action = controllers.contactPreference.routes.EmailToUseController.submit) {
 
-        @radioGroup(
-            field = emailToUseForm(yesNo),
-            choices = Seq(
-            yes -> messages("common.yes"),
-            no -> messages("common.no")),
-            question = messages("emailToUse.title"),
-            additionalContent = Some(questionContent)
+    @govukRadios(Radios(
+      idPrefix = Some("yes_no"),
+      name = "yes_no",
+      fieldset = Some(Fieldset(
+        legend = Some(Legend(
+          content = Text(messages("emailToUse.title")),
+          classes = "govuk-fieldset__legend--l",
+          isPageHeading = true
+        ))
+      )),
+      hint = Some(Hint(
+        content = HtmlContent(questionContent)
+      )),
+      items = Seq(
+        RadioItem(
+          content = Text(messages("common.yes")),
+          value = Some("yes")
+        ),
+        RadioItem(
+          content = Text(messages("common.no")),
+          value = Some("no")
         )
+      ),
+      errorMessage = emailToUseForm("yes_no").error.map { error =>
+        ErrorMessage(content = Text(messages(error.message)))
+      }
+    ))
 
-        <button class="button" type ="submit" id="continue">
-            @messages("common.continue")
-        </button>
-    }
+    @govukButton(Button(
+      content = Text(messages("common.continue")),
+    ))
+  }
 
 }

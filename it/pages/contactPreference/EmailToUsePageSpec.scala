@@ -194,7 +194,7 @@ class EmailToUsePageSpec extends BasePageISpec {
           res should have(
             httpStatus(Status.BAD_REQUEST),
             pageTitle("Error: " + generateDocumentTitle("emailToUse.title")),
-            elementText(".error-message")("Error: Select yes if this is the email address you want us to use")
+            elementText("#yes_no-error")("Error: Select yes if this is the email address you want us to use")
           )
         }
       }
