@@ -30,13 +30,13 @@ class EmailToUseViewSpec extends ViewBaseSpec {
 
   private object Selectors {
     val pageHeading = "#content h1"
-    val email = ".panel-border-wide"
-    val yesOption = "div.multiple-choice:nth-child(1) > label"
-    val noOption = "div.multiple-choice:nth-child(2) > label"
-    val button = ".button"
-    val errorHeading = "#error-summary-display"
-    val error = ".error-message"
-    val backLink = "#content > article > a"
+    val email = ".govuk-inset-text"
+    val yesOption = ".govuk-radios > div:nth-child(1) > label"
+    val noOption = ".govuk-radios > div:nth-child(2) > label"
+    val button = ".govuk-button"
+    val errorHeading = ".govuk-error-summary"
+    val error = "#yes_no-error"
+    val backLink = ".govuk-back-link"
   }
 
   "The EmailToUseView" should {
