@@ -29,16 +29,16 @@ class AddEmailAddressViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val pageHeading = "#content h1"
-    val backLink = "#content > article > a"
+    val backLink = ".govuk-back-link"
     val form = "form"
-    val button = ".button"
-    val line1 = ".form-field > div:nth-child(2) > p:nth-child(1)"
-    val line2 = ".form-field > div:nth-child(2) > p:nth-child(2)"
-    val question = ".form-field > div:nth-child(2) > p:nth-child(3)"
-    val yesOption = "div.multiple-choice:nth-child(1) > label"
-    val noOption = "div.multiple-choice:nth-child(2) > label"
-    val errorHeading = "#error-summary-display"
-    val error = ".error-message"
+    val button = ".govuk-button"
+    val line1 = "#content p:nth-of-type(1)"
+    val line2 = "#content p:nth-of-type(2)"
+    val question = "#content > form > div > fieldset > legend"
+    val yesOption = "div.govuk-radios__item:nth-child(1) > label:nth-child(2)"
+    val noOption = "div.govuk-radios__item:nth-child(2) > label:nth-child(2)"
+    val errorHeading = ".govuk-error-summary h2"
+    val error = ".govuk-error-message"
   }
 
   "Once rendered, the add email address page" should {
@@ -106,7 +106,7 @@ class AddEmailAddressViewSpec extends ViewBaseSpec {
     }
 
     "display the correct error heading" in {
-      elementText(Selectors.errorHeading) shouldBe s"${ContactPrefAddEmailMessages.errorHeading} ${ContactPrefAddEmailMessages.errorMessage}"
+      elementText(Selectors.errorHeading) shouldBe s"${ContactPrefAddEmailMessages.errorHeading}"
     }
 
     "display the correct error message" in {
