@@ -14,45 +14,68 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.inputs.RadioGroup
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import forms.YesNoForm._
-@import views.html.templates.errors.ErrorSummary
 
-@this(mainTemplate: MainTemplateOriginal, radioGroup: RadioGroup, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
+@this(mainTemplate: MainTemplate,
+      govukRadios: GovukRadios,
+      formWithCSRF: FormWithCSRF,
+      govukErrorSummary: GovukErrorSummary,
+      govukBackLink: GovukBackLink,
+      govukButton: GovukButton,
+      govukInsetText: GovukInsetText)
 
 @(form: Form[YesNo], address: String)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @hint = {
-  <div class="panel panel-border-wide">
-    <p id="form-hint">@messages("letterPreference.hint")</p>
-  </div>
+  @govukInsetText(InsetText(
+    content = Text(messages("letterPreference.hint"))
+  ))
 }
 
-@mainTemplate(
-  title = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("letterPreference.title"))
-          else messages("letterPreference.title")) {
+@mainTemplate(pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("letterPreference.title"))
+                          else messages("letterPreference.title")) {
 
-    @errorSummary(messages("common.error.heading"), form)
-
-    <a class="link-back" href="@appConfig.btaAccountDetailsUrl">@messages("base.back")</a>
-
-    @formWithCSRF(action = controllers.contactPreference.routes.LetterPreferenceController.submit,
-    'novalidate -> "novalidate") {
-      @radioGroup(
-        field = form(yesNo),
-        choices = Seq(
-          yes -> messages("letterPreference.yes", address),
-          no -> messages("letterPreference.no")
-        ),
-        question = messages("letterPreference.title"),
-        additionalContent = Some(hint),
-        inline = false
-      )
-
-    <button class="button" type="submit" id="continue">
-      @messages("common.continue")
-    </button>
+  @if(form.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+      title = Text(messages("common.error.heading")),
+      errorList = form.errors.map { error =>
+        ErrorLink(content = Text(messages(error.message)), href = Some(s"#$yesNo"))
+      }
+    ))
   }
 
+  @govukBackLink(BackLink(content = Text(messages("base.back")), href = appConfig.btaAccountDetailsUrl))
+
+  @formWithCSRF(action = controllers.contactPreference.routes.LetterPreferenceController.submit) {
+
+    @govukRadios(Radios(
+      idPrefix = Some(yesNo),
+      name = yesNo,
+      fieldset = Some(Fieldset(
+        legend = Some(Legend(
+          content = Text(messages("letterPreference.title")),
+          isPageHeading = true,
+          classes = "govuk-fieldset__legend--l"
+        ))
+      )),
+      hint = Some(Hint(content = HtmlContent(hint))),
+      items = Seq(
+        RadioItem(
+          value = Some(Yes.toString),
+          content = Text(messages("letterPreference.yes", address)),
+          checked = form(yesNo).value.contains(Yes.toString)
+        ),
+        RadioItem(
+          value = Some(No.toString),
+          content = Text(messages("letterPreference.no")),
+          checked = form(yesNo).value.contains(No.toString)
+        )
+      ),
+      errorMessage = form(yesNo).error.map { err =>
+        ErrorMessage(content = Text(messages(err.message)))
+      }
+    ))
+
+    @govukButton(Button(content = Text(messages("common.continue"))))
+  }
 }

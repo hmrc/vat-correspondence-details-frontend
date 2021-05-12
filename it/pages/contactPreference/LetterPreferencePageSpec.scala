@@ -146,7 +146,7 @@ class LetterPreferencePageSpec extends BasePageISpec {
           res should have(
             httpStatus(Status.BAD_REQUEST),
             pageTitle("Error: " + generateDocumentTitle("letterPreference.title")),
-            elementText(".error-message")("Error: Select yes if you want communications by letter")
+            elementText(".govuk-error-message")("Error: Select yes if you want communications by letter")
           )
         }
       }

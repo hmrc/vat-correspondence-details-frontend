@@ -29,15 +29,15 @@ class LetterPreferenceViewSpec extends ViewBaseSpec {
   lazy val address: String = "123 Fake Street, AB1 C23"
 
   object Selectors {
-    val pageHeading = "#content h1"
-    val button = ".button"
-    val yesOption = "div.multiple-choice:nth-child(1) > label"
-    val noOption = "div.multiple-choice:nth-child(2) > label"
-    val hint = ".panel"
-    val errorHeading = "#error-summary-display h2"
-    val errorSummaryMessage = "#yes_no-error-summary"
-    val error = ".error-message"
-    val backLink = "#content > article > a"
+    val pageHeading = "h1"
+    val button = ".govuk-button"
+    val yesOption = "label[for=yes_no]"
+    val noOption = "label[for=yes_no-2]"
+    val hint = ".govuk-inset-text"
+    val errorHeading = "#error-summary-title"
+    val errorSummaryMessage = ".govuk-error-summary__list > li > a"
+    val error = ".govuk-error-message"
+    val backLink = ".govuk-back-link"
   }
 
   "Once rendered, the Letters to PPOB view" should {
