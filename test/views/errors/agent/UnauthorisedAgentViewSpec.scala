@@ -27,9 +27,9 @@ class UnauthorisedAgentViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "h1"
-    val instructions = "#content article p"
-    val signOutButton = ".button"
-    val signOutLink = "#content article p a"
+    val instructions = "#content p"
+    val signOutButton = ".govuk-button"
+    val signOutLink = "#content a"
   }
 
   "Rendering the agent unauthorised page" should {

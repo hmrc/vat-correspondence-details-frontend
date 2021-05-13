@@ -27,9 +27,9 @@ class NotSignedUpViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "#content h1"
-    val instructions = "#content article p"
-    val signUpLink = "#content > article > p> a"
-    val signUpButton = "#content .button"
+    val instructions = "#content p"
+    val signUpLink = "#content a"
+    val signUpButton = "#content .govuk-button"
   }
 
   "Rendering the unauthorised page" should {
