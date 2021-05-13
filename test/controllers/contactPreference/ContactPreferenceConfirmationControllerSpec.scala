@@ -68,7 +68,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
             }
 
             "render view with the email populated" in {
-              Jsoup.parse(bodyOf(result)).select("#validationValue").text() shouldBe "asd@asd.com"
+              Jsoup.parse(bodyOf(result)).select("#content > div.govuk-inset-text").text() shouldBe "asd@asd.com"
             }
           }
 
@@ -127,7 +127,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
             }
 
             "render view with the full business address populated" in {
-              Jsoup.parse(bodyOf(result)).select("#validationValue").text() shouldBe
+              Jsoup.parse(bodyOf(result)).select("#content > div.govuk-inset-text").text() shouldBe
                 "firstLine secondLine thirdLine fourthLine fifthLine codeOfMyPost"
             }
           }

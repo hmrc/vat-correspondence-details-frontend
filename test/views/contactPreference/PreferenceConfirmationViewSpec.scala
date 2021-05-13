@@ -45,28 +45,28 @@ class PreferenceConfirmationViewSpec extends ViewBaseSpec {
       }
 
       "have the correct first paragraph" in {
-        elementText("#content article p:nth-of-type(1)") shouldBe
+        elementText("#content > p:nth-child(3)") shouldBe
           "If we can accept the change, we will contact you about VAT at:"
       }
 
       "have the correct email address" in {
-        elementText(".panel-border-wide") shouldBe
+        elementText("#content > div.govuk-inset-text") shouldBe
           "pepsi-mac@test.com"
       }
 
       "have the correct second paragraph" in {
-        elementText("#content article p:nth-of-type(2)") shouldBe
+        elementText("#content > p:nth-child(5)") shouldBe
           "We’ll still need to send you some letters in the post because the law tells us to."
       }
 
       "have a button" which {
 
         "has the correct text" in {
-          elementText(".button") shouldBe "View your account details"
+          elementText(".govuk-button") shouldBe "View your account details"
         }
 
         "has the correct href" in {
-          element(".button").attr("href") shouldBe mockConfig.btaAccountDetailsUrl
+          element(".govuk-button").attr("href") shouldBe mockConfig.btaAccountDetailsUrl
         }
       }
     }
@@ -77,15 +77,14 @@ class PreferenceConfirmationViewSpec extends ViewBaseSpec {
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "render all lines of address" in {
-        val text = element("#validationValue")
 
-        text.select("span:nth-of-type(1)").text() shouldBe "Address line 1"
-        text.select("span:nth-of-type(2)").text() shouldBe "Address line 2"
-        text.select("span:nth-of-type(3)").text() shouldBe "Address line 3"
+        elementText("#content > div.govuk-inset-text") shouldBe
+          "Address line 1 Address line 2 Address line 3"
+
       }
 
       "not render section regarding sending letters" in {
-        elementExtinct("#content article p:nth-of-type(2)")
+        elementExtinct("#content > p:nth-child(5)")
       }
     }
   }
