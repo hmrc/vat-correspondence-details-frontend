@@ -82,8 +82,8 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText("#passcode-error-summary")("Enter the 6 character confirmation code"),
-          elementText(".form-field--error .error-message")("Error: Enter the 6 character confirmation code")
+          elementText(".govuk-error-summary__body")("Enter the 6 character confirmation code"),
+          elementText("#passcode-error")("Error: Enter the 6 character confirmation code")
         )
       }
     }
@@ -100,7 +100,7 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText("#content > article > p:nth-child(2)")("This is because you have entered the wrong code too many times.")
+          elementText("#content > p:nth-child(2)")("This is because you have entered the wrong code too many times.")
         )
       }
     }
@@ -117,7 +117,7 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText("#content > article > p:nth-child(2)")("The code we sent you has expired.")
+          elementText("#content > p:nth-child(2)")("The code we sent you has expired.")
         )
       }
     }
@@ -133,8 +133,8 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText("#passcode-error-summary")("Enter the 6 character confirmation code"),
-          elementText(".form-field--error .error-message")("Error: Enter the 6 character confirmation code")
+          elementText(".govuk-error-summary__body")("Enter the 6 character confirmation code"),
+          elementText("#passcode-error")("Error: Enter the 6 character confirmation code")
         )
       }
     }
@@ -197,8 +197,8 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText("#passcode-error-summary")("Enter the 6 character confirmation code"),
-          elementText(".form-field--error .error-message")("Error: Enter the 6 character confirmation code")
+          elementText(".govuk-error-summary__body")("Enter the 6 character confirmation code"),
+          elementText("#passcode-error")("Error: Enter the 6 character confirmation code")
         )
       }
     }
@@ -215,7 +215,7 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText("#content > article > p:nth-child(2)")("This is because you have entered the wrong code too many times.")
+          elementText("#content > p:nth-child(2)")("This is because you have entered the wrong code too many times.")
         )
       }
     }
@@ -232,7 +232,7 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText("#content > article > p:nth-child(2)")("The code we sent you has expired.")
+          elementText("#content > p:nth-child(2)")("The code we sent you has expired.")
         )
       }
     }
@@ -248,8 +248,8 @@ class PasscodePageSpec extends BasePageISpec {
 
         res should have(
           httpStatus(BAD_REQUEST),
-          elementText("#passcode-error-summary")("Enter the 6 character confirmation code"),
-          elementText(".form-field--error .error-message")("Error: Enter the 6 character confirmation code")
+          elementText(".govuk-error-summary__body")("Enter the 6 character confirmation code"),
+          elementText("#passcode-error")("Error: Enter the 6 character confirmation code")
         )
       }
     }
