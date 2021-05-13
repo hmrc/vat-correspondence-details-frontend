@@ -201,7 +201,7 @@ class EmailPreferencePageSpec extends BasePageISpec {
           res should have(
             httpStatus(Status.BAD_REQUEST),
             pageTitle("Error: " + generateDocumentTitle("emailPreference.title")),
-            elementText(".error-message")("Error: Select yes if you want communications by email")
+            elementText(".govuk-error-summary__body")("Select yes if you want communications by email")
           )
         }
       }

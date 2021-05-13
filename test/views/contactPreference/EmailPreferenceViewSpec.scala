@@ -28,13 +28,13 @@ class EmailPreferenceViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val pageHeading = "#content h1"
-    val button = ".button"
-    val yesOption = "div.multiple-choice:nth-child(1) > label"
-    val noOption = "div.multiple-choice:nth-child(2) > label"
-    val hint = ".panel"
-    val errorHeading = "#error-summary-display"
-    val error = ".error-message"
-    val backLink = "#content > article > a"
+    val button = ".govuk-button"
+    val yesOption = "div > fieldset > div.govuk-radios > div:nth-child(1) > label"
+    val noOption = "div > fieldset > div.govuk-radios > div:nth-child(2) > label"
+    val hint = ".govuk-hint"
+    val errorHeading = ".govuk-error-summary"
+    val error = ".govuk-error-message"
+    val backLink = ".govuk-back-link"
   }
 
   "Once rendered, the email preference page" should {
@@ -77,7 +77,7 @@ class EmailPreferenceViewSpec extends ViewBaseSpec {
   }
 
   "The email preference page with errors" should {
-    lazy val view = emailPrefView(YesNoForm.yesNoForm(EmailPrefMessages.errorMessage).bind(Map("yes_no" -> "")))(
+    lazy val view = emailPrefView(YesNoForm.yesNoForm(EmailPrefMessages.emailErrorMessage).bind(Map("yes_no" -> "")))(
       user, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
@@ -90,7 +90,7 @@ class EmailPreferenceViewSpec extends ViewBaseSpec {
     }
 
     "display the correct error heading" in {
-      elementText(Selectors.errorHeading) shouldBe s"${EmailPrefMessages.errorHeading} ${EmailPrefMessages.errorMessage}"
+      elementText(Selectors.errorHeading) shouldBe s"${EmailPrefMessages.errorHeading} ${EmailPrefMessages.emailErrorMessage}"
     }
 
     "have the correct radio buttons with yes/no answers" in {
@@ -103,7 +103,7 @@ class EmailPreferenceViewSpec extends ViewBaseSpec {
     }
 
     "display the correct error message" in {
-      elementText(Selectors.error) shouldBe s"${EmailPrefMessages.errorTitlePrefix} ${EmailPrefMessages.errorMessage}"
+      elementText(Selectors.error) shouldBe s"${EmailPrefMessages.errorTitlePrefix} ${EmailPrefMessages.emailErrorMessage}"
     }
   }
 }

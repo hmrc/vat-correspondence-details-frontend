@@ -22,7 +22,7 @@ object EmailPrefMessages {
   val titleSuffixUser = " - Business tax account - GOV.UK"
   val title: String = heading + titleSuffixUser
   val hint = "We currently send messages about your VAT by letter."
-  val errorMessage = "Select yes if this is the email address you want us to use"
+  val emailErrorMessage = "Select yes if you want communications by email"
   val yes = "Yes"
   val no = "No"
   val continue = "Continue"
