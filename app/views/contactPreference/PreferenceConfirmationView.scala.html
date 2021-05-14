@@ -17,28 +17,37 @@
 @import config.AppConfig
 @import common.SessionKeys
 
-@this(mainTemplate: MainTemplateOriginal)
+@this(mainTemplate: MainTemplate, govukPanel: GovukPanel, govukButton: GovukButton, govukInsetText: GovukInsetText)
 
 @(contactDetails: Seq[String], changeKey: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(title = messages("contactPrefConfirmation.title")) {
+@insetTextHtml = {
+    @contactDetails.map { line =>
+        @line @if(contactDetails.last != line){<br />}
+    }
+}
 
-  <div class="govuk-box-highlight">
-    <h1 class="heading-xlarge">@messages("contactPrefConfirmation.title")</h1>
-  </div>
+@mainTemplate(pageTitle = messages("contactPrefConfirmation.title")) {
 
-  <h2 class="heading-medium">@messages("common.whatHappensNext")</h2>
+    @govukPanel(Panel(
+        title = Text(messages("contactPrefConfirmation.title"))
+    ))
 
-  <p>@messages("contactPrefConfirmation.contactYou")</p>
-  <div class="panel panel-border-wide" id="validationValue">
-      @contactDetails.map { detail =>
-        <span class="input--cleared">@detail</span>
-      }
-  </div>
+  <h2 class="govuk-heading-m">@messages("common.whatHappensNext")</h2>
+
+  <p class="govuk-body">@messages("contactPrefConfirmation.contactYou")</p>
+
+    @govukInsetText(InsetText(
+        content = HtmlContent(insetTextHtml)
+    ))
 
   @if(changeKey == SessionKeys.letterToEmailChangeSuccessful) {
-    <p>@messages("contactPrefConfirmation.stillNeedLetters")</p>
+    <p class="govuk-body">@messages("contactPrefConfirmation.stillNeedLetters")</p>
   }
 
-  <a href="@appConfig.btaAccountDetailsUrl" class="button" role="button">@messages("common.accountDetails")</a>
+@govukButton(Button(
+    href = Some(appConfig.btaAccountDetailsUrl),
+    content = Text(messages("common.accountDetails"))
+))
+
 }
