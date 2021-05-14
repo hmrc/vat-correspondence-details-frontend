@@ -14,19 +14,18 @@
  * limitations under the License.
  *@
 
-@this(mainTemplate: MainTemplateOriginal)
+@this(mainTemplate: MainTemplate, govukButton: GovukButton)
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(title = messages("agentJourneyDisabled.title"), feedbackOnSignOut = false) {
+@mainTemplate(pageTitle = messages("agentJourneyDisabled.title"), feedbackOnSignOut = false) {
 
-  <h1>@messages("agentJourneyDisabled.title")</h1>
-  <p>@messages("agentJourneyDisabled.summary")</p>
-  <p>@messages("agentJourneyDisabled.instructions")</p>
+  <h1 class="govuk-heading-l">@messages("agentJourneyDisabled.title")</h1>
+  <p class="govuk-body">@messages("agentJourneyDisabled.summary")</p>
+  <p class="govuk-body">@messages("agentJourneyDisabled.instructions")</p>
 
-  <a class="button"
-     role="button"
-     href="@controllers.routes.SignOutController.signOut(feedbackOnSignOut = false)">
-    @messages("base.signOut")
-  </a>
+  @govukButton(Button(
+    content = Text(messages("base.signOut")),
+    href = Some(controllers.routes.SignOutController.signOut(feedbackOnSignOut = false).url)
+  ))
 }

@@ -14,15 +14,17 @@
  * limitations under the License.
  *@
 
-@this(mainTemplate: MainTemplateOriginal)
+@this(mainTemplate: MainTemplate)
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(title = messages("inFlightChange.title")) {
+@mainTemplate(pageTitle = messages("inFlightChange.title")) {
 
-  <h1 class="heading-large">@messages("inFlightChange.title")</h1>
-  <p>@messages("inFlightChange.recentRequest")</p>
-  <p>@messages("inFlightChange.untilWeAccept")</p>
-  <p>@messages("inFlightChange.acceptOrReject")</p>
-  <a href="@appConfig.btaAccountDetailsUrl">@messages("inFlightChange.backToAccountDetails")</a>
+  <h1 class="govuk-heading-l">@messages("inFlightChange.title")</h1>
+  <p class="govuk-body">@messages("inFlightChange.recentRequest")</p>
+  <p class="govuk-body">@messages("inFlightChange.untilWeAccept")</p>
+  <p class="govuk-body">@messages("inFlightChange.acceptOrReject")</p>
+  <p class="govuk-body">
+    <a class="govuk-link" href="@appConfig.btaAccountDetailsUrl">@messages("inFlightChange.backToAccountDetails")</a>
+  </p>
 }

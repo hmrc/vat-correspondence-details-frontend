@@ -27,10 +27,10 @@ class InFlightChangeViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "h1"
-    val paragraphOne = "article > p:nth-child(2)"
-    val paragraphTwo = "article > p:nth-child(3)"
-    val paragraphThree = "article > p:nth-child(4)"
-    val backToAccountDetails = "article > a"
+    val paragraphOne = "#content p:nth-child(2)"
+    val paragraphTwo = "#content p:nth-child(3)"
+    val paragraphThree = "#content p:nth-child(4)"
+    val backToAccountDetails = "#content .govuk-link"
   }
 
   "The Inflight change pending view" when {
