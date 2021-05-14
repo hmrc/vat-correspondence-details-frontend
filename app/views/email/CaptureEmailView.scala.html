@@ -24,28 +24,21 @@ govukBackLink: GovukBackLink, text: Text, govukInput : GovukInput, govukDetails 
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@additionalContent = {
-@if(currentEmail == "") {
-<p>@messages("captureEmail.onlyAddEmail")</p>
-}
-<span id="form-hint" class="form-hint">@messages("captureEmail.hint")</span>
-}
-
 @mainTemplate( pageTitle = if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title"))
 else messages("captureEmail.title")){
 
 @if(letterToConfirmedEmail){
-@currentEmail match {
-case "" => { @govukBackLink(BackLink(
-href = "@controllers.contactPreference.routes.AddEmailAddressController.show().url",
-content = Text(messages("base.back"))
-)) }
+    @currentEmail match {
+        case "" => { @govukBackLink(BackLink(
+        href = "@controllers.contactPreference.routes.AddEmailAddressController.show().url",
+        content = Text(messages("base.back"))
+    )) }
 case _ => {
-@govukBackLink(BackLink(
-href = "@controllers.contactPreference.routes.EmailToUseController.show().url",
-content = Text(messages("base.back"))
-))
-}
+    @govukBackLink(BackLink(
+        href = "@controllers.contactPreference.routes.EmailToUseController.show().url",
+        content = Text(messages("base.back"))
+    ))
+    }
 }
 } else {@govukBackLink(BackLink(
 href = "@controllers.contactPreference.routes.EmailToUseController.show().url",
@@ -54,55 +47,49 @@ content = Text(messages("base.back"))
 }
 
 @if(emailForm.hasErrors) {
-@govukErrorSummary(ErrorSummary(
-errorList = Seq(
-ErrorLink(
-content = Text(messages("cPrefAddEmail.error"))
-)),
-title = Text(messages("common.error.heading"))
-))
+    @govukErrorSummary(ErrorSummary(
+        errorList = emailForm.errors.map { error =>
+        ErrorLink(content = Text(messages(error.message)), href = Some("#email"))
+    },
+    title = Text(messages("common.error.heading"))
+    ))
 }
 
 @form(action = submitFormAction) {
 
 @govukInput(Input(
-id = "email",
-name = "email",
-inputmode = Some("email"),
-label = Label(
-isPageHeading = true,
-classes = "govuk-label--l",
-content = Text(messages("captureEmail.title"))
+    id = "email",
+    name = "email",
+    inputmode = Some("email"),
+    label = Label(
+    isPageHeading = true,
+    classes = "govuk-label--l",
+    content = Text(messages("captureEmail.title"))
 ),
-hint = Some(Hint(
-content = Text(messages("captureEmail.hint"))
+    hint = Some(Hint(
+    content = Text(messages("captureEmail.hint"))
 )),
-classes = "govuk-input--width-10"
+    classes = "govuk-input--width-10"
 ))
 
 @if(currentEmail == "") {
-<p class ="govuk-body">@messages("captureEmail.onlyAddEmail")</p>
+    <p class="govuk-body">@messages("captureEmail.onlyAddEmail")</p>
 }
 
 @govukButton(Button(
-content = Text(messages("common.continue")),
-))
+    content = Text(messages("common.continue")),
+    ))
 }
 
 @if(!(currentEmail == "")) {
-@govukDetails(Details(
-summary = Text(messages("captureEmail.removeEmail.title")),
-content = HtmlContent(
-s"""<a target="_blank" href="@appConfig.contactHmrcUrl">
-    ${messages("captureEmail.removeEmail.contactUs")}
-</a> ${messages("captureEmail.removeEmail.description")}"""
-)
+    @govukDetails(Details(
+    summary = Text(messages("captureEmail.removeEmail.title")),
+    content = HtmlContent(
+    s"""<a target="_blank" href="@appConfig.contactHmrcUrl">
+        ${messages("captureEmail.removeEmail.contactUs")}
+        </a> ${messages("captureEmail.removeEmail.description")}"""
+    )
 ))
 }
 
-<div id="hmrc-privacy-notice">
-    @messages("hmrcPrivacyNotice.details")
-    <a target="_blank" href="@appConfig.hmrcPrivacyNoticeUrl">
-        @messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
-</div>
-}
+<p class ="govuk-body">Full details of how we use your information are in the <a class ="govuk-link"href="@appConfig.hmrcPrivacyNoticeUrl"/> @messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")</p> }
