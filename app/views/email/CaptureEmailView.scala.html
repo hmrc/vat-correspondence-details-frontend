@@ -14,69 +14,96 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.AppConfig
 @import views.html.templates.inputs.Text
 @import views.html.templates.errors.ErrorSummary
 @import play.api.mvc.Call
 
-@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
+@this(mainTemplate: MainTemplate, form: FormWithCSRF, govukErrorSummary: GovukErrorSummary, govukButton: GovukButton,
+govukBackLink: GovukBackLink, text: Text, govukInput : GovukInput)
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @additionalContent = {
-  @if(currentEmail == "") {
-    <p>@messages("captureEmail.onlyAddEmail")</p>
-  }
-  <span id="form-hint" class="form-hint">@messages("captureEmail.hint")</span>
+@if(currentEmail == "") {
+<p>@messages("captureEmail.onlyAddEmail")</p>
+}
+<span id="form-hint" class="form-hint">@messages("captureEmail.hint")</span>
 }
 
-@mainTemplate(if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title")) else messages("captureEmail.title")) {
+@mainTemplate( pageTitle = if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title"))
+else messages("captureEmail.title")){
 
-    @if(letterToConfirmedEmail){
-        @currentEmail match {
-        case "" => {
-          <a class="link-back" href="@controllers.contactPreference.routes.AddEmailAddressController.show().url">@messages("base.back")</a>}
-        case _ => {
-          <a class="link-back" href="@controllers.contactPreference.routes.EmailToUseController.show().url">@messages("base.back")</a>}
-        }
+@if(letterToConfirmedEmail){
+@currentEmail match {
+case "" => { @govukBackLink(BackLink(
+href = "@controllers.contactPreference.routes.AddEmailAddressController.show().url",
+content = Text(messages("base.back"))
+)) }
+case _ => {
+@govukBackLink(BackLink(
+href = "@controllers.contactPreference.routes.EmailToUseController.show().url",
+content = Text(messages("base.back"))
+))
+}
+}
+} else {@govukBackLink(BackLink(
+href = "@controllers.contactPreference.routes.EmailToUseController.show().url",
+content = Text(messages("base.back"))
+))
+}
 
-    } else {<a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>}
+@if(emailForm.hasErrors) {
+@govukErrorSummary(ErrorSummary(
+errorList = Seq(
+ErrorLink(
+content = Text(messages("cPrefAddEmail.error"))
+)),
+title = Text(messages("common.error.heading"))
+))
+}
 
+@form(action = submitFormAction) {
 
-        @errorSummary(messages("common.error.heading"), emailForm)
+@govukInput(Input(
+id = "email",
+name = "email",
+inputmode = Some("email"),
+label = Label(
+isPageHeading = true,
+classes = "govuk-label--l",
+content = Text(messages("captureEmail.title"))
+),
+hint = Some(Hint(
+content = Text("Must be between 6 and 8 digits long")
+)),
+classes = "govuk-input--width-10"
+))
 
-        @form(action = submitFormAction) {
-            @text(
-                field = emailForm("email"),
-                pageTitle = Some(messages("captureEmail.title")),
-                additionalContent = Some(additionalContent)
-            )
+<div class="form-group">
+    <button class="button" type="submit">@messages("common.continue")</button>
+</div>
+}
 
-            <div class="form-group">
-                <button class="button" type="submit">@messages("common.continue")</button>
-            </div>
-        }
-
-        @if(!(currentEmail == "")) {
-            <div class="form-group">
-                <details>
-                    <summary role="button">
-                      <span class="summary"></span>
-                      @messages("captureEmail.removeEmail.title")
-                    </summary>
-                    <div class="panel panel-border-narrow">
-                        <a target="_blank" href="@appConfig.contactHmrcUrl">
-                          @messages("captureEmail.removeEmail.contactUs")
-                        </a> @messages("captureEmail.removeEmail.description")
-                    </div>
-                </details>
-            </div>
-        }
-
-        <div id="hmrc-privacy-notice">
-            @messages("hmrcPrivacyNotice.details")
-            <a target="_blank" href="@appConfig.hmrcPrivacyNoticeUrl">
-              @messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
+@if(!(currentEmail == "")) {
+<div class="form-group">
+    <details>
+        <summary role="button">
+            <span class="summary"></span>
+            @messages("captureEmail.removeEmail.title")
+        </summary>
+        <div class="panel panel-border-narrow">
+            <a target="_blank" href="@appConfig.contactHmrcUrl">
+                @messages("captureEmail.removeEmail.contactUs")
+            </a> @messages("captureEmail.removeEmail.description")
         </div>
-    }
+    </details>
+</div>
+}
+
+<div id="hmrc-privacy-notice">
+    @messages("hmrcPrivacyNotice.details")
+    <a target="_blank" href="@appConfig.hmrcPrivacyNoticeUrl">
+        @messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
+</div>
+}
