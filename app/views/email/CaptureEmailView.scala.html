@@ -20,7 +20,7 @@
 @import play.api.mvc.Call
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, govukErrorSummary: GovukErrorSummary, govukButton: GovukButton,
-govukBackLink: GovukBackLink, text: Text, govukInput : GovukInput)
+govukBackLink: GovukBackLink, text: Text, govukInput : GovukInput, govukDetails : GovukDetails)
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
@@ -75,30 +75,38 @@ classes = "govuk-label--l",
 content = Text(messages("captureEmail.title"))
 ),
 hint = Some(Hint(
-content = Text("Must be between 6 and 8 digits long")
+content = Text(messages("captureEmail.hint"))
 )),
 classes = "govuk-input--width-10"
 ))
 
-<div class="form-group">
-    <button class="button" type="submit">@messages("common.continue")</button>
-</div>
+@if(currentEmail == "") {
+<p class ="govuk-body">@messages("captureEmail.onlyAddEmail")</p>
+}
+
+@govukButton(Button(
+content = Text(messages("common.continue")),
+))
 }
 
 @if(!(currentEmail == "")) {
-<div class="form-group">
-    <details>
-        <summary role="button">
-            <span class="summary"></span>
-            @messages("captureEmail.removeEmail.title")
-        </summary>
-        <div class="panel panel-border-narrow">
-            <a target="_blank" href="@appConfig.contactHmrcUrl">
-                @messages("captureEmail.removeEmail.contactUs")
-            </a> @messages("captureEmail.removeEmail.description")
-        </div>
-    </details>
-</div>
+@govukDetails(Details(
+summary = Text(messages("captureEmail.removeEmail.title")),
+content = Text("We need to know your nationality so we can work out which elections you’re entitled to vote in. If you cannot provide your nationality, you’ll have to send copies of identity documents through the post.")
+))
+<!--<div class="form-group">-->
+<!--    <details>-->
+<!--        <summary role="button">-->
+<!--            <span class="summary"></span>-->
+<!--            @messages("captureEmail.removeEmail.title")-->
+<!--        </summary>-->
+<!--        <div class="panel panel-border-narrow">-->
+<!--            <a target="_blank" href="@appConfig.contactHmrcUrl">-->
+<!--                @messages("captureEmail.removeEmail.contactUs")-->
+<!--            </a> @messages("captureEmail.removeEmail.description")-->
+<!--        </div>-->
+<!--    </details>-->
+<!--</div>-->
 }
 
 <div id="hmrc-privacy-notice">
