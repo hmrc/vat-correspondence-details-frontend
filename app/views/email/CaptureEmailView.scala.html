@@ -92,21 +92,12 @@ content = Text(messages("common.continue")),
 @if(!(currentEmail == "")) {
 @govukDetails(Details(
 summary = Text(messages("captureEmail.removeEmail.title")),
-content = Text("We need to know your nationality so we can work out which elections you’re entitled to vote in. If you cannot provide your nationality, you’ll have to send copies of identity documents through the post.")
+content = HtmlContent(
+s"""<a target="_blank" href="@appConfig.contactHmrcUrl">
+    ${messages("captureEmail.removeEmail.contactUs")}
+</a> ${messages("captureEmail.removeEmail.description")}"""
+)
 ))
-<!--<div class="form-group">-->
-<!--    <details>-->
-<!--        <summary role="button">-->
-<!--            <span class="summary"></span>-->
-<!--            @messages("captureEmail.removeEmail.title")-->
-<!--        </summary>-->
-<!--        <div class="panel panel-border-narrow">-->
-<!--            <a target="_blank" href="@appConfig.contactHmrcUrl">-->
-<!--                @messages("captureEmail.removeEmail.contactUs")-->
-<!--            </a> @messages("captureEmail.removeEmail.description")-->
-<!--        </div>-->
-<!--    </details>-->
-<!--</div>-->
 }
 
 <div id="hmrc-privacy-notice">
