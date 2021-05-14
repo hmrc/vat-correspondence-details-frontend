@@ -14,38 +14,32 @@
  * limitations under the License.
  *@
 
-@import config.ConfigKeys
-@import helper.CSRF
-@import templates.inputs.SingleCheckbox
+@import testOnly.views.FeatureSwitchItems
 
-@this(mainTemplate: MainTemplateOriginal, singleCheckbox: SingleCheckbox)
+@this(mainTemplate: MainTemplate,
+      featureSwitchItems: FeatureSwitchItems,
+      formWithCSRF: FormWithCSRF,
+      govukButton: GovukButton,
+      govukCheckboxes: GovukCheckboxes)
 
 @(form: Form[FeatureSwitchModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(title = "Feature switches") {
+@mainTemplate(pageTitle = "Feature switches") {
 
-  @helper.form(action = testOnly.controllers.routes.FeatureSwitchController.submitFeatureSwitch) {
-    @CSRF.formField
+  @formWithCSRF(action = testOnly.controllers.routes.FeatureSwitchController.submitFeatureSwitch) {
 
-    <div class="form-group">
-      <fieldset>
-        <legend>
-          <h1 class="heading-medium">Features</h1>
-        </legend>
-        @singleCheckbox(form(ConfigKeys.agentAccessFeature), "Agent Access")
-        @singleCheckbox(form(ConfigKeys.emailVerificationFeature), "Email Verification")
-        @singleCheckbox(form(ConfigKeys.stubContactPreferencesFeature), "Stub Contact Preferences")
-        @singleCheckbox(form(ConfigKeys.contactPreferencesFeature), "Contact Preferences")
-        @singleCheckbox(form(ConfigKeys.emailVerifiedContactPrefFeature), "Contact Pref Digital & Email Verified (Go Paperless)")
-        @singleCheckbox(form(ConfigKeys.languageSelectorFeature), "Language Selector")
-        @singleCheckbox(form(ConfigKeys.changeContactDetailsFeature), "Change website / phone numbers")
-        @singleCheckbox(form(ConfigKeys.bulkPaperOffFeature), "Bulk paper output for Agents turned off")
-        @singleCheckbox(form(ConfigKeys.btaEntryPointFeature), "Journey entry points set to BTA Account Details")
-        @singleCheckbox(form(ConfigKeys.letterToConfirmedEmailFeature), "Contact Pref - Letter to Confirmed email")
-        @singleCheckbox(form(ConfigKeys.contactPrefMigrationFeature), "Retrieve contact pref from vat-subscription")
-      </fieldset>
-    </div>
+    @govukCheckboxes(Checkboxes(
+      name = "feature-switch",
+      fieldset = Some(Fieldset(
+        legend = Some(Legend(
+          content = Text("Features"),
+          classes = "govuk-fieldset__legend--l",
+          isPageHeading = true
+        )),
+      )),
+      items = featureSwitchItems.items(form)
+    ))
 
-    <button class="button" type="submit" id="continue-button">Submit</button>
+    @govukButton(Button(content = Text("Submit")))
   }
 }
