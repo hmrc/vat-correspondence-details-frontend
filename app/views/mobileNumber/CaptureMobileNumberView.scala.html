@@ -14,49 +14,71 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.AppConfig
-@import views.html.templates.inputs.Text
-@import views.html.templates.errors.ErrorSummary
 
-@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
+@this(mainTemplate: MainTemplate,
+      formWithCSRF: FormWithCSRF,
+      govukErrorSummary: GovukErrorSummary,
+      govukInput: GovukInput,
+      govukBackLink: GovukBackLink,
+      govukButton: GovukButton)
 
 @(mobileNumberForm: Form[String], currentMobile: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@formHint = {
-  <span id="form-hint" class="form-hint">@messages("captureMobile.hint")</span>
-}
-
-@mainTemplate(
-    if(mobileNumberForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureMobile.title"))
-    else messages("captureMobile.title")
+@mainTemplate(pageTitle =
+  if(mobileNumberForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureMobile.title"))
+  else messages("captureMobile.title")
 ) {
 
-    <a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>
+  @govukBackLink(BackLink(
+    content = Text(messages("base.back")),
+    href = appConfig.dynamicJourneyEntryUrl(user.isAgent)
+  ))
 
-    @errorSummary(messages("common.error.heading"), mobileNumberForm)
+  @if(mobileNumberForm.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+      title = Text(messages("common.error.heading")),
+      errorList = mobileNumberForm.errors.map { error =>
+        ErrorLink(content = Text(messages(error.message)), href = Some(s"#mobileNumber"))
+      }
+    ))
+  }
 
-    @form(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
+  @formWithCSRF(action = controllers.mobileNumber.routes.CaptureMobileNumberController.submit) {
 
-        @text(
-            field = mobileNumberForm("mobileNumber"),
-            pageTitle = Some(messages("captureMobile.title")),
-            additionalContent = Some(formHint)
-        )
+    @govukInput(Input(
+      id = "mobileNumber",
+      name = "mobileNumber",
+      classes = "govuk-!-width-one-half",
+      label = Label(
+        isPageHeading = true,
+        classes = "govuk-label--l",
+        content = Text(messages("captureMobile.title"))
+      ),
+      value = mobileNumberForm("mobileNumber").value,
+      hint = Some(Hint(content = Text(messages("captureMobile.hint")))),
+      errorMessage = mobileNumberForm("mobileNumber").error.map { err =>
+        ErrorMessage(content = Text(messages(err.message)))
+      }
+    ))
 
-        @if(currentMobile != "") {
-            <p><a id="remove-mobile" href='@controllers.mobileNumber.routes.ConfirmRemoveMobileController.show().url'>
-                @messages("captureMobile.remove")
-            </a></p>
-        }
-
-        <div class="form-group">
-            <button class="button" type="submit">@messages("common.continue")</button>
-        </div>
+    @if(currentMobile != "") {
+      <p class="govuk-body">
+        <a class="govuk-link" id="remove-mobile"
+           href='@controllers.mobileNumber.routes.ConfirmRemoveMobileController.show().url'>
+          @messages("captureMobile.remove")
+        </a>
+      </p>
     }
 
-    <div id="hmrc-privacy-notice">
-        @messages("hmrcPrivacyNotice.details")
-        <a target="_blank" href="@appConfig.hmrcPrivacyNoticeUrl">@messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
-    </div>
+    @govukButton(Button(content = Text(messages("common.continue"))))
+  }
+
+  <div id="hmrc-privacy-notice">
+    <p class="govuk-body">
+      @messages("hmrcPrivacyNotice.details")
+      <a class="govuk-link" target="_blank" rel="noreferrer noopener"
+         href="@appConfig.hmrcPrivacyNoticeUrl">@messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
+    </p>
+  </div>
 }

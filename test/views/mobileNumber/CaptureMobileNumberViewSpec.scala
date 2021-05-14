@@ -48,16 +48,16 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         "have a back link" which {
 
           "should have the correct text" in {
-            elementText(".link-back") shouldBe "Back"
+            elementText(".govuk-back-link") shouldBe "Back"
           }
 
           "should have the correct href" in {
-            element(".link-back").attr("href") shouldBe mockConfig.btaAccountDetailsUrl
+            element(".govuk-back-link").attr("href") shouldBe mockConfig.btaAccountDetailsUrl
           }
         }
 
         "have the correct field hint" in {
-          elementText(".form-hint") shouldBe
+          elementText(".govuk-hint") shouldBe
             "You need to enter the country code for international numbers, like 00447946 123456. You cannot enter a plus sign."
         }
 
@@ -75,7 +75,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         "have a button" which {
 
           "has the correct text" in {
-            elementText(".button") shouldBe "Continue"
+            elementText(".govuk-button") shouldBe "Continue"
           }
 
           "has the correct link location" in {
@@ -84,7 +84,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         }
 
         "have the HMRC Privacy Notice" in {
-          element("#hmrc-privacy-notice > a").attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
+          element("#hmrc-privacy-notice a").attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
         }
       }
 
@@ -100,16 +100,16 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         "have a form error box" which {
 
           "has the correct error message" in {
-            elementText("#mobileNumber-error-summary") shouldBe "You have not made any changes to the mobile number"
+            elementText(".govuk-error-summary__list > li > a") shouldBe "You have not made any changes to the mobile number"
           }
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-message") shouldBe "Error: You have not made any changes to the mobile number"
+          elementText(".govuk-error-message") shouldBe "Error: You have not made any changes to the mobile number"
         }
 
         "display the error summary" in {
-          element("#error-summary-heading").text() shouldBe "There is a problem"
+          element("#error-summary-title").text() shouldBe "There is a problem"
         }
       }
 
@@ -124,7 +124,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         "have a back link" which {
 
           "should have the correct href" in {
-            element(".link-back").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+            element(".govuk-back-link").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
           }
         }
       }
@@ -143,7 +143,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec {
         "have a back link" which {
 
           "should have the correct href" in {
-            element(".link-back").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+            element(".govuk-back-link").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
           }
         }
       }
