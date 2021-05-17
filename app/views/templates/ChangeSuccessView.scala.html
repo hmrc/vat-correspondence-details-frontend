@@ -17,71 +17,83 @@
 @import models.contactPreferences.ContactPreference
 @import models.viewModels.ChangeSuccessViewModel
 
-@this(mainTemplate: MainTemplateOriginal, updateClient: UpdateClient)
+@this(mainTemplate: MainTemplate,
+      updateClient: UpdateClient,
+      govukPanel: GovukPanel,
+      govukButton: GovukButton,
+      govukInsetText: GovukInsetText)
 
 @(model: ChangeSuccessViewModel)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(title = messages(model.pageTitle)) {
+@mainTemplate(pageTitle = messages(model.pageTitle)) {
 
-<div class="govuk-box-highlight">
-  <h1 class="heading-xlarge">@messages(model.pageTitle)</h1>
-</div>
+  @govukPanel(Panel(
+    title = Text(messages(model.pageTitle))
+  ))
 
-<h2 class="heading-medium">@messages("common.whatHappensNext")</h2>
+  <h2 class="govuk-heading-m">@messages("common.whatHappensNext")</h2>
 
-@if(user.isAgent) {
+  @if(user.isAgent) {
 
-  @if(appConfig.features.bulkPaperOffEnabled()) {
+    @if(appConfig.features.bulkPaperOffEnabled()) {
 
-    @model.agentEmail.map { agentEmail =>
-      <p>
-        @messages("changeSuccess.agent.email.partOne")
-        <strong class="bold">@agentEmail</strong>
-        @messages("changeSuccess.agent.email.partTwo")
-      </p>
-    }
+      @model.agentEmail.map { agentEmail =>
+        <p class="govuk-body">
+          @messages("changeSuccess.agent.email.partOne")
+          <strong>@agentEmail</strong>
+          @messages("changeSuccess.agent.email.partTwo")
+        </p>
+      }
+
+      } else {
+        @model.agentEmail match {
+          case Some(email) => {<p class="govuk-body">@messages("changeSuccess.helpOne.digital.agent", email)</p>}
+          case _ => {<p class="govuk-body">@messages("changeSuccess.helpOne.paper.agent")</p>}
+        }
+      }
+
+    @updateClient(model.businessName)
 
   } else {
-    @model.agentEmail match {
-      case Some(email) => {<p>@messages("changeSuccess.helpOne.digital.agent", email)</p>}
-      case _ => {<p>@messages("changeSuccess.helpOne.paper.agent")</p>}
-    }
-  }
 
-  @updateClient(model.businessName)
+    @(model.preference, model.emailVerified) match {
 
-
-} else {
-
-  @(model.preference, model.emailVerified) match {
-
-    case (Some(ContactPreference.digital), Some(true)) => {
-        <p id="preference-message">@messages("changeSuccess.helpOne.emailVerified")</p>
+      case (Some(ContactPreference.digital), Some(true)) => {
+        <p class="govuk-body" id="preference-message">@messages("changeSuccess.helpOne.emailVerified")</p>
+      }
+      case (Some(ContactPreference.digital), _) => {
+        <p class="govuk-body" id="preference-message">@messages("changeSuccess.helpOne.digital")</p>
+      }
+      case (Some(ContactPreference.paper), _) => {
+        <p class="govuk-body" id="preference-message">@messages("changeSuccess.helpOne.paper")</p>
+      }
+      case _ => {
+        <p class="govuk-body">@messages("common.helpOne.apiFailure")</p>
+      }
     }
-    case (Some(ContactPreference.digital), _) => {
-        <p id="preference-message">@messages("changeSuccess.helpOne.digital")</p>
-    }
-    case (Some(ContactPreference.paper), _) => {
-        <p id="preference-message">@messages("changeSuccess.helpOne.paper")</p>
-    }
-    case _ => {
-        <p>@messages("common.helpOne.apiFailure")</p>
-    }
-  }
 
     @if(model.pageTitle == "emailChangeSuccess.title") {
-        <p>@messages("changeEmailSuccess.helpTwo")</p>
-        <div class="panel panel-border-wide">
-            @messages("changeEmailSuccess.helpThree")
-        </div>
-    } else {
-      <p>@messages("changeSuccess.helpTwo")</p>
-    }
-}
 
-@if(user.isAgent) {
-    <a href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)" class="button" role="button">@messages("base.clientFinish")</a>
-} else {
-    <a href="@appConfig.dynamicJourneyEntryUrl(false)" class="button" role="button">@messages("base.finish")</a>
-}
+      <p class="govuk-body">@messages("changeEmailSuccess.helpTwo")</p>
+
+      @govukInsetText(InsetText(
+        content = Text(messages("changeEmailSuccess.helpThree"))
+      ))
+
+    } else {
+      <p class="govuk-body">@messages("changeSuccess.helpTwo")</p>
+    }
+  }
+
+  @if(user.isAgent) {
+    @govukButton(Button(
+      content = Text(messages("base.clientFinish")),
+      href = Some(appConfig.dynamicJourneyEntryUrl(isAgent = true))
+    ))
+  } else {
+    @govukButton(Button(
+      content = Text(messages("base.finish")),
+      href = Some(appConfig.dynamicJourneyEntryUrl(isAgent = false))
+    ))
+  }
 }

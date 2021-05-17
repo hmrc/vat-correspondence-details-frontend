@@ -31,9 +31,9 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
     val title = "title"
     val pageHeading = "h1"
     val secondaryHeading = "h2"
-    val paragraphOne = "#content article p:nth-of-type(1)"
-    val paragraphTwo = "#content article p:nth-of-type(2)"
-    val button = "#content > article > a"
+    val paragraphOne = "#content > p:nth-child(3)"
+    val paragraphTwo = "#content > p:nth-child(4)"
+    val button = ".govuk-button"
   }
 
   val exampleTitle = "ExampleTitle"

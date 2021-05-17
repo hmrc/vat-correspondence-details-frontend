@@ -27,6 +27,14 @@ $hmrc-assets-path: "/vat-through-software/account/correspondence/assets/lib/hmrc
   cursor: default;
 }
 
+.govuk-summary-list__key {
+  width: 60%;
+}
+
+.govuk-summary-list__value {
+  width: 40%;
+}
+
 .govuk-box-highlight > h1 {
   margin:1em 0;
   padding: 2em 1em 2em;

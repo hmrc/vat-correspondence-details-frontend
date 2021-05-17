@@ -16,39 +16,42 @@
 
 @import models.viewModels.CheckYourAnswersViewModel
 
-@this(mainTemplate: MainTemplateOriginal)
+@this(mainTemplate: MainTemplate,
+      govukSummaryList: GovukSummaryList,
+      govukButton: GovukButton)
 
 @(model: CheckYourAnswersViewModel)(implicit messages: Messages, appConfig: config.AppConfig, user: User[_])
 
-@mainTemplate(title = messages("checkYourAnswers.title")) {
+@mainTemplate(pageTitle = messages("checkYourAnswers.title")) {
 
-  <h1 class="heading-large">@messages("checkYourAnswers.title")</h1>
+  <h1 class="govuk-heading-l">@messages("checkYourAnswers.title")</h1>
 
-  <h2>@messages("checkYourAnswers.vatBusinessDetails")</h2>
+  <h2 class="govuk-heading-m">@messages("checkYourAnswers.vatBusinessDetails")</h2>
 
-  <div class="form-group">
-    <dl class="govuk-check-your-answers cya-questions-long">
+  @govukSummaryList(SummaryList(
+    rows = Seq(
+      SummaryListRow(
+        key = Key(
+          content = Text(messages(model.question))
+        ),
+        value = Value(
+          content = Text(model.answer)
+        ),
+        actions = Some(Actions(
+          items = Seq(
+            ActionItem(
+              href = model.changeLink,
+              content = HtmlContent(s"""<span>${messages("checkYourAnswers.change")}</span>"""),
+              visuallyHiddenText = Some(messages(model.changeLinkHiddenText))
+            )
+          )
+        ))
+      )
+    )
+  ))
 
-      <div>
-        <dt class="cya-question">
-          @messages(model.question)
-        </dt>
-
-        <dd class="cya-answer">
-          @model.answer
-        </dd>
-
-        <dd class="cya-change">
-          <a href="@model.changeLink" aria-label="@messages(model.changeLinkHiddenText)">
-            @messages("checkYourAnswers.change")
-          </a>
-        </dd>
-      </div>
-
-    </dl>
-  </div>
-
-  <a href="@model.continueLink" class="button" role="button">
-    @messages("common.continue")
-  </a>
+  @govukButton(Button(
+    content = Text(messages("common.continue")),
+    href = Some(model.continueLink)
+  ))
 }
