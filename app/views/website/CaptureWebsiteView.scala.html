@@ -14,40 +14,61 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.AppConfig
-@import views.html.templates.inputs.Text
-@import views.html.templates.errors.ErrorSummary
 
-@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
+@this(mainTemplate: MainTemplate,
+    formWithCSRF: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukBackLink: GovukBackLink,
+    govukButton: GovukButton)
 
 @(websiteForm: Form[String], currentWebsite: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@formHint = {
-  <span id="form-hint" class="form-hint">@messages("captureWebsite.hint")</span>
-}
+@mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title"))
+    else messages("captureWebsite.title")) {
 
-@mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title")) else messages("captureWebsite.title")) {
+    @govukBackLink(BackLink(
+        content = Text(messages("base.back")),
+        href = appConfig.dynamicJourneyEntryUrl(user.isAgent)
+    ))
 
-    <a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>
+    @if(websiteForm.hasErrors) {
+        @govukErrorSummary(ErrorSummary(
+            title = Text(messages("common.error.heading")),
+            errorList = websiteForm.errors.map { error =>
+            ErrorLink(content = Text(messages(error.message)), href = Some(s"#website"))
+        }
+        ))
+    }
 
-    @errorSummary(messages("common.error.heading"), websiteForm)
+    @formWithCSRF(action = controllers.website.routes.CaptureWebsiteController.submit) {
 
-    @form(action = controllers.website.routes.CaptureWebsiteController.submit, 'novalidate -> "novalidate") {
-        @text(
-            field = websiteForm("website"),
-            pageTitle = Some(messages("captureWebsite.title")),
-            additionalContent = Some(formHint)
-        )
+    @govukInput(Input(
+            id = "website",
+            name = "website",
+            classes = "govuk-!-width-one-half",
+            label = Label(
+            isPageHeading = true,
+            classes = "govuk-label--l",
+            content = Text(messages("captureWebsite.title"))
+        ),
+        value = websiteForm("website").value,
+        hint = Some(Hint(content = Text(messages("captureWebsite.hint")))),
+        errorMessage = websiteForm("website").error.map { err =>
+        ErrorMessage(content = Text(messages(err.message)))
+        }
+    ))
 
         @if(currentWebsite != ""){
-          <p><a id="remove-website" href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>
-            @messages("captureWebsite.removeWebsite.linkText")
-          </a></p>
+            <p class="govuk-body">
+                <a class="govuk-link" id="remove-website"
+                   href='@controllers.website.routes.ConfirmRemoveWebsiteController.show().url'>
+                    @messages("captureWebsite.removeWebsite.linkText")
+                </a>
+            </p>
         }
 
-        <div class="form-group">
-            <button class="button" type="submit">@messages("common.continue")</button>
-        </div>
+    @govukButton(Button(content = Text(messages("common.continue"))))
     }
 }

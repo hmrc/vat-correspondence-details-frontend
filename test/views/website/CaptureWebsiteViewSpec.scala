@@ -29,11 +29,11 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
 
   private object Selectors {
     val pageHeading = "h1"
-    val formHint: String = ".form-hint"
-    val backLink = "#content > article > a"
+    val formHint: String = ".govuk-hint"
+    val backLink = ".govuk-back-link"
     val form = "form"
     val websiteField = "#website"
-    val continueButton = "button"
+    val continueButton = ".govuk-button"
     val removeWebsite = "#remove-website"
   }
 
@@ -122,16 +122,16 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
         "have a form error box" which {
 
           "has the correct error message" in {
-            elementText("#website-error-summary") shouldBe "Enter a new website address"
+            elementText(".govuk-error-summary__list > li > a") shouldBe "Enter a new website address"
           }
         }
 
         "have the correct error notification text above the input box" in {
-          elementText(".error-message") shouldBe "Error: Enter a new website address"
+          elementText(".govuk-error-message") shouldBe "Error: Enter a new website address"
         }
 
         "display the error summary" in {
-          element("#error-summary-heading").text() shouldBe "There is a problem"
+          element("#error-summary-title").text() shouldBe "There is a problem"
         }
       }
 
@@ -146,7 +146,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
         "have a back link" which {
 
           "should have the correct href" in {
-            element(".link-back").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+            element(Selectors.backLink).attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
           }
         }
       }
@@ -165,7 +165,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
         "have a back link" which {
 
           "should have the correct href" in {
-            element(".link-back").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+            element(Selectors.backLink).attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
           }
         }
       }
