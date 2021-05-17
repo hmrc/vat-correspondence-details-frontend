@@ -15,20 +15,26 @@
  *@
 
 @import config.AppConfig
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 
-@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF)
+@this(mainTemplate: MainTemplate,
+    formWithCSRF: FormWithCSRF,
+    govukBackLink: GovukBackLink,
+    govukButton: GovukButton)
 
 @(website: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(title = messages("confirmWebsiteRemove.title")) {
+@mainTemplate(pageTitle = messages("confirmWebsiteRemove.title")) {
 
-  <a class="link-back" href='@controllers.website.routes.CaptureWebsiteController.show()'>@messages("base.back")</a>
+    @govukBackLink(BackLink(
+        content = Text(messages("base.back")),
+        href = controllers.website.routes.CaptureWebsiteController.show().url
+    ))
 
-  <h1 class="heading-large">@messages("confirmWebsiteRemove.heading",website)</h1>
+  <h1 class="govuk-heading-l">@messages("confirmWebsiteRemove.heading",website)</h1>
 
-  @form(action = controllers.website.routes.ConfirmRemoveWebsiteController.removeWebsiteAddress()) {
+  @formWithCSRF(action = controllers.website.routes.ConfirmRemoveWebsiteController.removeWebsiteAddress()) {
     <input type="hidden" name="value" value="submit">
-    <button class="button" type="submit">@messages("base.confirmAndContinue")</button>
+
+    @govukButton(Button(content = Text(messages("base.confirmAndContinue"))))
   }
 }

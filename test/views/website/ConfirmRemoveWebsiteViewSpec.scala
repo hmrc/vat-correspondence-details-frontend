@@ -27,10 +27,9 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec {
   val injectedView: ConfirmRemoveWebsiteView = injector.instanceOf[ConfirmRemoveWebsiteView]
 
   object Selectors {
-    val heading = ".heading-large"
-    val backLink = "#content > article > a"
-    val continueButton = ".button"
-    val cancelLink = ".content__body > p:nth-child(3) > a:nth-child(1)"
+    val heading = "h1"
+    val backLink = ".govuk-back-link"
+    val continueButton = ".govuk-button"
   }
 
   "The Confirm Website view" when {
@@ -66,7 +65,7 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec {
         }
 
         "has a continue button with the correct text" in {
-          elementText(".button") shouldBe "Confirm and continue"
+          elementText(".govuk-button") shouldBe "Confirm and continue"
         }
       }
     }
