@@ -50,7 +50,7 @@ class ConfirmRemoveLandlineViewSpec extends ViewBaseSpec {
         }
 
         "has a continue button with the correct text" in {
-          elementText(".button") shouldBe "Confirm and continue"
+          elementText(".govuk-button") shouldBe "Confirm and continue"
         }
 
       }

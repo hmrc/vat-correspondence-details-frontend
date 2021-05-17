@@ -14,48 +14,72 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.AppConfig
-@import views.html.templates.inputs.Text
-@import views.html.templates.errors.ErrorSummary
 
-@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF, errorSummary: ErrorSummary, text: Text)
+@this(mainTemplate: MainTemplate,
+      formWithCSRF: FormWithCSRF,
+      govukErrorSummary: GovukErrorSummary,
+      govukInput: GovukInput,
+      govukBackLink: GovukBackLink,
+      govukButton: GovukButton)
 
 @(landlineForm: Form[String], currentLandline: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@formHint = {
-  <span id="form-hint" class="form-hint">@messages("captureLandline.hint")</span>
-}
-
-@mainTemplate(
+@mainTemplate(pageTitle =
     if(landlineForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureLandline.title"))
     else messages("captureLandline.title")
 ) {
 
-    <a class="link-back" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("base.back")</a>
+    @govukBackLink(BackLink(
+        content = Text(messages("base.back")),
+        href = appConfig.dynamicJourneyEntryUrl(user.isAgent)
+    ))
 
-    @errorSummary(messages("common.error.heading"), landlineForm)
+    @if(landlineForm.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+        title = Text(messages("common.error.heading")),
+        errorList = landlineForm.errors.map { error =>
+            ErrorLink(content = Text(messages(error.message)), href = Some(s"#landlineNumber"))
+        }
+    ))
+    }
 
-    @form(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {
-        @text(
-            field = landlineForm("landlineNumber"),
-            pageTitle = Some(messages("captureLandline.title")),
-            additionalContent = Some(formHint)
-        )
+    @formWithCSRF(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {
+
+        @govukInput(Input(
+            id = "landlineNumber",
+            name = "landlineNumber",
+            classes = "govuk-!-width-one-half",
+            label = Label(
+                isPageHeading = true,
+                classes = "govuk-label--l",
+                content = Text(messages("captureLandline.title"))
+            ),
+            value = landlineForm("landlineNumber").value,
+            hint = Some(Hint(content = Text(messages("captureLandline.hint")))),
+            errorMessage = landlineForm("landlineNumber").error.map { err =>
+                ErrorMessage(content = Text(messages(err.message)))
+            }
+        ))
 
         @if(currentLandline != "") {
-            <p><a id="remove-landline" href='@controllers.landlineNumber.routes.ConfirmRemoveLandlineController.show().url'>
+            <p class = "govuk-body">
+                <a class = "govuk-link" id="remove-landline" href='@controllers.landlineNumber.routes.ConfirmRemoveLandlineController.show().url'>
                 @messages("captureLandline.remove")
-            </a></p>
+                </a>
+            </p>
         }
 
-        <div class="form-group">
-            <button class="button" type="submit">@messages("common.continue")</button>
-        </div>
+        @govukButton(Button(content = Text(messages("common.continue"))))
     }
 
     <div id="hmrc-privacy-notice">
-        @messages("hmrcPrivacyNotice.details")
-        <a target="_blank" href="@appConfig.hmrcPrivacyNoticeUrl">@messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
+        <p class = "govuk-body">
+            @messages("hmrcPrivacyNotice.details")
+            <a class = "govuk-link" target = "_blank" rel = "noreferrer noopener"
+                href="@appConfig.hmrcPrivacyNoticeUrl">@messages("hmrcPrivacyNotice.link")
+            </a>
+            @messages("common.fullstop")
+        </p>
     </div>
 }
