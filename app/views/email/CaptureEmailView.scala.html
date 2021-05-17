@@ -92,4 +92,13 @@ content = Text(messages("base.back"))
 ))
 }
 
-<p class ="govuk-body">Full details of how we use your information are in the <a class ="govuk-link"href="@appConfig.hmrcPrivacyNoticeUrl"/> @messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")</p> }
+<div id="hmrc-privacy-notice">
+    <p class = "govuk-body">
+        @messages("hmrcPrivacyNotice.details")
+        <a class = "govuk-link" target = "_blank" rel = "noreferrer noopener"
+           href="@appConfig.hmrcPrivacyNoticeUrl">@messages("hmrcPrivacyNotice.link")
+        </a>
+        @messages("common.fullstop")
+    </p>
+</div>
+}
