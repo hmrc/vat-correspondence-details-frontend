@@ -86,6 +86,11 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
         "have the HMRC Privacy Notice" in {
           element("#hmrc-privacy-notice a").attr("href") shouldBe mockConfig.hmrcPrivacyNoticeUrl
         }
+
+        "has the correct HMRC Privacy Notice text" in {
+          elementText("#hmrc-privacy-notice") shouldBe
+          "Full details of how we use your information are in the HMRC Privacy Notice (opens in a new window or tab)."
+        }
       }
 
       "there are errors in the form" should {
