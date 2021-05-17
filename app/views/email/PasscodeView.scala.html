@@ -15,17 +15,25 @@
  *@
 
 @import config.AppConfig
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
-@import views.html.templates.errors.ErrorSummary
-@import views.html.templates.inputs.Text
 
-@this(mainTemplate: MainTemplateOriginal, text: Text, form: FormWithCSRF, errorSummary: ErrorSummary)
+@this(mainTemplate: MainTemplate,
+      form: FormWithCSRF,
+      govukErrorSummary: GovukErrorSummary,
+      govukInsetText: GovukInsetText,
+      govukInput: GovukInput,
+      govukBackLink: GovukBackLink,
+      govukButton: GovukButton,
+      govukDetails: GovukDetails)
 
-@(email: String, passcodeForm: Form[String], contactPrefJourney: Boolean)(implicit request: User[_], messages: Messages, appConfig: AppConfig)
+@(email: String,
+  passcodeForm: Form[String],
+  contactPrefJourney: Boolean)(implicit request: User[_],
+                                        messages: Messages,
+                                        appConfig: AppConfig)
 
 @additionalContent = {
-  <h2 class="heading-small">@messages("passcode.confirmationCode")</h2>
-  <span id="form-hint" class="form-hint">@messages("passcode.formHint")</span>
+  <span>@messages("passcode.confirmationCode")</span>
+  <span id="form-hint" class="govuk-hint govuk-!-margin-bottom-0">@messages("passcode.formHint")</span>
 }
 
 @startJourneyUrl = @{
@@ -52,44 +60,77 @@
   }
 }
 
+@formField = @{ passcodeForm("passcode") }
+
+@detailsContent = {
+  <p class="govuk-body">@messages("passcode.subjectLine")</p>
+  <p class="govuk-body">@messages("passcode.stillNotArrived.1")
+    <a class="govuk-link" href=@resendVerificationUrl>@messages("passcode.stillNotArrived.2")</a>
+    @messages("passcode.stillNotArrived.3")
+    <a class="govuk-link" href=@startJourneyUrl>@messages("passcode.stillNotArrived.4")</a>@messages("common.fullstop")
+  </p>
+}
+
 @mainTemplate(
-  title = if(passcodeForm.hasErrors) messages("common.error.prefixTitle", messages("passcode.title")) else messages("passcode.title")
+  pageTitle = if(passcodeForm.hasErrors) messages("common.error.prefixTitle", messages("passcode.title"))
+              else messages("passcode.title")
 ){
 
-  <a class="link-back" href=@startJourneyUrl>@messages("base.back")</a>
+  @govukBackLink(BackLink(
+    href = startJourneyUrl,
+    content = Text(messages("base.back"))
+  ))
 
-  @errorSummary(messages("common.error.heading"), passcodeForm)
+  @if(passcodeForm.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+      errorList = passcodeForm.errors.map { error =>
+        ErrorLink(
+          href = Some("#passcode"),
+          content = Text(messages(error.message))
+        )
+      },
+      title = Text(messages("common.error.heading"))
+    ))
+  }
 
-  <h1 id="page-heading"><label for="@passcodeForm("passcode").id" class="heading-large">
-    @messages("passcode.title")
-  </label></h1>
+  <h1 class="govuk-heading-l">@messages("passcode.title")</h1>
 
-  <p>@messages("passcode.weHaveSent")
-    <span class="bold">@email</span>
+  <p class="govuk-body">@messages("passcode.weHaveSent")
+    <span class="govuk-!-font-weight-bold">@email</span>
   </p>
-  <p class="panel panel-border-wide">@messages("passcode.newTabOrWindow")</p>
+
+  @govukInsetText(InsetText(
+    content = Text(messages("passcode.newTabOrWindow"))
+  ))
 
   @form(action = formSubmissionAction) {
-    @text(
-      field = passcodeForm("passcode"),
-      pageTitle = None,
-      additionalContent = Some(additionalContent)
-    )
 
-    <details class="controlpanel">
-      <summary><span class="summary">@messages("passcode.notReceived")</span></summary>
-      <div class="panel panel-border-narrow">
-        <p>@messages("passcode.subjectLine")</p>
-        <p>@messages("passcode.stillNotArrived.1")
-          <a href=@resendVerificationUrl>@messages("passcode.stillNotArrived.2")</a>
-          @messages("passcode.stillNotArrived.3")
-          <a href=@startJourneyUrl>@messages("passcode.stillNotArrived.4")</a>@messages("common.fullstop")
-        </p>
-      </div>
-    </details>
+    @govukInput(Input(
+      id = formField.id,
+      name = formField.name,
+      value = formField.value,
+      label = Label(
+        content = HtmlContent(additionalContent),
+        forAttr = Some(formField.id),
+        classes = "govuk-!-font-weight-bold"
+      ),
+      errorMessage = formField.error.map { error =>
+        ErrorMessage(
+          content = Text(messages(error.message))
+        )
+      },
+      classes = "govuk-input--width-10"
 
-    <div class="form-group">
-      <button class="button" type="submit">@messages("common.continue")</button>
-    </div>
+    ))
+
+    @govukDetails(Details(
+      summary = Text(messages("passcode.notReceived")),
+      content = HtmlContent(detailsContent)
+    ))
+
+    @govukButton(Button(
+      content = Text(messages("common.continue"))
+    ))
+
   }
 }

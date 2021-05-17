@@ -16,19 +16,19 @@
 
 @import config.AppConfig
 
-@this(mainTemplate: MainTemplateOriginal)
+@this(mainTemplate: MainTemplate)
 
 @(errorMessage: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(title = messages("passcode.error.title")) {
+@mainTemplate(pageTitle = messages("passcode.error.title")) {
 
-<h1 class="heading-large">@messages("passcode.error.title")</h1>
+  <h1 class="govuk-heading-l">@messages("passcode.error.title")</h1>
 
-    <p>@messages(errorMessage)</p>
+  <p class="govuk-body">@messages(errorMessage)</p>
 
-    <p>
-    <a href="@appConfig.vatOverviewUrl">@messages("passcode.error.vatAccount")</a>
-        @messages("passcode.error.retry")
-    </p>
+  <p class="govuk-body">
+    <a class="govuk-link" href="@appConfig.vatOverviewUrl">@messages("passcode.error.vatAccount")</a>
+    @messages("passcode.error.retry")
+  </p>
 
 }

@@ -37,25 +37,25 @@ class PasscodeErrorViewSpec extends ViewBaseSpec {
     }
 
     "have the correct heading" in {
-      elementText(".heading-large") shouldBe "You need to start again"
+      elementText(".govuk-heading-l") shouldBe "You need to start again"
     }
 
     "have the correct text for the first paragraph" in {
-      elementText("#content > article > p:nth-child(2)") shouldBe "This is because you have entered the wrong code too many times."
+      elementText("#content p:nth-child(2)") shouldBe "This is because you have entered the wrong code too many times."
     }
 
     "have the correct text for the second paragraph" in {
-      elementText("#content > article > p:nth-child(3)") shouldBe "Return to your VAT account" + " to start the process again."
+      elementText("#content p:nth-child(3)") shouldBe "Return to your VAT account" + " to start the process again."
     }
 
     "have a link that takes you to VAT account" which {
 
       "has the correct text" in {
-        elementText("#content > article > p:nth-child(3) > a") shouldBe "Return to your VAT account"
+        elementText("#content p:nth-child(3) > a") shouldBe "Return to your VAT account"
       }
 
       "have the correct href" in {
-        element("#content > article > p:nth-child(3) > a").attr("href") shouldBe
+        element("#content p:nth-child(3) > a").attr("href") shouldBe
           mockConfig.vatOverviewUrl
       }
     }
