@@ -20,7 +20,7 @@
 @import play.api.mvc.Call
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, govukErrorSummary: GovukErrorSummary, govukButton: GovukButton,
-govukBackLink: GovukBackLink, text: Text, govukInput : GovukInput, govukDetails : GovukDetails)
+govukBackLink: GovukBackLink, text: Text, govukInput : GovukInput, govukDetails : GovukDetails, formWithCSRF: FormWithCSRF)
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
@@ -55,7 +55,7 @@ content = Text(messages("base.back"))
     ))
 }
 
-@form(action = submitFormAction) {
+@formWithCSRF(action = submitFormAction) {
 
 @govukInput(Input(
     id = "email",
