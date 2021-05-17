@@ -14,21 +14,27 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.AppConfig
 
-@this(mainTemplate: MainTemplateOriginal, form: FormWithCSRF)
+@this(mainTemplate: MainTemplate,
+      formWithCSRF: FormWithCSRF,
+      govukBackLink: GovukBackLink,
+      govukButton: GovukButton)
 
 @(landline: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(title = messages("confirmRemoveLandline.title")) {
+@mainTemplate(pageTitle = messages("confirmRemoveLandline.title")) {
 
-  <a class="link-back" href='@controllers.landlineNumber.routes.CaptureLandlineNumberController.show()'>@messages("base.back")</a>
+    @govukBackLink(BackLink(
+        content = Text(messages("base.back")),
+        href = controllers.landlineNumber.routes.CaptureLandlineNumberController.show().url
+    ))
 
-  <h1 class="heading-large">@messages("confirmRemoveLandline.heading", landline)</h1>
+  <h1 class="govuk-heading-l">@messages("confirmRemoveLandline.heading", landline)</h1>
 
-  @form(action = controllers.landlineNumber.routes.ConfirmRemoveLandlineController.removeLandlineNumber) {
+  @formWithCSRF(action = controllers.landlineNumber.routes.ConfirmRemoveLandlineController.removeLandlineNumber) {
     <input type="hidden" name="value" value="submit">
-    <button class="button" type="submit">@messages("base.confirmAndContinue")</button>
+
+    @govukButton(Button(content = Text(messages("base.confirmAndContinue"))))
   }
 }
