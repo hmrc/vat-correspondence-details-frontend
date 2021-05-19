@@ -68,15 +68,15 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           }
 
           "prepopulate the form with the validation email" in {
-            document.select("input").attr("value") shouldBe testValidationEmail
+            document.select("#email").attr("value") shouldBe testValidationEmail
           }
         }
 
         "the previous form value is retrieved from session" should {
 
           lazy val result = target().show(request.withSession(
-              common.SessionKeys.validationEmailKey -> testValidationEmail,
-              common.SessionKeys.prepopulationEmailKey -> testValidEmail)
+            common.SessionKeys.validationEmailKey -> testValidationEmail,
+            common.SessionKeys.prepopulationEmailKey -> testValidEmail)
           )
           lazy val document = Jsoup.parse(bodyOf(result))
 
@@ -90,7 +90,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           }
 
           "prepopulate the form with the previously entered form value" in {
-            document.select("input").attr("value") shouldBe testValidEmail
+            document.select("#email").attr("value") shouldBe testValidEmail
           }
         }
       }
