@@ -69,8 +69,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
               status(result) shouldBe Status.OK
             }
 
-            "the digital preference message is displayed" in {
-              document.select("#content article p:nth-of-type(1)").text() shouldBe
+            "display the digital preference message" in {
+              document.select("#preference-message").text() shouldBe
                 "We’ll send you an email within 2 working days with an update or you can check your HMRC secure messages."
             }
           }
@@ -88,8 +88,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
               status(result) shouldBe Status.OK
             }
 
-            "the paper preference message is displayed" in {
-              document.select("#content article p:nth-of-type(1)").text() shouldBe
+            "display the preference message" in {
+              document.select("#preference-message").text() shouldBe
                 "We’ll send a letter to your principal place of business with an update within 15 working days."
             }
           }
@@ -108,8 +108,8 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
             status(result) shouldBe Status.OK
           }
 
-          "the generic preference message is displayed" in {
-            document.select("#content article p:nth-of-type(1)").text() shouldBe
+          "display the generic preference message" in {
+            document.select("#content p:nth-child(3)").text() shouldBe
               "We will send you an update within 15 working days."
           }
         }
@@ -160,7 +160,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
 
         "the user has the email change success key in the session" when {
 
-          "a valid response is retrieved from the contact preference service" should {
+          "a valid response is retrieved from the contact preference service" when {
 
             "a digital preference is retrieved" should {
 
@@ -183,7 +183,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
               }
 
               "the digital preference message is displayed" in {
-                document.select("#content article p:nth-of-type(1)").text() shouldBe
+                document.select("#content > p:nth-child(3)").text() shouldBe
                   "We’ll send you an email within 2 working days with an update or you can check your HMRC secure messages."
               }
 
@@ -210,7 +210,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
               }
 
               "the paper preference message is displayed" in {
-                document.select("#content article p:nth-of-type(1)").text() shouldBe
+                document.select("#content > p:nth-child(3)").text() shouldBe
                   "We’ll send a letter to your principal place of business with an update within 15 working days."
               }
 
@@ -232,7 +232,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
               }
 
               "the generic preference message is displayed" in {
-                document.select("#content article p:nth-of-type(1)").text() shouldBe
+                document.select("#content > p:nth-child(3)").text() shouldBe
                   "We will send you an update within 15 working days."
               }
             }
@@ -240,6 +240,5 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
         }
       }
     }
-
   }
 }

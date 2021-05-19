@@ -18,7 +18,7 @@
 
 @(clientName: Option[String])(implicit messages: Messages)
 
-<p>
+<p class="govuk-body">
   @messages("common.agent.updateClient1")
   @clientName.fold(
     <span>{messages("common.agent.yourClient")}</span>

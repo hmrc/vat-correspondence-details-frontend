@@ -71,23 +71,23 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         lazy val page = Jsoup.parse(bodyOf(result))
 
         "has the correct question text" in {
-          page.select(".cya-question").text() shouldBe "Email address"
+          page.select(".govuk-summary-list__key").text() shouldBe "Email address"
         }
 
         "has the correct email" in {
-          page.select(".cya-answer").text()  shouldBe testEmail
+          page.select(".govuk-summary-list__value").text()  shouldBe testEmail
         }
 
         "has the correct change link URL" in {
-          page.select(".cya-change a").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show().url
+          page.select(".govuk-summary-list__actions a").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show().url
         }
 
         "has the correct hidden text" in {
-          page.select(".cya-change a").attr("aria-label") shouldBe "Change the email address"
+          page.select(".govuk-summary-list__actions > a > span:nth-child(2)").text() shouldBe "Change the email address"
         }
 
         "has the correct continue URL" in {
-          page.select(".button").attr("href") shouldBe controllers.email.routes.VerifyPasscodeController.updateEmailAddress().url
+          page.select(".govuk-button").attr("href") shouldBe controllers.email.routes.VerifyPasscodeController.updateEmailAddress().url
         }
       }
     }
@@ -137,24 +137,24 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         lazy val page = Jsoup.parse(bodyOf(result))
 
         "has the correct question text" in {
-          page.select(".cya-question").text() shouldBe "Email address"
+          page.select(".govuk-summary-list__key").text() shouldBe "Email address"
         }
 
         "has the correct email" in {
-          page.select(".cya-answer").text()  shouldBe testEmail
+          page.select(".govuk-summary-list__value").text()  shouldBe testEmail
         }
 
         "has the correct change link URL" in {
-          page.select(".cya-change a").attr("href") shouldBe
+          page.select(".govuk-summary-list__actions a").attr("href") shouldBe
             controllers.email.routes.CaptureEmailController.showPrefJourney().url
         }
 
         "has the correct hidden text" in {
-          page.select(".cya-change a").attr("aria-label") shouldBe "Change the email address"
+          page.select(".govuk-summary-list__actions > a > span:nth-child(2)").text() shouldBe "Change the email address"
         }
 
         "has the correct continue URL" in {
-          page.select(".button").attr("href") shouldBe
+          page.select(".govuk-button").attr("href") shouldBe
             controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url
         }
       }

@@ -54,25 +54,25 @@ class CheckYourAnswersViewSpec extends ViewBaseSpec {
     "contain a row" which {
 
       "has the correct question text" in {
-        elementText(".cya-question") shouldBe "Question"
+        elementText(".govuk-summary-list__key") shouldBe "Question"
       }
 
       "has the correct answer text" in {
-        elementText(".cya-answer") shouldBe "Answer"
+        elementText(".govuk-summary-list__value") shouldBe "Answer"
       }
 
       "has a change link" which {
 
         "has the correct text" in {
-          elementText(".cya-change") shouldBe "Change"
+          elementText(".govuk-summary-list__actions > a > span:nth-child(1)") shouldBe "Change"
         }
 
         "has the correct URL" in {
-          element(".cya-change > a").attr("href") shouldBe "/change-link"
+          element(".govuk-summary-list__actions > a").attr("href") shouldBe "/change-link"
         }
 
         "has hidden text" in {
-          element(".cya-change > a").attr("aria-label") shouldBe "Edit the answer"
+          elementText(".govuk-summary-list__actions > a > span:nth-child(2)") shouldBe "Edit the answer"
         }
       }
     }
@@ -80,11 +80,11 @@ class CheckYourAnswersViewSpec extends ViewBaseSpec {
     "have a continue button" which {
 
       "has the correct text" in {
-        elementText(".button") shouldBe "Continue"
+        elementText(".govuk-button") shouldBe "Continue"
       }
 
       "has the correct URL" in {
-        element(".button").attr("href") shouldBe "/continue-link"
+        element(".govuk-button").attr("href") shouldBe "/continue-link"
       }
     }
   }
