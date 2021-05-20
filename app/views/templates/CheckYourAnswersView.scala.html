@@ -32,7 +32,8 @@
     rows = Seq(
       SummaryListRow(
         key = Key(
-          content = Text(messages(model.question))
+          content = Text(messages(model.question)),
+          classes = "govuk-!-width-one-quarter"
         ),
         value = Value(
           content = Text(model.answer)
