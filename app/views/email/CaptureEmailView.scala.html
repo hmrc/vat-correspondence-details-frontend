@@ -15,12 +15,9 @@
  *@
 
 @import config.AppConfig
-@import views.html.templates.inputs.Text
-@import views.html.templates.errors.ErrorSummary
-@import play.api.mvc.Call
 
 @this(mainTemplate: MainTemplate, form: FormWithCSRF, govukErrorSummary: GovukErrorSummary, govukButton: GovukButton,
-govukBackLink: GovukBackLink, text: Text, govukInput : GovukInput, govukDetails : GovukDetails, formWithCSRF: FormWithCSRF)
+govukBackLink: GovukBackLink, govukInput : GovukInput, govukDetails : GovukDetails, formWithCSRF: FormWithCSRF)
 
 @(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
@@ -78,7 +75,7 @@ content = Text(messages("base.back"))
 }
 
 @govukButton(Button(
-    content = Text(messages("common.continue")),
+    content = Text(messages("common.continue"))
     ))
 }
 
@@ -86,7 +83,7 @@ content = Text(messages("base.back"))
     @govukDetails(Details(
     summary = Text(messages("captureEmail.removeEmail.title")),
     content = HtmlContent(
-    s"""<a target="_blank" href="${appConfig.contactHmrcUrl}">
+    s"""<a target="_blank" href="${appConfig.contactHmrcUrl}" rel = "noreferrer noopener">
         ${messages("captureEmail.removeEmail.contactUs")}</a>
         ${messages("captureEmail.removeEmail.description")}"""
     )
