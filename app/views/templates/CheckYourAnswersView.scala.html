@@ -41,7 +41,7 @@
           items = Seq(
             ActionItem(
               href = model.changeLink,
-              content = HtmlContent(s"""<span>${messages("checkYourAnswers.change")}</span>"""),
+              content = HtmlContent(s"""<span aria-hidden="true">${messages("checkYourAnswers.change")}</span>"""),
               visuallyHiddenText = Some(messages(model.changeLinkHiddenText))
             )
           )
