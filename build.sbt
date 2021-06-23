@@ -23,7 +23,7 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "3.4.0"
+val bootstrapPlayVersion       = "5.4.0"
 val playFrontendGovUk          = "0.71.0-play-26"
 val playFrontendHmrc           = "0.58.0-play-26"
 val govTemplateVersion         = "5.63.0-play-26"
@@ -114,7 +114,7 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {
 }
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(PlayKeys.playDefaultPort := 9148)
   .settings(coverageSettings: _*)
@@ -137,8 +137,5 @@ lazy val microservice = Project(appName, file("."))
     unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest) (base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
     testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false)
-  .settings(resolvers ++= Seq(
-    Resolver.bintrayRepo("hmrc", "releases"),
-    Resolver.jcenterRepo
-  ))
+    parallelExecution in IntegrationTest := false
+  )

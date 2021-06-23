@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import utils.LoggerUtil.logDebug
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

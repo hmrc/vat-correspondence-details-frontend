@@ -17,16 +17,16 @@
 package mocks
 
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.HttpReads
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
-
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HttpClient
 
 trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -38,18 +38,16 @@ trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
   }
 
   def setupMockHttpGet[T](url: String)(response: T): OngoingStubbing[Future[T]] =
-    when(mockHttp.GET[T](ArgumentMatchers.eq(url))
-      (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
+    when(mockHttp.GET[T](ArgumentMatchers.eq(url), any(), any())(any(), any(), any()))
+      .thenReturn(Future.successful(response))
 
   def setupMockHttpPost[I,O](url: String)(response: O): OngoingStubbing[Future[O]] =
-    when(mockHttp.POST[I,O]
-      (ArgumentMatchers.eq(url), ArgumentMatchers.any[I](), ArgumentMatchers.any())
-      (ArgumentMatchers.any[Writes[I]](),ArgumentMatchers.any[HttpReads[O]](), ArgumentMatchers.any(), ArgumentMatchers.any())
+    when(mockHttp.POST[I,O](ArgumentMatchers.eq(url), ArgumentMatchers.any[I](), any())
+      (ArgumentMatchers.any[Writes[I]](),ArgumentMatchers.any[HttpReads[O]](), any(), any())
     ).thenReturn(Future.successful(response))
 
   def setupMockHttpPut[I,O](url: String)(response: O): OngoingStubbing[Future[O]] =
-    when(mockHttp.PUT[I,O]
-      (ArgumentMatchers.eq(url), ArgumentMatchers.any[I]())
-      (ArgumentMatchers.any[Writes[I]](),ArgumentMatchers.any[HttpReads[O]](), ArgumentMatchers.any(), ArgumentMatchers.any())
+    when(mockHttp.PUT[I,O](ArgumentMatchers.eq(url), ArgumentMatchers.any[I]())
+      (ArgumentMatchers.any[Writes[I]](),ArgumentMatchers.any[HttpReads[O]](), any(), any())
     ).thenReturn(Future.successful(response))
 }
