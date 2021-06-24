@@ -25,9 +25,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{ActionRefiner, Result}
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.LoggerUtil.logWarn
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -40,7 +39,7 @@ class ContactPrefPredicate @Inject()(contactPrefComps: ContactPrefPredicateCompo
 
   override def refine[A](request: User[A]): Future[Either[Result, User[A]]] = {
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: User[A] = request
 
     req.session.get(currentContactPrefKey) match {

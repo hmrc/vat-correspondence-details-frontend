@@ -26,9 +26,8 @@ import models.User
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{EmailVerificationService, VatSubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.LoggerUtil.logDebug
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -51,7 +50,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
   def btaVerifyEmailRedirect(): Action[AnyContent] = blockAgentPredicate.async {
     implicit user =>
 
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(user.headers, Some(user.session))
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(user, user.session)
 
       if(user.headers.get("Referer").getOrElse("").contains(appConfig.btaAccountDetailsUrl)){
         vatSubscriptionService.getCustomerInfo(user.vrn) map {

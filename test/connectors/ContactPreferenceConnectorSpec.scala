@@ -21,7 +21,6 @@ import connectors.httpParsers.ResponseHttpParser.HttpGetResult
 import mocks.MockHttp
 import models.contactPreferences.ContactPreference
 import utils.TestUtil
-
 import scala.concurrent.Future
 
 class ContactPreferenceConnectorSpec extends TestUtil with MockHttp {
