@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-import play.core.PlayVersion
 import play.sbt.routes.RoutesKeys
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import uk.gov.hmrc.SbtAutoBuildPlugin
 
 val appName = "vat-correspondence-details-frontend"
 
 val bootstrapPlayVersion       = "5.4.0"
 val playFrontendGovUk          = "0.71.0-play-26"
 val playFrontendHmrc           = "0.58.0-play-26"
-val govTemplateVersion         = "5.63.0-play-26"
 val playPartialsVersion        = "7.1.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
 val playUiVersion              = "9.0.0-play-26"
@@ -76,7 +73,6 @@ val compile = Seq(
   "uk.gov.hmrc"       %% "bootstrap-frontend-play-26" % bootstrapPlayVersion,
   "uk.gov.hmrc"       %% "play-frontend-govuk"        % playFrontendGovUk,
   "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc,
-  "uk.gov.hmrc"       %% "govuk-template"             % govTemplateVersion,
   "uk.gov.hmrc"       %% "play-ui"                    % playUiVersion,
   "uk.gov.hmrc"       %% "play-partials"              % playPartialsVersion,
   "uk.gov.hmrc"       %% "auth-client"                % authClientVersion,
@@ -91,7 +87,6 @@ def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVersion      % scope,
   "org.pegdown"            %  "pegdown"                     % pegdownVersion        % scope,
   "org.jsoup"              %  "jsoup"                       % jsoupVersion          % scope,
-  "com.typesafe.play"      %% "play-test"                   % PlayVersion.current   % scope,
   "org.mockito"            %  "mockito-core"                % mockitoVersion        % scope,
   "com.github.tomakehurst" %  "wiremock-jre8"               % wiremockVersion       % scope
 )
