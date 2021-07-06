@@ -25,20 +25,25 @@
 
 @(websiteForm: Form[String], currentWebsite: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title"))
-    else messages("captureWebsite.title")) {
+@backLink = {
+  @govukBackLink(BackLink(
+    content = Text(messages("base.back")),
+    href = appConfig.dynamicJourneyEntryUrl(user.isAgent)
+  ))
+}
 
-    @govukBackLink(BackLink(
-        content = Text(messages("base.back")),
-        href = appConfig.dynamicJourneyEntryUrl(user.isAgent)
-    ))
+@mainTemplate(
+  pageTitle = if(websiteForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureWebsite.title"))
+              else messages("captureWebsite.title"),
+  backLinkContent = Some(backLink)
+) {
 
     @if(websiteForm.hasErrors) {
         @govukErrorSummary(ErrorSummary(
             title = Text(messages("common.error.heading")),
             errorList = websiteForm.errors.map { error =>
-            ErrorLink(content = Text(messages(error.message)), href = Some(s"#website"))
-        }
+              ErrorLink(content = Text(messages(error.message)), href = Some(s"#website"))
+            }
         ))
     }
 

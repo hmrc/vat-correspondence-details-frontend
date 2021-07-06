@@ -32,9 +32,18 @@
   ))
 }
 
+@backLink = {
+  @govukBackLink(BackLink(
+    href = controllers.contactPreference.routes.EmailPreferenceController.show().url,
+    content = Text(messages("base.back"))
+  ))
+}
+
 @mainTemplate(
   pageTitle = if(emailToUseForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("emailToUse.title"))
-    else messages("emailToUse.title")) {
+              else messages("emailToUse.title"),
+  backLinkContent = Some(backLink)
+) {
 
   @if(emailToUseForm.hasErrors) {
     @govukErrorSummary(ErrorSummary(
@@ -46,11 +55,6 @@
       title = Text(messages("common.error.heading"))
     ))
   }
-
-  @govukBackLink(BackLink(
-    href = controllers.contactPreference.routes.EmailPreferenceController.show().url,
-    content = Text(messages("base.back"))
-  ))
 
   @form(action = controllers.contactPreference.routes.EmailToUseController.submit) {
 

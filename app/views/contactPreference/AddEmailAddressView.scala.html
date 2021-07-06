@@ -24,24 +24,29 @@
 
 @(form: Form[YesNo])(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(
-    pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("cPrefAddEmail.title"))
-    else messages("cPrefAddEmail.title")) {
+@backLink = {
+  @govukBackLink(BackLink(
+    href = controllers.contactPreference.routes.EmailPreferenceController.show().url,
+    content = Text(messages("base.back"))
+  ))
+}
 
-    @govukBackLink(BackLink(
-        href = controllers.contactPreference.routes.EmailPreferenceController.show().url,
-        content = Text(messages("base.back"))
-    ))
+@mainTemplate(
+  pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("cPrefAddEmail.title"))
+              else messages("cPrefAddEmail.title"),
+  backLinkContent = Some(backLink)
+){
 
     @if(form.hasErrors) {
-        @govukErrorSummary(ErrorSummary(
-                errorList = Seq(
-                ErrorLink(
-                href = Some("#yes_no"),
-                content = Text(messages("cPrefAddEmail.error"))
-            )),
-                title = Text(messages("common.error.heading"))
-            ))
+      @govukErrorSummary(ErrorSummary(
+        errorList = Seq(
+          ErrorLink(
+            href = Some("#yes_no"),
+            content = Text(messages("cPrefAddEmail.error"))
+          )
+        ),
+        title = Text(messages("common.error.heading"))
+      ))
     }
 
     <h1 class="govuk-heading-l">@messages("cPrefAddEmail.title")</h1>

@@ -71,15 +71,18 @@
   </p>
 }
 
-@mainTemplate(
-  pageTitle = if(passcodeForm.hasErrors) messages("common.error.prefixTitle", messages("passcode.title"))
-              else messages("passcode.title")
-){
-
+@backLink = {
   @govukBackLink(BackLink(
     href = startJourneyUrl,
     content = Text(messages("base.back"))
   ))
+}
+
+@mainTemplate(
+  pageTitle = if(passcodeForm.hasErrors) messages("common.error.prefixTitle", messages("passcode.title"))
+              else messages("passcode.title"),
+  backLinkContent = Some(backLink)
+){
 
   @if(passcodeForm.hasErrors) {
     @govukErrorSummary(ErrorSummary(

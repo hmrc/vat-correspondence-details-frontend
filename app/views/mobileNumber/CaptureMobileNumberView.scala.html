@@ -25,15 +25,18 @@
 
 @(mobileNumberForm: Form[String], currentMobile: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(pageTitle =
-  if(mobileNumberForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureMobile.title"))
-  else messages("captureMobile.title")
-) {
-
+@backLink = {
   @govukBackLink(BackLink(
     content = Text(messages("base.back")),
     href = appConfig.dynamicJourneyEntryUrl(user.isAgent)
   ))
+}
+
+@mainTemplate(
+  pageTitle = if(mobileNumberForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureMobile.title"))
+              else messages("captureMobile.title"),
+  backLinkContent = Some(backLink)
+) {
 
   @if(mobileNumberForm.hasErrors) {
     @govukErrorSummary(ErrorSummary(

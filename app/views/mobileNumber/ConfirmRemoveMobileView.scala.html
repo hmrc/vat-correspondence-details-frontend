@@ -23,12 +23,14 @@
 
 @(mobile: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(pageTitle = messages("confirmRemoveMobile.title")) {
-
+@backLink = {
   @govukBackLink(BackLink(
     content = Text(messages("base.back")),
     href = controllers.mobileNumber.routes.CaptureMobileNumberController.show().url
   ))
+}
+
+@mainTemplate(pageTitle = messages("confirmRemoveMobile.title"), backLinkContent = Some(backLink)) {
 
   <h1 class="govuk-heading-l">@messages("confirmRemoveMobile.heading", mobile)</h1>
 

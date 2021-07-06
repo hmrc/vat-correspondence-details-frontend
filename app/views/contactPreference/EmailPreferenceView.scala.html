@@ -26,60 +26,57 @@
 
 @(form: Form[YesNo])(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
-    @hint = {
-        @govukInsetText(InsetText(
-            content = Text(messages("emailPreference.hint"))
-        ))
-    }
+@hint = {
+  @govukInsetText(InsetText(content = Text(messages("emailPreference.hint"))))
+}
+
+@backLink = {
+  @govukBackLink(BackLink(href = appConfig.btaAccountDetailsUrl, content = Text(messages("base.back"))))
+}
 
 @mainTemplate(
-    pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("emailPreference.title"))
-    else messages("emailPreference.title")) {
+  pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("emailPreference.title"))
+              else messages("emailPreference.title"),
+  backLinkContent = Some(backLink)
+) {
 
-
-    @if(form.hasErrors) {
-        @govukErrorSummary(ErrorSummary(
-        errorList = Seq(
-            ErrorLink(
-            href = Some("#yes_no"),
-            content = Text(messages("emailPreference.error"))
-            )),
-            title = Text(messages("common.error.heading"))
-        ))
-    }
-
-    @govukBackLink(BackLink(
-    href = appConfig.btaAccountDetailsUrl,
-    content = Text(messages("base.back"))
+  @if(form.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+      errorList = Seq(
+        ErrorLink(
+          href = Some("#yes_no"),
+          content = Text(messages("emailPreference.error"))
+        )),
+        title = Text(messages("common.error.heading"))
     ))
+  }
 
-
-@formWithCSRF(action = controllers.contactPreference.routes.EmailPreferenceController.submit) {
+  @formWithCSRF(action = controllers.contactPreference.routes.EmailPreferenceController.submit) {
 
     @govukRadios(Radios(
-    idPrefix = Some("yes_no"),
-    name = "yes_no",
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-                content = Text(messages("emailPreference.title")),
-                classes = "govuk-fieldset__legend--l",
-                isPageHeading = true
-            ))
-        )),
-    hint = Some(Hint(content = HtmlContent(hint))),
-    items = Seq(
-      RadioItem(
-        content = Text(messages("common.yes")),
-        value = Some("yes"),
+      idPrefix = Some("yes_no"),
+      name = "yes_no",
+      fieldset = Some(Fieldset(
+        legend = Some(Legend(
+          content = Text(messages("emailPreference.title")),
+          classes = "govuk-fieldset__legend--l",
+          isPageHeading = true
+        ))
+      )),
+      hint = Some(Hint(content = HtmlContent(hint))),
+      items = Seq(
+        RadioItem(
+          content = Text(messages("common.yes")),
+          value = Some("yes"),
         ),
         RadioItem(
-        content = Text(messages("common.no")),
-        value = Some("no"),
+          content = Text(messages("common.no")),
+          value = Some("no"),
         )
       ),
-    errorMessage = form(yesNo).error.map { err =>
-    ErrorMessage(content = Text(messages(err.message)))
-    }
+      errorMessage = form(yesNo).error.map { err =>
+        ErrorMessage(content = Text(messages(err.message)))
+      }
     ))
 
     @govukButton(Button(
