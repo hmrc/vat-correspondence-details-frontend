@@ -27,7 +27,6 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import utils.LoggerUtil.{logDebug, logWarn}
 import views.html.errors.SessionTimeoutView
-import views.html.errors.agent.AgentJourneyDisabledView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,7 +35,6 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
                                            val errorHandler: ErrorHandler,
                                            mcc: MessagesControllerComponents,
                                            sessionTimeoutView: SessionTimeoutView,
-                                           agentJourneyDisabledView: AgentJourneyDisabledView,
                                            implicit val appConfig: AppConfig,
                                            override implicit val executionContext: ExecutionContext,
                                            override val messagesApi: MessagesApi)

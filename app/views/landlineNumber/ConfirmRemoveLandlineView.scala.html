@@ -23,12 +23,14 @@
 
 @(landline: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(pageTitle = messages("confirmRemoveLandline.title")) {
+@backLink = {
+  @govukBackLink(BackLink(
+    content = Text(messages("base.back")),
+    href = controllers.landlineNumber.routes.CaptureLandlineNumberController.show().url
+  ))
+}
 
-    @govukBackLink(BackLink(
-        content = Text(messages("base.back")),
-        href = controllers.landlineNumber.routes.CaptureLandlineNumberController.show().url
-    ))
+@mainTemplate(pageTitle = messages("confirmRemoveLandline.title"), backLinkContent = Some(backLink)) {
 
   <h1 class="govuk-heading-l">@messages("confirmRemoveLandline.heading", landline)</h1>
 

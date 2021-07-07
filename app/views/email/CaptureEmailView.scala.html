@@ -16,85 +16,93 @@
 
 @import config.AppConfig
 
-@this(mainTemplate: MainTemplate, form: FormWithCSRF, govukErrorSummary: GovukErrorSummary, govukButton: GovukButton,
-govukBackLink: GovukBackLink, govukInput : GovukInput, govukDetails : GovukDetails, formWithCSRF: FormWithCSRF)
+@this(mainTemplate: MainTemplate,
+      govukErrorSummary: GovukErrorSummary,
+      govukButton: GovukButton,
+      govukBackLink: GovukBackLink,
+      govukInput: GovukInput,
+      govukDetails: GovukDetails,
+      formWithCSRF: FormWithCSRF)
 
-@(emailForm: Form[String], emailNotChangedError: Boolean, currentEmail: String, submitFormAction: Call, letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
+@(emailForm: Form[String],
+  emailNotChangedError: Boolean,
+  currentEmail: String,
+  submitFormAction: Call,
+  letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate( pageTitle = if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title"))
-else messages("captureEmail.title")){
-
-@if(letterToConfirmedEmail){
-    @currentEmail match {
-        case "" => { @govukBackLink(BackLink(
-        href = controllers.contactPreference.routes.AddEmailAddressController.show().url,
-        content = Text(messages("base.back"))
-    )) }
-case _ => {
-    @govukBackLink(BackLink(
-        href = controllers.contactPreference.routes.EmailToUseController.show().url,
-        content = Text(messages("base.back"))
-    ))
-    }
-}
-} else {@govukBackLink(BackLink(
-href = appConfig.dynamicJourneyEntryUrl(user.isAgent),
-content = Text(messages("base.back"))
-))
+@backUrl = @{
+  (letterToConfirmedEmail, currentEmail) match {
+    case (true, "") => controllers.contactPreference.routes.AddEmailAddressController.show().url
+    case (true, _) => controllers.contactPreference.routes.EmailToUseController.show().url
+    case _ => appConfig.dynamicJourneyEntryUrl(user.isAgent)
+  }
 }
 
-@if(emailForm.hasErrors) {
+@backLink = {
+  @govukBackLink(BackLink(
+    href = backUrl,
+    content = Text(messages("base.back"))
+  ))
+}
+
+@mainTemplate(
+  pageTitle = if(emailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureEmail.title"))
+              else messages("captureEmail.title"),
+  backLinkContent = Some(backLink)
+){
+
+  @if(emailForm.hasErrors) {
     @govukErrorSummary(ErrorSummary(
-        errorList = emailForm.errors.map { error =>
+      errorList = emailForm.errors.map { error =>
         ErrorLink(content = Text(messages(error.message)), href = Some(s"#email"))
-    },
-    title = Text(messages("common.error.heading"))
+      },
+      title = Text(messages("common.error.heading"))
     ))
-}
+  }
 
-@formWithCSRF(action = submitFormAction) {
+  @formWithCSRF(action = submitFormAction) {
 
-@govukInput(Input(
-    id = "email",
-    name = "email",
-    classes = "govuk-!-width-one-half",
-    label = Label(
+    @govukInput(Input(
+      id = "email",
+      name = "email",
+      classes = "govuk-!-width-one-half",
+      label = Label(
         isPageHeading = true,
         classes = "govuk-label--l",
         content = Text(messages("captureEmail.title"))
-    ),
-    value = emailForm("email").value,
-    hint = Some(Hint(content = Text(messages("captureEmail.hint")))),
-    errorMessage = emailForm("email").error.map { err =>
+      ),
+      value = emailForm("email").value,
+      hint = Some(Hint(content = Text(messages("captureEmail.hint")))),
+      errorMessage = emailForm("email").error.map { err =>
         ErrorMessage(content = Text(messages(err.message)))
-        }
+      }
     ))
 
-@if(currentEmail == "") {
-    <p class="govuk-body">@messages("captureEmail.onlyAddEmail")</p>
-}
+    @if(currentEmail == "") {
+      <p class="govuk-body">@messages("captureEmail.onlyAddEmail")</p>
+    }
 
-@govukButton(Button(
-    content = Text(messages("common.continue"))
+    @govukButton(Button(
+      content = Text(messages("common.continue"))
     ))
-}
+  }
 
-@if(!(currentEmail == "")) {
+  @if(!(currentEmail == "")) {
     @govukDetails(Details(
-    summary = Text(messages("captureEmail.removeEmail.title")),
-    content = HtmlContent(
-    s"""<a target="_blank" href="${appConfig.contactHmrcUrl}" rel = "noreferrer noopener">
+      summary = Text(messages("captureEmail.removeEmail.title")),
+      content = HtmlContent(
+        s"""<a target="_blank" href="${appConfig.contactHmrcUrl}" rel = "noreferrer noopener">
         ${messages("captureEmail.removeEmail.contactUs")}</a>
         ${messages("captureEmail.removeEmail.description")}"""
-    )
-))
-}
+      )
+    ))
+  }
 
-<div id="hmrc-privacy-notice">
+  <div id="hmrc-privacy-notice">
     <p class = "govuk-body">
         @messages("hmrcPrivacyNotice.details")
         <a class = "govuk-link" target = "_blank" rel = "noreferrer noopener"
            href="@appConfig.hmrcPrivacyNoticeUrl">@messages("hmrcPrivacyNotice.link")</a>@messages("common.fullstop")
     </p>
-</div>
+  </div>
 }

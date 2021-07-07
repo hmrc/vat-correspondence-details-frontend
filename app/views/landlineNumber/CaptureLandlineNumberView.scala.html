@@ -25,23 +25,26 @@
 
 @(landlineForm: Form[String], currentLandline: String)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
-@mainTemplate(pageTitle =
-    if(landlineForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureLandline.title"))
-    else messages("captureLandline.title")
+@backLink = {
+  @govukBackLink(BackLink(
+    content = Text(messages("base.back")),
+    href = appConfig.dynamicJourneyEntryUrl(user.isAgent)
+  ))
+}
+
+@mainTemplate(
+  pageTitle = if(landlineForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("captureLandline.title"))
+              else messages("captureLandline.title"),
+  backLinkContent = Some(backLink)
 ) {
 
-    @govukBackLink(BackLink(
-        content = Text(messages("base.back")),
-        href = appConfig.dynamicJourneyEntryUrl(user.isAgent)
-    ))
-
     @if(landlineForm.hasErrors) {
-    @govukErrorSummary(ErrorSummary(
+      @govukErrorSummary(ErrorSummary(
         title = Text(messages("common.error.heading")),
         errorList = landlineForm.errors.map { error =>
-            ErrorLink(content = Text(messages(error.message)), href = Some(s"#landlineNumber"))
+          ErrorLink(content = Text(messages(error.message)), href = Some(s"#landlineNumber"))
         }
-    ))
+      ))
     }
 
     @formWithCSRF(action = controllers.landlineNumber.routes.CaptureLandlineNumberController.submit) {

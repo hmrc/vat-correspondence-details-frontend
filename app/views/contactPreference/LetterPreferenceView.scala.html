@@ -32,8 +32,15 @@
   ))
 }
 
-@mainTemplate(pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("letterPreference.title"))
-                          else messages("letterPreference.title")) {
+@backLink = {
+  @govukBackLink(BackLink(content = Text(messages("base.back")), href = appConfig.btaAccountDetailsUrl))
+}
+
+@mainTemplate(
+  pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("letterPreference.title"))
+              else messages("letterPreference.title"),
+  backLinkContent = Some(backLink)
+) {
 
   @if(form.hasErrors) {
     @govukErrorSummary(ErrorSummary(
@@ -43,8 +50,6 @@
       }
     ))
   }
-
-  @govukBackLink(BackLink(content = Text(messages("base.back")), href = appConfig.btaAccountDetailsUrl))
 
   @formWithCSRF(action = controllers.contactPreference.routes.LetterPreferenceController.submit) {
 
