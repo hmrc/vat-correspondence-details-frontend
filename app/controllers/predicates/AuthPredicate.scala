@@ -46,7 +46,7 @@ class AuthPredicate(authComps: AuthPredicateComponents,
       case Some(affinityGroup) ~ allEnrolments =>
         (isAgent(affinityGroup), allEnrolments) match {
           case (true, enrolments) =>
-            if (appConfig.features.agentAccessEnabled() && allowsAgents) {
+            if (allowsAgents) {
               checkAgentEnrolment(enrolments, block)
             } else if(isChangePrefJourney) {
               Future.successful(Redirect(authComps.appConfig.vatAgentClientLookupAgentHubPath))

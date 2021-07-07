@@ -42,83 +42,63 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
       "the Agent has an active HMRC-AS-AGENT enrolment" when {
 
-        "the agent access feature is enabled" when {
+        "the allowAgents parameter is set to true" should {
 
-          "the allowAgents parameter is set to true" should {
-
-            "return OK (200)" in {
-              mockConfig.features.agentAccessEnabled(true)
-              mockAgentAuthorised()
-              status(allowAgentPredicate(fakeRequestWithClientsVRN)) shouldBe Status.OK
-            }
-          }
-
-          "the allowAgents parameter is set to false" should {
-
-            val blockAgentPredicate: Action[AnyContent] =
-              new AuthPredicate(mockAuthPredicateComponents, allowsAgents = false).async {
-                _ => Future.successful(Ok("test"))
-              }
-
-            lazy val result = await(blockAgentPredicate(agent))
-
-            "return Unauthorized (401)" in {
-              mockAgentAuthorised()
-              status(result) shouldBe Status.UNAUTHORIZED
-            }
-
-            "show the agent journey disabled page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
-            }
-          }
-
-          "the allowAgents parameter is set to false and they are trying to access the changePref journey" should {
-
-            val blockAgentPredicate: Action[AnyContent] =
-              new AuthPredicate(mockAuthPredicateComponents, allowsAgents = false, true).async {
-                _ => Future.successful(Ok("test"))
-              }
-
-            lazy val result = await(blockAgentPredicate(agent))
-
-            "return SEE_OTHER (303)" in {
-              mockAgentAuthorised()
-              status(result) shouldBe Status.SEE_OTHER
-            }
-
-            "redirect to the agent hub page" in {
-              redirectLocation(result) shouldBe Some("agent-hub")
-            }
-          }
-
-          "the Agent does NOT have an Active HMRC-AS-AGENT enrolment" should {
-
-            lazy val result = await(allowAgentPredicate(agent))
-
-            "return Forbidden" in {
-              mockConfig.features.agentAccessEnabled(true)
-              mockAgentWithoutEnrolment()
-              status(result) shouldBe Status.FORBIDDEN
-            }
-
-            "render the Unauthorised Agent page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Your client’s VAT details - GOV.UK"
-            }
+          "return OK (200)" in {
+            mockAgentAuthorised()
+            status(allowAgentPredicate(fakeRequestWithClientsVRN)) shouldBe Status.OK
           }
         }
 
-        "the agent access feature is disabled" should {
+        "the allowAgents parameter is set to false" should {
 
-          lazy val result = await(allowAgentPredicate(agent))
+          val blockAgentPredicate: Action[AnyContent] =
+            new AuthPredicate(mockAuthPredicateComponents, allowsAgents = false).async {
+              _ => Future.successful(Ok("test"))
+            }
+
+          lazy val result = await(blockAgentPredicate(agent))
 
           "return Unauthorized (401)" in {
-            mockConfig.features.agentAccessEnabled(false)
             mockAgentAuthorised()
             status(result) shouldBe Status.UNAUTHORIZED
           }
 
           "show the agent journey disabled page" in {
             messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
+          }
+        }
+
+        "the allowAgents parameter is set to false and they are trying to access the changePref journey" should {
+
+          val blockAgentPredicate: Action[AnyContent] =
+            new AuthPredicate(mockAuthPredicateComponents, allowsAgents = false, true).async {
+              _ => Future.successful(Ok("test"))
+            }
+
+          lazy val result = await(blockAgentPredicate(agent))
+
+          "return SEE_OTHER (303)" in {
+            mockAgentAuthorised()
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the agent hub page" in {
+            redirectLocation(result) shouldBe Some("agent-hub")
+          }
+        }
+
+        "the Agent does NOT have an Active HMRC-AS-AGENT enrolment" should {
+
+          lazy val result = await(allowAgentPredicate(agent))
+
+          "return Forbidden" in {
+            mockAgentWithoutEnrolment()
+            status(result) shouldBe Status.FORBIDDEN
+          }
+
+          "render the Unauthorised Agent page" in {
+            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Your client’s VAT details - GOV.UK"
           }
         }
       }
