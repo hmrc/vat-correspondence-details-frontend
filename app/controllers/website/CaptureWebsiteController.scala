@@ -43,7 +43,6 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
-    if(appConfig.features.changeContactDetailsEnabled()) {
       val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey)
 
       val prepopulationWebsite: String = user.session.get(SessionKeys.prepopulationWebsiteKey).getOrElse(validationWebsite.getOrElse(""))
@@ -53,9 +52,6 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
             Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulationWebsite), valWebsite))
           case _ => errorHandler.showInternalServerError
         }
-    } else {
-      NotFound(errorHandler.notFoundTemplate)
-    }
   }
 
   def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>

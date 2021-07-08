@@ -36,7 +36,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
         stubContactPreferences = appConfig.features.stubContactPreferences(),
         contactPreferences = appConfig.features.contactPreferencesEnabled(),
         languageSelector = appConfig.features.languageSelectorEnabled(),
-        changeContactDetails = appConfig.features.changeContactDetailsEnabled(),
         emailVerifiedContactPref = appConfig.features.emailVerifiedContactPrefEnabled(),
         bulkPaperOff = appConfig.features.bulkPaperOffEnabled(),
         btaEntryPoint = appConfig.features.btaEntryPointEnabled(),
@@ -59,7 +58,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
     appConfig.features.stubContactPreferences(model.stubContactPreferences)
     appConfig.features.contactPreferencesEnabled(model.contactPreferences)
     appConfig.features.languageSelectorEnabled(model.languageSelector)
-    appConfig.features.changeContactDetailsEnabled(model.changeContactDetails)
     appConfig.features.emailVerifiedContactPrefEnabled(model.emailVerifiedContactPref)
     appConfig.features.bulkPaperOffEnabled(model.bulkPaperOff)
     appConfig.features.btaEntryPointEnabled(model.btaEntryPoint)

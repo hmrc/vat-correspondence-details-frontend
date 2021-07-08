@@ -42,8 +42,6 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
 
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
 
-    if(appConfig.features.changeContactDetailsEnabled()) {
-
       val validationMobile: Option[String] = user.session.get(SessionKeys.validationMobileKey)
 
       val prepopulationMobile: String = user.session.get(SessionKeys.prepopulationMobileKey).getOrElse(validationMobile.getOrElse(""))
@@ -53,9 +51,6 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
           Ok(captureMobileNumberView(mobileNumberForm(mobile).fill(prepopulationMobile),mobile))
         case _ => errorHandler.showInternalServerError
       }
-    } else {
-      NotFound(errorHandler.notFoundTemplate)
-    }
   }
 
   def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>

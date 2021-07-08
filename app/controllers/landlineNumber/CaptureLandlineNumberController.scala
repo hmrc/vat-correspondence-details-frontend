@@ -42,9 +42,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
 
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
 
-    if(appConfig.features.changeContactDetailsEnabled()) {
-
-      val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
+    val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
 
       val prepopulationLandline: String = user.session.get(SessionKeys.prepopulationLandlineKey).getOrElse(validationLandline.getOrElse(""))
 
@@ -53,9 +51,6 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
           Ok(captureLandlineNumberView(landlineNumberForm(landline).fill(prepopulationLandline), landline))
         case _ => errorHandler.showInternalServerError
       }
-    } else {
-      NotFound(errorHandler.notFoundTemplate)
-    }
   }
 
   def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
