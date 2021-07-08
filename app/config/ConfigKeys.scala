@@ -66,7 +66,5 @@ object ConfigKeys {
   val btaHost: String = "business-tax-account.url"
   val btaAccountDetailsUrl: String = "business-tax-account.accountDetails"
 
-  val contactPrefMigrationFeature: String = "features.contactPrefMigration.enabled"
-
   val gtmContainer: String = "tracking-consent-frontend.gtm.container"
 }

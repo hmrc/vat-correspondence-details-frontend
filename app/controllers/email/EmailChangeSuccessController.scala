@@ -16,27 +16,21 @@
 
 package controllers.email
 
-import audit.AuditingService
-import audit.models.ContactPreferenceAuditModel
 import common.SessionKeys
 import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
-import models.errors.ErrorModel
 import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
-import services.{ContactPreferenceService, VatSubscriptionService}
-import utils.LoggerUtil.logWarn
+import services.VatSubscriptionService
 import views.html.templates.ChangeSuccessView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailChangeSuccessController @Inject()(auditService: AuditingService,
-                                             contactPreferenceService: ContactPreferenceService,
-                                             vatSubscriptionService: VatSubscriptionService,
+class EmailChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionService,
                                              changeSuccessView: ChangeSuccessView)
                                             (implicit val appConfig: AppConfig,
                                              mcc: MessagesControllerComponents,
@@ -51,31 +45,10 @@ class EmailChangeSuccessController @Inject()(auditService: AuditingService,
       case Some("true") =>
 
         for {
-          preferenceCall <- if(appConfig.features.contactPrefMigrationEnabled()){
-            Future.successful(Left(ErrorModel(NO_CONTENT, "")))
-          } else {
-            contactPreferenceService.getContactPreference(user.vrn)
-          }
-
           customerDetails <- vatSubscriptionService.getCustomerInfo(user.vrn)
         } yield {
 
-          val preference: Option[String] = if (appConfig.features.contactPrefMigrationEnabled()) {
-            customerDetails.fold(_ => None, _.commsPreference)
-          } else {
-            preferenceCall.fold(error => {
-              logWarn("[EmailChangeSuccessController][show] Error retrieved from contactPreferenceService." +
-                s" Error code: ${error.status}, Error message: ${error.message}")
-              None
-            }, pref => Some(pref.preference))
-          }
-
-          if (!appConfig.features.contactPrefMigrationEnabled() && preference.isDefined) {
-            auditService.extendedAudit(
-              ContactPreferenceAuditModel(user.vrn, preference.getOrElse("")),
-              controllers.email.routes.EmailChangeSuccessController.show().url
-            )
-          }
+          val preference: Option[String] = customerDetails.fold(_ => None, _.commsPreference)
 
           val emailVerified = customerDetails.fold(_ => None, _.ppob.contactDetails.flatMap(_.emailVerified))
           val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, preference, None, emailVerified)

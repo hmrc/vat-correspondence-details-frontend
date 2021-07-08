@@ -39,8 +39,6 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
   val view: ChangeSuccessView = inject[ChangeSuccessView]
 
   object TestController extends EmailChangeSuccessController(
-    mockAuditingService,
-    mockContactPreferenceService,
     mockVatSubscriptionService,
     view
   )
@@ -150,95 +148,5 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockConta
     }
 
     insolvencyCheck(TestController.show())
-  }
-
-  "When the contactPrefMigration feature switch is turned off" when {
-
-    "calling the show action" when {
-
-      "a user is enrolled with a valid enrolment" when {
-
-        "the user has the email change success key in the session" when {
-
-          "a valid response is retrieved from the contact preference service" when {
-
-            "a digital preference is retrieved" should {
-
-              lazy val result = {
-                mockIndividualAuthorised()
-                mockConfig.features.contactPrefMigrationEnabled(false)
-                mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-                getMockContactPreference(vrn)(Right(ContactPreference("DIGITAL")))
-                TestController.show(successfulChangeRequest)
-              }
-              lazy val document = Jsoup.parse(bodyOf(result))
-
-              "return 200" in {
-                status(result) shouldBe Status.OK
-              }
-
-              "audit the contact preference" in {
-                verifyExtendedAudit(ContactPreferenceAuditModel(vrn, "DIGITAL"))
-                reset(mockAuditingService)
-              }
-
-              "the digital preference message is displayed" in {
-                document.select("#content > p:nth-child(3)").text() shouldBe
-                  "We’ll send you an email within 2 working days with an update or you can check your HMRC secure messages."
-              }
-
-            }
-
-            "a paper preference is retrieved" should {
-
-              lazy val result = {
-                mockIndividualAuthorised()
-                mockConfig.features.contactPrefMigrationEnabled(false)
-                mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-                getMockContactPreference(vrn)(Right(ContactPreference("PAPER")))
-                TestController.show(successfulChangeRequest)
-              }
-              lazy val document = Jsoup.parse(bodyOf(result))
-
-              "return 200" in {
-                status(result) shouldBe Status.OK
-              }
-
-              "audit the contact preference" in {
-                verifyExtendedAudit(ContactPreferenceAuditModel(vrn, "PAPER"))
-                reset(mockAuditingService)
-              }
-
-              "the paper preference message is displayed" in {
-                document.select("#content > p:nth-child(3)").text() shouldBe
-                  "We’ll send a letter to your principal place of business with an update within 15 working days."
-              }
-
-            }
-
-            "an invalid response is retrieved from the contact preference service" should {
-
-              lazy val result = {
-                mockIndividualAuthorised()
-                mockConfig.features.contactPrefMigrationEnabled(false)
-                mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-                getMockContactPreference(vrn)(Left(ErrorModel(Status.BAD_GATEWAY, "Error")))
-                TestController.show(successfulChangeRequest)
-              }
-              lazy val document = Jsoup.parse(bodyOf(result))
-
-              "return 200" in {
-                status(result) shouldBe Status.OK
-              }
-
-              "the generic preference message is displayed" in {
-                document.select("#content > p:nth-child(3)").text() shouldBe
-                  "We will send you an update within 15 working days."
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }

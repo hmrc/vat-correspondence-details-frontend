@@ -30,7 +30,6 @@ object FeatureSwitchForm {
       ConfigKeys.emailVerifiedContactPrefFeature -> boolean,
       ConfigKeys.bulkPaperOffFeature -> boolean,
       ConfigKeys.letterToConfirmedEmailFeature -> boolean,
-      ConfigKeys.contactPrefMigrationFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }

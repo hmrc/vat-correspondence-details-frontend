@@ -33,7 +33,6 @@ import scala.concurrent.Future
 class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService with MockEmailVerificationService {
 
   val controller: ChangeSuccessController = new ChangeSuccessController(
-    mockContactPreferenceService,
     mockVatSubscriptionService,
     inject[ChangeSuccessView]
   )
@@ -194,54 +193,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
           }
 
           await(result) shouldBe None
-        }
-      }
-    }
-  }
-
-  "The contactPrefMigrationEnabled feature switch is turned off" when {
-
-    "calling the landlineNumber action" when {
-
-      "both expected session keys are populated" when {
-
-        "the user is a principal entity" should {
-
-          lazy val result: Future[Result] = {
-            mockConfig.features.contactPrefMigrationEnabled(false)
-            controller.landlineNumber(request.withSession(
-              landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline
-            ))
-          }
-
-          "return 200" in {
-            mockIndividualAuthorised()
-            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-            getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
-            status(result) shouldBe Status.OK
-          }
-        }
-      }
-    }
-
-    "calling the websiteAddress action" when {
-
-      "both expected session keys are populated" when {
-
-        "the user is a principal entity" should {
-
-          lazy val result: Future[Result] = {
-            mockConfig.features.contactPrefMigrationEnabled(false)
-            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-            getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
-            controller.websiteAddress(request.withSession(
-              prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true"
-            ))
-          }
-
-          "return 200" in {
-            status(result) shouldBe Status.OK
-          }
         }
       }
     }
