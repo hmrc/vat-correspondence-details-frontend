@@ -27,20 +27,7 @@ class FeatureSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    features.agentAccessEnabled(true)
     features.emailVerificationEnabled(true)
-  }
-
-  "The Agent Access Feature" should {
-
-    "return its current state" in {
-      features.agentAccessEnabled() shouldBe true
-    }
-
-    "switch to a new state" in {
-      features.agentAccessEnabled(false)
-      features.agentAccessEnabled() shouldBe false
-    }
   }
 
   "The Email Verification Feature" should {
