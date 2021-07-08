@@ -35,11 +35,6 @@ import assets.BaseTestConstants._
 
 trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport with BeforeAndAfterEach with Injecting {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    mockConfig.features.languageSelectorEnabled(true)
-  }
-
   lazy val injector: Injector = app.injector
   implicit lazy val mcc: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
   implicit lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
