@@ -27,7 +27,6 @@ object FeatureSwitchForm {
       ConfigKeys.agentAccessFeature -> boolean,
       ConfigKeys.emailVerificationFeature -> boolean,
       ConfigKeys.stubContactPreferencesFeature -> boolean,
-      ConfigKeys.contactPreferencesFeature -> boolean,
       ConfigKeys.languageSelectorFeature -> boolean,
       ConfigKeys.changeContactDetailsFeature -> boolean,
       ConfigKeys.emailVerifiedContactPrefFeature -> boolean,

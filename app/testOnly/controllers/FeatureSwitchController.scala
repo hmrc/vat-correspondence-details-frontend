@@ -34,7 +34,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
         agentAccess = appConfig.features.agentAccessEnabled(),
         emailVerification = appConfig.features.emailVerificationEnabled(),
         stubContactPreferences = appConfig.features.stubContactPreferences(),
-        contactPreferences = appConfig.features.contactPreferencesEnabled(),
         languageSelector = appConfig.features.languageSelectorEnabled(),
         changeContactDetails = appConfig.features.changeContactDetailsEnabled(),
         emailVerifiedContactPref = appConfig.features.emailVerifiedContactPrefEnabled(),
@@ -57,7 +56,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
     appConfig.features.agentAccessEnabled(model.agentAccess)
     appConfig.features.emailVerificationEnabled(model.emailVerification)
     appConfig.features.stubContactPreferences(model.stubContactPreferences)
-    appConfig.features.contactPreferencesEnabled(model.contactPreferences)
     appConfig.features.languageSelectorEnabled(model.languageSelector)
     appConfig.features.changeContactDetailsEnabled(model.changeContactDetails)
     appConfig.features.emailVerifiedContactPrefEnabled(model.emailVerifiedContactPref)

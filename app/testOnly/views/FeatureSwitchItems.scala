@@ -43,7 +43,6 @@ class FeatureSwitchItems @Inject() () {
       formCheckBoxItem(form, ConfigKeys.agentAccessFeature, "Agent Access"),
       formCheckBoxItem(form, ConfigKeys.emailVerificationFeature, "Email Verification"),
       formCheckBoxItem(form, ConfigKeys.stubContactPreferencesFeature, "Stub Contact Preferences"),
-      formCheckBoxItem(form, ConfigKeys.contactPreferencesFeature, "Contact Preferences"),
       formCheckBoxItem(form, ConfigKeys.emailVerifiedContactPrefFeature, "Contact Pref Digital & Email Verified (Go Paperless)"),
       formCheckBoxItem(form, ConfigKeys.languageSelectorFeature, "Language Selector"),
       formCheckBoxItem(form, ConfigKeys.changeContactDetailsFeature, "Change website / phone numbers"),
