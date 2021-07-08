@@ -41,7 +41,6 @@ object ConfigKeys {
 
   val host: String = "host"
 
-  val agentAccessFeature: String = "features.agentAccess.enabled"
   val emailVerificationFeature: String = "features.emailVerification.enabled"
   val stubContactPreferencesFeature: String = "features.stubContactPreferences.enabled"
   val contactPreferencesFeature: String = "features.contactPreferences.enabled"

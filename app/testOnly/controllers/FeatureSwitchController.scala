@@ -31,7 +31,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
   def featureSwitch: Action[AnyContent] = Action { implicit request =>
     Ok(featureSwitchView(FeatureSwitchForm.form.fill(
       FeatureSwitchModel(
-        agentAccess = appConfig.features.agentAccessEnabled(),
         emailVerification = appConfig.features.emailVerificationEnabled(),
         stubContactPreferences = appConfig.features.stubContactPreferences(),
         contactPreferences = appConfig.features.contactPreferencesEnabled(),
@@ -54,7 +53,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
   }
 
   def handleSuccess(model: FeatureSwitchModel): Result = {
-    appConfig.features.agentAccessEnabled(model.agentAccess)
     appConfig.features.emailVerificationEnabled(model.emailVerification)
     appConfig.features.stubContactPreferences(model.stubContactPreferences)
     appConfig.features.contactPreferencesEnabled(model.contactPreferences)

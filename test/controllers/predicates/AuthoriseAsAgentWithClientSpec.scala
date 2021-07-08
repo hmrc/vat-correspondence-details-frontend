@@ -38,8 +38,6 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
     "the agent is authorised with a Client VRN in session" should {
 
       "return 200" in {
-        mockConfig.features.agentAccessEnabled(true)
-
         mockAgentAuthorised()
         val result = target(fakeRequestWithClientsVRN)
         status(result) shouldBe Status.OK
@@ -49,8 +47,6 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
     "the agent is not authenticated" should {
 
       "return 401 (Unauthorised)" in {
-        mockConfig.features.agentAccessEnabled(true)
-
         mockMissingBearerToken()
         val result = target(fakeRequestWithClientsVRN)
         status(result) shouldBe Status.UNAUTHORIZED
@@ -59,7 +55,6 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
 
     "the agent is not authorised" should {
 
-      mockConfig.features.agentAccessEnabled(true)
       lazy val result = target(fakeRequestWithClientsVRN)
 
       "return 303" in {
@@ -74,7 +69,6 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
 
     "the agent has no enrolments" should {
 
-      mockConfig.features.agentAccessEnabled(true)
       lazy val result = await(target(fakeRequestWithClientsVRN))
 
       "return Internal Server Error (500)" in {
@@ -89,7 +83,6 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
 
     "there is no client VRN in session" should {
 
-      mockConfig.features.agentAccessEnabled(true)
       mockAgentAuthorised()
       lazy val result = await(target(request))
 
