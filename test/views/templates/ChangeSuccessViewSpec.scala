@@ -109,20 +109,6 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
           elementText(Selectors.paragraphOne) shouldBe "We will send you an update within 15 working days."
         }
       }
-
-      "the BTA entry point feature is set to false" should {
-
-        val viewModel = ChangeSuccessViewModel(exampleTitle, None, Some(ContactPreference.digital), None, None)
-        lazy val view = {
-          mockConfig.features.btaEntryPointEnabled(false)
-          injectedView(viewModel)(user, messages, mockConfig)
-        }
-        lazy implicit val document: Document = Jsoup.parse(view.body)
-
-        "have a finish button which navigates to the Change of Circs overview page" in {
-          element(Selectors.button).attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
-        }
-      }
     }
 
     "an agent is performing the action" when {

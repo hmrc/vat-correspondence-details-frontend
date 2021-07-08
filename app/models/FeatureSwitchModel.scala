@@ -22,7 +22,6 @@ case class FeatureSwitchModel(emailVerification: Boolean,
                               languageSelector: Boolean,
                               emailVerifiedContactPref: Boolean,
                               bulkPaperOff: Boolean,
-                              btaEntryPoint: Boolean,
                               letterToConfirmedEmail: Boolean,
                               contactPrefMigration: Boolean)
 

@@ -46,7 +46,6 @@ class FeatureSwitchItems @Inject() () {
       formCheckBoxItem(form, ConfigKeys.emailVerifiedContactPrefFeature, "Contact Pref Digital & Email Verified (Go Paperless)"),
       formCheckBoxItem(form, ConfigKeys.languageSelectorFeature, "Language Selector"),
       formCheckBoxItem(form, ConfigKeys.bulkPaperOffFeature, "Bulk paper output for Agents turned off"),
-      formCheckBoxItem(form, ConfigKeys.btaEntryPointFeature, "Journey entry points set to BTA Account Details"),
       formCheckBoxItem(form, ConfigKeys.letterToConfirmedEmailFeature, "Contact Pref - Letter to Confirmed email"),
       formCheckBoxItem(form, ConfigKeys.contactPrefMigrationFeature, "Retrieve contact pref from vat-subscription")
     )
