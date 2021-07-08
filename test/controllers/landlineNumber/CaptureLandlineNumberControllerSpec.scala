@@ -139,23 +139,6 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
       }
     }
 
-    "the contact details feature switch is disabled" should {
-
-      lazy val result = {
-        mockConfig.features.changeContactDetailsEnabled(false)
-        controller.show(request)
-      }
-
-      "return 404" in {
-        status(result) shouldBe Status.NOT_FOUND
-      }
-
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
-      }
-    }
-
     insolvencyCheck(controller.show())
   }
 

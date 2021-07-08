@@ -131,24 +131,6 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "the change contact details feature switch is disabled" should {
-
-      lazy val result = {
-        mockConfig.features.changeContactDetailsEnabled(false)
-        target().show(request)
-      }
-
-      "return 404" in {
-
-        status(result) shouldBe Status.NOT_FOUND
-      }
-
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
-      }
-    }
-
     insolvencyCheck(target().show())
   }
 

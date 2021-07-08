@@ -45,7 +45,6 @@ object ConfigKeys {
   val stubContactPreferencesFeature: String = "features.stubContactPreferences.enabled"
   val contactPreferencesFeature: String = "features.contactPreferences.enabled"
   val languageSelectorFeature: String = "features.languageSelector.enabled"
-  val changeContactDetailsFeature: String = "features.changeContactDetails.enabled"
   val emailVerifiedContactPrefFeature: String = "features.emailVerifiedContactPref.enabled"
   val bulkPaperOffFeature: String = "features.bulkPaperOff.enabled"
   val btaEntryPointFeature: String = "features.btaEntryPoint.enabled"
