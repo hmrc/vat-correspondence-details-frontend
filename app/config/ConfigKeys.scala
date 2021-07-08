@@ -44,7 +44,6 @@ object ConfigKeys {
   val emailVerificationFeature: String = "features.emailVerification.enabled"
   val stubContactPreferencesFeature: String = "features.stubContactPreferences.enabled"
   val languageSelectorFeature: String = "features.languageSelector.enabled"
-  val emailVerifiedContactPrefFeature: String = "features.emailVerifiedContactPref.enabled"
   val bulkPaperOffFeature: String = "features.bulkPaperOff.enabled"
   val btaEntryPointFeature: String = "features.btaEntryPoint.enabled"
   val letterToConfirmedEmailFeature: String = "features.letterToConfirmedEmail.enabled"

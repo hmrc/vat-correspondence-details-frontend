@@ -25,7 +25,6 @@ class Features @Inject()(config: Configuration) {
   val emailVerificationEnabled = new Feature(ConfigKeys.emailVerificationFeature, config)
   val stubContactPreferences = new Feature(ConfigKeys.stubContactPreferencesFeature, config)
   val languageSelectorEnabled = new Feature(ConfigKeys.languageSelectorFeature, config)
-  val emailVerifiedContactPrefEnabled = new Feature(ConfigKeys.emailVerifiedContactPrefFeature, config)
   val bulkPaperOffEnabled = new Feature(ConfigKeys.bulkPaperOffFeature, config)
   val btaEntryPointEnabled = new Feature(ConfigKeys.btaEntryPointFeature, config)
   val letterToConfirmedEmailEnabled = new Feature(ConfigKeys.letterToConfirmedEmailFeature, config)
