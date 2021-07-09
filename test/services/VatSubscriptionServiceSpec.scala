@@ -37,7 +37,6 @@ class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    mockConfig.features.emailVerifiedContactPrefEnabled(true)
   }
 
   "calling getCustomerInfo" when {
