@@ -29,7 +29,7 @@ object FeatureSwitchForm {
       ConfigKeys.languageSelectorFeature -> boolean,
       ConfigKeys.emailVerifiedContactPrefFeature -> boolean,
       ConfigKeys.bulkPaperOffFeature -> boolean,
-      ConfigKeys.letterToConfirmedEmailFeature -> boolean,
+      ConfigKeys.letterToConfirmedEmailFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }
