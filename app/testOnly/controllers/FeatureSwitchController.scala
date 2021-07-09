@@ -33,7 +33,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
       FeatureSwitchModel(
         emailVerification = appConfig.features.emailVerificationEnabled(),
         stubContactPreferences = appConfig.features.stubContactPreferences(),
-        contactPreferences = appConfig.features.contactPreferencesEnabled(),
         languageSelector = appConfig.features.languageSelectorEnabled(),
         emailVerifiedContactPref = appConfig.features.emailVerifiedContactPrefEnabled(),
         bulkPaperOff = appConfig.features.bulkPaperOffEnabled(),
@@ -54,7 +53,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.emailVerificationEnabled(model.emailVerification)
     appConfig.features.stubContactPreferences(model.stubContactPreferences)
-    appConfig.features.contactPreferencesEnabled(model.contactPreferences)
     appConfig.features.languageSelectorEnabled(model.languageSelector)
     appConfig.features.emailVerifiedContactPrefEnabled(model.emailVerifiedContactPref)
     appConfig.features.bulkPaperOffEnabled(model.bulkPaperOff)

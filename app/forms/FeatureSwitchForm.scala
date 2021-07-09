@@ -26,7 +26,6 @@ object FeatureSwitchForm {
     mapping(
       ConfigKeys.emailVerificationFeature -> boolean,
       ConfigKeys.stubContactPreferencesFeature -> boolean,
-      ConfigKeys.contactPreferencesFeature -> boolean,
       ConfigKeys.languageSelectorFeature -> boolean,
       ConfigKeys.emailVerifiedContactPrefFeature -> boolean,
       ConfigKeys.bulkPaperOffFeature -> boolean,

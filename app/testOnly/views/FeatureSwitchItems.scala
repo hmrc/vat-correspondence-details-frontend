@@ -42,7 +42,6 @@ class FeatureSwitchItems @Inject() () {
     Seq(
       formCheckBoxItem(form, ConfigKeys.emailVerificationFeature, "Email Verification"),
       formCheckBoxItem(form, ConfigKeys.stubContactPreferencesFeature, "Stub Contact Preferences"),
-      formCheckBoxItem(form, ConfigKeys.contactPreferencesFeature, "Contact Preferences"),
       formCheckBoxItem(form, ConfigKeys.emailVerifiedContactPrefFeature, "Contact Pref Digital & Email Verified (Go Paperless)"),
       formCheckBoxItem(form, ConfigKeys.languageSelectorFeature, "Language Selector"),
       formCheckBoxItem(form, ConfigKeys.bulkPaperOffFeature, "Bulk paper output for Agents turned off"),
