@@ -134,22 +134,6 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec {
           element("#error-summary-title").text() shouldBe "There is a problem"
         }
       }
-
-      "the BTA entry point feature is set to false" should {
-
-        lazy val view: Html = {
-          mockConfig.features.btaEntryPointEnabled(false)
-          injectedView(websiteForm(testWebsite).fill(testWebsite), testWebsite)(user, messages, mockConfig)
-        }
-        lazy implicit val document: Document = Jsoup.parse(view.body)
-
-        "have a back link" which {
-
-          "should have the correct href" in {
-            element(Selectors.backLink).attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
-          }
-        }
-      }
     }
 
     "the user is an agent" should {

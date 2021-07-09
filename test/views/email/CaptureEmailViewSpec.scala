@@ -212,24 +212,6 @@ class CaptureEmailViewSpec extends ViewBaseSpec {
         }
       }
     }
-
-    "the BTA entry point feature is set to false" should {
-
-      lazy val view: Html = {
-        mockConfig.features.btaEntryPointEnabled(false)
-        injectedView(emailForm(testEmail), emailNotChangedError = false, currentEmail = testEmail, Call("",""),
-          letterToConfirmedEmail = false)(user, messages, mockConfig)
-      }
-
-      lazy implicit val document: Document = Jsoup.parse(view.body)
-
-      "have a back link" which {
-
-        "should have the correct href" in {
-          element(Selectors.backLink).attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
-        }
-      }
-    }
   }
 }
 
