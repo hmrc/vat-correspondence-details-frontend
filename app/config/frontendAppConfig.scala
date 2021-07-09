@@ -53,9 +53,7 @@ trait AppConfig {
   val contactFormServiceIdentifier: String
   val timeoutPeriod: Int
   val timeoutCountdown: Int
-  val contactPreferencesService: String
   val contactHmrcUrl: String
-  def contactPreferencesUrl(vrn: String): String
   def feedbackUrl(redirect: String): String
   val accessibilityLinkUrl: String
   val vatOverviewUrl: String
@@ -130,16 +128,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
 
   override val contactHmrcUrl: String = sc.getString(Keys.contactHmrc)
-
-  override lazy val contactPreferencesService: String = {
-    if(features.stubContactPreferences()){
-      sc.baseUrl("vat-subscription-dynamic-stub")
-    } else {
-      sc.baseUrl(Keys.contactPreferencesService)
-    }
-  }
-
-  override def contactPreferencesUrl(vrn: String): String = contactPreferencesService + s"/contact-preferences/vat/vrn/$vrn"
 
   override def feedbackUrl(redirect: String): String =
     s"$contactFrontendService/contact/beta-feedback?service=$contactFormServiceIdentifier" +

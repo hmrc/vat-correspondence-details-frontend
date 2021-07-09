@@ -42,7 +42,6 @@ object ConfigKeys {
   val host: String = "host"
 
   val emailVerificationFeature: String = "features.emailVerification.enabled"
-  val stubContactPreferencesFeature: String = "features.stubContactPreferences.enabled"
   val languageSelectorFeature: String = "features.languageSelector.enabled"
   val letterToConfirmedEmailFeature: String = "features.letterToConfirmedEmail.enabled"
   val vatSubscription: String = "vat-subscription"
@@ -52,8 +51,6 @@ object ConfigKeys {
 
   val timeoutPeriod: String = "timeout.period"
   val timeoutCountdown: String = "timeout.countdown"
-
-  val contactPreferencesService: String = "contact-preferences"
 
   val contactHmrc: String = "contact-hmrc.url"
 

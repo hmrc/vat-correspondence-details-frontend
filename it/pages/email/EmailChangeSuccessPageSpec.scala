@@ -20,10 +20,8 @@ import common.SessionKeys
 import pages.BasePageISpec
 import play.api.http.Status
 import play.api.i18n.Messages
-import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import play.api.test.Helpers.OK
-import stubs.{ContactPreferencesStub, VatSubscriptionStub}
+import stubs.VatSubscriptionStub
 
 class EmailChangeSuccessPageSpec extends BasePageISpec {
 
@@ -43,7 +41,6 @@ class EmailChangeSuccessPageSpec extends BasePageISpec {
         VatSubscriptionStub.stubCustomerInfo
 
         And("a successful response for an individual is stubbed")
-        ContactPreferencesStub.getContactPrefs(OK, Json.obj("preference" -> "DiGiTaL"))
 
         When("the Confirm email page is called")
         val result = show

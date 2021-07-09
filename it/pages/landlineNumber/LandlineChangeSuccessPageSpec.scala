@@ -19,10 +19,8 @@ package pages.landlineNumber
 import common.SessionKeys.{landlineChangeSuccessful, prepopulationLandlineKey}
 import pages.BasePageISpec
 import play.api.http.Status
-import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import play.api.test.Helpers.OK
-import stubs.{ContactPreferencesStub, VatSubscriptionStub}
+import stubs.VatSubscriptionStub
 
 class LandlineChangeSuccessPageSpec extends BasePageISpec {
 
@@ -40,8 +38,6 @@ class LandlineChangeSuccessPageSpec extends BasePageISpec {
 
           given.user.isAuthenticated
           VatSubscriptionStub.stubCustomerInfo
-
-          ContactPreferencesStub.getContactPrefs(OK, Json.obj("preference" -> "DIGITAL"))
 
           val result = show
 
