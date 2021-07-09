@@ -33,13 +33,8 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
       FeatureSwitchModel(
         emailVerification = appConfig.features.emailVerificationEnabled(),
         stubContactPreferences = appConfig.features.stubContactPreferences(),
-        contactPreferences = appConfig.features.contactPreferencesEnabled(),
         languageSelector = appConfig.features.languageSelectorEnabled(),
-        changeContactDetails = appConfig.features.changeContactDetailsEnabled(),
-        emailVerifiedContactPref = appConfig.features.emailVerifiedContactPrefEnabled(),
-        btaEntryPoint = appConfig.features.btaEntryPointEnabled(),
-        letterToConfirmedEmail = appConfig.features.letterToConfirmedEmailEnabled(),
-        contactPrefMigration = appConfig.features.contactPrefMigrationEnabled()
+        letterToConfirmedEmail = appConfig.features.letterToConfirmedEmailEnabled()
       )
     )))
   }
@@ -54,13 +49,8 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.emailVerificationEnabled(model.emailVerification)
     appConfig.features.stubContactPreferences(model.stubContactPreferences)
-    appConfig.features.contactPreferencesEnabled(model.contactPreferences)
     appConfig.features.languageSelectorEnabled(model.languageSelector)
-    appConfig.features.changeContactDetailsEnabled(model.changeContactDetails)
-    appConfig.features.emailVerifiedContactPrefEnabled(model.emailVerifiedContactPref)
-    appConfig.features.btaEntryPointEnabled(model.btaEntryPoint)
     appConfig.features.letterToConfirmedEmailEnabled(model.letterToConfirmedEmail)
-    appConfig.features.contactPrefMigrationEnabled(model.contactPrefMigration)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 }

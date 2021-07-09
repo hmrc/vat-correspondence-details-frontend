@@ -43,11 +43,7 @@ object ConfigKeys {
 
   val emailVerificationFeature: String = "features.emailVerification.enabled"
   val stubContactPreferencesFeature: String = "features.stubContactPreferences.enabled"
-  val contactPreferencesFeature: String = "features.contactPreferences.enabled"
   val languageSelectorFeature: String = "features.languageSelector.enabled"
-  val changeContactDetailsFeature: String = "features.changeContactDetails.enabled"
-  val emailVerifiedContactPrefFeature: String = "features.emailVerifiedContactPref.enabled"
-  val btaEntryPointFeature: String = "features.btaEntryPoint.enabled"
   val letterToConfirmedEmailFeature: String = "features.letterToConfirmedEmail.enabled"
   val vatSubscription: String = "vat-subscription"
 
@@ -67,8 +63,6 @@ object ConfigKeys {
 
   val btaHost: String = "business-tax-account.url"
   val btaAccountDetailsUrl: String = "business-tax-account.accountDetails"
-
-  val contactPrefMigrationFeature: String = "features.contactPrefMigration.enabled"
 
   val gtmContainer: String = "tracking-consent-frontend.gtm.container"
 }

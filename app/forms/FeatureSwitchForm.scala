@@ -26,13 +26,8 @@ object FeatureSwitchForm {
     mapping(
       ConfigKeys.emailVerificationFeature -> boolean,
       ConfigKeys.stubContactPreferencesFeature -> boolean,
-      ConfigKeys.contactPreferencesFeature -> boolean,
       ConfigKeys.languageSelectorFeature -> boolean,
-      ConfigKeys.changeContactDetailsFeature -> boolean,
-      ConfigKeys.emailVerifiedContactPrefFeature -> boolean,
-      ConfigKeys.btaEntryPointFeature -> boolean,
-      ConfigKeys.letterToConfirmedEmailFeature -> boolean,
-      ConfigKeys.contactPrefMigrationFeature -> boolean
+      ConfigKeys.letterToConfirmedEmailFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 }

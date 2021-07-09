@@ -18,11 +18,5 @@ package models
 
 case class FeatureSwitchModel(emailVerification: Boolean,
                               stubContactPreferences: Boolean,
-                              contactPreferences: Boolean,
                               languageSelector: Boolean,
-                              changeContactDetails: Boolean,
-                              emailVerifiedContactPref: Boolean,
-                              btaEntryPoint: Boolean,
-                              letterToConfirmedEmail: Boolean,
-                              contactPrefMigration: Boolean)
-
+                              letterToConfirmedEmail: Boolean)

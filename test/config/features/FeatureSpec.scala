@@ -28,7 +28,6 @@ class FeatureSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   override def beforeEach(): Unit = {
     super.beforeEach()
     features.emailVerificationEnabled(true)
-    features.changeContactDetailsEnabled(true)
   }
 
   "The Email Verification Feature" should {
@@ -40,18 +39,6 @@ class FeatureSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     "switch to a new state" in {
       features.emailVerificationEnabled(false)
       features.emailVerificationEnabled() shouldBe false
-    }
-  }
-
-  "The Change Website Feature" should {
-
-    "return its current state" in {
-      features.changeContactDetailsEnabled() shouldBe true
-    }
-
-    "switch to a new state" in {
-      features.changeContactDetailsEnabled(false)
-      features.changeContactDetailsEnabled() shouldBe false
     }
   }
 }
