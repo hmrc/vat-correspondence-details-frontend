@@ -27,7 +27,6 @@ object FeatureSwitchForm {
       ConfigKeys.emailVerificationFeature -> boolean,
       ConfigKeys.stubContactPreferencesFeature -> boolean,
       ConfigKeys.languageSelectorFeature -> boolean,
-      ConfigKeys.bulkPaperOffFeature -> boolean,
       ConfigKeys.letterToConfirmedEmailFeature -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )

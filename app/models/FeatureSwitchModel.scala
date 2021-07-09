@@ -19,6 +19,4 @@ package models
 case class FeatureSwitchModel(emailVerification: Boolean,
                               stubContactPreferences: Boolean,
                               languageSelector: Boolean,
-                              bulkPaperOff: Boolean,
                               letterToConfirmedEmail: Boolean)
-

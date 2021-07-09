@@ -113,107 +113,6 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
 
     "an agent is performing the action" when {
 
-      "bulkPaperOffEnabled feature switch is off" when {
-
-        "the agent has an email address registered" should {
-          val viewModel = ChangeSuccessViewModel(exampleTitle, Some("agent@example.com"), None, Some("TheBusiness"), None)
-          lazy val view = injectedView(viewModel)(agent, messages, mockConfig)
-
-          lazy implicit val document: Document = Jsoup.parse(view.body)
-
-          "have the page title provided by the model" in {
-            elementText(Selectors.title) shouldBe s"$exampleTitle - Your client’s VAT details - GOV.UK"
-          }
-
-          "have the heading provided by the model" in {
-            elementText(Selectors.pageHeading) shouldBe exampleTitle
-          }
-
-          "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Back to client’s details"
-          }
-
-          "have a finish button which navigates to the Change of Circs overview page" in {
-            element(Selectors.button).select("a").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
-          }
-
-          "have the correct first paragraph" in {
-            elementText(Selectors.paragraphOne) shouldBe "We’ll send an email to agent@example.com within 2" +
-              " working days telling you whether or not the request has been accepted."
-          }
-
-          "have the correct second paragraph" in {
-            elementText(Selectors.paragraphTwo) shouldBe "We’ll contact TheBusiness with an update."
-          }
-        }
-
-        "the agent doesn't have an email address registered" should {
-          val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, Some("TheBusiness"), None)
-          lazy val view = injectedView(viewModel)(agent, messages, mockConfig)
-
-          lazy implicit val document: Document = Jsoup.parse(view.body)
-
-          "have the page title provided by the model" in {
-            elementText(Selectors.title) shouldBe s"$exampleTitle - Your client’s VAT details - GOV.UK"
-          }
-
-          "have the heading provided by the model" in {
-            elementText(Selectors.pageHeading) shouldBe exampleTitle
-          }
-
-          "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Back to client’s details"
-          }
-
-          "have a finish button which navigates to the Change of Circs overview page" in {
-            element(Selectors.button).select("a").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
-          }
-
-          "have the correct first paragraph" in {
-            elementText(Selectors.paragraphOne) shouldBe
-              "We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days."
-          }
-
-          "have the correct second paragraph" in {
-            elementText(Selectors.paragraphTwo) shouldBe "We’ll contact TheBusiness with an update."
-          }
-        }
-
-        "the client's business name isn't retrieved" should {
-          val viewModel = ChangeSuccessViewModel(exampleTitle, None, None, None, None)
-          lazy val view = injectedView(viewModel)(agent, messages, mockConfig)
-
-          lazy implicit val document: Document = Jsoup.parse(view.body)
-
-          "have the page title provided by the model" in {
-            elementText(Selectors.title) shouldBe s"$exampleTitle - Your client’s VAT details - GOV.UK"
-          }
-
-          "have the heading provided by the model" in {
-            elementText(Selectors.pageHeading) shouldBe exampleTitle
-          }
-
-          "have a finish button with the correct text" in {
-            elementText(Selectors.button) shouldBe "Back to client’s details"
-          }
-
-          "have a finish button which navigates to the Change of Circs overview page" in {
-            element(Selectors.button).select("a").attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
-          }
-
-          "have the correct first paragraph" in {
-            elementText(Selectors.paragraphOne) shouldBe "We’ll send a confirmation letter to the agency address registered with HMRC within 15 working days."
-          }
-
-          "have the correct second paragraph" in {
-            elementText(Selectors.paragraphTwo) shouldBe "We’ll contact your client with an update."
-          }
-
-        }
-      }
-
-      "bulkPaperOffEnabled feature switch is on" when {
-
         "agent has a digital preference" when {
 
           "client's business name is retrieved" should {
@@ -226,7 +125,6 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
               None
             )
             lazy val view = {
-              mockConfig.features.bulkPaperOffEnabled(true)
               injectedView(viewModel)(agent, messages, mockConfig)
             }
             lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -252,7 +150,6 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
               None
             )
             lazy val view = {
-              mockConfig.features.bulkPaperOffEnabled(true)
               injectedView(viewModel)(agent, messages, mockConfig)
             }
             lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -280,7 +177,6 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
               None
             )
             lazy val view = {
-              mockConfig.features.bulkPaperOffEnabled(true)
               injectedView(viewModel)(agent, messages, mockConfig)
             }
             lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -300,7 +196,6 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
               None
             )
             lazy val view = {
-              mockConfig.features.bulkPaperOffEnabled(true)
               injectedView(viewModel)(agent, messages, mockConfig)
             }
             lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -310,7 +205,6 @@ class ChangeSuccessViewSpec extends ViewBaseSpec {
             }
           }
         }
-      }
     }
   }
 }

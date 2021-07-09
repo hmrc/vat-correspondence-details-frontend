@@ -44,7 +44,6 @@ object ConfigKeys {
   val emailVerificationFeature: String = "features.emailVerification.enabled"
   val stubContactPreferencesFeature: String = "features.stubContactPreferences.enabled"
   val languageSelectorFeature: String = "features.languageSelector.enabled"
-  val bulkPaperOffFeature: String = "features.bulkPaperOff.enabled"
   val letterToConfirmedEmailFeature: String = "features.letterToConfirmedEmail.enabled"
   val vatSubscription: String = "vat-subscription"
 
