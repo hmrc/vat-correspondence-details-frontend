@@ -16,13 +16,10 @@
 
 package controllers.email
 
-import audit.models.ContactPreferenceAuditModel
 import common.SessionKeys._
 import controllers.ControllerBaseSpec
 import mocks.{MockAuditingService, MockContactPreferenceService}
-import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
-import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
