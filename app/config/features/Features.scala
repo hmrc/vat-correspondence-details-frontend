@@ -27,5 +27,4 @@ class Features @Inject()(config: Configuration) {
   val languageSelectorEnabled = new Feature(ConfigKeys.languageSelectorFeature, config)
   val bulkPaperOffEnabled = new Feature(ConfigKeys.bulkPaperOffFeature, config)
   val letterToConfirmedEmailEnabled = new Feature(ConfigKeys.letterToConfirmedEmailFeature, config)
-  val contactPrefMigrationEnabled = new Feature(ConfigKeys.contactPrefMigrationFeature, config)
 }

@@ -44,8 +44,7 @@ class FeatureSwitchItems @Inject() () {
       formCheckBoxItem(form, ConfigKeys.stubContactPreferencesFeature, "Stub Contact Preferences"),
       formCheckBoxItem(form, ConfigKeys.languageSelectorFeature, "Language Selector"),
       formCheckBoxItem(form, ConfigKeys.bulkPaperOffFeature, "Bulk paper output for Agents turned off"),
-      formCheckBoxItem(form, ConfigKeys.letterToConfirmedEmailFeature, "Contact Pref - Letter to Confirmed email"),
-      formCheckBoxItem(form, ConfigKeys.contactPrefMigrationFeature, "Retrieve contact pref from vat-subscription")
+      formCheckBoxItem(form, ConfigKeys.letterToConfirmedEmailFeature, "Contact Pref - Letter to Confirmed email")
     )
   }
 }

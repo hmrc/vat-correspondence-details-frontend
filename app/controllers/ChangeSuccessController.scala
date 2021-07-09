@@ -23,19 +23,16 @@ import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.User
-import models.contactPreferences.ContactPreference
 import models.customerInformation.CustomerInformation
-import models.errors.ErrorModel
 import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
-import services.{ContactPreferenceService, VatSubscriptionService}
+import services.VatSubscriptionService
 import views.html.templates.ChangeSuccessView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ChangeSuccessController @Inject()(contactPreferenceService: ContactPreferenceService,
-                                        vatSubscriptionService: VatSubscriptionService,
+class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionService,
                                         changeSuccessView: ChangeSuccessView)
                                        (implicit val appConfig: AppConfig,
                                         mcc: MessagesControllerComponents,
@@ -71,28 +68,19 @@ class ChangeSuccessController @Inject()(contactPreferenceService: ContactPrefere
   private[controllers] def renderView(changeKey: String)(implicit user: User[_]): Future[Result] =
     for {
 
-      preference <-
-        if (user.isAgent || appConfig.features.contactPrefMigrationEnabled()) {Future.successful(Left(ErrorModel(NO_CONTENT, "")))}
-        else {contactPreferenceService.getContactPreference(user.vrn)}
-
       customerDetails <-
         vatSubscriptionService.getCustomerInfo(user.vrn)
 
     } yield {
       val viewModel =
-        constructViewModel(preference, user.session.get(verifiedAgentEmail), changeKey, customerDetails)
+        constructViewModel(user.session.get(verifiedAgentEmail), changeKey, customerDetails)
       Ok(changeSuccessView(viewModel))
     }
 
-  private[controllers] def constructViewModel(preferenceCall: HttpGetResult[ContactPreference],
-                                              agentEmail: Option[String],
+  private[controllers] def constructViewModel(agentEmail: Option[String],
                                               changeKey: String,
                                               customerDetails: HttpGetResult[CustomerInformation]): ChangeSuccessViewModel = {
-    val preference: Option[String] = if(appConfig.features.contactPrefMigrationEnabled()) {
-      customerDetails.fold(_ => None, _.commsPreference)
-    } else {
-      preferenceCall.fold(_ => None, pref => Some(pref.preference))
-    }
+    val preference: Option[String] = customerDetails.fold(_ => None, _.commsPreference)
     val entityName = customerDetails.fold(_ => None, _.entityName)
     val emailVerified = customerDetails.fold(_ => None, _.ppob.contactDetails.flatMap(_.emailVerified))
     val titleMessageKey: String = getTitleMessageKey(changeKey)
