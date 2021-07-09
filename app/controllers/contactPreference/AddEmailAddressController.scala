@@ -39,25 +39,17 @@ class AddEmailAddressController @Inject()(val errorHandler: ErrorHandler,
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("cPrefAddEmail.error")
 
   def show: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate andThen inFlightContactPrefPredicate).async { implicit user =>
-    if (appConfig.features.letterToConfirmedEmailEnabled()) {
       Future.successful(Ok(addEmailAddressView(formYesNo)))
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
-    }
   }
 
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen paperPrefPredicate andThen inFlightContactPrefPredicate) { implicit user =>
-    if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      formYesNo.bindFromRequest().fold (
-        formWithErrors =>
-          BadRequest(addEmailAddressView(formWithErrors)),
-        {
-          case Yes => Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney())
-          case No => Redirect(appConfig.btaAccountDetailsUrl)
-        }
-      )
-    } else {
-      NotFound(authComps.errorHandler.notFoundTemplate)
-    }
+    formYesNo.bindFromRequest().fold (
+      formWithErrors =>
+        BadRequest(addEmailAddressView(formWithErrors)),
+      {
+        case Yes => Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney())
+        case No => Redirect(appConfig.btaAccountDetailsUrl)
+      }
+    )
   }
 }

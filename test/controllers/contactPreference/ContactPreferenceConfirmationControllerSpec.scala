@@ -19,7 +19,7 @@ package controllers.contactPreference
 import assets.BaseTestConstants.vrn
 import assets.CustomerInfoConstants.fullCustomerInfoModel
 import controllers.ControllerBaseSpec
-import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import views.html.contactPreference.PreferenceConfirmationView
 import common.SessionKeys._
 import models.errors.ErrorModel
@@ -35,67 +35,34 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
 
   ".show" when {
 
-    "the feature switch is false" should {
+    "changeType is email" when {
 
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(false)
-        controller.show("email")(requestWithPaperPref)
-      }
+      s"$letterToEmailChangeSuccessful is in session" when {
 
-      "return a NOT_FOUND result" in {
-        status(result) shouldBe NOT_FOUND
-      }
-    }
+        s"$validationEmailKey is in session" should {
 
-    "the feature switch is true" when {
-
-      "changeType is email" when {
-
-        s"$letterToEmailChangeSuccessful is in session" when {
-
-          s"$validationEmailKey is in session" should {
-
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              controller.show("email")(requestWithPaperPref.withSession(
-                validationEmailKey -> "asd@asd.com",
-                letterToEmailChangeSuccessful -> "true"
-              ))
-            }
-
-            "return OK" in {
-              status(result) shouldBe OK
-            }
-
-            "render view with the email populated" in {
-              Jsoup.parse(bodyOf(result)).select("#content > div.govuk-inset-text").text() shouldBe "asd@asd.com"
-            }
+          lazy val result = {
+            controller.show("email")(requestWithPaperPref.withSession(
+              validationEmailKey -> "asd@asd.com",
+              letterToEmailChangeSuccessful -> "true"
+            ))
           }
 
-          s"$validationEmailKey is not in session" should {
+          "return OK" in {
+            status(result) shouldBe OK
+          }
 
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              controller.show("email")(requestWithPaperPref.withSession(
-                letterToEmailChangeSuccessful -> "true"
-              ))
-            }
-
-            "return 303" in {
-              status(result) shouldBe SEE_OTHER
-            }
-
-            s"redirect to ${controllers.contactPreference.routes.EmailToUseController.show().url}" in {
-              redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailToUseController.show().url)
-            }
+          "render view with the email populated" in {
+            Jsoup.parse(bodyOf(result)).select("#content > div.govuk-inset-text").text() shouldBe "asd@asd.com"
           }
         }
 
-        s"$letterToEmailChangeSuccessful is not in session" should {
+        s"$validationEmailKey is not in session" should {
 
           lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            controller.show("email")(requestWithPaperPref)
+            controller.show("email")(requestWithPaperPref.withSession(
+              letterToEmailChangeSuccessful -> "true"
+            ))
           }
 
           "return 303" in {
@@ -108,59 +75,72 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
         }
       }
 
-      "changeType is letter" when {
+      s"$letterToEmailChangeSuccessful is not in session" should {
 
-        s"$emailToLetterChangeSuccessful is in session" when {
+        lazy val result = {
+          controller.show("email")(requestWithPaperPref)
+        }
 
-          "retrieval of current address is successful" should {
+        "return 303" in {
+          status(result) shouldBe SEE_OTHER
+        }
 
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
-              controller.show("letter")(requestWithDigitalPref.withSession(
-                emailToLetterChangeSuccessful -> "true"
-              ))
-            }
+        s"redirect to ${controllers.contactPreference.routes.EmailToUseController.show().url}" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailToUseController.show().url)
+        }
+      }
+    }
 
-            "return OK" in {
-              status(result) shouldBe OK
-            }
+    "changeType is letter" when {
 
-            "render view with the full business address populated" in {
-              Jsoup.parse(bodyOf(result)).select("#content > div.govuk-inset-text").text() shouldBe
-                "firstLine secondLine thirdLine fourthLine fifthLine codeOfMyPost"
-            }
+      s"$emailToLetterChangeSuccessful is in session" when {
+
+        "retrieval of current address is successful" should {
+
+          lazy val result = {
+            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+            controller.show("letter")(requestWithDigitalPref.withSession(
+              emailToLetterChangeSuccessful -> "true"
+            ))
           }
 
-          "retrieval of current address is unsuccessful" should {
+          "return OK" in {
+            status(result) shouldBe OK
+          }
 
-            lazy val result = {
-              mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
-              controller.show("letter")(requestWithDigitalPref.withSession(
-                emailToLetterChangeSuccessful -> "true"
-              ))
-            }
-
-            "return 500" in {
-              status(result) shouldBe INTERNAL_SERVER_ERROR
-            }
+          "render view with the full business address populated" in {
+            Jsoup.parse(bodyOf(result)).select("#content > div.govuk-inset-text").text() shouldBe
+              "firstLine secondLine thirdLine fourthLine fifthLine codeOfMyPost"
           }
         }
 
-        s"$emailToLetterChangeSuccessful is not in session" should {
+        "retrieval of current address is unsuccessful" should {
 
           lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            controller.show("letter")(requestWithDigitalPref)
+            mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+            controller.show("letter")(requestWithDigitalPref.withSession(
+              emailToLetterChangeSuccessful -> "true"
+            ))
           }
 
-          "return 303" in {
-            status(result) shouldBe SEE_OTHER
+          "return 500" in {
+            status(result) shouldBe INTERNAL_SERVER_ERROR
           }
+        }
+      }
 
-          s"redirect to ${controllers.contactPreference.routes.LetterPreferenceController.show().url}" in {
-            redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.LetterPreferenceController.show().url)
-          }
+      s"$emailToLetterChangeSuccessful is not in session" should {
+
+        lazy val result = {
+          controller.show("letter")(requestWithDigitalPref)
+        }
+
+        "return 303" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        s"redirect to ${controllers.contactPreference.routes.LetterPreferenceController.show().url}" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.LetterPreferenceController.show().url)
         }
       }
     }

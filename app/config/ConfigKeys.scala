@@ -42,7 +42,7 @@ object ConfigKeys {
   val host: String = "host"
 
   val emailVerificationFeature: String = "features.emailVerification.enabled"
-  val letterToConfirmedEmailFeature: String = "features.letterToConfirmedEmail.enabled"
+
   val vatSubscription: String = "vat-subscription"
 
   val surveyUrl: String = "feedback-frontend.url"

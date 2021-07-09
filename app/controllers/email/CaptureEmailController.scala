@@ -100,8 +100,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
     contactPreferencePredicate andThen
       paperPrefPredicate andThen
       inFlightContactPrefPredicate) { implicit user =>
-    if (appConfig.features.letterToConfirmedEmailEnabled()){
-      sessionValidationEmail match {
+        sessionValidationEmail match {
           case Some(valEmail) =>
             Ok(captureEmailView(
               emailForm(valEmail).fill(prePopulationEmail(valEmail)),
@@ -112,17 +111,13 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
             ))
           case _ => errorHandler.showInternalServerError
         }
-    } else {
-      errorHandler.showNotFoundError
-    }
-  }
+      }
 
   def submitPrefJourney: Action[AnyContent] = (
     contactPreferencePredicate andThen
       paperPrefPredicate andThen
       inFlightContactPrefPredicate).async { implicit user =>
 
-    if (appConfig.features.letterToConfirmedEmailEnabled()) {
       (sessionValidationEmail, sessionPrePopulationEmail) match {
         case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
           errorForm => {
@@ -150,8 +145,5 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
         )
         case (None, _) => Future.successful(errorHandler.showInternalServerError)
       }
-    } else {
-      Future.successful(errorHandler.showNotFoundError)
     }
-  }
 }

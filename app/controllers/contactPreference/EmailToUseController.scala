@@ -51,29 +51,25 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   def show: Action[AnyContent] = (contactPreferencePredicate andThen
                                   paperPrefPredicate andThen
                                   inFlightContactPrefPredicate).async { implicit user =>
-    if (appConfig.features.letterToConfirmedEmailEnabled()) {
-      user.session.get(SessionKeys.contactPrefUpdate) match {
-        case Some("true") =>
-          lazy val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
-            case Some(email) => Future.successful(Some(email))
-            case _ =>
-              vatSubscriptionService.getCustomerInfo(user.vrn) map {
-                case Right(details) => Some(details.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""))
-                case _ => None
-              }
-          }
+    user.session.get(SessionKeys.contactPrefUpdate) match {
+      case Some("true") =>
+        lazy val validationEmail: Future[Option[String]] = user.session.get(SessionKeys.validationEmailKey) match {
+          case Some(email) => Future.successful(Some(email))
+          case _ =>
+            vatSubscriptionService.getCustomerInfo(user.vrn) map {
+              case Right(details) => Some(details.ppob.contactDetails.flatMap(_.emailAddress).getOrElse(""))
+              case _ => None
+            }
+        }
 
-          validationEmail map {
-            case Some(email) => Ok(emailToUseView(form, email))
-              .addingToSession(SessionKeys.validationEmailKey -> email)
-              .addingToSession(SessionKeys.prepopulationEmailKey -> email)
-            case _ => authComps.errorHandler.showInternalServerError
-          }
+        validationEmail map {
+          case Some(email) => Ok(emailToUseView(form, email))
+            .addingToSession(SessionKeys.validationEmailKey -> email)
+            .addingToSession(SessionKeys.prepopulationEmailKey -> email)
+          case _ => authComps.errorHandler.showInternalServerError
+        }
 
-        case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
-      }
-    } else {
-      Future.successful(authComps.errorHandler.showNotFoundError)
+      case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
     }
 
   }
@@ -82,27 +78,23 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen
                                     paperPrefPredicate andThen
                                     inFlightContactPrefPredicate).async { implicit user =>
-    if (appConfig.features.letterToConfirmedEmailEnabled()) {
 
-      user.session.get(SessionKeys.contactPrefUpdate) match {
-        case Some("true") =>
-          lazy val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
+    user.session.get(SessionKeys.contactPrefUpdate) match {
+      case Some("true") =>
+        lazy val validationEmail: Option[String] = user.session.get(SessionKeys.validationEmailKey)
 
-          validationEmail match {
-            case Some(email) => form.bindFromRequest().fold(
-              error =>
-                Future.successful(BadRequest(emailToUseView(error, email))),
-              {
-                case Yes => handleDynamicRouting(email)
-                case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney()))
-              }
-            )
-            case _ => Future.successful(authComps.errorHandler.showInternalServerError)
-          }
-        case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
-      }
-    } else {
-      Future.successful(authComps.errorHandler.showNotFoundError)
+        validationEmail match {
+          case Some(email) => form.bindFromRequest().fold(
+            error =>
+              Future.successful(BadRequest(emailToUseView(error, email))),
+            {
+              case Yes => handleDynamicRouting(email)
+              case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney()))
+            }
+          )
+          case _ => Future.successful(authComps.errorHandler.showInternalServerError)
+        }
+      case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
     }
   }
 

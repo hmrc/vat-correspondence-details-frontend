@@ -39,15 +39,11 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
                                                         ec: ExecutionContext) extends BaseController {
 
   def show(changeType: String): Action[AnyContent] = (contactPreferencePredicate andThen inFlightContactPrefPredicate) async { implicit user =>
-      if (appConfig.features.letterToConfirmedEmailEnabled()) {
-        changeType match {
-          case "email" => sessionGuard(letterToEmailChangeSuccessful)
-          case "letter" => sessionGuard(emailToLetterChangeSuccessful)
-        }
-      } else {
-        Future.successful(NotFound(authComps.errorHandler.notFoundTemplate))
-      }
+    changeType match {
+      case "email" => sessionGuard(letterToEmailChangeSuccessful)
+      case "letter" => sessionGuard(emailToLetterChangeSuccessful)
     }
+  }
 
   private[controllers] def renderLetterPreferenceView(implicit user: User[_]): Future[Result] = {
     vatSubscriptionService.getCustomerInfo(user.vrn) map {

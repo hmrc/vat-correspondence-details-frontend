@@ -23,5 +23,4 @@ import play.api.Configuration
 class Features @Inject()(config: Configuration) {
 
   val emailVerificationEnabled = new Feature(ConfigKeys.emailVerificationFeature, config)
-  val letterToConfirmedEmailEnabled = new Feature(ConfigKeys.letterToConfirmedEmailFeature, config)
 }

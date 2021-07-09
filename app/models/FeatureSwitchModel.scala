@@ -16,6 +16,5 @@
 
 package models
 
-case class FeatureSwitchModel(emailVerification: Boolean,
-                              letterToConfirmedEmail: Boolean)
+case class FeatureSwitchModel(emailVerification: Boolean)
 

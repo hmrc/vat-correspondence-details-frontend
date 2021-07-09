@@ -40,8 +40,7 @@ class FeatureSwitchItems @Inject() () {
 
   def items(form: Form[FeatureSwitchModel]): Seq[CheckboxItem] = {
     Seq(
-      formCheckBoxItem(form, ConfigKeys.emailVerificationFeature, "Email Verification"),
-      formCheckBoxItem(form, ConfigKeys.letterToConfirmedEmailFeature, "Contact Pref - Letter to Confirmed email")
+      formCheckBoxItem(form, ConfigKeys.emailVerificationFeature, "Email Verification")
     )
   }
 }
