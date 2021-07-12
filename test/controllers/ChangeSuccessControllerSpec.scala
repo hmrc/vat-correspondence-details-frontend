@@ -19,9 +19,8 @@ package controllers
 import assets.BaseTestConstants._
 import assets.CustomerInfoConstants.fullCustomerInfoModel
 import common.SessionKeys._
-import mocks.{MockContactPreferenceService, MockEmailVerificationService}
+import mocks.MockEmailVerificationService
 import models.User
-import models.contactPreferences.ContactPreference
 import models.errors.ErrorModel
 import play.api.http.Status
 import play.api.mvc.Result
@@ -30,7 +29,7 @@ import views.html.templates.ChangeSuccessView
 
 import scala.concurrent.Future
 
-class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPreferenceService with MockEmailVerificationService {
+class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   val controller: ChangeSuccessController = new ChangeSuccessController(
     mockVatSubscriptionService,
@@ -53,7 +52,6 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockContactPre
           "return 200" in {
             mockIndividualAuthorised()
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-            getMockContactPreference(vrn)(Future(Right(ContactPreference("DIGITAL"))))
             mockGetEmailVerificationState("pepsimac@gmail.com")(Future(Some(true)))
             status(result) shouldBe Status.OK
           }

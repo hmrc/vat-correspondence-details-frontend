@@ -32,7 +32,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
     Ok(featureSwitchView(FeatureSwitchForm.form.fill(
       FeatureSwitchModel(
         emailVerification = appConfig.features.emailVerificationEnabled(),
-        stubContactPreferences = appConfig.features.stubContactPreferences(),
         languageSelector = appConfig.features.languageSelectorEnabled(),
         letterToConfirmedEmail = appConfig.features.letterToConfirmedEmailEnabled()
       )
@@ -48,7 +47,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
 
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.emailVerificationEnabled(model.emailVerification)
-    appConfig.features.stubContactPreferences(model.stubContactPreferences)
     appConfig.features.languageSelectorEnabled(model.languageSelector)
     appConfig.features.letterToConfirmedEmailEnabled(model.letterToConfirmedEmail)
     Redirect(routes.FeatureSwitchController.featureSwitch())
