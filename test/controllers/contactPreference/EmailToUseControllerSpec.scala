@@ -61,79 +61,61 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
   "Calling the show action in EmailToUseController" when {
 
-    "the letterToConfirmedEmail switch is enabled" when {
+    s"there is an email and the ${SessionKeys.contactPrefUpdate} value is in session" should {
 
-      s"there is an email and the ${SessionKeys.contactPrefUpdate} value is in session" should {
-
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          target().show()(existingEmailSessionRequest)
-        }
-
-        "return 200 (OK)" in {
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "add the email address to session" in {
-          session(result).get(SessionKeys.validationEmailKey) shouldBe Some(testValidationEmail)
-          session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidationEmail)
-        }
+      lazy val result = {
+        target().show()(existingEmailSessionRequest)
       }
 
-      "there isn't an email in session" should {
-
-        lazy val result = {
-          mockVatSubscriptionCall()
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          target().show()(noEmailSessionRequest)
-        }
-
-        "return 200 (OK)" in {
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "add the email address to session" in {
-          session(result).get(SessionKeys.validationEmailKey) shouldBe Some("pepsimac@gmail.com")
-          session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
-        }
+      "return 200 (OK)" in {
+        status(result) shouldBe Status.OK
       }
 
-      s"the ${SessionKeys.contactPrefUpdate} value is not in session" should {
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
 
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          target().show()(noPrefUpdateValueSessionRequest)
-        }
-
-        s"return a $SEE_OTHER" in {
-          status(result) shouldBe SEE_OTHER
-        }
-
-        "redirect to the preference select page" in {
-          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
-        }
+      "add the email address to session" in {
+        session(result).get(SessionKeys.validationEmailKey) shouldBe Some(testValidationEmail)
+        session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidationEmail)
       }
     }
 
-    "the letterToConfirmedEmail switch is disabled" should {
+    "there isn't an email in session" should {
 
-      "return a 404" in {
+      lazy val result = {
+        mockVatSubscriptionCall()
+        target().show()(noEmailSessionRequest)
+      }
 
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(false)
-          target().show()(existingEmailSessionRequest)
-        }
-        status(result) shouldBe Status.NOT_FOUND
+      "return 200 (OK)" in {
+        status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+
+      "add the email address to session" in {
+        session(result).get(SessionKeys.validationEmailKey) shouldBe Some("pepsimac@gmail.com")
+        session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some("pepsimac@gmail.com")
+      }
+    }
+
+    s"the ${SessionKeys.contactPrefUpdate} value is not in session" should {
+
+      lazy val result = {
+        target().show()(noPrefUpdateValueSessionRequest)
+      }
+
+      s"return a $SEE_OTHER" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "redirect to the preference select page" in {
+        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
       }
     }
 
@@ -142,95 +124,54 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
   "Calling the submit action in EmailToUseController" when {
 
-    "the letterToConfirmedEmail switch is enabled" when {
+    "the user submits after selecting an 'Yes' option" when {
 
-      "the user submits after selecting an 'Yes' option" when {
+      lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+        requestWithPaperPref
+          .withFormUrlEncodedBody((yesNo, "yes"))
+          .withSession(
+            SessionKeys.validationEmailKey -> testValidationEmail,
+            SessionKeys.contactPrefUpdate -> "true"
+          )
 
-        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          requestWithPaperPref
-            .withFormUrlEncodedBody((yesNo, "yes"))
-            .withSession(
-              SessionKeys.validationEmailKey -> testValidationEmail,
-              SessionKeys.contactPrefUpdate -> "true"
-            )
+      "the user has a verified email address in ETMP" when {
 
-        "the user has a verified email address in ETMP" when {
+        "the contact preference has been updated successfully" should {
 
-          "the contact preference has been updated successfully" should {
+          lazy val result = {
+            mockVatSubscriptionCall()
+            mockUpdateContactPreference(vrn, ContactPreference.digital)(Future(Right(UpdatePPOBSuccess("success"))))
+            target().submit(yesRequest)
+          }
 
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              mockVatSubscriptionCall()
-              mockUpdateContactPreference(vrn, ContactPreference.digital)(Future(Right(UpdatePPOBSuccess("success"))))
-              target().submit(yesRequest)
-            }
+          "return 303 (SEE OTHER)" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
 
-            "return 303 (SEE OTHER)" in {
-              status(result) shouldBe Status.SEE_OTHER
-            }
-
-            "audit the change landline number event" in {
-              verifyExtendedAudit(
-                DigitalContactPreferenceAuditModel(
-                  testValidationEmail,
-                  vrn,
-                  ContactPreference.paper,
-                  ContactPreference.digital
-                )
+          "audit the change landline number event" in {
+            verifyExtendedAudit(
+              DigitalContactPreferenceAuditModel(
+                testValidationEmail,
+                vrn,
+                ContactPreference.paper,
+                ContactPreference.digital
               )
-              reset(mockAuditingService)
-            }
-
-            "redirect to the confirmation controller" in {
-              redirectLocation(result) shouldBe
-                Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url)
-            }
+            )
+            reset(mockAuditingService)
           }
 
-          "there was a conflict returned when trying to update the contact preference" should {
-
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              mockVatSubscriptionCall()
-              mockUpdateContactPreference(vrn, ContactPreference.digital)(
-                Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-              target().submit(yesRequest)
-            }
-
-            "return 303" in {
-              status(result) shouldBe Status.SEE_OTHER
-            }
-
-            "redirect the user to the manage-vat overview page" in {
-              redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
-            }
-          }
-
-          "there was an unexpected error trying to update the contact preference" should {
-
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              mockVatSubscriptionCall()
-              mockUpdateContactPreference(vrn, ContactPreference.digital)(
-                Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't update contact preference"))))
-              target().submit(yesRequest)
-            }
-
-            "return 500" in {
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-            }
-
-            "show the internal server error page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
-            }
+          "redirect to the confirmation controller" in {
+            redirectLocation(result) shouldBe
+              Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email").url)
           }
         }
 
-        "the user does not have a verified email address in ETMP" should {
+        "there was a conflict returned when trying to update the contact preference" should {
 
           lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            mockVatSubscriptionCall(Right(customerInfoEmailUnverified))
+            mockVatSubscriptionCall()
+            mockUpdateContactPreference(vrn, ContactPreference.digital)(
+              Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
             target().submit(yesRequest)
           }
 
@@ -238,114 +179,131 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
             status(result) shouldBe Status.SEE_OTHER
           }
 
-          "redirect the user to the verification route to update email and contact preference" in {
-            redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url)
+          "redirect the user to the manage-vat overview page" in {
+            redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
           }
         }
 
-        "the customer info call fails" should {
+        "there was an unexpected error trying to update the contact preference" should {
 
           lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            mockVatSubscriptionCall(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error")))
+            mockVatSubscriptionCall()
+            mockUpdateContactPreference(vrn, ContactPreference.digital)(
+              Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't update contact preference"))))
             target().submit(yesRequest)
           }
 
           "return 500" in {
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
+
+          "show the internal server error page" in {
+            messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+          }
         }
       }
 
-      "the user submits after selecting an 'No' option" should {
+      "the user does not have a verified email address in ETMP" should {
 
-        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          requestWithPaperPref
-            .withFormUrlEncodedBody((yesNo, "no"))
-            .withSession(
-              SessionKeys.validationEmailKey -> testValidationEmail,
-              SessionKeys.contactPrefUpdate -> "true"
-            )
         lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          target().submit()(yesRequest)
+          mockVatSubscriptionCall(Right(customerInfoEmailUnverified))
+          target().submit(yesRequest)
         }
 
-        "return 303 (SEE OTHER)" in {
+        "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
         }
 
-        s"Redirect to the '${controllers.email.routes.CaptureEmailController.showPrefJourney().url}'" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney().url)
+        "redirect the user to the verification route to update email and contact preference" in {
+          redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url)
         }
       }
 
-      "the user submits without selecting an option" should {
-
-        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          requestWithPaperPref
-            .withFormUrlEncodedBody((yesNo, ""))
-            .withSession(
-              SessionKeys.validationEmailKey -> testValidationEmail,
-              SessionKeys.contactPrefUpdate -> "true"
-            )
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          target().submit()(yesRequest)
-        }
-
-        "return a 400" in {
-          status(result) shouldBe Status.BAD_REQUEST
-        }
-      }
-
-      "the user does not have an email in session" should {
-
-        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          requestWithPaperPref
-            .withFormUrlEncodedBody((yesNo, "no"))
-            .withSession(SessionKeys.contactPrefUpdate -> "true")
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          target().submit()(yesRequest)
-        }
-
-        "return an ISE" in {
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-      }
-
-      s"the ${SessionKeys.contactPrefUpdate} key is not in session" should {
-
-        lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-          requestWithPaperPref
-            .withFormUrlEncodedBody((yesNo, "yes"))
-            .withSession(SessionKeys.validationEmailKey -> testValidationEmail)
+      "the customer info call fails" should {
 
         lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          target().submit()(yesRequest)
+          mockVatSubscriptionCall(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error")))
+          target().submit(yesRequest)
         }
 
-        "return 303 (SEE OTHER)" in {
-          status(result) shouldBe Status.SEE_OTHER
-        }
-
-        s"Redirect to the '${controllers.contactPreference.routes.EmailPreferenceController.show().url}'" in {
-          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
+        "return 500" in {
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
     }
 
-    "the letterToConfirmedEmail switch is disabled" when {
+    "the user submits after selecting an 'No' option" should {
 
+      lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+        requestWithPaperPref
+          .withFormUrlEncodedBody((yesNo, "no"))
+          .withSession(
+            SessionKeys.validationEmailKey -> testValidationEmail,
+            SessionKeys.contactPrefUpdate -> "true"
+          )
       lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(false)
-        target().submit()(requestWithPaperPref)
+        target().submit()(yesRequest)
       }
 
-      "return a 404" in {
-        status(result) shouldBe Status.NOT_FOUND
+      "return 303 (SEE OTHER)" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      s"Redirect to the '${controllers.email.routes.CaptureEmailController.showPrefJourney().url}'" in {
+        redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney().url)
+      }
+    }
+
+    "the user submits without selecting an option" should {
+
+      lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+        requestWithPaperPref
+          .withFormUrlEncodedBody((yesNo, ""))
+          .withSession(
+            SessionKeys.validationEmailKey -> testValidationEmail,
+            SessionKeys.contactPrefUpdate -> "true"
+          )
+      lazy val result = {
+        target().submit()(yesRequest)
+      }
+
+      "return a 400" in {
+        status(result) shouldBe Status.BAD_REQUEST
+      }
+    }
+
+    "the user does not have an email in session" should {
+
+      lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+        requestWithPaperPref
+          .withFormUrlEncodedBody((yesNo, "no"))
+          .withSession(SessionKeys.contactPrefUpdate -> "true")
+      lazy val result = {
+        target().submit()(yesRequest)
+      }
+
+      "return an ISE" in {
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    s"the ${SessionKeys.contactPrefUpdate} key is not in session" should {
+
+      lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+        requestWithPaperPref
+          .withFormUrlEncodedBody((yesNo, "yes"))
+          .withSession(SessionKeys.validationEmailKey -> testValidationEmail)
+
+      lazy val result = {
+        target().submit()(yesRequest)
+      }
+
+      "return 303 (SEE OTHER)" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      s"Redirect to the '${controllers.contactPreference.routes.EmailPreferenceController.show().url}'" in {
+        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
       }
     }
 

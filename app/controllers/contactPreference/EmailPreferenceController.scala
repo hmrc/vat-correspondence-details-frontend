@@ -46,44 +46,36 @@ class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptio
   def show: Action[AnyContent] = (contactPreferencePredicate andThen
                                   paperPrefPredicate andThen
                                   inFlightContactPrefPredicate).async { implicit user =>
-    if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      Future.successful(Ok(emailPreferenceView(formYesNo))
-        .removingFromSession(SessionKeys.contactPrefUpdate)
-        .addingToSession(SessionKeys.currentContactPrefKey -> paper))
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
-    }
+    Future.successful(Ok(emailPreferenceView(formYesNo))
+      .removingFromSession(SessionKeys.contactPrefUpdate)
+      .addingToSession(SessionKeys.currentContactPrefKey -> paper))
   }
 
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen
                                     paperPrefPredicate andThen
                                     inFlightContactPrefPredicate).async { implicit user =>
-    if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      formYesNo.bindFromRequest().fold (
-        formWithErrors => Future.successful(BadRequest(emailPreferenceView(formWithErrors))),
-        {
-          case Yes =>
-             vatSubscriptionService.getCustomerInfo(user.vrn).map {
-               case Right(details) =>
-                 val result = details.ppob.contactDetails.flatMap(_.emailAddress) match {
-                   case Some(_) =>
-                     Redirect(controllers.contactPreference.routes.EmailToUseController.show())
-                   case None =>
-                     Redirect(controllers.contactPreference.routes.AddEmailAddressController.show())
-                 }
-                 result.addingToSession(SessionKeys.contactPrefUpdate -> "true")
+    formYesNo.bindFromRequest().fold (
+      formWithErrors => Future.successful(BadRequest(emailPreferenceView(formWithErrors))),
+      {
+        case Yes =>
+          vatSubscriptionService.getCustomerInfo(user.vrn).map {
+            case Right(details) =>
+              val result = details.ppob.contactDetails.flatMap(_.emailAddress) match {
+                case Some(_) =>
+                  Redirect(controllers.contactPreference.routes.EmailToUseController.show())
+                case None =>
+                  Redirect(controllers.contactPreference.routes.AddEmailAddressController.show())
+              }
+              result.addingToSession(SessionKeys.contactPrefUpdate -> "true")
 
-              case Left(_) =>
+            case Left(_) =>
               Logger.warn("[EmailPreferenceController][.submit] Unable to retrieve email address")
               authComps.errorHandler.showInternalServerError
 
             }
 
-          case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
-        }
-      )
-    } else {
-      Future.successful(NotFound(errorHandler.notFoundTemplate))
-    }
+        case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
+      }
+    )
   }
 }

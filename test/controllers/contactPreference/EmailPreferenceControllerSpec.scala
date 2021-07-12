@@ -20,7 +20,7 @@ import common.SessionKeys
 import controllers.ControllerBaseSpec
 import forms.YesNoForm.{yes, yesNo, no => _no}
 import models.contactPreferences.ContactPreference.paper
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers._
 import views.html.contactPreference.EmailPreferenceView
 import assets.BaseTestConstants._
@@ -37,146 +37,107 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
                                                       inject[EmailPreferenceView]
                                                       )
 
-  "The letterToConfirmedEmailEnabled feature switch is off" when {
+  ".show is called" should {
 
-    ".show is called" should {
-
-      "return an NOT_FOUND result" in {
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(false)
-          controller.show(requestWithPaperPref)
-        }
-
-        status(result) shouldBe NOT_FOUND
-      }
+    lazy val result = {
+      controller.show(requestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
     }
 
-    insolvencyCheck(controller.show())
+    "return an OK result" in {
+      status(result) shouldBe OK
+    }
 
-    ".submit is called" should {
+    "return HTML" in {
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
 
-      "return an NOT_FOUND result" in {
+    s"not contain the session key ${SessionKeys.contactPrefUpdate}" in {
+      session(result).get(SessionKeys.contactPrefUpdate) shouldBe None
+    }
 
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(false)
-          controller.submit(requestWithPaperPref)
-        }
-
-        status(result) shouldBe NOT_FOUND
-      }
+    "add the current contact preference to session" in {
+      session(result).get(SessionKeys.currentContactPrefKey) shouldBe Some(paper)
     }
   }
 
-  "The letterToConfirmedEmailEnabled feature switch is on" when {
+  ".submit is called with a Yes and client has an email address" should {
 
-    ".show is called" should {
-
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.show(requestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
-      }
-
-      "return an OK result" in {
-        status(result) shouldBe OK
-      }
-
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
-      }
-
-      s"not contain the session key ${SessionKeys.contactPrefUpdate}" in {
-        session(result).get(SessionKeys.contactPrefUpdate) shouldBe None
-      }
-
-      "add the current contact preference to session" in {
-        session(result).get(SessionKeys.currentContactPrefKey) shouldBe Some(paper)
-      }
+    lazy val result = {
+      mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+      controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
     }
 
-    ".submit is called with a Yes and client has an email address" should {
-
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
-        controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
-      }
-
-      "return a SEE_OTHER result" in {
-        status(result) shouldBe SEE_OTHER
-      }
-
-      "be at the correct url" in {
-        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/preference-confirm-email")
-      }
-
-      s"a value is added to the ${SessionKeys.contactPrefUpdate} key" in {
-        session(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
-      }
+    "return a SEE_OTHER result" in {
+      status(result) shouldBe SEE_OTHER
     }
 
-    ".submit is called with a Yes and client does not have an email address" should {
-
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        mockGetCustomerInfo(vrn)(Future.successful(Right(minCustomerInfoModel)))
-        controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
-      }
-
-      "return a SEE_OTHER result" in {
-        status(result) shouldBe SEE_OTHER
-      }
-
-      "be at the correct url" in {
-        redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/contact-preference/add-email-address")
-      }
-
-      s"a value is added to the ${SessionKeys.contactPrefUpdate} key" in {
-        session(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
-      }
+    "be at the correct url" in {
+      redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/preference-confirm-email")
     }
 
-    ".submit is called with but the get customer info call fails" should {
+    s"a value is added to the ${SessionKeys.contactPrefUpdate} key" in {
+      session(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
+    }
+  }
 
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
-          controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
+  ".submit is called with a Yes and client does not have an email address" should {
 
-        }
-
-        "return an INTERNAL_SERVER_ERROR result" in {
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-      }
-
-    ".submit is called with a No" should {
-
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
-        controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> _no))
-      }
-
-      "return a SEE_OTHER result" in {
-        status(result) shouldBe SEE_OTHER
-      }
-
-      "be at the correct url" in {
-        redirectLocation(result) shouldBe Some(mockConfig.dynamicJourneyEntryUrl(false))
-      }
+    lazy val result = {
+      mockGetCustomerInfo(vrn)(Future.successful(Right(minCustomerInfoModel)))
+      controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
     }
 
-    ".submit is called with no form data" should {
+    "return a SEE_OTHER result" in {
+      status(result) shouldBe SEE_OTHER
+    }
 
-      "return a BAD_REQUEST result" in {
+    "be at the correct url" in {
+      redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/contact-preference/add-email-address")
+    }
 
-        lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
-          controller.submit(requestWithPaperPref.withFormUrlEncodedBody())
-        }
+    s"a value is added to the ${SessionKeys.contactPrefUpdate} key" in {
+      session(result).get(SessionKeys.contactPrefUpdate) shouldBe Some("true")
+    }
+  }
 
-        status(result) shouldBe BAD_REQUEST
+  ".submit is called with but the get customer info call fails" should {
+
+    lazy val result = {
+      mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+      controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
+
+    }
+
+    "return an INTERNAL_SERVER_ERROR result" in {
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+    }
+  }
+
+  ".submit is called with a No" should {
+
+    lazy val result = {
+      controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> _no))
+    }
+
+    "return a SEE_OTHER result" in {
+      status(result) shouldBe SEE_OTHER
+    }
+
+    "be at the correct url" in {
+      redirectLocation(result) shouldBe Some(mockConfig.dynamicJourneyEntryUrl(false))
+    }
+  }
+
+  ".submit is called with no form data" should {
+
+    "return a BAD_REQUEST result" in {
+
+      lazy val result = {
+        controller.submit(requestWithPaperPref.withFormUrlEncodedBody())
       }
+
+      status(result) shouldBe BAD_REQUEST
     }
   }
 

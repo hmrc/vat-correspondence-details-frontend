@@ -22,7 +22,7 @@ import forms.YesNoForm
 import forms.YesNoForm.{yes, yesNo}
 import models.contactPreferences.ContactPreference._
 import org.jsoup.Jsoup
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
@@ -37,41 +37,24 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
     "user is authorised" when {
 
-      "user has paper preference" when {
+      "user has paper preference" should {
 
-        "feature switch is on" should {
-
-          lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(true)
-            controller.show(requestWithSession.withSession(SessionKeys.contactPrefUpdate -> "true"))
-          }
-
-          "return an OK result" in {
-            status(result) shouldBe OK
-          }
-
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
-          }
+        lazy val result = {
+          controller.show(requestWithSession.withSession(SessionKeys.contactPrefUpdate -> "true"))
         }
 
-        "feature switch is off" should {
+        "return an OK result" in {
+          status(result) shouldBe OK
+        }
 
-          "return an NOT_FOUND result" in {
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(false)
-              controller.show(requestWithSession)
-            }
-
-            status(result) shouldBe NOT_FOUND
-          }
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
         }
       }
 
       "user has a digital preference" should {
         lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
           controller.show(requestWithDigitalPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
         }
 
@@ -88,7 +71,6 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
     "user is unauthorised" should {
 
       lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
         controller.show(request)
       }
 
@@ -105,66 +87,48 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
       "the user currently has a digital preference" when {
 
-        "the letterToConfirmedEmailEnabled feature switch is off" should {
+        "'Yes' is submitted'" should {
 
           lazy val result = {
-            mockConfig.features.letterToConfirmedEmailEnabled(false)
-            controller.submit(requestWithSession)
+            controller.submit(requestWithSession.withFormUrlEncodedBody(yesNo -> yes))
           }
 
-          "return a NOT_FOUND result" in {
-            status(result) shouldBe NOT_FOUND
+          "return a SEE_OTHER result" in {
+            status(result) shouldBe SEE_OTHER
+          }
+
+          "redirect to confirmation page" in {
+            redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney().url)
           }
         }
 
-        "the letterToConfirmedEmailEnabled feature switch is on" when {
+        "'No' is submitted'" should {
 
-          "'Yes' is submitted'" should {
-
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              controller.submit(requestWithSession.withFormUrlEncodedBody(yesNo -> yes))
-            }
-
-            "return a SEE_OTHER result" in {
-              status(result) shouldBe SEE_OTHER
-            }
-
-            "redirect to confirmation page" in {
-              redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney().url)
-            }
+          lazy val result = {
+            controller.submit()(requestWithSession.withFormUrlEncodedBody(yesNo -> YesNoForm.no))
           }
 
-          "'No' is submitted'" should {
-
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              controller.submit()(requestWithSession.withFormUrlEncodedBody(yesNo -> YesNoForm.no))
-            }
-
-            "return a SEE_OTHER result" in {
-              status(result) shouldBe SEE_OTHER
-            }
-
-            "redirect to BTA" in {
-              redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
-            }
+          "return a SEE_OTHER result" in {
+            status(result) shouldBe SEE_OTHER
           }
 
-          "Nothing is submitted (form has errors)" when {
+          "redirect to BTA" in {
+            redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
+          }
+        }
 
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              controller.submit()(requestWithSession.withFormUrlEncodedBody())
-            }
+        "Nothing is submitted (form has errors)" when {
 
-            "return a BAD_REQUEST result" in {
-              status(result) shouldBe BAD_REQUEST
-            }
+          lazy val result = {
+            controller.submit()(requestWithSession.withFormUrlEncodedBody())
+          }
 
-            "render the view with errors" in {
-              Jsoup.parse(bodyOf(result)).title should include("Error:")
-            }
+          "return a BAD_REQUEST result" in {
+            status(result) shouldBe BAD_REQUEST
+          }
+
+          "render the view with errors" in {
+            Jsoup.parse(bodyOf(result)).title should include("Error:")
           }
         }
       }
@@ -172,7 +136,6 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
       "the user currently has a paper preference" should {
 
         lazy val result = {
-          mockConfig.features.letterToConfirmedEmailEnabled(true)
           controller.submit(request.withSession(SessionKeys.currentContactPrefKey -> digital))
         }
 
@@ -188,7 +151,6 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
     "user is unauthorised" should {
       lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(true)
         mockIndividualWithoutEnrolment()
         controller.submit(requestWithSession)
       }

@@ -245,101 +245,66 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
   "Calling the showPrefJourney action" when {
 
-    "the letterToConfirmedEmail feature switch is turned on" when {
+    "a user is enrolled with a valid enrolment" when {
 
-      "a user is enrolled with a valid enrolment" when {
+      "there is an email in session" when {
 
-        "there is an email in session" when {
+        "the validation email is retrieved from session" should {
 
-          "the validation email is retrieved from session" should {
-
-            lazy val result ={
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().showPrefJourney(request.withSession(
-                SessionKeys.validationEmailKey -> testValidationEmail,
-                SessionKeys.currentContactPrefKey -> paper
-              ))
-            }
-            lazy val document = Jsoup.parse(bodyOf(result))
-
-            "return 200" in {
-              status(result) shouldBe Status.OK
-            }
-
-            "return HTML" in {
-              contentType(result)(defaultTimeout) shouldBe Some("text/html")
-              charset(result) shouldBe Some("utf-8")
-            }
-
-            "prepopulate the form with the validation email" in {
-              document.select("input").attr("value") shouldBe testValidationEmail
-            }
-
+          lazy val result ={
+            target().showPrefJourney(request.withSession(
+              SessionKeys.validationEmailKey -> testValidationEmail,
+              SessionKeys.currentContactPrefKey -> paper
+            ))
           }
-          "the previous form value is retrieved from session" should {
+          lazy val document = Jsoup.parse(bodyOf(result))
 
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().showPrefJourney(request.withSession(
-                SessionKeys.validationEmailKey -> testValidationEmail,
-                SessionKeys.prepopulationEmailKey -> testValidEmail,
-                SessionKeys.currentContactPrefKey -> paper
-              ))
-            }
-            lazy val document = Jsoup.parse(bodyOf(result))
-
-            "return 200" in {
-              status(result) shouldBe Status.OK
-            }
-
-            "return HTML" in {
-              contentType(result) shouldBe Some("text/html")
-              charset(result) shouldBe Some("utf-8")
-            }
-
-            "prepopulate the form with the previously entered form value" in {
-              document.select("input").attr("value") shouldBe testValidEmail
-            }
+          "return 200" in {
+            status(result) shouldBe Status.OK
           }
+
+          "return HTML" in {
+            contentType(result)(defaultTimeout) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "prepopulate the form with the validation email" in {
+            document.select("input").attr("value") shouldBe testValidationEmail
+          }
+
         }
+        "the previous form value is retrieved from session" should {
 
-        "there is no email in session" when {
+          lazy val result = {
+            target().showPrefJourney(request.withSession(
+              SessionKeys.validationEmailKey -> testValidationEmail,
+              SessionKeys.prepopulationEmailKey -> testValidEmail,
+              SessionKeys.currentContactPrefKey -> paper
+            ))
+          }
+          lazy val document = Jsoup.parse(bodyOf(result))
 
-          lazy val result = target().showPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
-
-          "return 500" in {
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          "return 200" in {
+            status(result) shouldBe Status.OK
           }
 
           "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
           }
+
+          "prepopulate the form with the previously entered form value" in {
+            document.select("input").attr("value") shouldBe testValidEmail
+          }
         }
       }
 
-      "a user does not have a valid enrolment" should {
+      "there is no email in session" when {
 
-        lazy val result = target().showPrefJourney(request)
+        lazy val result = target().showPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
 
-        "return 403" in {
-          mockIndividualWithoutEnrolment()
-          status(result) shouldBe Status.FORBIDDEN
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-      }
-
-      "a user is not logged in" should {
-
-        lazy val result = target().submitPrefJourney(request)
-
-        "return 401" in {
-          mockMissingBearerToken()
-          status(result) shouldBe Status.UNAUTHORIZED
+        "return 500" in {
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
         "return HTML" in {
@@ -349,17 +314,33 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "letterToConfirmedEmail feature switch is off" should {
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(false)
-        target().showPrefJourney(request.withSession(
-          SessionKeys.validationEmailKey -> testValidationEmail,
-          SessionKeys.currentContactPrefKey -> paper
-        ))
+    "a user does not have a valid enrolment" should {
+
+      lazy val result = target().showPrefJourney(request)
+
+      "return 403" in {
+        mockIndividualWithoutEnrolment()
+        status(result) shouldBe Status.FORBIDDEN
       }
 
-      "return NOT FOUND" in {
-        status(result) shouldBe Status.NOT_FOUND
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+    }
+
+    "a user is not logged in" should {
+
+      lazy val result = target().submitPrefJourney(request)
+
+      "return 401" in {
+        mockMissingBearerToken()
+        status(result) shouldBe Status.UNAUTHORIZED
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
       }
     }
 
@@ -368,74 +349,55 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
   "Calling the submitPrefJourney action" when {
 
-    "the letterToConfirmedEmail feature switch is turned on" when {
+    "a user is enrolled with a valid enrolment" when {
 
-      "a user is enrolled with a valid enrolment" when {
+      "there is an email in session" when {
 
-        "there is an email in session" when {
+        "the form is successfully submitted" should {
 
-          "the form is successfully submitted" should {
-
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().submitPrefJourney(request
-                .withFormUrlEncodedBody("email" -> testValidEmail)
-                .withSession(
-                  SessionKeys.validationEmailKey -> testValidationEmail,
-                  SessionKeys.currentContactPrefKey -> paper
-                )
+          lazy val result = {
+            target().submitPrefJourney(request
+              .withFormUrlEncodedBody("email" -> testValidEmail)
+              .withSession(
+                SessionKeys.validationEmailKey -> testValidationEmail,
+                SessionKeys.currentContactPrefKey -> paper
               )
-            }
-            "redirect to the confirm email view" in {
-              status(result) shouldBe Status.SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.email.routes.ConfirmEmailController.showContactPref().url)
-            }
-
-            "add the new email to the session" in {
-              session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidEmail)
-            }
-
-            "audit the attempted email address change" in {
-              verifyExtendedAudit(
-                AttemptedContactPrefEmailAuditModel(
-                  Some(testValidationEmail),
-                  testValidEmail,
-                  "999999999"
-                )
-              )
-            }
+            )
+          }
+          "redirect to the confirm email view" in {
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.email.routes.ConfirmEmailController.showContactPref().url)
           }
 
-          "the form is unsuccessfully submitted" should {
+          "add the new email to the session" in {
+            session(result).get(SessionKeys.prepopulationEmailKey) shouldBe Some(testValidEmail)
+          }
 
-            lazy val result = {
-              mockConfig.features.letterToConfirmedEmailEnabled(true)
-              target().submitPrefJourney(request
-                .withFormUrlEncodedBody("email" -> testInvalidEmail)
-                .withSession(
-                  SessionKeys.validationEmailKey -> testValidationEmail,
-                  SessionKeys.currentContactPrefKey -> paper
-                )
+          "audit the attempted email address change" in {
+            verifyExtendedAudit(
+              AttemptedContactPrefEmailAuditModel(
+                Some(testValidationEmail),
+                testValidEmail,
+                "999999999"
               )
-            }
-
-            "reload the page with errors" in {
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-
-            "return HTML" in {
-              contentType(result) shouldBe Some("text/html")
-              charset(result) shouldBe Some("utf-8")
-            }
+            )
           }
         }
 
-        "there is no email in session" when {
+        "the form is unsuccessfully submitted" should {
 
-          lazy val result = target().submitPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
+          lazy val result = {
+            target().submitPrefJourney(request
+              .withFormUrlEncodedBody("email" -> testInvalidEmail)
+              .withSession(
+                SessionKeys.validationEmailKey -> testValidationEmail,
+                SessionKeys.currentContactPrefKey -> paper
+              )
+            )
+          }
 
-          "render the error view" in {
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          "reload the page with errors" in {
+            status(result) shouldBe Status.BAD_REQUEST
           }
 
           "return HTML" in {
@@ -445,28 +407,12 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         }
       }
 
-      "a user does not have a valid enrolment" should {
+      "there is no email in session" when {
 
-        lazy val result = target().submitPrefJourney(request)
+        lazy val result = target().submitPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
 
-        "return 403" in {
-          mockIndividualWithoutEnrolment()
-          status(result) shouldBe Status.FORBIDDEN
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-      }
-
-      "a user is not logged in" should {
-
-        lazy val result = target().submit(request)
-
-        "return 401" in {
-          mockMissingBearerToken()
-          status(result) shouldBe Status.UNAUTHORIZED
+        "render the error view" in {
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
         "return HTML" in {
@@ -476,18 +422,33 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "letterToConfirmedEmail feature switch is off" should {
+    "a user does not have a valid enrolment" should {
 
-      lazy val result = {
-        mockConfig.features.letterToConfirmedEmailEnabled(false)
-        target().submitPrefJourney(request.withSession(
-          SessionKeys.validationEmailKey -> testValidationEmail,
-          SessionKeys.currentContactPrefKey -> paper
-        ))
+      lazy val result = target().submitPrefJourney(request)
+
+      "return 403" in {
+        mockIndividualWithoutEnrolment()
+        status(result) shouldBe Status.FORBIDDEN
       }
 
-      "return NOT FOUND" in {
-        status(result) shouldBe Status.NOT_FOUND
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+    }
+
+    "a user is not logged in" should {
+
+      lazy val result = target().submit(request)
+
+      "return 401" in {
+        mockMissingBearerToken()
+        status(result) shouldBe Status.UNAUTHORIZED
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
       }
     }
 

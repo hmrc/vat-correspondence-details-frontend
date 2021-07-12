@@ -55,39 +55,31 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
   def show: Action[AnyContent] = (contactPreferencePredicate andThen
                                   digitalPrefPredicate andThen
                                   inFlightContactPrefPredicate).async { implicit user =>
-    if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      vatSubscriptionService.getCustomerInfo(user.vrn) map {
-        case Right(details) => Ok(view(formYesNo, displayAddress(details.ppob)))
-        case _ =>
-          Logger.warn("[LetterPreferenceController][show] Unable to retrieve current business address")
-          authComps.errorHandler.showInternalServerError
-      }
-    } else {
-      Future.successful(NotFound(authComps.errorHandler.notFoundTemplate))
+    vatSubscriptionService.getCustomerInfo(user.vrn) map {
+      case Right(details) => Ok(view(formYesNo, displayAddress(details.ppob)))
+      case _ =>
+        Logger.warn("[LetterPreferenceController][show] Unable to retrieve current business address")
+        authComps.errorHandler.showInternalServerError
     }
   }
 
   def submit: Action[AnyContent] = (contactPreferencePredicate andThen
                                     digitalPrefPredicate andThen
                                     inFlightContactPrefPredicate).async { implicit user =>
-    if(appConfig.features.letterToConfirmedEmailEnabled()) {
-      formYesNo.bindFromRequest().fold(
-        formWithErrors => {
-          vatSubscriptionService.getCustomerInfo(user.vrn) map {
-            case Right(details) => BadRequest(view(formWithErrors, displayAddress(details.ppob)))
-            case _ =>
-              Logger.warn("[LetterPreferenceController][submit] Unable to retrieve current business address")
-              authComps.errorHandler.showInternalServerError
-          }
-        },
-        {
-          case Yes => updateCommsPreference
-          case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
+    formYesNo.bindFromRequest().fold(
+      formWithErrors => {
+        vatSubscriptionService.getCustomerInfo(user.vrn) map {
+          case Right(details) => BadRequest(view(formWithErrors, displayAddress(details.ppob)))
+          case _ =>
+            Logger.warn("[LetterPreferenceController][submit] Unable to retrieve current business address")
+            authComps.errorHandler.showInternalServerError
         }
-      )
-    } else {
-      Future.successful(NotFound(authComps.errorHandler.notFoundTemplate))
-    }
+      },
+      {
+        case Yes => updateCommsPreference
+        case No => Future.successful(Redirect(appConfig.btaAccountDetailsUrl))
+      }
+    )
   }
 
   private def updateCommsPreference(implicit hc: HeaderCarrier, user: User[_]): Future[Result] =

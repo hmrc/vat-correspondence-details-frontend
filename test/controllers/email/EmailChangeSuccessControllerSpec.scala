@@ -18,7 +18,6 @@ package controllers.email
 
 import common.SessionKeys._
 import controllers.ControllerBaseSpec
-import mocks.MockAuditingService
 import models.errors.ErrorModel
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
@@ -31,7 +30,7 @@ import org.jsoup.Jsoup
 
 import scala.concurrent.Future
 
-class EmailChangeSuccessControllerSpec extends ControllerBaseSpec with MockAuditingService {
+class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
 
   val view: ChangeSuccessView = inject[ChangeSuccessView]
 

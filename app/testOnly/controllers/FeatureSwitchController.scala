@@ -31,8 +31,7 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
   def featureSwitch: Action[AnyContent] = Action { implicit request =>
     Ok(featureSwitchView(FeatureSwitchForm.form.fill(
       FeatureSwitchModel(
-        emailVerification = appConfig.features.emailVerificationEnabled(),
-        letterToConfirmedEmail = appConfig.features.letterToConfirmedEmailEnabled()
+        emailVerification = appConfig.features.emailVerificationEnabled()
       )
     )))
   }
@@ -46,7 +45,6 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
 
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.emailVerificationEnabled(model.emailVerification)
-    appConfig.features.letterToConfirmedEmailEnabled(model.letterToConfirmedEmail)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 }

@@ -21,13 +21,13 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "5.4.0"
-val playFrontendGovUk          = "0.71.0-play-26"
-val playFrontendHmrc           = "0.58.0-play-26"
+val bootstrapPlayVersion       = "5.7.0"
+val playFrontendGovUk          = "0.80.0-play-26"
+val playFrontendHmrc           = "0.82.0-play-26"
 val playPartialsVersion        = "7.1.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
-val playUiVersion              = "9.0.0-play-26"
-val playLanguageVersion        = "4.10.0-play-26"
+val playUiVersion              = "9.6.0-play-26"
+val playLanguageVersion        = "5.1.0-play-26"
 val scalaTestPlusVersion       = "3.1.3"
 val hmrcTestVersion            = "3.9.0-play-26"
 val scalatestVersion           = "3.0.8"
