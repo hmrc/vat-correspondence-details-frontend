@@ -16,18 +16,18 @@
 
 @import play.twirl.api.HtmlFormat
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
-@import uk.gov.hmrc.play.views.html.layouts.TrackingConsentSnippet
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.utils.ServiceNameUtil
 
 @this(govukLayout: GovukLayout,
       hmrcLanguageSelect: HmrcLanguageSelect,
       hmrcTimeoutDialog: HmrcTimeoutDialog,
-      govukPhaseBanner: GovukPhaseBanner,
+      standardBetaBanner: StandardBetaBanner,
       govukHeader: GovukHeader,
+      hmrcStandardHeader: HmrcStandardHeader,
       hmrcStandardFooter: HmrcStandardFooter,
       hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
-      trackingConsentSnippet: TrackingConsentSnippet)
+      hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet)
 
 @(pageTitle: String,
   serviceName: Option[String] = None,
@@ -63,13 +63,6 @@
   ))
 }
 
-@phaseBannerContent = {
-  @messages("banner.newService")
-  <a id="beta-banner-feedback" class="govuk-link" href="@appConfig.feedbackUrl(request.uri)">
-  @messages("banner.feedback")</a>
-  @messages("banner.feedbackImprove")
-}
-
 @languageSelect = {
   @hmrcLanguageSelect(LanguageSelect(
     language = if (messages.lang.language == "en") En else Cy,
@@ -80,10 +73,6 @@
 }
 
 @beforeContentHtml = {
-  @govukPhaseBanner(PhaseBanner(
-    tag = Some(Tag(content = Text(messages("banner.phaseName")))),
-    content = HtmlContent(phaseBannerContent)
-  ))
   <div class="govuk-body govuk-!-margin-bottom-0">
     @serviceInfoContent
   </div>
@@ -92,7 +81,7 @@
 }
 
 @head = {
-  @trackingConsentSnippet(nonce = None)
+  @hmrcTrackingConsentSnippet()
 
   <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/application.css")'>
 
@@ -108,17 +97,12 @@
 }
 
 @header = {
-  @govukHeader(Header(
+  @hmrcStandardHeader(
     serviceName = Some(navTitle),
-    serviceUrl = Some("#"),
-    navigation =
-      if(showLogout)
-        Some(Seq(HeaderNavigation(
-          text = Some(messages("base.signOut")),
-          href = Some(routes.SignOutController.signOut(feedbackOnSignOut).url)
-        )))
-      else None
-  ))
+    signOutUrl = if(showLogout) Some(routes.SignOutController.signOut(feedbackOnSignOut).url) else None,
+    phaseBanner = Some(standardBetaBanner(url = appConfig.feedbackUrl(request.uri))),
+    displayHmrcBanner = false
+  )
 }
 
 @content = {

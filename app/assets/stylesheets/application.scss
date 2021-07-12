@@ -9,10 +9,6 @@ $hmrc-assets-path: "/vat-through-software/account/correspondence/assets/lib/hmrc
   font-weight: bold;
 }
 
-.govuk-header__content > nav {
-  float: right;
-}
-
 .govuk-main-wrapper {
   padding-top: 0;
 }
@@ -33,11 +29,4 @@ $hmrc-assets-path: "/vat-through-software/account/correspondence/assets/lib/hmrc
   color:govuk-colour("white");
   background:#28a197;
   text-align:center;
-}
-
-.js-enabled .govuk-header__menu-button {
-  display: none;
-}
-.js-enabled .govuk-header__navigation {
-  display: block;
 }
