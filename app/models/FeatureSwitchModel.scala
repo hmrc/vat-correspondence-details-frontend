@@ -17,5 +17,5 @@
 package models
 
 case class FeatureSwitchModel(emailVerification: Boolean,
-                              languageSelector: Boolean,
                               letterToConfirmedEmail: Boolean)
+
