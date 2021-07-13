@@ -55,7 +55,7 @@ class PasscodeViewSpec extends ViewBaseSpec {
     }
 
     "have the correct first paragraph" in {
-      elementText(".govuk-body:nth-of-type(1)") shouldBe s"We have sent a code to: $testEmail"
+      elementText("div > div > div > p:nth-of-type(1)") shouldBe s"We have sent a code to: $testEmail"
     }
 
     "have the correct panel paragraph" in {
