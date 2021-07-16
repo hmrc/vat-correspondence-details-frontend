@@ -18,8 +18,8 @@ package forms
 
 import play.api.data.Form
 import play.api.data.Forms._
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
-import uk.gov.hmrc.play.mappers.StopOnFirstFail.constraint
+import utils.StopOnFirstFail
+import utils.StopOnFirstFail.constraint
 
 object EmailForm {
 

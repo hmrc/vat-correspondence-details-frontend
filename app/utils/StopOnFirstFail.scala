@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package utils
 
-import play.api.data.Form
-import play.api.data.Forms.text
-import utils.StopOnFirstFail
-import utils.StopOnFirstFail.constraint
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-object PasscodeForm {
+object StopOnFirstFail {
 
-  val form: Form[String] = Form(
-    "passcode" -> text.verifying(
-      StopOnFirstFail(
-        constraint[String]("passcode.error.empty", _.nonEmpty),
-        constraint[String]("passcode.error.invalid", _.length == 6)
-      )
-    )
-  )
+  def apply[T](constraints: Constraint[T]*) = Constraint { field: T =>
+    constraints.toList dropWhile (_ (field) == Valid) match {
+      case Nil => Valid
+      case constraint :: _ => constraint(field)
+    }
+  }
+
+  def constraint[T](message: String, validator: (T) => Boolean) =
+    Constraint((data: T) => if (validator(data)) Valid else Invalid(Seq(ValidationError(message))))
 }

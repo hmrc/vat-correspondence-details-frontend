@@ -26,7 +26,6 @@ val playFrontendGovUk          = "0.80.0-play-26"
 val playFrontendHmrc           = "0.82.0-play-26"
 val playPartialsVersion        = "7.1.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
-val playUiVersion              = "9.6.0-play-26"
 val playLanguageVersion        = "5.1.0-play-26"
 val scalaTestPlusVersion       = "3.1.3"
 val hmrcTestVersion            = "3.9.0-play-26"
@@ -73,7 +72,6 @@ val compile = Seq(
   "uk.gov.hmrc"       %% "bootstrap-frontend-play-26" % bootstrapPlayVersion,
   "uk.gov.hmrc"       %% "play-frontend-govuk"        % playFrontendGovUk,
   "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc,
-  "uk.gov.hmrc"       %% "play-ui"                    % playUiVersion,
   "uk.gov.hmrc"       %% "play-partials"              % playPartialsVersion,
   "uk.gov.hmrc"       %% "auth-client"                % authClientVersion,
   "uk.gov.hmrc"       %% "play-language"              % playLanguageVersion,
