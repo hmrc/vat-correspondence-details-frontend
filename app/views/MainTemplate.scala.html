@@ -99,6 +99,7 @@
 @header = {
   @hmrcStandardHeader(
     serviceName = Some(navTitle),
+    serviceUrl = ServiceNameUtil.generateServiceUrl,
     signOutUrl = if(showLogout) Some(routes.SignOutController.signOut(feedbackOnSignOut).url) else None,
     phaseBanner = Some(standardBetaBanner(url = appConfig.feedbackUrl(request.uri))),
     displayHmrcBanner = false

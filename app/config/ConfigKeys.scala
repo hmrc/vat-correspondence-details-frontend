@@ -58,6 +58,7 @@ object ConfigKeys {
   val vatSummaryFrontendOverviewUrl: String = "vat-summary-frontend.vatOverviewUrl"
 
   val btaHost: String = "business-tax-account.url"
+  val btaHomeUrl: String = "business-tax-account.homeUrl"
   val btaAccountDetailsUrl: String = "business-tax-account.accountDetails"
 
   val gtmContainer: String = "tracking-consent-frontend.gtm.container"

@@ -16,17 +16,22 @@
 
 package views.utils
 
+import config.AppConfig
 import models.User
 import play.api.i18n.Messages
 import play.api.mvc.Request
 
-object ServiceNameUtil{
+object ServiceNameUtil {
 
-  def generateHeader(implicit request: Request[_], messages: Messages): String = {
+  def generateHeader(implicit request: Request[_], messages: Messages): String =
     request match {
       case user: User[_] => if (user.isAgent) messages("common.agentService") else messages("common.clientService")
       case _ => messages("common.vat")
     }
-  }
 
+  def generateServiceUrl(implicit request: Request[_], appConfig: AppConfig): Option[String] =
+    request match {
+      case user: User[_] => if (user.isAgent) Some(appConfig.vatAgentClientLookupAgentHubPath) else Some(appConfig.btaHomeUrl)
+      case _ => None
+    }
 }
