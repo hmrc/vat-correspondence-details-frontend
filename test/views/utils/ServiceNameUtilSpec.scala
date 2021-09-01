@@ -36,12 +36,35 @@ class ServiceNameUtilSpec extends TestUtil {
       }
     }
 
-    "NOT given a user" should {
+    "not given a User" should {
 
       "return the client service name Business tax account" in {
         ServiceNameUtil.generateHeader(request, messages) shouldBe "VAT"
       }
     }
+  }
 
+  ".generateServiceUrl" when {
+
+    "given a User who is an Agent" should {
+
+      "return the Agent Hub URL" in {
+        ServiceNameUtil.generateServiceUrl(agent, mockConfig) shouldBe Some(mockConfig.vatAgentClientLookupAgentHubPath)
+      }
+    }
+
+    "given a User who is not an Agent" should {
+
+      "return the BTA home URL" in {
+        ServiceNameUtil.generateServiceUrl(user, mockConfig) shouldBe Some(mockConfig.btaHomeUrl)
+      }
+    }
+
+    "not given a User" should {
+
+      "return None" in {
+        ServiceNameUtil.generateServiceUrl(request, mockConfig) shouldBe None
+      }
+    }
   }
 }

@@ -57,6 +57,7 @@ trait AppConfig {
   def feedbackUrl(redirect: String): String
   val accessibilityLinkUrl: String
   val vatOverviewUrl: String
+  val btaHomeUrl: String
   val btaAccountDetailsUrl: String
   val gtmContainer: String
   def dynamicJourneyEntryUrl(isAgent: Boolean): String = {
@@ -139,6 +140,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override val vatOverviewUrl: String = sc.getString(Keys.vatSummaryFrontendServiceUrl) +
     sc.getString(Keys.vatSummaryFrontendOverviewUrl)
 
+  override val btaHomeUrl: String = sc.getString(Keys.btaHost) + sc.getString(Keys.btaHomeUrl)
   override val btaAccountDetailsUrl: String = sc.getString(Keys.btaHost) + sc.getString(Keys.btaAccountDetailsUrl)
 
   override val gtmContainer: String = sc.getString(Keys.gtmContainer)
