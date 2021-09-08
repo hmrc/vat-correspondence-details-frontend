@@ -21,9 +21,9 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
 
-val bootstrapPlayVersion       = "5.7.0"
+val bootstrapPlayVersion       = "5.12.0"
 val playFrontendHmrc           = "1.4.0-play-26"
-val playPartialsVersion        = "8.1.0-play-26"
+val playPartialsVersion        = "8.2.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
 val playLanguageVersion        = "5.1.0-play-26"
 val scalaTestPlusVersion       = "3.1.3"
@@ -114,7 +114,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     Keys.fork in Test := true,
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.14",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
