@@ -22,8 +22,7 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 val appName = "vat-correspondence-details-frontend"
 
 val bootstrapPlayVersion       = "5.7.0"
-val playFrontendGovUk          = "0.80.0-play-26"
-val playFrontendHmrc           = "0.83.0-play-26"
+val playFrontendHmrc           = "1.4.0-play-26"
 val playPartialsVersion        = "8.1.0-play-26"
 val authClientVersion          = "3.0.0-play-26"
 val playLanguageVersion        = "5.1.0-play-26"
@@ -70,7 +69,6 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 val compile = Seq(
   ws,
   "uk.gov.hmrc"       %% "bootstrap-frontend-play-26" % bootstrapPlayVersion,
-  "uk.gov.hmrc"       %% "play-frontend-govuk"        % playFrontendGovUk,
   "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc,
   "uk.gov.hmrc"       %% "play-partials"              % playPartialsVersion,
   "uk.gov.hmrc"       %% "auth-client"                % authClientVersion,
@@ -91,7 +89,6 @@ def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
 
 TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",
-  "uk.gov.hmrc.govukfrontend.views.html.helpers._",
   "uk.gov.hmrc.hmrcfrontend.views.html.components._",
   "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
 )
