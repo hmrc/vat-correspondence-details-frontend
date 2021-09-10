@@ -23,14 +23,16 @@ import mocks.MockEmailVerificationConnector
 import models.errors.ErrorModel
 import org.mockito.Mockito.{never, verify}
 import org.scalatest.EitherValues
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status._
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestUtil
 
 import scala.concurrent.Future
 
-class EmailVerificationServiceSpec extends UnitSpec with MockEmailVerificationConnector with TestUtil with EitherValues {
+class EmailVerificationServiceSpec extends AnyWordSpecLike with Matchers with MockEmailVerificationConnector with TestUtil with EitherValues {
 
   object TestStoreEmailService extends EmailVerificationService(
     mockEmailVerificationConnector,

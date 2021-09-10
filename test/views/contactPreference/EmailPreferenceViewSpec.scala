@@ -20,10 +20,11 @@ import assets.EmailPrefMessages
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.contactPreference.EmailPreferenceView
 
-class EmailPreferenceViewSpec extends ViewBaseSpec {
+class EmailPreferenceViewSpec extends ViewBaseSpec with Matchers {
   lazy val emailPrefView: EmailPreferenceView = injector.instanceOf[EmailPreferenceView]
 
   object Selectors {

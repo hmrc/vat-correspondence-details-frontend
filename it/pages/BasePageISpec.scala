@@ -18,11 +18,12 @@ package pages
 
 import common.SessionKeys
 import helpers.IntegrationBaseSpec
+import org.scalatest.matchers.should.Matchers
 import play.api.i18n.Messages
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{INTERNAL_SERVER_ERROR, UNAUTHORIZED}
 
-trait BasePageISpec extends IntegrationBaseSpec {
+trait BasePageISpec extends IntegrationBaseSpec with Matchers {
 
   def formatSessionVrn: Option[String] => Map[String, String] =
     _.fold(Map.empty[String, String])(x => Map(SessionKeys.clientVrn -> x))

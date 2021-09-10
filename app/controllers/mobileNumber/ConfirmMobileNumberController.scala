@@ -30,9 +30,8 @@ import models.errors.ErrorModel
 import models.viewModels.CheckYourAnswersViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
-import utils.LoggerUtil.{logInfo, logWarn}
+import utils.LoggerUtil
 import views.html.templates.CheckYourAnswersView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -43,7 +42,7 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
                                              (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
-                                                inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                                inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
@@ -80,7 +79,7 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
 
       enteredMobile match {
         case None =>
-          logInfo("[ConfirmMobileNumberController][updateMobileNumber] - No mobile number found in session")
+          logger.info("[ConfirmMobileNumberController][updateMobileNumber] - No mobile number found in session")
           Future.successful(Redirect(routes.CaptureMobileNumberController.show()))
 
         case Some(mobile) => vatSubscriptionService.updateMobileNumber(user.vrn, mobile).map {
@@ -100,7 +99,7 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
               .addingToSession(mobileChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
           case Left(ErrorModel(CONFLICT, _)) =>
-            logWarn("[ConfirmMobileNumberController][updateMobileNumber] - There is a contact details update request " +
+            logger.warn("[ConfirmMobileNumberController][updateMobileNumber] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
               .addingToSession(inFlightContactDetailsChangeKey -> "true")

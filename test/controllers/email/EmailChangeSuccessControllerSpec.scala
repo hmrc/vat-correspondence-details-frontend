@@ -28,8 +28,6 @@ import assets.BaseTestConstants.vrn
 import assets.CustomerInfoConstants.fullCustomerInfoModel
 import org.jsoup.Jsoup
 
-import scala.concurrent.Future
-
 class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
 
   val view: ChangeSuccessView = inject[ChangeSuccessView]
@@ -57,7 +55,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
               mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
               TestController.show(successfulChangeRequest)
             }
-            lazy val document = Jsoup.parse(bodyOf(result))
+            lazy val document = Jsoup.parse(contentAsString(result))
 
             "return 200" in {
               status(result) shouldBe Status.OK
@@ -76,7 +74,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
               mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(commsPreference = Some("PAPER"))))
               TestController.show(successfulChangeRequest)
             }
-            lazy val document = Jsoup.parse(bodyOf(result))
+            lazy val document = Jsoup.parse(contentAsString(result))
 
             "return 200" in {
               status(result) shouldBe Status.OK
@@ -93,10 +91,10 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
 
           lazy val result = {
             mockIndividualAuthorised()
-            mockGetCustomerInfo(vrn)(Future(Left(ErrorModel(Status.BAD_GATEWAY, "Error"))))
+            mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.BAD_GATEWAY, "Error")))
             TestController.show(successfulChangeRequest)
           }
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return 200" in {
             status(result) shouldBe Status.OK

@@ -16,12 +16,11 @@
 
 package controllers
 
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.test.Helpers._
-import play.api.Play
-import play.api.mvc.Cookie
 
-class LanguageControllerSpec extends ControllerBaseSpec {
+class LanguageControllerSpec extends ControllerBaseSpec with Matchers {
 
   val controller = new LanguageController(mockConfig, mcc)
 
@@ -36,8 +35,7 @@ class LanguageControllerSpec extends ControllerBaseSpec {
       }
 
       "use the English language" in {
-        cookies(result).get(Play.langCookieName(messagesApi)) shouldBe
-          Some(Cookie("PLAY_LANG", "en", None, "/", None, secure = false, httpOnly = true))
+        cookies(result).get(messagesApi.langCookieName).get.value shouldBe "en"
       }
     }
 
@@ -50,8 +48,7 @@ class LanguageControllerSpec extends ControllerBaseSpec {
       }
 
       "use the Welsh language" in {
-        cookies(result).get(Play.langCookieName(messagesApi)) shouldBe
-          Some(Cookie("PLAY_LANG", "cy", None, "/", None, secure = false, httpOnly = true))
+        cookies(result).get(messagesApi.langCookieName).get.value shouldBe "cy"
       }
     }
 
@@ -65,8 +62,7 @@ class LanguageControllerSpec extends ControllerBaseSpec {
       }
 
       "keep the current language" in {
-        cookies(result).get(Play.langCookieName(messagesApi)) shouldBe
-          Some(Cookie("PLAY_LANG", "en", None, "/", None, secure = false, httpOnly = true))
+        cookies(result).get(messagesApi.langCookieName).get.value shouldBe "en"
       }
     }
   }

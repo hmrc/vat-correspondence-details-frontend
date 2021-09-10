@@ -26,7 +26,6 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import views.html.templates.ChangeSuccessView
-
 import scala.concurrent.Future
 
 class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
@@ -66,7 +65,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
           "return 200" in {
             mockAgentAuthorised()
-            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
             status(result) shouldBe Status.OK
           }
         }
@@ -113,7 +112,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
           lazy val result: Future[Result] = {
             mockAgentAuthorised()
-            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
             controller.websiteAddress(request.withSession(
               prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", clientVrn -> vrn
             ))
@@ -174,7 +173,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
         "return the entity name" in {
           val result = {
-            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
             controller.getClientEntityName(User(vrn, arn = Some(arn))(request))
           }
 
@@ -186,7 +185,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
         "return None" in {
           val result = {
-            mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error"))))
+            mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error")))
             controller.getClientEntityName(User(vrn, arn = Some(arn))(request))
           }
 

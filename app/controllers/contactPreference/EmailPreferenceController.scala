@@ -25,10 +25,10 @@ import forms.YesNoForm
 import javax.inject.Inject
 import models.contactPreferences.ContactPreference.paper
 import models.{No, Yes, YesNo}
-import play.api.Logger
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
+import utils.LoggerUtil
 import views.html.contactPreference.EmailPreferenceView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,7 @@ class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptio
                                          (implicit val appConfig: AppConfig,
                                           authComps: AuthPredicateComponents,
                                           executionContext: ExecutionContext,
-                                          inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
+                                          inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController with LoggerUtil {
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("emailPreference.error")
 
@@ -69,7 +69,7 @@ class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptio
               result.addingToSession(SessionKeys.contactPrefUpdate -> "true")
 
             case Left(_) =>
-              Logger.warn("[EmailPreferenceController][.submit] Unable to retrieve email address")
+              logger.warn("[EmailPreferenceController][.submit] Unable to retrieve email address")
               authComps.errorHandler.showInternalServerError
 
             }

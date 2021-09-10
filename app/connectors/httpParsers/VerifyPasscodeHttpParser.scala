@@ -18,11 +18,11 @@ package connectors.httpParsers
 
 import connectors.httpParsers.ResponseHttpParser.HttpPostResult
 import models.errors.ErrorModel
-import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.LoggerUtil
 
-object VerifyPasscodeHttpParser {
+object VerifyPasscodeHttpParser extends LoggerUtil {
 
   sealed trait VerifyPasscodeRequest
 
@@ -36,22 +36,22 @@ object VerifyPasscodeHttpParser {
     override def read(method: String, url: String, response: HttpResponse): HttpPostResult[VerifyPasscodeRequest] =
       response.status match {
         case CREATED =>
-          Logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Email successfully verified")
+          logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Email successfully verified")
           Right(SuccessfullyVerified)
         case NO_CONTENT =>
-          Logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Email is already verified")
+          logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Email is already verified")
           Right(AlreadyVerified)
         case FORBIDDEN =>
-          Logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Max attempts per session exceeded")
+          logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Max attempts per session exceeded")
           Right(TooManyAttempts)
         case NOT_FOUND if response.body.contains("PASSCODE_NOT_FOUND") =>
-          Logger.warn("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Passcode not found (or expired) for this email")
+          logger.warn("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Passcode not found (or expired) for this email")
           Right(PasscodeNotFound)
         case NOT_FOUND if response.body.contains("PASSCODE_MISMATCH") =>
-          Logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Incorrect passcode")
+          logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Incorrect passcode")
           Right(IncorrectPasscode)
         case status =>
-          Logger.warn(
+          logger.warn(
             "[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - " +
               s"Received unexpected error. Response status: $status, Response body: ${response.body}"
           )

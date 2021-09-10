@@ -16,6 +16,7 @@
 
 package models
 
+import models.YesNo.id
 import play.api.libs.json._
 
 sealed trait YesNo {
@@ -43,9 +44,16 @@ object YesNo {
 object Yes extends YesNo {
   override def toString: String = "yes"
   override val value: Boolean = true
+  implicit val writes: Writes[Yes.type] = Writes {
+    isYes => Json.obj(id -> isYes.value)
+  }
 }
 
 object No extends YesNo {
   override def toString: String = "no"
   override val value: Boolean = false
+  implicit val writes: Writes[No.type] = Writes {
+    isYes => Json.obj(id -> isYes.value)
+  }
+
 }

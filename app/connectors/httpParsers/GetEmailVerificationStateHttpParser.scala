@@ -18,9 +18,9 @@ package connectors.httpParsers
 
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.LoggerUtil.{logDebug, logWarn}
+import utils.LoggerUtil
 
-object GetEmailVerificationStateHttpParser {
+object GetEmailVerificationStateHttpParser extends LoggerUtil {
 
   type GetEmailVerificationStateResponse = Either[GetEmailVerificationStateErrorResponse, EmailVerificationState]
 
@@ -29,12 +29,12 @@ object GetEmailVerificationStateHttpParser {
       response.status match {
         case OK => Right(EmailVerified)
         case NOT_FOUND =>
-          logDebug(
+          logger.debug(
             "[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads][read] - Email not verified"
           )
           Right(EmailNotVerified)
         case status =>
-          logWarn(
+          logger.warn(
             s"[GetEmailVerificationStateHttpParser][GetEmailVerificationStateHttpReads][read] - " +
               s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )

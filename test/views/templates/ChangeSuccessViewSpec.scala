@@ -20,10 +20,11 @@ import models.contactPreferences.ContactPreference
 import models.viewModels.ChangeSuccessViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.templates.ChangeSuccessView
 
-class ChangeSuccessViewSpec extends ViewBaseSpec {
+class ChangeSuccessViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: ChangeSuccessView = inject[ChangeSuccessView]
 

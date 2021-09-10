@@ -24,12 +24,15 @@ import models.User
 import models.customerInformation.PendingChanges
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class InFlightPredicateSpec extends MockAuth {
+import scala.concurrent.Future
+
+class InFlightPredicateSpec extends MockAuth with Matchers {
 
   def setup(result: GetCustomerInfoResponse = Right(customerInfoPendingAddressModel)): Unit =
     mockGetCustomerInfo("999999999")(result)
@@ -57,8 +60,8 @@ class InFlightPredicateSpec extends MockAuth {
 
       "the inflight indicator is set to 'commsPref' and the blockIfPendingPref parameter is true" should {
 
-        lazy val result = await(inflightCommsPrefPredicate.refine(userWithSession("commsPref"))).left.get
-        lazy val document = Jsoup.parse(bodyOf(result))
+        lazy val result = Future.successful(await(inflightCommsPrefPredicate.refine(userWithSession("commsPref"))).left.get)
+        lazy val document = Jsoup.parse(contentAsString(result))
 
         "return 409" in {
           status(result) shouldBe Status.CONFLICT
@@ -71,8 +74,8 @@ class InFlightPredicateSpec extends MockAuth {
 
       "the inflight indicator is set to 'true'" should {
 
-        lazy val result = await(inflightPPOBPredicate.refine(userWithSession("true"))).left.get
-        lazy val document = Jsoup.parse(bodyOf(result))
+        lazy val result = Future.successful(await(inflightPPOBPredicate.refine(userWithSession("true"))).left.get)
+        lazy val document = Jsoup.parse(contentAsString(result))
 
         "return 409" in {
           status(result) shouldBe Status.CONFLICT
@@ -99,9 +102,9 @@ class InFlightPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup()
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
         }
-        lazy val document = Jsoup.parse(bodyOf(result))
+        lazy val document = Jsoup.parse(contentAsString(result))
 
         "return 409" in {
           status(result) shouldBe Status.CONFLICT
@@ -122,9 +125,9 @@ class InFlightPredicateSpec extends MockAuth {
 
           lazy val result = {
             setup(Right(customerInfoPendingContactPrefModel))
-            await(inflightCommsPrefPredicate.refine(userWithoutSession)).left.get
+            Future.successful(await(inflightCommsPrefPredicate.refine(userWithoutSession)).left.get)
           }
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return 409" in {
             status(result) shouldBe Status.CONFLICT
@@ -143,7 +146,7 @@ class InFlightPredicateSpec extends MockAuth {
 
           lazy val result = {
             setup(Right(customerInfoPendingContactPrefModel))
-            await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+            Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
           }
 
           "return 303" in {
@@ -164,7 +167,7 @@ class InFlightPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup(Right(minCustomerInfoModel.copy(ppob = fullPPOBModel)))
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
         }
 
         "return 303" in {
@@ -200,7 +203,7 @@ class InFlightPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup(Right(minCustomerInfoModel.copy(pendingChanges = Some(PendingChanges(None, None)))))
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
         }
 
         "return 303" in {
@@ -220,7 +223,7 @@ class InFlightPredicateSpec extends MockAuth {
 
         lazy val result = {
           setup(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
-          await(inflightPPOBPredicate.refine(userWithoutSession)).left.get
+          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
         }
 
         "return 500" in {

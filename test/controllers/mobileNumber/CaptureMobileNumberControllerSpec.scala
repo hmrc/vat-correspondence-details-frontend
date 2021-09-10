@@ -41,7 +41,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
         lazy val result = controller.show(requestWithValidationMobileNumber)
 
-        lazy val document = Jsoup.parse(bodyOf(result))
+        lazy val document = Jsoup.parse(contentAsString(result))
 
         "return 200" in {
           status(result) shouldBe Status.OK
@@ -61,7 +61,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
     "the previous form value is retrieved from session" should {
 
       lazy val result = controller.show(requestWithAllMobileNumbers)
-      lazy val document = Jsoup.parse(bodyOf(result))
+      lazy val document = Jsoup.parse(contentAsString(result))
 
       "return 200" in {
         status(result) shouldBe Status.OK

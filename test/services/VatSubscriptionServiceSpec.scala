@@ -23,13 +23,15 @@ import models.User
 import models.contactPreferences.ContactPreference
 import models.customerInformation._
 import models.errors.ErrorModel
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.TestUtil
 import scala.concurrent.Future
 
 class VatSubscriptionServiceSpec extends TestUtil with MockVatSubscriptionConnector with
-  MockEmailVerificationService {
+  MockEmailVerificationService with Matchers {
 
   val service = new VatSubscriptionService(connector, mockEmailVerificationService)
   val testVrn: String = "123456789"

@@ -18,10 +18,11 @@ package views.errors.agent
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.errors.agent.AgentJourneyDisabledView
 
-class AgentJourneyDisabledViewSpec extends ViewBaseSpec {
+class AgentJourneyDisabledViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: AgentJourneyDisabledView = injector.instanceOf[AgentJourneyDisabledView]
 

@@ -26,12 +26,12 @@ import play.api.mvc.{ActionRefiner, Result}
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.LoggerUtil.logWarn
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactPrefPredicate @Inject()(contactPrefComps: ContactPrefPredicateComponents,
-                                     blockedPref: String) extends ActionRefiner[User, User] with I18nSupport {
+                                     blockedPref: String) extends ActionRefiner[User, User] with I18nSupport with LoggerUtil{
 
   implicit val appConfig: AppConfig = contactPrefComps.appConfig
   implicit val executionContext: ExecutionContext = contactPrefComps.mcc.executionContext
@@ -62,7 +62,7 @@ class ContactPrefPredicate @Inject()(contactPrefComps: ContactPrefPredicateCompo
         case (None, _) => Left(contactPrefComps.errorHandler.showInternalServerError)
       }
       case Left(error) =>
-        logWarn("[InFlightPredicate][getCustomerInfoCall] - " +
+        logger.warn("[InFlightPredicate][getCustomerInfoCall] - " +
           s"The call to the GetCustomerInfo API failed. Error: ${error.message}")
         Left(contactPrefComps.errorHandler.showInternalServerError)
     }

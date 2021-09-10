@@ -17,9 +17,10 @@
 package models.customerInformation
 
 import assets.CustomerInfoConstants._
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class PendingChangesSpec extends UnitSpec {
+class PendingChangesSpec extends AnyWordSpecLike with Matchers {
 
   "PendingChanges" should {
 

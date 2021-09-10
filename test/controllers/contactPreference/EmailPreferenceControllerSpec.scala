@@ -28,14 +28,11 @@ import assets.CustomerInfoConstants.{fullCustomerInfoModel, minCustomerInfoModel
 import models.errors.ErrorModel
 import play.api.http.Status
 
-import scala.concurrent.Future
-
 class EmailPreferenceControllerSpec extends ControllerBaseSpec {
 
   lazy val controller = new EmailPreferenceController(mockVatSubscriptionService,
                                                       mockErrorHandler,
-                                                      inject[EmailPreferenceView]
-                                                      )
+                                                      inject[EmailPreferenceView])
 
   ".show is called" should {
 
@@ -64,7 +61,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
   ".submit is called with a Yes and client has an email address" should {
 
     lazy val result = {
-      mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+      mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
       controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
     }
 
@@ -84,7 +81,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
   ".submit is called with a Yes and client does not have an email address" should {
 
     lazy val result = {
-      mockGetCustomerInfo(vrn)(Future.successful(Right(minCustomerInfoModel)))
+      mockGetCustomerInfo(vrn)(Right(minCustomerInfoModel))
       controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
     }
 
@@ -104,7 +101,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
   ".submit is called with but the get customer info call fails" should {
 
     lazy val result = {
-      mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+      mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
       controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
 
     }

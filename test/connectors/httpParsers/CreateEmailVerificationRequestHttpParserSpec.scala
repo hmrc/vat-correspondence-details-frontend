@@ -16,15 +16,15 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{EmailAlreadyVerified,
-  EmailVerificationRequestFailure,  EmailVerificationRequestSent}
+import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{EmailAlreadyVerified, EmailVerificationRequestFailure, EmailVerificationRequestSent}
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.CreateEmailVerificationRequestHttpReads.read
 import org.scalatest.EitherValues
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.test.UnitSpec
 
-class CreateEmailVerificationRequestHttpParserSpec extends UnitSpec with EitherValues {
+class CreateEmailVerificationRequestHttpParserSpec extends AnyWordSpecLike with Matchers with EitherValues {
 
   "CreateEmailVerificationRequestHttpReads" when {
 

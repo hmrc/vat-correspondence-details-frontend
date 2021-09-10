@@ -20,10 +20,11 @@ import assets.BaseTestConstants.testValidationMobile
 import controllers.mobileNumber.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.mobileNumber.ConfirmRemoveMobileView
 
-class ConfirmRemoveMobileViewSpec extends ViewBaseSpec {
+class ConfirmRemoveMobileViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: ConfirmRemoveMobileView = inject[ConfirmRemoveMobileView]
 

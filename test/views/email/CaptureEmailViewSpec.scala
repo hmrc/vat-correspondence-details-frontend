@@ -19,12 +19,13 @@ package views.email
 import forms.EmailForm._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import play.twirl.api.Html
 import views.ViewBaseSpec
 import views.html.email.CaptureEmailView
 import play.api.mvc.Call
 
-class CaptureEmailViewSpec extends ViewBaseSpec {
+class CaptureEmailViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: CaptureEmailView = injector.instanceOf[CaptureEmailView]
 

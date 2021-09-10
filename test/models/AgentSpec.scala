@@ -16,10 +16,11 @@
 
 package models
 
+import org.scalatest.matchers.should.Matchers
 import utils.TestUtil
 import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolment, EnrolmentIdentifier, Enrolments}
 
-class AgentSpec extends TestUtil {
+class AgentSpec extends TestUtil with Matchers {
 
   "Creating an Agent with only an ARN" should {
 

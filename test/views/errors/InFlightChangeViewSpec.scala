@@ -18,10 +18,11 @@ package views.errors
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.errors.InFlightChangeView
 
-class InFlightChangeViewSpec extends ViewBaseSpec {
+class InFlightChangeViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: InFlightChangeView = injector.instanceOf[InFlightChangeView]
 

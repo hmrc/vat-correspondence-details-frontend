@@ -18,9 +18,9 @@ package connectors.httpParsers
 
 import play.api.http.Status.{CONFLICT, CREATED}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.LoggerUtil.{logDebug, logWarn}
+import utils.LoggerUtil
 
-object CreateEmailVerificationRequestHttpParser {
+object CreateEmailVerificationRequestHttpParser extends LoggerUtil{
 
   type CreateEmailVerificationRequestResponse = Either[EmailVerificationRequestFailure, EmailVerificationRequestSuccess]
 
@@ -28,13 +28,13 @@ object CreateEmailVerificationRequestHttpParser {
     override def read(method: String, url: String, response: HttpResponse): CreateEmailVerificationRequestResponse =
       response.status match {
         case CREATED =>
-          logDebug("[CreateEmailVerificationRequestHttpReads][read] - Email request sent successfully")
+          logger.debug("[CreateEmailVerificationRequestHttpReads][read] - Email request sent successfully")
           Right(EmailVerificationRequestSent)
         case CONFLICT =>
-          logDebug("[CreateEmailVerificationRequestHttpReads][read] - Email already verified")
+          logger.debug("[CreateEmailVerificationRequestHttpReads][read] - Email already verified")
           Right(EmailAlreadyVerified)
         case status =>
-          logWarn(
+          logger.warn(
             "[CreateEmailVerificationRequestHttpParser][CreateEmailVerificationRequestHttpReads][read] - " +
             s"Failed to create email verification. Received status: $status Response body: ${response.body}"
           )

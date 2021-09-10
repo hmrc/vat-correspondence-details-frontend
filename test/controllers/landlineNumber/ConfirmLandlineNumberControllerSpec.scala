@@ -159,7 +159,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         }
 
         "show the internal server error page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+          messages(Jsoup.parse(contentAsString(result)).title) shouldBe internalServerErrorTitle
         }
       }
     }

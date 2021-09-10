@@ -19,11 +19,12 @@ package connectors.httpParsers
 import connectors.httpParsers.RequestPasscodeHttpParser.{EmailIsAlreadyVerified, EmailVerificationPasscodeRequestSent}
 import connectors.httpParsers.RequestPasscodeHttpParser.RequestPasscodeHttpReads.read
 import models.errors.ErrorModel
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status.{CONFLICT, CREATED, INTERNAL_SERVER_ERROR}
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.test.UnitSpec
 
-class RequestPasscodeHttpParserSpec extends UnitSpec {
+class RequestPasscodeHttpParserSpec extends AnyWordSpecLike with Matchers {
 
   "RequestPasscodeHttpReads" when {
 

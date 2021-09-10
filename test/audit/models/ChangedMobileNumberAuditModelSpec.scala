@@ -16,11 +16,12 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{vrn, arn, testValidationMobile, testPrepopMobile}
+import assets.BaseTestConstants.{arn, testPrepopMobile, testValidationMobile, vrn}
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsValue, Json}
 import utils.TestUtil
 
-class ChangedMobileNumberAuditModelSpec extends TestUtil {
+class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
 
   "ChangedMobileNumberAuditModel" when {
 

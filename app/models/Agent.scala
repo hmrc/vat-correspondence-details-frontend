@@ -25,6 +25,6 @@ case class Agent[A](arn: String)(implicit request: Request[A]) extends WrappedRe
 object Agent {
   def apply[A](enrolments: Enrolments)(implicit request: Request[A]): Agent[A] =
     enrolments.enrolments.collectFirst {
-      case Enrolment(EnrolmentKeys.agentEnrolmentId, EnrolmentIdentifier(_, arn) :: _, _, _) => Agent(arn)
+      case Enrolment(EnrolmentKeys.agentEnrolmentId, Seq(EnrolmentIdentifier(_, arn)), _, _) => Agent(arn)
     }.getOrElse(throw InternalError("Agent Service Enrolment Missing"))
 }

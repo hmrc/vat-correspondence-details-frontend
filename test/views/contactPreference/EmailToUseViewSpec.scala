@@ -20,11 +20,12 @@ import assets.{ChangePrefMessages => viewMessages}
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import play.twirl.api.Html
 import views.ViewBaseSpec
 import views.html.contactPreference.EmailToUseView
 
-class EmailToUseViewSpec extends ViewBaseSpec {
+class EmailToUseViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: EmailToUseView = injector.instanceOf[EmailToUseView]
 

@@ -17,10 +17,12 @@
 package controllers
 
 import mocks.{MockAuditingService, MockAuth, MockHttp}
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc.{Action, AnyContent}
+import play.api.test.Helpers._
 
-trait ControllerBaseSpec extends MockAuth with MockHttp with MockAuditingService {
+trait ControllerBaseSpec extends MockAuth with MockHttp with MockAuditingService with Matchers {
 
   def unauthenticatedCheck(controllerAction: Action[AnyContent]): Unit = {
 

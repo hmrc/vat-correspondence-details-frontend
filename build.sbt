@@ -20,21 +20,20 @@ import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, s
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
-
 val bootstrapPlayVersion       = "5.12.0"
-val playFrontendHmrc           = "1.4.0-play-26"
-val playPartialsVersion        = "8.2.0-play-26"
-val authClientVersion          = "3.0.0-play-26"
-val playLanguageVersion        = "5.1.0-play-26"
-val scalaTestPlusVersion       = "3.1.3"
-val hmrcTestVersion            = "3.9.0-play-26"
-val scalatestVersion           = "3.0.8"
+val playFrontendHmrc           = "0.94.0-play-28"
+val playPartialsVersion        = "8.2.0-play-28"
+val authClientVersion          = "5.2.0-play-28"
+val playLanguageVersion        = "5.1.0-play-28"
+val scalaTestPlusVersion       = "5.1.0"
+val scalatestVersion           = "3.1.4"
 val pegdownVersion             = "1.6.0"
-val jsoupVersion               = "1.13.1"
-val mockitoVersion             = "2.28.2"
+val jsoupVersion               = "1.14.1"
+val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "3.6.0"
-val wiremockVersion            = "2.27.1"
-val playJsonJodaVersion        = "2.7.4"
+val wiremockVersion            = "2.26.3"
+val playJsonJodaVersion        = "2.9.2"
+val flexmarkVersion            = "0.36.8"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
@@ -60,7 +59,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimum := 95,
+    ScoverageKeys.coverageMinimumStmtTotal := 95,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -68,7 +67,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-frontend-play-26" % bootstrapPlayVersion,
+  "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
   "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc,
   "uk.gov.hmrc"       %% "play-partials"              % playPartialsVersion,
   "uk.gov.hmrc"       %% "auth-client"                % authClientVersion,
@@ -77,14 +76,14 @@ val compile = Seq(
 )
 
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"            %% "hmrctest"                    % hmrcTestVersion       % scope,
   "org.scalatest"          %% "scalatest"                   % scalatestVersion      % scope,
   "org.scalatestplus.play" %% "scalatestplus-play"          % scalaTestPlusVersion  % scope,
+  "org.scalatestplus"      %% "mockito-3-4"                 % mockitoVersion        % scope,
   "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVersion      % scope,
   "org.pegdown"            %  "pegdown"                     % pegdownVersion        % scope,
   "org.jsoup"              %  "jsoup"                       % jsoupVersion          % scope,
-  "org.mockito"            %  "mockito-core"                % mockitoVersion        % scope,
-  "com.github.tomakehurst" %  "wiremock-jre8"               % wiremockVersion       % scope
+  "com.github.tomakehurst" %  "wiremock-jre8"               % wiremockVersion       % scope,
+  "com.vladsch.flexmark"   %  "flexmark-all"                % flexmarkVersion       % scope
 )
 
 TwirlKeys.templateImports ++= Seq(

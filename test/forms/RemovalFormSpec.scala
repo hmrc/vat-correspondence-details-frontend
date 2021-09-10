@@ -18,8 +18,9 @@ package forms
 
 import utils.TestUtil
 import forms.RemovalForm.removalForm
+import org.scalatest.matchers.should.Matchers
 
-class RemovalFormSpec extends TestUtil {
+class RemovalFormSpec extends TestUtil with Matchers {
 
   "The removal form" should {
 

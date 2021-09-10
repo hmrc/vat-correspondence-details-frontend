@@ -17,10 +17,11 @@
 package forms
 
 import forms.WebsiteForm._
+import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
 import utils.TestUtil
 
-class WebsiteFormSpec extends TestUtil {
+class WebsiteFormSpec extends TestUtil with Matchers {
 
   "The website form" should {
 

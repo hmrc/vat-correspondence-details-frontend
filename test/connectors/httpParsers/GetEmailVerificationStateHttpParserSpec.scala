@@ -16,15 +16,15 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.GetEmailVerificationStateHttpParser.{EmailNotVerified, EmailVerified,
-  GetEmailVerificationStateErrorResponse}
+import connectors.httpParsers.GetEmailVerificationStateHttpParser.{EmailNotVerified, EmailVerified, GetEmailVerificationStateErrorResponse}
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateHttpReads.read
 import org.scalatest.EitherValues
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.test.UnitSpec
 
-class GetEmailVerificationStateHttpParserSpec extends UnitSpec with EitherValues {
+class GetEmailVerificationStateHttpParserSpec extends AnyWordSpecLike with Matchers with EitherValues {
 
   "GetEmailVerificationStateHttpReads" when {
 

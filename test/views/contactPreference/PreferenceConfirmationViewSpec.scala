@@ -18,10 +18,11 @@ package views.contactPreference
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.html.contactPreference.PreferenceConfirmationView
 import views.ViewBaseSpec
 
-class PreferenceConfirmationViewSpec extends ViewBaseSpec {
+class PreferenceConfirmationViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: PreferenceConfirmationView = inject[PreferenceConfirmationView]
 

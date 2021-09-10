@@ -39,7 +39,7 @@ import scala.concurrent.Future
 class EmailToUseControllerSpec extends ControllerBaseSpec {
 
   def mockVatSubscriptionCall(result: HttpGetResult[CustomerInformation] = Right(fullCustomerInfoModel)): Unit =
-    mockGetCustomerInfo("999999999")(Future.successful(result))
+    mockGetCustomerInfo("999999999")(result)
 
   val testValidationEmail: String = "validation@example.com"
 
@@ -198,7 +198,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
           }
 
           "show the internal server error page" in {
-            messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+            messages(Jsoup.parse(contentAsString(result)).title) shouldBe internalServerErrorTitle
           }
         }
       }

@@ -20,13 +20,14 @@ import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads._
 import assets.UpdateEmailConstants._
 import models.errors.ErrorModel
 import org.scalatest.EitherValues
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.test.UnitSpec
 
-class UpdatePPOBHttpParserSpec extends UnitSpec with EitherValues {
+class UpdatePPOBHttpParserSpec extends AnyWordSpecLike with Matchers with EitherValues {
 
   "read" when {
     "the response status is OK" should {

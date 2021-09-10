@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{EmailVerificationService, VatSubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.LoggerUtil.logDebug
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -37,7 +37,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
                                      (implicit val appConfig: AppConfig,
                                       mcc: MessagesControllerComponents,
                                       authComps: AuthPredicateComponents,
-                                      inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                      inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
@@ -56,19 +56,19 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
         vatSubscriptionService.getCustomerInfo(user.vrn) map {
           case Right(details) => (details.approvedEmail, details.ppob.contactDetails.flatMap(_.emailVerified)) match {
             case (Some(_), Some(true)) =>
-              logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - emailVerified has come back as true. Returning user to BTA")
+              logger.debug("[EmailVerificationController][btaVerifyEmailRedirect] - emailVerified has come back as true. Returning user to BTA")
               Redirect(appConfig.btaAccountDetailsUrl)
             case (Some(email), _)  => Redirect(routes.VerifyPasscodeController.emailSendVerification())
               .addingToSession(SessionKeys.prepopulationEmailKey -> email)
               .addingToSession(SessionKeys.inFlightContactDetailsChangeKey -> s"${details.pendingPpobChanges}")
             case (_, _) =>
-              logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - user does not have an email. Redirecting to capture email page")
+              logger.debug("[EmailVerificationController][btaVerifyEmailRedirect] - user does not have an email. Redirecting to capture email page")
               Redirect(routes.CaptureEmailController.show())
           }
           case _ => errorHandler.showInternalServerError
         }
       } else {
-        logDebug("[EmailVerificationController][btaVerifyEmailRedirect] - user has not come from BTA account details page. Throwing ISE")
+        logger.debug("[EmailVerificationController][btaVerifyEmailRedirect] - user has not come from BTA account details page. Throwing ISE")
         Future.successful(errorHandler.showInternalServerError)
       }
 

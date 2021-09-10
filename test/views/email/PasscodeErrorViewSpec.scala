@@ -19,10 +19,11 @@ package views.email
 import views.html.email.PasscodeErrorView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import play.twirl.api.Html
 import views.ViewBaseSpec
 
-class PasscodeErrorViewSpec extends ViewBaseSpec {
+class PasscodeErrorViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: PasscodeErrorView = inject[PasscodeErrorView]
   lazy val view: Html = injectedView("passcode.error.tooManyAttempts")(user, messages, mockConfig)

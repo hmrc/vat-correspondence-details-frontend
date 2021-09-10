@@ -20,12 +20,13 @@ import controllers.email.routes
 import forms.PasscodeForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import play.api.data.Form
 import play.twirl.api.Html
 import views.ViewBaseSpec
 import views.html.email.PasscodeView
 
-class PasscodeViewSpec extends ViewBaseSpec {
+class PasscodeViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: PasscodeView = inject[PasscodeView]
   val testForm: Form[String] = PasscodeForm.form
