@@ -29,8 +29,6 @@ import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-import scala.concurrent.Future
-
 class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
 
   object TestVerifyEmailController extends VerifyEmailController(
@@ -45,7 +43,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
   val ppobAddress: PPOBAddress = PPOBAddress("", None, None, None, None, None, "")
   val currentEmail = "current@email.com"
 
-  def mockCustomer(): Unit = mockGetCustomerInfo(vrn)(Future.successful(Right(CustomerInformation(
+  def mockCustomer(): Unit = mockGetCustomerInfo(vrn)(Right(CustomerInformation(
     PPOB(ppobAddress, None, None),
     Some(PendingChanges(Some(PPOB(ppobAddress, None, None)), None)),
     None,
@@ -56,7 +54,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     isInsolvent = false,
     Some(true),
     None
-  ))))
+  )))
 
   "Calling the emailSendVerification action in VerifyEmailController" when {
 
@@ -95,12 +93,12 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "the user has an unverified email " should {
 
         lazy val result = {
-          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
+          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(
             pendingChanges = None,
             ppob = fullPPOBModel.copy(
               contactDetails = Some(contactDetailsUnverifiedEmail)
             )
-          ))))
+          )))
           TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
             .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
           )
@@ -123,9 +121,9 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       "the user has a verified email" should {
         lazy val result = {
-          mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel.copy(
+          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(
             pendingChanges = None
-          ))))
+          )))
           TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
             .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
           )

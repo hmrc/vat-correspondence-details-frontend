@@ -56,7 +56,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
           lazy val result = target().show(request
             .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return 200" in {
             status(result) shouldBe Status.OK
@@ -78,7 +78,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
             common.SessionKeys.validationEmailKey -> testValidationEmail,
             common.SessionKeys.prepopulationEmailKey -> testValidEmail)
           )
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return 200" in {
             status(result) shouldBe Status.OK
@@ -257,14 +257,14 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
               SessionKeys.currentContactPrefKey -> paper
             ))
           }
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return 200" in {
             status(result) shouldBe Status.OK
           }
 
           "return HTML" in {
-            contentType(result)(defaultTimeout) shouldBe Some("text/html")
+            contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
           }
 
@@ -282,7 +282,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
               SessionKeys.currentContactPrefKey -> paper
             ))
           }
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return 200" in {
             status(result) shouldBe Status.OK

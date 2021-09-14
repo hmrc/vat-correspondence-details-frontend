@@ -75,7 +75,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
       }
 
       "return a 401 (Unauthorised) result" in {
-        mockMissingBearerToken()
+        mockMissingBearerToken
         status(result) shouldBe UNAUTHORIZED
       }
     }
@@ -128,7 +128,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
           }
 
           "render the view with errors" in {
-            Jsoup.parse(bodyOf(result)).title should include("Error:")
+            Jsoup.parse(contentAsString(result)).title should include("Error:")
           }
         }
       }

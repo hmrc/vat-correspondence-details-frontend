@@ -30,9 +30,8 @@ import models.errors.ErrorModel
 import models.viewModels.CheckYourAnswersViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
-import utils.LoggerUtil.{logInfo, logWarn}
+import utils.LoggerUtil
 import views.html.templates.CheckYourAnswersView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -43,7 +42,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
                                       (implicit val appConfig: AppConfig,
                                        mcc: MessagesControllerComponents,
                                        authComps: AuthPredicateComponents,
-                                       inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                       inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
@@ -112,7 +111,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
           case Left(ErrorModel(CONFLICT, _)) =>
-            logWarn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
+            logger.warn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
               .addingToSession(inFlightContactDetailsChangeKey -> "true")
@@ -122,7 +121,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
         }
 
       case _ =>
-        logInfo("[ConfirmEmailController][updateEmailAddress] - No email address found in session")
+        logger.info("[ConfirmEmailController][updateEmailAddress] - No email address found in session")
         Future.successful(Redirect(routes.CaptureEmailController.show()))
     }
   }

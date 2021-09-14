@@ -17,10 +17,11 @@
 package audit.models
 
 import assets.BaseTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 
-class ChangedWebsiteAddressAuditModelSpec extends UnitSpec {
+class ChangedWebsiteAddressAuditModelSpec extends AnyWordSpecLike with Matchers {
 
   "ChangedWebsiteAddressAuditModel" when {
 

@@ -24,7 +24,6 @@ import mocks.MockVatSubscriptionService
 import models.customerInformation.CustomerInformation
 import models.errors.ErrorModel
 import play.api.test.Helpers._
-
 import scala.concurrent.Future
 
 class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
@@ -49,7 +48,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
       "the user has a paper preference" which {
         lazy val result = {
-          mockGetCustomerInfo(vrn)(fullCustomerInfoModel.copy(commsPreference = Some("PAPER")))
+          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(commsPreference = Some("PAPER"))))
           mockIndividualAuthorised()
           controller.redirect()(fakeRequestWithClientsVRN)
         }
@@ -67,7 +66,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
       "the user has an email preference" which {
 
         lazy val result = {
-          mockGetCustomerInfo(vrn)(fullCustomerInfoModel)
+          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
           mockIndividualAuthorised()
           controller.redirect()(fakeRequestWithClientsVRN)
         }
@@ -88,7 +87,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
       "the customer details are not returned" in {
         lazy val result = {
-          mockGetCustomerInfo(vrn)(ErrorModel(BAD_REQUEST, "nu-uh"))
+          mockGetCustomerInfo(vrn)(Left(ErrorModel(BAD_REQUEST, "nu-uh")))
           mockIndividualAuthorised()
           controller.redirect()(fakeRequestWithClientsVRN)
         }
@@ -98,7 +97,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
 
       "the user has no comms preference" in {
         lazy val result = {
-          mockGetCustomerInfo(vrn)(fullCustomerInfoModel.copy(commsPreference = None))
+          mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(commsPreference = None)))
           mockIndividualAuthorised()
           controller.redirect()(fakeRequestWithClientsVRN)
         }

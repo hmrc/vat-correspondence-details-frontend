@@ -19,11 +19,12 @@ package views.website
 import forms.WebsiteForm._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import play.twirl.api.Html
 import views.ViewBaseSpec
 import views.html.website.CaptureWebsiteView
 
-class CaptureWebsiteViewSpec extends ViewBaseSpec {
+class CaptureWebsiteViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: CaptureWebsiteView = injector.instanceOf[CaptureWebsiteView]
 

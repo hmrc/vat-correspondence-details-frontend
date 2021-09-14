@@ -29,12 +29,11 @@ import models.contactPreferences.ContactPreference
 import models.customerInformation.{PPOB, UpdatePPOBSuccess}
 import models.errors.ErrorModel
 import models.{No, User, Yes, YesNo}
-import play.api.Logger
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, Result}
 import services.VatSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.LoggerUtil.logWarn
+import utils.LoggerUtil
 import views.html.contactPreference.LetterPreferenceView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +45,7 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
                                            (implicit val appConfig: AppConfig,
                                             ec: ExecutionContext,
                                             authComps: AuthPredicateComponents,
-                                            inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController {
+                                            inFlightPredicateComponents: InFlightPredicateComponents) extends BaseController with LoggerUtil{
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("letterPreference.error")
 
@@ -57,8 +56,7 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
                                   inFlightContactPrefPredicate).async { implicit user =>
     vatSubscriptionService.getCustomerInfo(user.vrn) map {
       case Right(details) => Ok(view(formYesNo, displayAddress(details.ppob)))
-      case _ =>
-        Logger.warn("[LetterPreferenceController][show] Unable to retrieve current business address")
+      case _ => logger.warn("[LetterPreferenceController][show] Unable to retrieve current business address")
         authComps.errorHandler.showInternalServerError
     }
   }
@@ -71,7 +69,7 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
         vatSubscriptionService.getCustomerInfo(user.vrn) map {
           case Right(details) => BadRequest(view(formWithErrors, displayAddress(details.ppob)))
           case _ =>
-            Logger.warn("[LetterPreferenceController][submit] Unable to retrieve current business address")
+            logger.warn("[LetterPreferenceController][submit] Unable to retrieve current business address")
             authComps.errorHandler.showInternalServerError
         }
       },
@@ -101,7 +99,7 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
 
 
       case Left(ErrorModel(CONFLICT, _)) =>
-        logWarn("[LetterPreferenceController][updateCommsPreference] - There is an update request " +
+        logger.warn("[LetterPreferenceController][updateCommsPreference] - There is an update request " +
           "already in progress. Redirecting user to manage-vat overview page.")
         Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
 

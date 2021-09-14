@@ -23,11 +23,10 @@ import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
 import models.User
-import play.api.Logger
 import play.api.mvc._
 import services.VatSubscriptionService
+import utils.LoggerUtil
 import views.html.contactPreference.PreferenceConfirmationView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -36,7 +35,7 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
                                                        (implicit val appConfig: AppConfig,
                                                         authComps: AuthPredicateComponents,
                                                         inFlightComps: InFlightPredicateComponents,
-                                                        ec: ExecutionContext) extends BaseController {
+                                                        ec: ExecutionContext) extends BaseController with LoggerUtil {
 
   def show(changeType: String): Action[AnyContent] = (contactPreferencePredicate andThen inFlightContactPrefPredicate) async { implicit user =>
     changeType match {
@@ -57,7 +56,7 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
         ).flatten
         Ok(preferenceConfirmationView(address, emailToLetterChangeSuccessful))
       case Left(_) =>
-        Logger.warn("[ContactPreferenceConfirmationController][renderLetterPreferenceView] Unable to retrieve current business address")
+        logger.warn("[ContactPreferenceConfirmationController][renderLetterPreferenceView] Unable to retrieve current business address")
         authComps.errorHandler.showInternalServerError
     }
   }

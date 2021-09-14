@@ -27,6 +27,6 @@ case class User[A](vrn: String, active: Boolean = true, arn: Option[String] = No
 object User {
   def apply[A](enrolments: Enrolments)(implicit request: Request[A]): User[A] =
     enrolments.enrolments.collectFirst {
-      case Enrolment(EnrolmentKeys.vatEnrolmentId, EnrolmentIdentifier(_, vatId) :: _, _, _) => User(vatId)
+      case Enrolment(EnrolmentKeys.vatEnrolmentId, Seq(EnrolmentIdentifier(_, vatId)), _, _) => User(vatId)
     }.getOrElse(throw InternalError("VRN Missing"))
 }

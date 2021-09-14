@@ -20,9 +20,9 @@ import models.customerInformation.UpdateEmailSuccess
 import models.errors.ErrorModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.LoggerUtil.{logDebug, logWarn}
+import utils.LoggerUtil
 
-object UpdateEmailHttpParser {
+object UpdateEmailHttpParser extends LoggerUtil {
 
   type UpdateEmailResponse = Either[ErrorModel, UpdateEmailSuccess]
 
@@ -31,16 +31,16 @@ object UpdateEmailHttpParser {
       response.status match {
         case OK => response.json.validate[UpdateEmailSuccess].fold(
           invalid => {
-            logWarn(s"[UpdateEmailHttpParser][read] - Invalid JSON: $invalid")
+            logger.warn(s"[UpdateEmailHttpParser][read] - Invalid JSON: $invalid")
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => {
-            logDebug("[UpdateEmailHttpParser][read] - Successfully parsed update response.")
+            logger.debug("[UpdateEmailHttpParser][read] - Successfully parsed update response.")
             Right(valid)
           }
         )
         case status =>
-          logWarn(
+          logger.warn(
             s"[UpdateEmailHttpParser][read] - " +
               s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )

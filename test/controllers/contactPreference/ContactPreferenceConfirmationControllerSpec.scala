@@ -27,8 +27,6 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
 
-import scala.concurrent.Future
-
 class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
 
   lazy val controller = new ContactPreferenceConfirmationController(inject[PreferenceConfirmationView], mockVatSubscriptionService)
@@ -53,7 +51,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
           }
 
           "render view with the email populated" in {
-            Jsoup.parse(bodyOf(result)).select("#content > div.govuk-inset-text").text() shouldBe "asd@asd.com"
+            Jsoup.parse(contentAsString(result)).select("#content > div.govuk-inset-text").text() shouldBe "asd@asd.com"
           }
         }
 
@@ -98,7 +96,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
         "retrieval of current address is successful" should {
 
           lazy val result = {
-            mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+            mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
             controller.show("letter")(requestWithDigitalPref.withSession(
               emailToLetterChangeSuccessful -> "true"
             ))
@@ -109,7 +107,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
           }
 
           "render view with the full business address populated" in {
-            Jsoup.parse(bodyOf(result)).select("#content > div.govuk-inset-text").text() shouldBe
+            Jsoup.parse(contentAsString(result)).select("#content > div.govuk-inset-text").text() shouldBe
               "firstLine secondLine thirdLine fourthLine fifthLine codeOfMyPost"
           }
         }
@@ -117,7 +115,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
         "retrieval of current address is unsuccessful" should {
 
           lazy val result = {
-            mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+            mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
             controller.show("letter")(requestWithDigitalPref.withSession(
               emailToLetterChangeSuccessful -> "true"
             ))

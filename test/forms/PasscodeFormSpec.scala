@@ -16,9 +16,10 @@
 
 package forms
 
+import org.scalatest.matchers.should.Matchers
 import utils.TestUtil
 
-class PasscodeFormSpec extends TestUtil {
+class PasscodeFormSpec extends TestUtil with Matchers {
 
   "Binding the form with a six-character value" should {
 

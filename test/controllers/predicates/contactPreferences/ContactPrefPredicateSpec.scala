@@ -23,11 +23,14 @@ import mocks.MockAuth
 import models.User
 import models.contactPreferences.ContactPreference.{digital, paper}
 import models.errors.ErrorModel
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
 
-class ContactPrefPredicateSpec extends MockAuth {
+import scala.concurrent.Future
+
+class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
   val predicateComponents = new ContactPrefPredicateComponents(
     mockVatSubscriptionService, mockErrorHandler, mcc, messagesApi, mockConfig
@@ -47,7 +50,7 @@ class ContactPrefPredicateSpec extends MockAuth {
 
         "this preference is blocked" should {
 
-          lazy val result = await(paperPrefPredicate.refine(digitalUser)).left.get
+          lazy val result = Future.successful(await(paperPrefPredicate.refine(digitalUser)).left.get)
 
           "return 303" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -72,7 +75,7 @@ class ContactPrefPredicateSpec extends MockAuth {
 
         "this preference is blocked" should {
 
-          lazy val result = await(digitalPrefPredicate.refine(paperUser)).left.get
+          lazy val result = Future.successful(await(digitalPrefPredicate.refine(paperUser)).left.get)
 
           "return 303" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -102,7 +105,7 @@ class ContactPrefPredicateSpec extends MockAuth {
 
           lazy val result = {
             mockGetCustomerInfo(user.vrn)(Right(fullCustomerInfoModel))
-            await(paperPrefPredicate.refine(user)).left.get
+            Future.successful(await(paperPrefPredicate.refine(user)).left.get)
           }
 
           "return 303" in {
@@ -137,7 +140,7 @@ class ContactPrefPredicateSpec extends MockAuth {
 
           lazy val result = {
             mockGetCustomerInfo(user.vrn)(Right(customerInfoPaperPrefModel))
-            await(digitalPrefPredicate.refine(user)).left.get
+            Future.successful(await(digitalPrefPredicate.refine(user)).left.get)
           }
 
           "return 303" in {
@@ -170,7 +173,7 @@ class ContactPrefPredicateSpec extends MockAuth {
 
         lazy val result = {
           mockGetCustomerInfo(user.vrn)(Right(minCustomerInfoModel))
-          await(paperPrefPredicate.refine(user)).left.get
+          Future.successful(await(paperPrefPredicate.refine(user)).left.get)
         }
 
         "return 500" in {
@@ -182,7 +185,7 @@ class ContactPrefPredicateSpec extends MockAuth {
 
         lazy val result = {
           mockGetCustomerInfo(user.vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
-          await(paperPrefPredicate.refine(user)).left.get
+          Future.successful(await(paperPrefPredicate.refine(user)).left.get)
         }
 
         "return 500" in {

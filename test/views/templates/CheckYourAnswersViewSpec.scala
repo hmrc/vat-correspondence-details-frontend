@@ -20,10 +20,11 @@ import models.User
 import models.viewModels.CheckYourAnswersViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.templates.CheckYourAnswersView
 
-class CheckYourAnswersViewSpec extends ViewBaseSpec {
+class CheckYourAnswersViewSpec extends ViewBaseSpec with Matchers {
 
   "CheckYourAnswersView" should {
 

@@ -20,9 +20,10 @@ import models.errors.ErrorModel
 import models.customerInformation.UpdatePPOBSuccess
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.LoggerUtil.{logDebug, logWarn}
+import utils.LoggerUtil
 
-object UpdatePPOBHttpParser {
+
+object UpdatePPOBHttpParser extends LoggerUtil {
 
   type UpdatePPOBResponse = Either[ErrorModel, UpdatePPOBSuccess]
 
@@ -31,16 +32,16 @@ object UpdatePPOBHttpParser {
       response.status match {
         case OK => response.json.validate[UpdatePPOBSuccess].fold(
           invalid => {
-            logWarn(s"[UpdatePPOBHttpParser][read] - Invalid JSON: $invalid")
+            logger.warn(s"[UpdatePPOBHttpParser][read] - Invalid JSON: $invalid")
             Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
           },
           valid => {
-            logDebug("[UpdatePPOBHttpParser][read] - Successfully parsed update response.")
+            logger.debug("[UpdatePPOBHttpParser][read] - Successfully parsed update response.")
             Right(valid)
           }
         )
         case status =>
-          logWarn(
+          logger.warn(
             s"[UpdatePPOBHttpParser][read] - " +
               s"Unexpected Response, Status $status returned, with response: ${response.body}"
           )

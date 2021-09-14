@@ -18,10 +18,11 @@ package views.errors.agent
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.errors.agent.UnauthorisedAgentView
 
-class UnauthorisedAgentViewSpec extends ViewBaseSpec {
+class UnauthorisedAgentViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: UnauthorisedAgentView = injector.instanceOf[UnauthorisedAgentView]
 

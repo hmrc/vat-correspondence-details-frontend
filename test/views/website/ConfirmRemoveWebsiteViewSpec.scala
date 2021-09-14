@@ -19,10 +19,11 @@ package views.website
 import controllers.website.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.website.ConfirmRemoveWebsiteView
 
-class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec {
+class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: ConfirmRemoveWebsiteView = injector.instanceOf[ConfirmRemoveWebsiteView]
 

@@ -32,9 +32,8 @@ import models.{No, User, Yes, YesNo}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, Result}
 import services.VatSubscriptionService
-import utils.LoggerUtil.logWarn
+import utils.LoggerUtil
 import views.html.contactPreference.EmailToUseView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -43,7 +42,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
                                      auditService: AuditingService)
                                     (implicit val appConfig: AppConfig,
                                      authComps: AuthPredicateComponents,
-                                     inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                     inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
 
   implicit val ec: ExecutionContext = authComps.mcc.executionContext
   val form: Form[YesNo] = YesNoForm.yesNoForm("emailToUse.error")
@@ -122,7 +121,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
           .addingToSession(SessionKeys.letterToEmailChangeSuccessful -> "true")
 
       case Left(ErrorModel(CONFLICT, _)) =>
-        logWarn("[EmailToUseController][updateCommsPreference] - There is an update request " +
+        logger.warn("[EmailToUseController][updateCommsPreference] - There is an update request " +
           "already in progress. Redirecting user to manage-vat overview page.")
         Redirect(appConfig.manageVatSubscriptionServicePath)
 

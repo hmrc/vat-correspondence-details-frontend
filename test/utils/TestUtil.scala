@@ -29,11 +29,11 @@ import play.api.inject.Injector
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import views.html.errors.StandardErrorView
 import assets.BaseTestConstants._
+import org.scalatest.wordspec.AnyWordSpecLike
 
-trait TestUtil extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport with BeforeAndAfterEach with Injecting {
+trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with MaterializerSupport with BeforeAndAfterEach with Injecting {
 
   lazy val injector: Injector = app.injector
   implicit lazy val mcc: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]

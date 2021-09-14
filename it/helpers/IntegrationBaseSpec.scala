@@ -28,6 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.{Application, Environment, Mode}
 import stubs.AuthStub
+import play.api.test.Helpers._
 
 trait IntegrationBaseSpec extends CustomMatchers with GuiceOneServerPerSuite with WireMockHelper with BeforeAndAfterAll {
 

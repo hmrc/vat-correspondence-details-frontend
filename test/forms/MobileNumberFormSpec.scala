@@ -16,12 +16,13 @@
 
 package forms
 
-import assets.BaseTestConstants.{testValidationMobile, testPrepopMobile}
+import assets.BaseTestConstants.{testPrepopMobile, testValidationMobile}
 import forms.MobileNumberForm.mobileNumberForm
+import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
 import utils.TestUtil
 
-class MobileNumberFormSpec extends TestUtil {
+class MobileNumberFormSpec extends TestUtil with Matchers {
 
   "The mobile number form" should {
 

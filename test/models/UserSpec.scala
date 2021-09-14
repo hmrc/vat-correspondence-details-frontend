@@ -16,10 +16,11 @@
 
 package models
 
+import org.scalatest.matchers.should.Matchers
 import uk.gov.hmrc.auth.core.{AuthorisationException, Enrolment, EnrolmentIdentifier, Enrolments}
 import utils.TestUtil
 
-class UserSpec extends TestUtil {
+class UserSpec extends TestUtil with Matchers {
 
   "Creating a User model with a VRN and an active enrolment" should {
 

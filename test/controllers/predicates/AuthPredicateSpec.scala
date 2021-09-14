@@ -21,16 +21,16 @@ import assets.CustomerInfoConstants.{customerInfoInsolvent, fullCustomerInfoMode
 import common.SessionKeys
 import mocks.MockAuth
 import org.jsoup.Jsoup
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.MaterializerSupport
-
 import scala.concurrent.Future
 
-class AuthPredicateSpec extends MockAuth with MaterializerSupport {
+class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers {
 
   val allowAgentPredicate: Action[AnyContent] = mockAuthPredicate.async {
     _ => Future.successful(Ok("test"))
@@ -57,7 +57,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
               _ => Future.successful(Ok("test"))
             }
 
-          lazy val result = await(blockAgentPredicate(agent))
+          lazy val result = Future.successful(await(blockAgentPredicate(agent)))
 
           "return Unauthorized (401)" in {
             mockAgentAuthorised()
@@ -65,7 +65,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
           }
 
           "show the agent journey disabled page" in {
-            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
+            messages(Jsoup.parse(contentAsString(result)).title) shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
           }
         }
 
@@ -76,7 +76,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
               _ => Future.successful(Ok("test"))
             }
 
-          lazy val result = await(blockAgentPredicate(agent))
+          lazy val result = Future.successful(await(blockAgentPredicate(agent)))
 
           "return SEE_OTHER (303)" in {
             mockAgentAuthorised()
@@ -90,7 +90,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
         "the Agent does NOT have an Active HMRC-AS-AGENT enrolment" should {
 
-          lazy val result = await(allowAgentPredicate(agent))
+          lazy val result = Future.successful(await(allowAgentPredicate(agent)))
 
           "return Forbidden" in {
             mockAgentWithoutEnrolment()
@@ -98,7 +98,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
           }
 
           "render the Unauthorised Agent page" in {
-            messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Your client’s VAT details - GOV.UK"
+            messages(Jsoup.parse(contentAsString(result)).title) shouldBe "You can not use this service yet - Your client’s VAT details - GOV.UK"
           }
         }
       }
@@ -113,29 +113,29 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
       "a no active session result is returned from Auth" should {
 
-        lazy val result = await(allowAgentPredicate(agent))
+        lazy val result = Future.successful(await(allowAgentPredicate(agent)))
 
         "return Unauthorised (401)" in {
-          mockMissingBearerToken()
+          mockMissingBearerToken
           status(result) shouldBe Status.UNAUTHORIZED
         }
 
         "render the Unauthorised page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "Your session has timed out - Your client’s VAT details - GOV.UK"
+          messages(Jsoup.parse(contentAsString(result)).title) shouldBe "Your session has timed out - Your client’s VAT details - GOV.UK"
         }
       }
 
       "an authorisation exception is returned from Auth" should {
 
-        lazy val result = await(allowAgentPredicate(agent))
+        lazy val result = Future.successful(await(allowAgentPredicate(agent)))
 
         "return Internal Server Error (500)" in {
-          mockAuthorisationException()
+          mockAuthorisationException
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
         "render the Unauthorised page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "There is a problem with the service - Your client’s VAT details - GOV.UK"
+          messages(Jsoup.parse(contentAsString(result)).title) shouldBe "There is a problem with the service - Your client’s VAT details - GOV.UK"
         }
       }
     }
@@ -222,7 +222,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
 
       "they do NOT have an active HMRC-MTD-VAT enrolment" should {
 
-        lazy val result = await(allowAgentPredicate(user))
+        lazy val result = Future.successful(await(allowAgentPredicate(user)))
 
         "return Forbidden (403)" in {
           mockIndividualWithoutEnrolment()
@@ -230,7 +230,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport {
         }
 
         "render the Not Signed Up page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe "You can not use this service yet - Business tax account - GOV.UK"
+          messages(Jsoup.parse(contentAsString(result)).title) shouldBe "You can not use this service yet - Business tax account - GOV.UK"
         }
 
       }

@@ -19,11 +19,12 @@ package connectors.httpParsers
 import connectors.httpParsers.VerifyPasscodeHttpParser._
 import connectors.httpParsers.VerifyPasscodeHttpParser.VerifyPasscodeHttpReads.read
 import models.errors.ErrorModel
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.test.UnitSpec
 
-class VerifyPasscodeHttpParserSpec extends UnitSpec {
+class VerifyPasscodeHttpParserSpec extends AnyWordSpecLike with Matchers {
 
   "VerifyPasscodeHttpReads" when {
 

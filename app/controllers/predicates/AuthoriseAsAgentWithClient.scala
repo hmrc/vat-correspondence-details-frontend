@@ -25,9 +25,8 @@ import play.api.mvc._
 import services.EnrolmentsAuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
-import utils.LoggerUtil.{logDebug, logWarn}
+import utils.LoggerUtil
 import views.html.errors.SessionTimeoutView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -39,7 +38,7 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
                                            override implicit val executionContext: ExecutionContext,
                                            override val messagesApi: MessagesApi)
 
-  extends AuthBasePredicate(mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] {
+  extends AuthBasePredicate(mcc) with ActionBuilder[User, AnyContent] with ActionFunction[Request, User] with LoggerUtil {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 
@@ -53,7 +52,7 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
 
     request.session.get(SessionKeys.clientVrn) match {
       case Some(vrn) =>
-        logDebug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
+        logger.debug(s"[AuthoriseAsAgentWithClient][invokeBlock] - Client VRN from Session: $vrn")
         enrolmentsAuthService.authorised(delegatedAuthRule(vrn))
           .retrieve(v2.Retrievals.affinityGroup and v2.Retrievals.allEnrolments) {
             case None ~ _ =>
@@ -64,12 +63,12 @@ class AuthoriseAsAgentWithClient @Inject()(enrolmentsAuthService: EnrolmentsAuth
               block(user)
           } recover {
             case _: NoActiveSession =>
-              logDebug("[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
+              logger.debug("[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have an active session, " +
                 "rendering Session Timeout")
               Unauthorized(sessionTimeoutView())
 
             case _: AuthorisationException =>
-              logWarn("[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
+              logger.warn("[AuthoriseAsAgentWithClient][invokeBlock] - Agent does not have " +
                 "delegated authority for Client")
               Redirect(appConfig.vatAgentClientLookupUnauthorised)
 

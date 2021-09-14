@@ -24,16 +24,17 @@ import helpers.IntegrationBaseSpec
 import models.User
 import models.customerInformation._
 import models.errors.ErrorModel
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import stubs.VatSubscriptionStub
 import uk.gov.hmrc.http.HeaderCarrier
-
+import play.api.test.Helpers._
 import scala.concurrent.ExecutionContext
 
-class VatSubscriptionConnectorISpec extends IntegrationBaseSpec {
+class VatSubscriptionConnectorISpec extends IntegrationBaseSpec with Matchers {
 
   private trait Test {
     def setupStubs(): StubMapping

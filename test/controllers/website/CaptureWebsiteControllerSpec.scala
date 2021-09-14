@@ -47,7 +47,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
           common.SessionKeys.validationWebsiteKey -> testValidationWebsite)
         )
 
-        lazy val document = Jsoup.parse(bodyOf(result))
+        lazy val document = Jsoup.parse(contentAsString(result))
 
         "return 200" in {
           status(result) shouldBe Status.OK
@@ -71,7 +71,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
         common.SessionKeys.validationWebsiteKey -> testValidationWebsite,
         common.SessionKeys.prepopulationWebsiteKey -> testValidWebsite)
       )
-      lazy val document = Jsoup.parse(bodyOf(result))
+      lazy val document = Jsoup.parse(contentAsString(result))
 
       "return 200" in {
         status(result) shouldBe Status.OK

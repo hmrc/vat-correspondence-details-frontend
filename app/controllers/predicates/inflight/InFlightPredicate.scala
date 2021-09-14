@@ -24,12 +24,12 @@ import play.api.mvc.{ActionRefiner, Result}
 import play.api.mvc.Results.{Conflict, Redirect}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.LoggerUtil.{logDebug, logWarn}
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
                         redirectURL: String,
-                        blockIfPendingPref: Boolean) extends ActionRefiner[User, User] with I18nSupport {
+                        blockIfPendingPref: Boolean) extends ActionRefiner[User, User] with I18nSupport with LoggerUtil {
 
   implicit val appConfig: AppConfig = inFlightComps.appConfig
   implicit val executionContext: ExecutionContext = inFlightComps.mcc.executionContext
@@ -58,7 +58,7 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
           case Some(changes) if changes.ppob.isDefined =>
             Left(Conflict(inFlightComps.inFlightChangeView()).addingToSession(inFlightContactDetailsChangeKey -> "true"))
           case _ =>
-            logDebug("[InFlightPredicate][getCustomerInfoCall] - There are no in-flight changes. " +
+            logger.debug("[InFlightPredicate][getCustomerInfoCall] - There are no in-flight changes. " +
               "Redirecting user to the start of the journey.")
             Left(Redirect(redirectURL).addingToSession(
               inFlightContactDetailsChangeKey -> "false",
@@ -69,7 +69,7 @@ class InFlightPredicate(inFlightComps: InFlightPredicateComponents,
             ))
         }
       case Left(error) =>
-        logWarn("[InFlightPredicate][getCustomerInfoCall] - " +
+        logger.warn("[InFlightPredicate][getCustomerInfoCall] - " +
           s"The call to the GetCustomerInfo API failed. Error: ${error.message}")
         Left(inFlightComps.errorHandler.showInternalServerError)
     }

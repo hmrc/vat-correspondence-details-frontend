@@ -21,10 +21,11 @@ import controllers.mobileNumber.routes
 import forms.MobileNumberForm.mobileNumberForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.mobileNumber.CaptureMobileNumberView
 
-class CaptureMobileNumberViewSpec extends ViewBaseSpec {
+class CaptureMobileNumberViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: CaptureMobileNumberView = inject[CaptureMobileNumberView]
 

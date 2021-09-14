@@ -68,7 +68,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
       }
 
       "render the Confirm Email page" which {
-        lazy val page = Jsoup.parse(bodyOf(result))
+        lazy val page = Jsoup.parse(contentAsString(result))
 
         "has the correct question text" in {
           page.select(".govuk-summary-list__key").text() shouldBe "Email address"
@@ -134,7 +134,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       "render the Confirm Email page" which {
 
-        lazy val page = Jsoup.parse(bodyOf(result))
+        lazy val page = Jsoup.parse(contentAsString(result))
 
         "has the correct question text" in {
           page.select(".govuk-summary-list__key").text() shouldBe "Email address"
@@ -247,7 +247,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         }
 
         "show the internal server error page" in {
-          messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+          messages(Jsoup.parse(contentAsString(result)).title) shouldBe internalServerErrorTitle
         }
       }
     }

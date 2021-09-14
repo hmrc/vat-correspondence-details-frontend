@@ -32,9 +32,8 @@ import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{EmailVerificationService, VatSubscriptionService}
-import utils.LoggerUtil.{logDebug, logInfo, logWarn}
+import utils.LoggerUtil
 import views.html.email.{PasscodeErrorView, PasscodeView}
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -47,7 +46,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
                                         (implicit val appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
                                          authComps: AuthPredicateComponents,
-                                         inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                         inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
@@ -90,7 +89,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
           case Some(true) => Redirect(routes.VerifyPasscodeController.emailShow())
           case Some(false) =>
-            logDebug(
+            logger.debug(
             "[VerifyPasscodeController][emailSendVerification] - " +
               "Unable to send email verification request. Service responded with 'already verified'"
             )
@@ -124,7 +123,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
                 .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
             case Left(ErrorModel(CONFLICT, _)) =>
-              logWarn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
+              logger.warn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
                 "already in progress. Redirecting user to manage-vat overview page.")
               Redirect(appConfig.manageVatSubscriptionServicePath)
                 .addingToSession(inFlightContactDetailsChangeKey -> "true")
@@ -134,7 +133,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           }
 
         case _ =>
-          logInfo("[VerifyPasscodeController][updateEmailAddress] - No email address found in session")
+          logger.info("[VerifyPasscodeController][updateEmailAddress] - No email address found in session")
           Future.successful(Redirect(routes.CaptureEmailController.show()))
       }
   }
@@ -187,7 +186,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
           case Some(true) => Redirect(routes.VerifyPasscodeController.contactPrefShow())
           case Some(false) =>
-            logDebug(
+            logger.debug(
               "[VerifyPasscodeController][contactPrefSendVerification] - " +
                 "Unable to send verification request. Service responded with 'already verified'"
             )
@@ -206,7 +205,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         case Some(email) => emailVerificationService.isEmailVerified(email).flatMap {
           case Some(true) => sendUpdateRequest(email)
           case _ =>
-            logDebug("[VerifyPasscodeController][updateContactPrefEmail] Email has not yet been verified.")
+            logger.debug("[VerifyPasscodeController][updateContactPrefEmail] Email has not yet been verified.")
             Future.successful(Redirect(routes.VerifyPasscodeController.contactPrefSendVerification()))
         }
         case _ =>
@@ -225,11 +224,11 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         Redirect(controllers.email.routes.EmailChangeSuccessController.show())
           .addingToSession(SessionKeys.emailChangeSuccessful -> "true")
       case Left(ErrorModel(CONFLICT, _)) =>
-        logDebug("[VerifyPasscodeController][sendUpdateRequest] - There is a contact details update request " +
+        logger.debug("[VerifyPasscodeController][sendUpdateRequest] - There is a contact details update request " +
           "already in progress. Redirecting user to manage-vat overview page.")
         Redirect(appConfig.btaAccountDetailsUrl)
       case Left(error) =>
-        logWarn(s"[VerifyPasscodeController][sendUpdateRequest] - ${error.status}: ${error.message}")
+        logger.warn(s"[VerifyPasscodeController][sendUpdateRequest] - ${error.status}: ${error.message}")
         errorHandler.showInternalServerError
     }
   }

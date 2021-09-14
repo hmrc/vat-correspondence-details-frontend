@@ -17,10 +17,11 @@
 package forms
 
 import forms.EmailForm._
+import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
 import utils.TestUtil
 
-class EmailFormSpec extends TestUtil {
+class EmailFormSpec extends TestUtil with Matchers {
 
   "The emailForm" should {
 

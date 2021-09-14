@@ -23,8 +23,9 @@ import views.ViewBaseSpec
 import views.html.contactPreference.AddEmailAddressView
 import assets.ContactPrefAddEmailMessages
 import controllers.contactPreference.routes
+import org.scalatest.matchers.should.Matchers
 
-class AddEmailAddressViewSpec extends ViewBaseSpec {
+class AddEmailAddressViewSpec extends ViewBaseSpec with Matchers {
   lazy val addEmailView: AddEmailAddressView = injector.instanceOf[AddEmailAddressView]
 
   object Selectors {

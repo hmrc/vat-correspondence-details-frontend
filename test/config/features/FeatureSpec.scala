@@ -17,11 +17,12 @@
 package config.features
 
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
-import uk.gov.hmrc.play.test.UnitSpec
 
-class FeatureSpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
+class FeatureSpec extends AnyWordSpecLike with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
   private val features = new Features(app.injector.instanceOf[Configuration])
 

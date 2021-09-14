@@ -68,10 +68,10 @@ trait MockVatSubscriptionService extends MockFactory with BeforeAndAfterEach {
       .expects(vrn, contactPref, *, *)
       .returning(response)
 
-  def mockGetCustomerInfo(vrn: String)(response: Future[GetCustomerInfoResponse]): Unit =
+  def mockGetCustomerInfo(vrn: String)(response: GetCustomerInfoResponse): Unit =
     (mockVatSubscriptionService.getCustomerInfo(_: String)(_: HeaderCarrier, _: ExecutionContext))
       .expects(vrn, *, *)
-      .returning(response)
+      .returning(Future.successful(response))
 
   def mockUpdateEmail()(response: Future[UpdatePPOBResponse]): Unit =
     (mockVatSubscriptionService.updateEmail(_: String, _: String)(_: HeaderCarrier, _: ExecutionContext, _: User[_]))

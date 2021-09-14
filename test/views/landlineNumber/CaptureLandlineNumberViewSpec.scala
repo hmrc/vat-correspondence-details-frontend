@@ -21,10 +21,11 @@ import controllers.landlineNumber.routes
 import forms.LandlineNumberForm.landlineNumberForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.landlineNumber.CaptureLandlineNumberView
 
-class CaptureLandlineNumberViewSpec extends ViewBaseSpec {
+class CaptureLandlineNumberViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: CaptureLandlineNumberView = inject[CaptureLandlineNumberView]
 

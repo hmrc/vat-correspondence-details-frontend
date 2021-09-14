@@ -18,10 +18,11 @@ package views.errors
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.errors.SessionTimeoutView
 
-class SessionTimeoutViewSpec extends ViewBaseSpec {
+class SessionTimeoutViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: SessionTimeoutView = injector.instanceOf[SessionTimeoutView]
 

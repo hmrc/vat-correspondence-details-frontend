@@ -16,10 +16,11 @@
 
 package audit.models
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 
-class ChangedEmailAddressAuditModelSpec extends UnitSpec {
+class ChangedEmailAddressAuditModelSpec extends AnyWordSpecLike with Matchers {
 
   val changedAddressNonAgentModel: ChangedEmailAddressAuditModel = ChangedEmailAddressAuditModel(
     currentEmailAddress = Some("testemail@test.com"),

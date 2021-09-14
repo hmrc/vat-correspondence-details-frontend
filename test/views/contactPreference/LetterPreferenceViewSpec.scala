@@ -20,10 +20,11 @@ import assets.LetterPreferenceMessages
 import forms.YesNoForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.contactPreference.LetterPreferenceView
 
-class LetterPreferenceViewSpec extends ViewBaseSpec {
+class LetterPreferenceViewSpec extends ViewBaseSpec with Matchers {
 
   lazy val letterPreferenceView: LetterPreferenceView = injector.instanceOf[LetterPreferenceView]
   lazy val address: String = "123 Fake Street, AB1 C23"

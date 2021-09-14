@@ -17,8 +17,9 @@
 package views.utils
 
 import _root_.utils.TestUtil
+import org.scalatest.matchers.should.Matchers
 
-class ServiceNameUtilSpec extends TestUtil {
+class ServiceNameUtilSpec extends TestUtil with Matchers {
 
   "ServiceNameUtil.generateHeader" when {
 

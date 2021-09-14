@@ -18,10 +18,11 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import play.twirl.api.Html
 import views.html.MainTemplate
 
-class MainTemplateSpec extends ViewBaseSpec {
+class MainTemplateSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: MainTemplate = inject[MainTemplate]
 

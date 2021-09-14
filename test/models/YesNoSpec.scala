@@ -16,10 +16,11 @@
 
 package models
 
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import utils.TestUtil
 
-class YesNoSpec extends TestUtil {
+class YesNoSpec extends TestUtil with Matchers {
 
   "YesNo.Yes" should {
 

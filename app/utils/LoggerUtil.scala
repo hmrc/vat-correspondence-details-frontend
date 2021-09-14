@@ -16,16 +16,11 @@
 
 package utils
 
-import play.api.Logger
+import org.slf4j.{Logger, LoggerFactory}
+import play.api.LoggerLike
 
-// $COVERAGE-OFF$
+trait LoggerUtil extends LoggerLike {
 
-object LoggerUtil {
+  override val logger: Logger = LoggerFactory.getLogger("application")
 
-  def logInfo(content: String): Unit = Logger.info(content)
-  def logDebug(content: String): Unit = Logger.debug(content)
-  def logWarn(content: String): Unit = Logger.warn(content)
-  def logError(content: String): Unit = Logger.error(content)
 }
-
-// $COVERAGE-ON$

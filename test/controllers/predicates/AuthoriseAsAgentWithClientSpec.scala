@@ -18,14 +18,14 @@ package controllers.predicates
 
 import mocks.MockAuth
 import org.jsoup.Jsoup
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
+import scala.concurrent.Future
 import play.api.test.Helpers._
 
-import scala.concurrent.Future
-
-class AuthoriseAsAgentWithClientSpec extends MockAuth {
+class AuthoriseAsAgentWithClientSpec extends MockAuth with Matchers {
 
   def target: Action[AnyContent] =
     mockAuthAsAgentWithClient.async {
@@ -47,7 +47,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
     "the agent is not authenticated" should {
 
       "return 401 (Unauthorised)" in {
-        mockMissingBearerToken()
+        mockMissingBearerToken
         val result = target(fakeRequestWithClientsVRN)
         status(result) shouldBe Status.UNAUTHORIZED
       }
@@ -58,7 +58,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       lazy val result = target(fakeRequestWithClientsVRN)
 
       "return 303" in {
-        mockAuthorisationException()
+        mockAuthorisationException
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -69,7 +69,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
 
     "the agent has no enrolments" should {
 
-      lazy val result = await(target(fakeRequestWithClientsVRN))
+      lazy val result = Future.successful(await(target(fakeRequestWithClientsVRN)))
 
       "return Internal Server Error (500)" in {
         mockAgentWithoutAffinity()
@@ -77,14 +77,14 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth {
       }
 
       "render the Internal Server Error page" in {
-        messages(Jsoup.parse(bodyOf(result)).title) shouldBe "There is a problem with the service - VAT - GOV.UK"
+        messages(Jsoup.parse(contentAsString(result)).title) shouldBe "There is a problem with the service - VAT - GOV.UK"
       }
     }
 
     "there is no client VRN in session" should {
 
       mockAgentAuthorised()
-      lazy val result = await(target(request))
+      lazy val result = Future.successful(await(target(request)))
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER

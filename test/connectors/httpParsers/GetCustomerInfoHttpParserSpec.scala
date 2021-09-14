@@ -19,13 +19,14 @@ package connectors.httpParsers
 import assets.CustomerInfoConstants._
 import connectors.httpParsers.GetCustomerInfoHttpParser.{CustomerInfoReads, GetCustomerInfoResponse}
 import models.errors.ErrorModel
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestUtil
 
-class GetCustomerInfoHttpParserSpec extends UnitSpec with TestUtil {
+class GetCustomerInfoHttpParserSpec extends AnyWordSpecLike with Matchers with TestUtil {
 
   private def customerInfoResult(response: HttpResponse): GetCustomerInfoResponse =
     CustomerInfoReads.read("", "", response)

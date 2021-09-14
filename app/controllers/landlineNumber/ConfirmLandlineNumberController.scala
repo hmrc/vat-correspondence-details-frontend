@@ -30,9 +30,8 @@ import models.errors.ErrorModel
 import models.viewModels.CheckYourAnswersViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.VatSubscriptionService
-import utils.LoggerUtil.{logInfo, logWarn}
+import utils.LoggerUtil
 import views.html.templates.CheckYourAnswersView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -43,7 +42,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
                                                (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
-                                                inFlightComps: InFlightPredicateComponents) extends BaseController {
+                                                inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
@@ -80,7 +79,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
 
       enteredLandline match {
         case None =>
-          logInfo("[ConfirmLandlineNumberController][updateLandlineNumber] - No landline number found in session")
+          logger.info("[ConfirmLandlineNumberController][updateLandlineNumber] - No landline number found in session")
           Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
 
         case Some(landline) => vatSubscriptionService.updateLandlineNumber(user.vrn, landline).map {
@@ -100,7 +99,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
               .addingToSession(landlineChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
           case Left(ErrorModel(CONFLICT, _)) =>
-            logWarn("[ConfirmLandlineNumberController][updateLandlineNumber] - There is a contact details update request " +
+            logger.warn("[ConfirmLandlineNumberController][updateLandlineNumber] - There is a contact details update request " +
               "already in progress. Redirecting user to manage-vat overview page.")
             Redirect(appConfig.manageVatSubscriptionServicePath)
               .addingToSession(inFlightContactDetailsChangeKey -> "true")

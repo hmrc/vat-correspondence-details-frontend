@@ -20,10 +20,11 @@ import assets.BaseTestConstants.testValidationLandline
 import controllers.landlineNumber.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.landlineNumber.ConfirmRemoveLandlineView
 
-class ConfirmRemoveLandlineViewSpec extends ViewBaseSpec {
+class ConfirmRemoveLandlineViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: ConfirmRemoveLandlineView = inject[ConfirmRemoveLandlineView]
 

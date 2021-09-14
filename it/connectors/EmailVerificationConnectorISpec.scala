@@ -24,11 +24,13 @@ import connectors.httpParsers.ResponseHttpParser.HttpPostResult
 import connectors.httpParsers.VerifyPasscodeHttpParser._
 import helpers.IntegrationBaseSpec
 import models.errors.ErrorModel
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import stubs.EmailVerificationStub
 import uk.gov.hmrc.http.HeaderCarrier
+import play.api.test.Helpers._
 
-class EmailVerificationConnectorISpec extends IntegrationBaseSpec {
+class EmailVerificationConnectorISpec extends IntegrationBaseSpec with Matchers {
 
   private trait Test {
     def setupStubs(): StubMapping

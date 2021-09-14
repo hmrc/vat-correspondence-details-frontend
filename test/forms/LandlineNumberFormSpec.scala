@@ -16,12 +16,13 @@
 
 package forms
 
-import assets.BaseTestConstants.{testValidationLandline, testPrepopLandline}
+import assets.BaseTestConstants.{testPrepopLandline, testValidationLandline}
 import forms.LandlineNumberForm._
+import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
 import utils.TestUtil
 
-class LandlineNumberFormSpec extends TestUtil {
+class LandlineNumberFormSpec extends TestUtil with Matchers {
 
   "The landline number form" should {
 

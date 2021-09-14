@@ -34,12 +34,12 @@ import views.html.contactPreference.LetterPreferenceView
 import models.contactPreferences.ContactPreference._
 import models.customerInformation.UpdatePPOBSuccess
 import org.mockito.Mockito.reset
+import org.scalatest.matchers.should.Matchers
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-
 import scala.concurrent.Future
 
-class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService {
+class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubscriptionService with Matchers {
 
   lazy val view: LetterPreferenceView = inject[LetterPreferenceView]
   lazy val controller = new LetterPreferenceController(view, mockVatSubscriptionService, mockErrorHandler, mockAuditingService)
@@ -56,11 +56,11 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
           "user has a postcode" should {
 
             lazy val result = {
-              mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+              mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
               controller.show(requestWithSession)
             }
 
-            lazy val page = Jsoup.parse(bodyOf(result))
+            lazy val page = Jsoup.parse(contentAsString(result))
 
             "return an OK result" in {
               status(result) shouldBe OK
@@ -78,11 +78,11 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
           "user does not have a postcode" should {
 
             lazy val result = {
-              mockGetCustomerInfo(vrn)(Future.successful(Right(minCustomerInfoModel)))
+              mockGetCustomerInfo(vrn)(Right(minCustomerInfoModel))
               controller.show(requestWithSession)
             }
 
-            lazy val page = Jsoup.parse(bodyOf(result))
+            lazy val page = Jsoup.parse(contentAsString(result))
 
             "return an OK result" in {
               status(result) shouldBe OK
@@ -97,7 +97,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
         "call to customer info is unsuccessful" should {
 
           lazy val result = {
-            mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+            mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
             controller.show(requestWithSession)
           }
 
@@ -152,7 +152,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
             lazy val result = {
               mockIndividualAuthorised()
-              mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+              mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
               mockUpdateContactPreference(
                 vrn, ContactPreference.paper)(Future(Right(UpdatePPOBSuccess("success")))
               )
@@ -213,7 +213,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
             }
 
             "show the internal server error page" in {
-              messages(Jsoup.parse(bodyOf(result)).title) shouldBe internalServerErrorTitle
+              messages(Jsoup.parse(contentAsString(result)).title) shouldBe internalServerErrorTitle
             }
           }
         }
@@ -237,7 +237,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
           "call to customer info is successful" should {
             lazy val result = {
-              mockGetCustomerInfo(vrn)(Future.successful(Right(fullCustomerInfoModel)))
+              mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
               controller.submit(requestWithSession.withFormUrlEncodedBody())
             }
 
@@ -246,14 +246,14 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
             }
 
             "return the LetterPreference view with errors" in {
-              Jsoup.parse(bodyOf(result)).title should include("Error: " + LetterPreferenceMessages.heading)
+              Jsoup.parse(contentAsString(result)).title should include("Error: " + LetterPreferenceMessages.heading)
             }
           }
 
           "call to customer info is unsuccessful" should {
 
             lazy val result = {
-              mockGetCustomerInfo(vrn)(Future.successful(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, ""))))
+              mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
               controller.submit(requestWithSession.withFormUrlEncodedBody())
             }
 
