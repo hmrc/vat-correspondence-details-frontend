@@ -39,7 +39,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec with Matchers {
         implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
-          document.title shouldBe "What is the mobile number? - Business tax account - GOV.UK"
+          document.title shouldBe "What is the mobile number? - Manage your VAT account - GOV.UK"
         }
 
         "have the correct heading" in {
@@ -95,7 +95,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec with Matchers {
         implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
-          document.title shouldBe "Error: What is the mobile number? - Business tax account - GOV.UK"
+          document.title shouldBe "Error: What is the mobile number? - Manage your VAT account - GOV.UK"
         }
 
         "have a form error box" which {

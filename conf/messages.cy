@@ -10,7 +10,7 @@ banner.feedback = adborth
 banner.feedbackImprove = yn ein helpu i’w wella.
 banner.phaseName = BETA
 
-common.clientService = Cyfrif Treth Busnes
+common.clientService = Rheoli eich cyfrif TAW
 common.agentService = Manylion TAW eich cleient
 common.vat = TAW
 common.continue = Yn eich blaen

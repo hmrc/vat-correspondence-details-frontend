@@ -37,7 +37,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct document title" in {
-      document.title shouldBe "Enter code to confirm your email address - Business tax account - GOV.UK"
+      document.title shouldBe "Enter code to confirm your email address - Manage your VAT account - GOV.UK"
     }
 
     "have the correct heading" in {
@@ -150,7 +150,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct document title" in {
-      document.title shouldBe "Error: Enter code to confirm your email address - Business tax account - GOV.UK"
+      document.title shouldBe "Error: Enter code to confirm your email address - Manage your VAT account - GOV.UK"
     }
 
     "have an error summary" which {

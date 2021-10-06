@@ -51,7 +51,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec with Matchers {
           implicit lazy val document: Document = Jsoup.parse(view.body)
 
           "have the correct document title" in {
-            document.title shouldBe "What’s the website address? - Business tax account - GOV.UK"
+            document.title shouldBe "What’s the website address? - Manage your VAT account - GOV.UK"
           }
 
           "have a back link" which {
@@ -117,7 +117,7 @@ class CaptureWebsiteViewSpec extends ViewBaseSpec with Matchers {
         implicit lazy val document: Document = Jsoup.parse(view.body)
 
         "have the correct document title" in {
-          document.title shouldBe "Error: What’s the website address? - Business tax account - GOV.UK"
+          document.title shouldBe "Error: What’s the website address? - Manage your VAT account - GOV.UK"
         }
 
         "have a form error box" which {

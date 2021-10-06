@@ -68,7 +68,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Manage your VAT account - GOV.UK"
         }
       }
 
@@ -82,7 +82,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Manage your VAT account - GOV.UK"
         }
       }
 
@@ -115,7 +115,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
         }
 
         "show the 'change pending' error page" in {
-          messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
+          messages(document.title) shouldBe "There is already a change pending - Manage your VAT account - GOV.UK"
         }
       }
 
@@ -134,7 +134,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
           }
 
           "show the 'change pending' error page" in {
-            messages(document.title) shouldBe "There is already a change pending - Business tax account - GOV.UK"
+            messages(document.title) shouldBe "There is already a change pending - Manage your VAT account - GOV.UK"
           }
 
           "add the inflight indicator 'commsPref' to session" in {

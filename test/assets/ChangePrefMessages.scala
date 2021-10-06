@@ -19,7 +19,7 @@ package assets
 object ChangePrefMessages {
 
   val heading = "Do you want us to use this email address to contact you about VAT?"
-  val titleSuffixUser = " - Business tax account - GOV.UK"
+  val titleSuffixUser = " - Manage your VAT account - GOV.UK"
   val title: String = heading + titleSuffixUser
   val errorMessage = "Select yes if this is the email address you want us to use"
   val yes = "Yes"

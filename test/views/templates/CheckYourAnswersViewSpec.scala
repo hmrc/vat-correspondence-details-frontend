@@ -41,7 +41,7 @@ class CheckYourAnswersViewSpec extends ViewBaseSpec with Matchers {
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct page title" in {
-      document.title() shouldBe "Check your answers - Business tax account - GOV.UK"
+      document.title() shouldBe "Check your answers - Manage your VAT account - GOV.UK"
     }
 
     "have the correct heading" in {

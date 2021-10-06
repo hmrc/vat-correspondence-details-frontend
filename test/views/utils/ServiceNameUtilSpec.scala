@@ -25,21 +25,21 @@ class ServiceNameUtilSpec extends TestUtil with Matchers {
 
     "given a User who is an Agent" should {
 
-      "return the agent service name Update your client’s VAT details" in {
+      "return the agent service name" in {
         ServiceNameUtil.generateHeader(agent, messages) shouldBe "Your client’s VAT details"
       }
     }
 
     "given a User who is not an Agent" should {
 
-      "return the client service name Business tax account" in {
-        ServiceNameUtil.generateHeader(user, messages) shouldBe "Business tax account"
+      "return the principal service name" in {
+        ServiceNameUtil.generateHeader(user, messages) shouldBe "Manage your VAT account"
       }
     }
 
     "not given a User" should {
 
-      "return the client service name Business tax account" in {
+      "return the generic service name" in {
         ServiceNameUtil.generateHeader(request, messages) shouldBe "VAT"
       }
     }
@@ -56,8 +56,8 @@ class ServiceNameUtilSpec extends TestUtil with Matchers {
 
     "given a User who is not an Agent" should {
 
-      "return the BTA home URL" in {
-        ServiceNameUtil.generateServiceUrl(user, mockConfig) shouldBe Some(mockConfig.btaHomeUrl)
+      "return the VAT overview URL" in {
+        ServiceNameUtil.generateServiceUrl(user, mockConfig) shouldBe Some(mockConfig.vatOverviewUrl)
       }
     }
 
