@@ -10,7 +10,7 @@ banner.feedback = feedback
 banner.feedbackImprove = will help us to improve it.
 banner.phaseName = BETA
 
-common.clientService = Business tax account
+common.clientService = Manage your VAT account
 common.agentService = Your client’s VAT details
 common.vat = VAT
 common.continue = Continue

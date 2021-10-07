@@ -37,7 +37,7 @@ class ConfirmRemoveMobileViewSpec extends ViewBaseSpec with Matchers {
 
       "have the correct title" in {
         document.title shouldBe
-          s"Confirm you want to remove the mobile number - Business tax account - GOV.UK"
+          s"Confirm you want to remove the mobile number - Manage your VAT account - GOV.UK"
       }
 
       "have the correct heading" in {

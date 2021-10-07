@@ -19,7 +19,7 @@ package assets
 object EmailPrefMessages {
 
   val heading = "Do you want us to send you emails instead of letters?"
-  val titleSuffixUser = " - Business tax account - GOV.UK"
+  val titleSuffixUser = " - Manage your VAT account - GOV.UK"
   val title: String = heading + titleSuffixUser
   val hint = "We currently send messages about your VAT by letter."
   val emailErrorMessage = "Select yes if you want communications by email"

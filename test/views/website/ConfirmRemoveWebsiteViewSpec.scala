@@ -41,7 +41,7 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec with Matchers {
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {
-        document.title shouldBe "Confirm you want to remove the website address - Business tax account - GOV.UK"
+        document.title shouldBe "Confirm you want to remove the website address - Manage your VAT account - GOV.UK"
       }
 
       "have the correct heading" in {

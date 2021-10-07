@@ -31,7 +31,8 @@ object ServiceNameUtil {
 
   def generateServiceUrl(implicit request: Request[_], appConfig: AppConfig): Option[String] =
     request match {
-      case user: User[_] => if (user.isAgent) Some(appConfig.vatAgentClientLookupAgentHubPath) else Some(appConfig.btaHomeUrl)
+      case user: User[_] =>
+        if (user.isAgent) Some(appConfig.vatAgentClientLookupAgentHubPath) else Some(appConfig.vatOverviewUrl)
       case _ => None
     }
 }

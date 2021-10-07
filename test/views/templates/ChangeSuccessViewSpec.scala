@@ -53,7 +53,7 @@ class ChangeSuccessViewSpec extends ViewBaseSpec with Matchers {
           lazy implicit val document: Document = Jsoup.parse(view.body)
 
           "have the page title provided by the model" in {
-            elementText(Selectors.title) shouldBe s"$exampleTitle - Business tax account - GOV.UK"
+            elementText(Selectors.title) shouldBe s"$exampleTitle - Manage your VAT account - GOV.UK"
           }
 
           "have the heading provided by the model" in {

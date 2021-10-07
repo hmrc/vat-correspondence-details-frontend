@@ -43,7 +43,7 @@ class PasscodePageSpec extends BasePageISpec {
 
       res should have(
         httpStatus(OK),
-        pageTitle("Enter code to confirm your email address - Business tax account - GOV.UK")
+        pageTitle("Enter code to confirm your email address - Manage your VAT account - GOV.UK")
       )
     }
   }
@@ -158,7 +158,7 @@ class PasscodePageSpec extends BasePageISpec {
 
       res should have(
         httpStatus(OK),
-        pageTitle("Enter code to confirm your email address - Business tax account - GOV.UK")
+        pageTitle("Enter code to confirm your email address - Manage your VAT account - GOV.UK")
       )
     }
   }

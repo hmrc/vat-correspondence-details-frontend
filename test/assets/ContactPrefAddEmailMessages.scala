@@ -19,7 +19,7 @@ package assets
 object ContactPrefAddEmailMessages {
 
   val heading = "We do not have an email address for you"
-  val titleSuffixUser = " - Business tax account - GOV.UK"
+  val titleSuffixUser = " - Manage your VAT account - GOV.UK"
   val title: String = heading + titleSuffixUser
   val info1 = "Tell us your email address so we can change how we contact you."
   val info2 = "You’ll need to confirm the email address before we add it to your VAT account."

@@ -34,7 +34,7 @@ class PasscodeErrorViewSpec extends ViewBaseSpec with Matchers {
 
 
     "have the correct document title" in {
-      document.title shouldBe "You need to start again - Business tax account - GOV.UK"
+      document.title shouldBe "You need to start again - Manage your VAT account - GOV.UK"
     }
 
     "have the correct heading" in {
