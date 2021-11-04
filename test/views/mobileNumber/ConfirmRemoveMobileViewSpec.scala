@@ -18,30 +18,34 @@ package views.mobileNumber
 
 import assets.BaseTestConstants.testValidationMobile
 import controllers.mobileNumber.routes
+import forms.YesNoForm
+import models.YesNo
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers
+import play.api.data.Form
 import views.ViewBaseSpec
 import views.html.mobileNumber.ConfirmRemoveMobileView
 
 class ConfirmRemoveMobileViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: ConfirmRemoveMobileView = inject[ConfirmRemoveMobileView]
+  val form: Form[YesNo] = YesNoForm.yesNoForm("confirmRemoveMobile.error")
 
   "The ConfirmRemoveMobile page" when {
 
     "the user is a principal entity" should {
 
-      lazy val view = injectedView(testValidationMobile)(user, messages, mockConfig)
+      lazy val view = injectedView(form, testValidationMobile)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {
         document.title shouldBe
-          s"Confirm you want to remove the mobile number - Manage your VAT account - GOV.UK"
+          "Are you sure you want to remove the mobile number? - Manage your VAT account - GOV.UK"
       }
 
       "have the correct heading" in {
-        elementText("h1") shouldBe s"Confirm you want to remove the mobile number: $testValidationMobile"
+        elementText("h1") shouldBe "Are you sure you want to remove the mobile number?"
       }
 
       "have a form" which {
@@ -50,20 +54,36 @@ class ConfirmRemoveMobileViewSpec extends ViewBaseSpec with Matchers {
           element("form").attr("action") shouldBe routes.ConfirmRemoveMobileController.removeMobileNumber().url
         }
 
+        "has a Yes option" in {
+          elementText("#label-yes") shouldBe "Yes"
+        }
+
+        "has a No option" in {
+          elementText("#label-no") shouldBe "No"
+        }
+
         "has a continue button with the correct text" in {
           elementText(".govuk-button") shouldBe "Confirm and continue"
+        }
+
+        "has the correct error text" in {
+          val errorForm = YesNoForm.yesNoForm("confirmRemoveMobile.error").bind(Map(YesNoForm.yesNo -> ""))
+          lazy val view = injectedView(errorForm, testValidationMobile)(user, messages, mockConfig)
+          lazy implicit val document: Document = Jsoup.parse(view.body)
+
+          elementText("#yes_no-error") shouldBe "Error: Select yes if you want us to remove the mobile number"
         }
       }
     }
 
     "the user is an agent" should {
 
-      lazy val view = injectedView(testValidationMobile)(agent, messages, mockConfig)
+      lazy val view = injectedView(form, testValidationMobile)(agent, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {
         document.title shouldBe
-          s"Confirm you want to remove the mobile number - Your client’s VAT details - GOV.UK"
+          "Are you sure you want to remove the mobile number? - Your client’s VAT details - GOV.UK"
       }
     }
   }
