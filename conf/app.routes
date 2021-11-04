@@ -75,7 +75,7 @@ GET         /update-new-mobile-number                        controllers.mobileN
 
 # remove mobile number
 GET         /confirm-remove-mobile-number                    controllers.mobileNumber.ConfirmRemoveMobileController.show
-POST        /update-remove-mobile-number                     controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
+POST        /confirm-remove-mobile-number                    controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
 
 # mobile number change successful
 GET         /mobile-number-confirmation                      controllers.ChangeSuccessController.mobileNumber

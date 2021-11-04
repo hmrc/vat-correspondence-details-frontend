@@ -82,20 +82,36 @@ class ConfirmRemoveMobileControllerSpec extends ControllerBaseSpec {
         }
       }
 
-      "the form is submitted successfully" should {
+      "the form is submitted successfully" when {
 
-        lazy val result = controller.removeMobileNumber()(requestWithMobile.withFormUrlEncodedBody("value" -> "foo"))
+        "a Yes is submitted" should {
 
-        "return 303" in {
-          status(result) shouldBe Status.SEE_OTHER
+          lazy val result = controller.removeMobileNumber()(requestWithMobile.withFormUrlEncodedBody("yes_no" -> "yes"))
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the updateMobileNumber() action in ConfirmMobileNumberController" in {
+            redirectLocation(result) shouldBe Some(routes.ConfirmMobileNumberController.updateMobileNumber().url)
+          }
+
+          "add a blank prepopulation mobile to the session" in {
+            session(result).get(prepopulationMobileKey) shouldBe Some("")
+          }
         }
 
-        "redirect to the updateMobileNumber() action in ConfirmMobileNumberController" in {
-          redirectLocation(result) shouldBe Some(routes.ConfirmMobileNumberController.updateMobileNumber().url)
-        }
+        "a No is submitted" should {
 
-        "add a blank prepopulation mobile to the session" in {
-          session(result).get(prepopulationMobileKey) shouldBe Some("")
+          lazy val result = controller.removeMobileNumber()(requestWithMobile.withFormUrlEncodedBody("yes_no" -> "no"))
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the business details page" in {
+            redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+          }
         }
       }
     }
