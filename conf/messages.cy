@@ -137,8 +137,8 @@ captureMobile.remove = Dileu rhif ffôn symudol
 confirmRemoveLandline.title = Cadarnhau eich bod am ddileu’r rhif ffôn llinell dir
 confirmRemoveLandline.heading = Cadarnhau eich bod am ddileu’r rhif ffôn llinell dir: {0}
 
-confirmRemoveMobile.title = Cadarnhau eich bod am ddileu’r rhif ffôn symudol
-confirmRemoveMobile.heading = Cadarnhau eich bod am ddileu’r rhif ffôn symudol: {0}
+confirmRemoveMobile.title = A ydych yn siŵr eich bod am dynnu’r rhif ffôn symudol?
+confirmRemoveMobile.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ffôn symudol
 
 landlineChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif llinell dir
 mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symudol

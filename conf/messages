@@ -142,8 +142,8 @@ confirmPhoneNumbers.numberRemoved = Number removed
 confirmRemoveLandline.title = Confirm you want to remove the landline number
 confirmRemoveLandline.heading = Confirm you want to remove the landline number: {0}
 
-confirmRemoveMobile.title = Confirm you want to remove the mobile number
-confirmRemoveMobile.heading = Confirm you want to remove the mobile number: {0}
+confirmRemoveMobile.title = Are you sure you want to remove the mobile number?
+confirmRemoveMobile.error = Select yes if you want to remove the mobile number
 
 emailToUse.title = Do you want us to use this email address to contact you about VAT?
 emailToUse.error = Select yes if this is the email address you want us to use

@@ -21,8 +21,10 @@ import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
-import forms.RemovalForm.removalForm
+import forms.YesNoForm
 import javax.inject.Inject
+import models.{No, Yes, YesNo}
+import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import views.html.mobileNumber.ConfirmRemoveMobileView
 
@@ -31,10 +33,12 @@ class ConfirmRemoveMobileController @Inject()(val confirmRemoveMobile: ConfirmRe
                                               authComps: AuthPredicateComponents,
                                               inFlightComps: InFlightPredicateComponents) extends BaseController {
 
+  val yesNoForm: Form[YesNo] = YesNoForm.yesNoForm("confirmRemoveMobile.error")
+
   def show(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
     user.session.get(validationMobileKey).filter(_.nonEmpty) match {
-      case Some(mobile) =>
-        Ok(confirmRemoveMobile(mobile))
+      case Some(_) =>
+        Ok(confirmRemoveMobile(yesNoForm))
       case None =>
         Redirect(routes.CaptureMobileNumberController.show())
     }
@@ -44,13 +48,14 @@ class ConfirmRemoveMobileController @Inject()(val confirmRemoveMobile: ConfirmRe
                                                   inFlightMobileNumberPredicate) { implicit user =>
     user.session.get(validationMobileKey).filter(_.nonEmpty) match {
       case Some(_) =>
-        removalForm.bindFromRequest.fold(
-          _ => {
-            authComps.errorHandler.showBadRequestError
+        yesNoForm.bindFromRequest.fold(
+          errorForm => {
+            BadRequest(confirmRemoveMobile(errorForm))
           },
-          _ => {
-            Redirect(routes.ConfirmMobileNumberController.updateMobileNumber())
+          {
+            case Yes => Redirect(routes.ConfirmMobileNumberController.updateMobileNumber())
               .addingToSession(prepopulationMobileKey -> "")
+            case No => Redirect(appConfig.manageVatSubscriptionServicePath)
           }
         )
       case None =>
