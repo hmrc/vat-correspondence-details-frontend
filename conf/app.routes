@@ -48,7 +48,7 @@ GET         /website-address-confirmation                    controllers.ChangeS
 
 # remove website address
 GET         /remove-website-address                          controllers.website.ConfirmRemoveWebsiteController.show
-POST        /update-remove-website-address                   controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
+POST        /remove-website-address                          controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
 
 # capture landline number
 GET         /new-landline-number                             controllers.landlineNumber.CaptureLandlineNumberController.show

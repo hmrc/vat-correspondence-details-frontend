@@ -87,8 +87,8 @@ sessionTimeout.helpOne = To manage your VAT account, you will have to
 sessionTimeout.helpTwo = sign in
 sessionTimeout.helpThree = using your Government Gateway ID.
 
-confirmWebsiteRemove.title = Confirm you want to remove the website address
-confirmWebsiteRemove.heading = Confirm you want to remove the website address: {0}
+confirmWebsiteRemove.title = Are you sure you want to remove the website address?
+confirmWebsiteRemove.error = Select yes if you want to remove the website address
 
 checkYourAnswers.title = Check your answers
 checkYourAnswers.vatBusinessDetails = VAT business details
