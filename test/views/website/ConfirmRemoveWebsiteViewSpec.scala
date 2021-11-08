@@ -22,30 +22,40 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers
 import views.ViewBaseSpec
 import views.html.website.ConfirmRemoveWebsiteView
+import forms.YesNoForm
+import models.YesNo
+import play.api.data.Form
 
 class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: ConfirmRemoveWebsiteView = injector.instanceOf[ConfirmRemoveWebsiteView]
+  val form: Form[YesNo] = YesNoForm.yesNoForm("confirmWebsiteRemove.error")
 
   object Selectors {
     val heading = "h1"
     val backLink = ".govuk-back-link"
     val continueButton = ".govuk-button"
+    val yesOption = "#label-yes"
+    val noOption = "#label-no"
+    val errorHeading = ".govuk-error-summary h2"
+    val error = ".govuk-error-message"
+    val errorList = "#content > div > div > ul > li > a"
   }
+
 
   "The Confirm Website view" when {
 
     "the user is a principal entity" should {
 
-      lazy val view = injectedView(testWebsite)(user, messages, mockConfig)
+      lazy val view = injectedView(form)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct document title" in {
-        document.title shouldBe "Confirm you want to remove the website address - Manage your VAT account - GOV.UK"
+        document.title shouldBe "Are you sure you want to remove the website address? - Manage your VAT account - GOV.UK"
       }
 
       "have the correct heading" in {
-        elementText(Selectors.heading) shouldBe s"Confirm you want to remove the website address: $testWebsite"
+        elementText(Selectors.heading) shouldBe "Are you sure you want to remove the website address?"
       }
 
       "have a back link" which {
@@ -61,26 +71,68 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec with Matchers {
 
       "have a form" which {
 
-        "has the correct action" in {
-          element("form").attr("action") shouldBe routes.ConfirmRemoveWebsiteController.removeWebsiteAddress().url
+        "when an option is selected" should {
+
+          "has the correct action" in {
+            element("form").attr("action") shouldBe routes.ConfirmRemoveWebsiteController.removeWebsiteAddress().url
+          }
+
+          "has a Yes option" in {
+            elementText(Selectors.yesOption) shouldBe "Yes"
+          }
+
+          "has a No option" in {
+            elementText(Selectors.noOption) shouldBe "No"
+          }
+
+          "has a continue button with the correct text" in {
+            elementText(Selectors.continueButton) shouldBe "Confirm and continue"
+          }
         }
 
-        "has a continue button with the correct text" in {
-          elementText(".govuk-button") shouldBe "Confirm and continue"
+        "when the page has errors" should {
+
+          val errorForm = YesNoForm.yesNoForm("confirmWebsiteRemove.error").bind(Map(YesNoForm.yesNo -> ""))
+          lazy val view = injectedView(errorForm)(user, messages, mockConfig)
+          lazy implicit val document: Document = Jsoup.parse(view.body)
+
+          "have the correct document title" in {
+            document.title shouldBe "Error: Are you sure you want to remove the website address? - Manage your VAT account - GOV.UK"
+          }
+
+          "have the correct page heading" in {
+            elementText(Selectors.heading) shouldBe "Are you sure you want to remove the website address?"
+          }
+
+          "display the correct error heading" in {
+            elementText(Selectors.errorHeading) shouldBe "There is a problem"
+          }
+
+          "has the correct error text" in {
+
+            elementText(Selectors.error) shouldBe "Error: Select yes if you want to remove the website address"
+          }
+
+          "has the correct link to the radio option" in {
+
+            element(Selectors.errorList).attr("href") shouldBe "#yes_no-yes"
+          }
+
         }
+      }
       }
     }
 
     "the user is an agent" should {
 
       "there are no errors in the form" should {
-        val view = injectedView(testWebsite)(agent, messages, mockConfig)
+        val view = injectedView(form)(agent, messages, mockConfig)
         implicit val document: Document = Jsoup.parse(view.body)
 
         "have the correct title" in {
-          document.title shouldBe "Confirm you want to remove the website address - Your client’s VAT details - GOV.UK"
+          document.title shouldBe "Are you sure you want to remove the website address? - Your client’s VAT details - GOV.UK"
         }
       }
     }
-  }
+
 }

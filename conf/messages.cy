@@ -75,8 +75,8 @@ sessionTimeout.helpOne = I reoli’ch cyfrif TAW, bydd yn rhaid i chi
 sessionTimeout.helpTwo = fewngofnodi
 sessionTimeout.helpThree = gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
 
-confirmWebsiteRemove.title = Cadarnhau eich bod am ddileu cyfeiriad y wefan
-confirmWebsiteRemove.heading = Cadarnhau eich bod am ddileu cyfeiriad y wefan: {0}
+confirmWebsiteRemove.title = A ydych yn siŵr eich bod am dynnu cyfeiriad y wefan?
+confirmWebsiteRemove.error = Dewiswch ‘Iawn’ os ydych am dynnu cyfeiriad y wefan
 
 checkYourAnswers.title = Gwiriwch eich atebion
 checkYourAnswers.vatBusinessDetails = Manylion busnes TAW

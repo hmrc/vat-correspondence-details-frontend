@@ -82,50 +82,67 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
         }
       }
 
-      "the form is submitted successfully" should {
+      "the form is submitted successfully" when {
 
-        lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsiteKey
-          .withFormUrlEncodedBody("value" -> "foo"))
+        "the Yes option is submitted" should {
 
-        "return 303" in {
-          status(result) shouldBe Status.SEE_OTHER
+          lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsiteKey
+            .withFormUrlEncodedBody("yes_no" -> "yes"))
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the updateWebsite() action in ConfirmWebsiteController" in {
+            redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.updateWebsite().url)
+          }
+
+          "add a blank value to the prepopulation session key" in {
+            session(result).get(SessionKeys.prepopulationWebsiteKey) shouldBe Some("")
+          }
         }
 
-        "redirect to the updateWebsite() action in ConfirmWebsiteController" in {
-          redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.updateWebsite().url)
+        "the No option is submitted" should {
+
+          lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsiteKey
+            .withFormUrlEncodedBody("yes_no" -> "no"))
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the business details page" in {
+            redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+          }
         }
 
-        "add a blank value to the prepopulation session key" in {
-          session(result).get(SessionKeys.prepopulationWebsiteKey) shouldBe Some("")
+        "there isn't a validation website address in session" should {
+
+          lazy val result = controller.removeWebsiteAddress()(request)
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the capture website page" in {
+            redirectLocation(result) shouldBe Some(routes.CaptureWebsiteController.show().url)
+          }
         }
+
+        "the user is not authorised" should {
+
+          "return 403" in {
+            val result = {
+              mockIndividualWithoutEnrolment()
+              controller.removeWebsiteAddress()(requestWithValidationWebsiteKey)
+            }
+
+            status(result) shouldBe Status.FORBIDDEN
+          }
+        }
+
+        insolvencyCheck(controller.removeWebsiteAddress())
       }
     }
-
-    "there isn't a validation website address in session" should {
-
-      lazy val result = controller.removeWebsiteAddress()(request)
-
-      "return 303" in {
-        status(result) shouldBe Status.SEE_OTHER
-      }
-
-      "redirect to the capture website page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureWebsiteController.show().url)
-      }
     }
-
-    "the user is not authorised" should {
-
-      "return 403" in {
-        val result = {
-          mockIndividualWithoutEnrolment()
-          controller.removeWebsiteAddress()(requestWithValidationWebsiteKey)
-        }
-
-        status(result) shouldBe Status.FORBIDDEN
-      }
-    }
-
-    insolvencyCheck(controller.removeWebsiteAddress())
   }
-}

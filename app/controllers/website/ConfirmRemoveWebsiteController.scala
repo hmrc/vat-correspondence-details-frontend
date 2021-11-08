@@ -21,7 +21,10 @@ import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
-import forms.RemovalForm.removalForm
+import forms.YesNoForm
+import models.{No, Yes, YesNo}
+import play.api.data.Form
+
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent}
 import views.html.website.ConfirmRemoveWebsiteView
@@ -32,27 +35,28 @@ class ConfirmRemoveWebsiteController @Inject()(confirmRemoveWebsite: ConfirmRemo
                                                authComps: AuthPredicateComponents,
                                                inFlightComps: InFlightPredicateComponents) extends BaseController {
 
+  val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("confirmWebsiteRemove.error")
+
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
 
     user.session.get(validationWebsiteKey).filter(_.nonEmpty) match {
-      case Some(website) =>
-        Ok(confirmRemoveWebsite(website))
+      case Some(_) =>
+        Ok(confirmRemoveWebsite(formYesNo))
       case _ =>
         Redirect(routes.CaptureWebsiteController.show())
       }
   }
 
   def removeWebsiteAddress(): Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
-
     user.session.get(validationWebsiteKey).filter(_.nonEmpty) match {
       case Some(_) =>
-        removalForm.bindFromRequest.fold(
-          _ => {
-            authComps.errorHandler.showBadRequestError
-          },
-          _ => {
-            Redirect(routes.ConfirmWebsiteController.updateWebsite())
+        formYesNo.bindFromRequest.fold(
+          formWithErrors =>
+            BadRequest(confirmRemoveWebsite(formWithErrors)),
+          {
+            case Yes => Redirect(routes.ConfirmWebsiteController.updateWebsite())
               .addingToSession(prepopulationWebsiteKey -> "")
+            case No => Redirect(appConfig.manageVatSubscriptionServicePath)
           }
         )
       case _ =>
