@@ -30,7 +30,7 @@ import assets.BaseTestConstants._
 import controllers.predicates.inflight.{InFlightPredicate, InFlightPredicateComponents}
 import models.User
 import play.api.mvc.Result
-import views.html.errors.{InFlightChangeView, NotSignedUpView, SessionTimeoutView}
+import views.html.errors.{InFlightChangeView, NotSignedUpView, SessionTimeoutView, UserInsolventError}
 import views.html.errors.agent.{AgentJourneyDisabledView, UnauthorisedAgentView}
 import org.mockito.Mockito.{mock => mMock}
 
@@ -49,6 +49,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
   val inFlightChangeView: InFlightChangeView = injector.instanceOf[InFlightChangeView]
   val unauthorisedAgentView: UnauthorisedAgentView = injector.instanceOf[UnauthorisedAgentView]
   val notSignedUpView: NotSignedUpView = injector.instanceOf[NotSignedUpView]
+  val userInsolventView: UserInsolventError = injector.instanceOf[UserInsolventError]
 
   lazy val mockAuthConnector: AuthConnector = mMock[AuthConnector](classOf[AuthConnector])
 
@@ -79,6 +80,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
     agentJourneyDisabledView,
     unauthorisedAgentView,
     notSignedUpView,
+    userInsolventView,
     mockVatSubscriptionService,
     mockConfig,
     ec,
