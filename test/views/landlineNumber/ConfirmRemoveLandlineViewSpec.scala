@@ -16,55 +16,112 @@
 
 package views.landlineNumber
 
-import assets.BaseTestConstants.testValidationLandline
 import controllers.landlineNumber.routes
+import forms.YesNoForm
+import models.YesNo
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers
+import play.api.data.Form
 import views.ViewBaseSpec
 import views.html.landlineNumber.ConfirmRemoveLandlineView
 
 class ConfirmRemoveLandlineViewSpec extends ViewBaseSpec with Matchers {
 
   val injectedView: ConfirmRemoveLandlineView = inject[ConfirmRemoveLandlineView]
+  val form: Form[YesNo] = YesNoForm.yesNoForm("confirmRemoveLandline.error")
+
+  object Selectors {
+    val heading = "h1"
+    val form = "form"
+    val yesLabel = "#label-yes"
+    val noLabel = "#label-no"
+    val button = ".govuk-button"
+    val errorText = "#yes_no-error"
+    val errorSummaryTitle = "#error-summary-title"
+    val errorLink = ".error-link"
+  }
 
   "The ConfirmRemoveLandline page" when {
 
-    "the user is a principal entity" should {
+    "there are no errors" when {
 
-      lazy val view = injectedView(testValidationLandline)(user, messages, mockConfig)
-      lazy implicit val document: Document = Jsoup.parse(view.body)
+      "the user is a principal entity" should {
 
-      "have the correct title" in {
-        document.title shouldBe
-          s"Confirm you want to remove the landline number - Manage your VAT account - GOV.UK"
-      }
+        lazy val view = injectedView(form)(user, messages, mockConfig)
+        lazy implicit val document: Document = Jsoup.parse(view.body)
 
-      "have the correct heading" in {
-        elementText("h1") shouldBe s"Confirm you want to remove the landline number: $testValidationLandline"
-      }
-
-      "have a form" which {
-
-        "has the correct action" in {
-          element("form").attr("action") shouldBe routes.ConfirmRemoveLandlineController.removeLandlineNumber().url
+        "have the correct title" in {
+          document.title shouldBe
+            "Are you sure you want to remove the landline number? - Manage your VAT account - GOV.UK"
         }
 
-        "has a continue button with the correct text" in {
-          elementText(".govuk-button") shouldBe "Confirm and continue"
+        "have the correct heading" in {
+          elementText(Selectors.heading) shouldBe "Are you sure you want to remove the landline number?"
         }
 
+        "have a form" which {
+
+          "has the correct action" in {
+            element(Selectors.form).attr("action") shouldBe routes.ConfirmRemoveLandlineController.removeLandlineNumber().url
+          }
+
+          "has a Yes option" in {
+            elementText(Selectors.yesLabel) shouldBe "Yes"
+          }
+
+          "has a No option" in {
+            elementText(Selectors.noLabel) shouldBe "No"
+          }
+
+          "has a continue button with the correct text" in {
+            elementText(Selectors.button) shouldBe "Confirm and continue"
+          }
+        }
+      }
+
+      "the user is an agent" should {
+
+        lazy val view = injectedView(form)(agent, messages, mockConfig)
+        lazy implicit val document: Document = Jsoup.parse(view.body)
+
+        "have the correct title" in {
+          document.title shouldBe
+            "Are you sure you want to remove the landline number? - Your client’s VAT details - GOV.UK"
+        }
       }
     }
 
-    "the user is an agent" should {
+    "there are errors" should {
 
-      lazy val view = injectedView(testValidationLandline)(agent, messages, mockConfig)
+      val errorForm = YesNoForm.yesNoForm("confirmRemoveLandline.error").bind(Map(YesNoForm.yesNo -> ""))
+      lazy val view = injectedView(errorForm)(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
-      "have the correct title" in {
-        document.title shouldBe
-          s"Confirm you want to remove the landline number - Your client’s VAT details - GOV.UK"
+      "have the correct error title" in {
+        document.title shouldBe "Error: Are you sure you want to remove the landline number? - Manage your VAT account - GOV.UK"
+      }
+
+      "have the correct error text" in {
+        elementText(Selectors.errorText) shouldBe "Error: Select yes if you want to remove the landline number"
+      }
+
+      "has an error summary when there is an error" which {
+
+        "has the correct title text" in {
+          elementText(Selectors.errorSummaryTitle) shouldBe "There is a problem"
+        }
+
+        "has a link to the error" which {
+
+          "has the correct href" in {
+            element(Selectors.errorLink).attr("href") shouldBe "#yes_no-yes"
+          }
+
+          "has the correct text" in {
+            elementText(Selectors.errorLink) shouldBe "Select yes if you want to remove the landline number"
+          }
+        }
       }
     }
   }

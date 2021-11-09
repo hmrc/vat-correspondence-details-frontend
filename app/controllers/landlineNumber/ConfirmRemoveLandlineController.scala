@@ -21,10 +21,13 @@ import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
+
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent}
 import views.html.landlineNumber.ConfirmRemoveLandlineView
-import forms.RemovalForm._
+import forms.YesNoForm
+import models.{No, Yes, YesNo}
+import play.api.data.Form
 
 import scala.concurrent.Future
 
@@ -33,10 +36,12 @@ class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: Confi
                                                 authComps: AuthPredicateComponents,
                                                 inFlightComps: InFlightPredicateComponents) extends BaseController {
 
+  val yesNoForm: Form[YesNo] = YesNoForm.yesNoForm("confirmRemoveLandline.error")
+
   def show(): Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async { implicit user =>
     user.session.get(validationLandlineKey).filter(_.nonEmpty) match {
-      case Some(landline) =>
-        Future.successful(Ok(confirmRemoveLandline(landline)))
+      case Some(_) =>
+        Future.successful(Ok(confirmRemoveLandline(yesNoForm)))
       case None =>
         Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
     }
@@ -46,13 +51,14 @@ class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: Confi
                                                     inFlightLandlineNumberPredicate) { implicit user =>
     user.session.get(validationLandlineKey).filter(_.nonEmpty) match {
       case Some(_) =>
-        removalForm.bindFromRequest.fold(
-          _ => {
-            authComps.errorHandler.showBadRequestError
+        yesNoForm.bindFromRequest.fold(
+          errorForm => {
+            BadRequest(confirmRemoveLandline(errorForm))
           },
-          _ => {
-            Redirect(controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber())
+          {
+            case Yes => Redirect(controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber())
               .addingToSession(prepopulationLandlineKey -> "")
+            case No => Redirect(appConfig.manageVatSubscriptionServicePath)
           }
         )
       case None =>

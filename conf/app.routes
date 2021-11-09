@@ -60,7 +60,7 @@ GET         /update-new-landline-number                      controllers.landlin
 
 # remove landline number
 GET         /confirm-remove-landline-number                  controllers.landlineNumber.ConfirmRemoveLandlineController.show
-POST        /update-remove-landline-number                   controllers.landlineNumber.ConfirmRemoveLandlineController.removeLandlineNumber
+POST        /confirm-remove-landline-number                  controllers.landlineNumber.ConfirmRemoveLandlineController.removeLandlineNumber
 
 # landline number change successful
 GET         /landline-number-confirmation                    controllers.ChangeSuccessController.landlineNumber

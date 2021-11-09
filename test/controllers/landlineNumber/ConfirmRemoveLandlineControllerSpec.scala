@@ -82,21 +82,37 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
         }
       }
 
-      "the form is submitted successfully" should {
+      "the form is submitted successfully" when {
 
-        lazy val result = controller.removeLandlineNumber()(requestWithLandline
-          .withFormUrlEncodedBody("value" -> "foo"))
+        "a Yes is submitted" should {
 
-        "return 303" in {
-          status(result) shouldBe Status.SEE_OTHER
+          lazy val result = controller.removeLandlineNumber()(requestWithLandline
+            .withFormUrlEncodedBody("yes_no" -> "yes"))
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the updateLandlineNumber() action in ConfirmLandlineNumberController" in {
+            redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.updateLandlineNumber().url)
+          }
+
+          "add a blank prepopulation landline to the session" in {
+            session(result).get(prepopulationLandlineKey) shouldBe Some("")
+          }
         }
 
-        "redirect to the updateLandlineNumber() action in ConfirmLandlineNumberController" in {
-          redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.updateLandlineNumber().url)
-        }
+        "a No is submitted" should {
 
-        "add a blank prepopulation landline to the session" in {
-          session(result).get(prepopulationLandlineKey) shouldBe Some("")
+          lazy val result = controller.removeLandlineNumber()(requestWithLandline.withFormUrlEncodedBody("yes_no" -> "no"))
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the business details page" in {
+            redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+          }
         }
       }
     }

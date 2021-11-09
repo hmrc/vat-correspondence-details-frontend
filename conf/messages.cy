@@ -134,8 +134,9 @@ captureMobile.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r r
 captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07946 123456 neu 00447946 123456 ac ni allwch nodi arwydd plws.
 captureMobile.remove = Dileu rhif ffôn symudol
 
-confirmRemoveLandline.title = Cadarnhau eich bod am ddileu’r rhif ffôn llinell dir
-confirmRemoveLandline.heading = Cadarnhau eich bod am ddileu’r rhif ffôn llinell dir: {0}
+confirmRemoveLandline.title = A ydych yn siŵr eich bod am dynnu’r rhif ffôn llinell dir?
+confirmRemoveLandline.heading = A ydych yn siŵr eich bod am dynnu’r rhif ffôn llinell dir?
+confirmRemoveLandline.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ffôn llinell dir
 
 confirmRemoveMobile.title = A ydych yn siŵr eich bod am dynnu’r rhif ffôn symudol?
 confirmRemoveMobile.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ffôn symudol

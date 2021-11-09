@@ -15,13 +15,17 @@
  *@
 
 @import config.AppConfig
+@import forms.YesNoForm._
 
 @this(mainTemplate: MainTemplate,
       formWithCSRF: FormWithCSRF,
       govukBackLink: GovukBackLink,
-      govukButton: GovukButton)
+      govukButton: GovukButton,
+      govukRadios : GovukRadios,
+      govukErrorSummary: GovukErrorSummary)
 
-@(landline: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@(form: Form[YesNo])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @backLink = {
   @govukBackLink(BackLink(
@@ -30,13 +34,61 @@
   ))
 }
 
-@mainTemplate(pageTitle = messages("confirmRemoveLandline.title"), backLinkContent = Some(backLink)) {
+@mainTemplate(pageTitle = if(form.errors.nonEmpty) messages("common.error.prefixTitle", messages("confirmRemoveLandline.title"))
+                          else messages("confirmRemoveLandline.title"), backLinkContent = Some(backLink)) {
 
-  <h1 class="govuk-heading-l">@messages("confirmRemoveLandline.heading", landline)</h1>
+    @if(form.hasErrors) {
+        @govukErrorSummary(ErrorSummary(
+            title = Text(messages("common.error.heading")),
+            errorList = form.errors.map { error =>
+                ErrorLink(
+                    href = Some(s"#${form("yes_no-yes").id}"),
+                    content = Text(messages(error.message)),
+                    attributes = Map("class" -> "error-link")
+                )
+            }
+        ))
+    }
 
   @formWithCSRF(action = controllers.landlineNumber.routes.ConfirmRemoveLandlineController.removeLandlineNumber) {
-    <input type="hidden" name="value" value="submit">
 
-    @govukButton(Button(content = Text(messages("base.confirmAndContinue"))))
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("confirmRemoveLandline.heading")),
+                classes = "govuk-fieldset__legend--l",
+                isPageHeading = true
+            ))
+        )),
+        idPrefix = Some(form(yesNo).id),
+        name = yesNo,
+        items = Seq(
+            RadioItem(
+                id = Some(s"$yesNo-$yes"),
+                content = Text(messages("common.yes")),
+                value = Some(yes),
+                label = Some(Label(
+                    attributes = Map("id" -> "label-yes")
+                ))
+            ),
+            RadioItem(
+                id = Some(s"$yesNo-$no"),
+                content = Text(messages("common.no")),
+                value = Some(no),
+                label = Some(Label(
+                    attributes = Map("id" -> "label-no")
+                ))
+            )
+        ),
+        classes = "govuk-radios--inline",
+        errorMessage = form(yesNo).error.map { error =>
+            ErrorMessage(content = Text(messages(error.message)))
+        }
+    ))
+
+    @govukButton(Button(
+        value = Some("submit"),
+        content = Text(messages("base.confirmAndContinue"))
+    ))
   }
 }

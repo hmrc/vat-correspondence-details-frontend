@@ -139,8 +139,9 @@ inFlightChange.backToAccountDetails = Back to account details
 confirmPhoneNumbers.notProvided = Not provided
 confirmPhoneNumbers.numberRemoved = Number removed
 
-confirmRemoveLandline.title = Confirm you want to remove the landline number
-confirmRemoveLandline.heading = Confirm you want to remove the landline number: {0}
+confirmRemoveLandline.title = Are you sure you want to remove the landline number?
+confirmRemoveLandline.heading = Are you sure you want to remove the landline number?
+confirmRemoveLandline.error = Select yes if you want to remove the landline number
 
 confirmRemoveMobile.title = Are you sure you want to remove the mobile number?
 confirmRemoveMobile.error = Select yes if you want to remove the mobile number
