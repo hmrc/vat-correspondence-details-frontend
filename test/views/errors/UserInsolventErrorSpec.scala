@@ -31,14 +31,15 @@ class UserInsolventErrorSpec extends ViewBaseSpec with Matchers {
     object Selectors {
       val pageHeading = "#insolvent-without-access-heading"
       val message = "#insolvent-without-access-body"
+      val signOutLink = "#sign-out-link"
       val button = ".govuk-button"
     }
 
-    lazy val view = userInsolvent()
+    lazy val view = userInsolvent()(user, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct document title" in {
-      document.title shouldBe "Sorry, you cannot access this service - VAT - GOV.UK"
+      document.title shouldBe "Sorry, you cannot access this service - Manage your VAT account - GOV.UK"
     }
 
     "have a the correct page heading" in {
@@ -47,6 +48,14 @@ class UserInsolventErrorSpec extends ViewBaseSpec with Matchers {
 
     "have the correct body" in {
       elementText(Selectors.message) shouldBe "Your business has been declared insolvent."
+    }
+
+    "have a sign out link" in {
+      element(Selectors.signOutLink).attr("href") shouldBe controllers.routes.SignOutController.signOut(feedbackOnSignOut = false).url
+    }
+
+    "the sign out link should have the correct text" in {
+      elementText(Selectors.signOutLink) shouldBe "Sign out"
     }
 
     "have the correct button text" in {

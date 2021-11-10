@@ -16,12 +16,18 @@
 
 @this(mainTemplate: MainTemplate, govukButton: GovukButton)
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@()(implicit user : User[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(pageTitle = messages("insolventError.title")) {
+@mainTemplate(pageTitle = messages("insolventError.title"), feedbackOnSignOut = false) {
     <h1 class="govuk-heading-l" id="insolvent-without-access-heading">@messages("insolventError.title")</h1>
 
     <p class="govuk-body" id="insolvent-without-access-body">@messages("insolventError.message")</p>
+
+    <p class="govuk-body" id="sign-out">
+        <a class="govuk-link" id="sign-out-link" href="@routes.SignOutController.signOut(feedbackOnSignOut = false)">
+            @messages("base.signOut")
+        </a>
+    </p>
 
     @govukButton(Button(
         content = Text(messages("insolventError.buttonText")),
