@@ -44,6 +44,10 @@ unauthorised.agent.title = You can not use this service yet
 unauthorised.agent.instructions = To use this service, you need to
 unauthorised.agent.instructions2 = set up an agent services account
 
+insolventError.title = Sorry, you cannot access this service
+insolventError.message = Your business has been declared insolvent.
+insolventError.buttonText = Go to your business tax account
+
 agentJourneyDisabled.title = You cannot change your client’s email address yet
 agentJourneyDisabled.summary = Agents cannot change their client’s email address yet.
 agentJourneyDisabled.instructions = If your client needs to change their email address, they need to sign in using their own Government Gateway details.

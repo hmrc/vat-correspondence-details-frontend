@@ -44,6 +44,10 @@ unauthorised.agent.title = Ni allwch ddefnyddio’r gwasanaeth hwn eto
 unauthorised.agent.instructions = I ddefnyddio’r gwasanaeth hwn, bydd angen i chi
 unauthorised.agent.instructions2 = agor cyfrif gwasanaethau asiantau
 
+insolventError.title = Mae’n ddrwg gennym - ni allwch gael mynediad at y gwasanaeth hwn
+insolventError.message = Mae’ch busnes wedi’i ddatgan yn ansolfent.
+insolventError.buttonText = Ewch i’ch cyfrif treth busnes
+
 agentJourneyDisabled.title = Ni allwch newid cyfeiriad e-bost eich cleient eto
 agentJourneyDisabled.summary = Ni all asiantau newid cyfeiriad e-bost eu cleientiaid eto.
 agentJourneyDisabled.instructions = Os oes angen i’ch cleient newid ei gyfeiriad e-bost, bydd angen iddo fewngofnodi gan ddefnyddio’i fanylion ei hun ar gyfer Porth y Llywodraeth.
