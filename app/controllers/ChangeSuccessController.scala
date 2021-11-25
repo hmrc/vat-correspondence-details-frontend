@@ -73,7 +73,7 @@ class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionS
 
     } yield {
       val viewModel =
-        constructViewModel(user.session.get(verifiedAgentEmail), changeKey, customerDetails)
+        constructViewModel(user.session.get(mtdVatvcVerifiedAgentEmail), changeKey, customerDetails)
       Ok(changeSuccessView(viewModel))
     }
 
@@ -95,7 +95,7 @@ class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionS
     }
 
   private[controllers] def getClientEntityName(implicit user: User[_]): Future[Option[String]] =
-    user.session.get(mtdVatAgentClientName) match {
+    user.session.get(mtdVatvcAgentClientName) match {
       case Some(entityName) => Future.successful(Some(entityName))
       case None => vatSubscriptionService.getCustomerInfo(user.vrn).map { result =>
         result.fold(_ => None, details => details.entityName)

@@ -59,7 +59,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
         "the user is an agent" should {
           lazy val result: Future[Result] = {
             controller.landlineNumber(request.withSession(
-              landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline, clientVrn -> vrn
+              landlineChangeSuccessful -> "true", prepopulationLandlineKey -> testPrepopLandline, mtdVatvcClientVrn -> vrn
             ))
           }
 
@@ -114,7 +114,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
             mockAgentAuthorised()
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
             controller.websiteAddress(request.withSession(
-              prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", clientVrn -> vrn
+              prepopulationWebsiteKey -> "", websiteChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn
             ))
           }
 
@@ -159,7 +159,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
     "there is an entity name in session" should {
 
       lazy val result = controller.getClientEntityName(User(vrn, arn = Some(arn))(request.withSession(
-        mtdVatAgentClientName -> "Jorip Biscuit Co"
+        mtdVatvcAgentClientName -> "Jorip Biscuit Co"
       )))
 
       "return the entity name" in {

@@ -67,7 +67,7 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
     import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads
 
     val updateModel = UpdatePPOB(
-      ppob.address, ppob.contactDetails, ppob.websiteAddress, user.session.get(SessionKeys.verifiedAgentEmail)
+      ppob.address, ppob.contactDetails, ppob.websiteAddress, user.session.get(SessionKeys.mtdVatvcVerifiedAgentEmail)
     )
 
     http.PUT[UpdatePPOB, HttpPutResult[UpdatePPOBSuccess]](updatePPOBUrl(vrn), updateModel).map {
