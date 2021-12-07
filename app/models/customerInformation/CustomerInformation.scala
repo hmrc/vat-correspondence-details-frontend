@@ -91,14 +91,14 @@ object CustomerInformation {
 
   implicit val reads: Reads[CustomerInformation] = (
     ppobPath.read[PPOB] and
-    pendingChangesPath.readNullable[PendingChanges].orElse(Reads.pure(None)) and
-    firstNamePath.readNullable[String].orElse(Reads.pure(None)) and
-    lastNamePath.readNullable[String].orElse(Reads.pure(None)) and
-    organisationNamePath.readNullable[String].orElse(Reads.pure(None)) and
-    tradingNamePath.readNullable[String].orElse(Reads.pure(None)) and
-    commsPreferencePath.readNullable[String].orElse(Reads.pure(None)) and
+    pendingChangesPath.readNullable[PendingChanges] and
+    firstNamePath.readNullable[String] and
+    lastNamePath.readNullable[String] and
+    organisationNamePath.readNullable[String] and
+    tradingNamePath.readNullable[String] and
+    commsPreferencePath.readNullable[String] and
     isInsolventPath.read[Boolean] and
-    continueToTradePath.readNullable[Boolean].orElse(Reads.pure(None)) and
-    insolvencyTypePath.readNullable[String].orElse(Reads.pure(None))
+    continueToTradePath.readNullable[Boolean] and
+    insolvencyTypePath.readNullable[String]
   )(CustomerInformation.apply _)
 }

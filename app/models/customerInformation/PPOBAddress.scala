@@ -39,11 +39,11 @@ object PPOBAddress {
 
   implicit val reads: Reads[PPOBAddress] = (
     line1Path.read[String] and
-    line2Path.readNullable[String].orElse(Reads.pure(None)) and
-    line3Path.readNullable[String].orElse(Reads.pure(None)) and
-    line4Path.readNullable[String].orElse(Reads.pure(None)) and
-    line5Path.readNullable[String].orElse(Reads.pure(None)) and
-    postCodePath.readNullable[String].orElse(Reads.pure(None)) and
+    line2Path.readNullable[String] and
+    line3Path.readNullable[String] and
+    line4Path.readNullable[String] and
+    line5Path.readNullable[String] and
+    postCodePath.readNullable[String] and
     countryCodePath.read[String]
   ) (PPOBAddress.apply _)
 

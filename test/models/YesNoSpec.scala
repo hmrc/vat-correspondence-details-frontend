@@ -31,6 +31,10 @@ class YesNoSpec extends TestUtil with Matchers {
     "deserialize from the correct JSON" in {
       Json.obj(YesNo.id -> Yes.value).as[YesNo] shouldBe Yes
     }
+
+    "produce the correct string value" in {
+      Yes.toString shouldBe "yes"
+    }
   }
 
   "YesNo.No" should {
@@ -41,6 +45,10 @@ class YesNoSpec extends TestUtil with Matchers {
 
     "deserialize from the correct JSON" in {
       Json.obj(YesNo.id -> No.value).as[YesNo] shouldBe No
+    }
+
+    "produce the correct string value" in {
+      No.toString shouldBe "no"
     }
   }
 }
