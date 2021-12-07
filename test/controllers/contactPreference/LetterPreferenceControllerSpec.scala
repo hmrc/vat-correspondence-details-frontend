@@ -148,35 +148,54 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
           val yesRequest = requestWithSession.withFormUrlEncodedBody(yesNo -> yes)
 
-          "the contact preference has been updated successfully" should {
+          "the contact preference has been updated successfully" when {
 
-            lazy val result = {
-              mockIndividualAuthorised()
-              mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-              mockUpdateContactPreference(
-                vrn, ContactPreference.paper)(Future(Right(UpdatePPOBSuccess("success")))
-              )
-              controller.submit(yesRequest)
-            }
+            "the customer info call is successful" should {
 
-            "return 303 (SEE OTHER)" in {
-              status(result) shouldBe Status.SEE_OTHER
-            }
-
-            "audit the change landline number event" in {
-              verifyExtendedAudit(
-                PaperContactPreferenceAuditModel(
-                  "firstLine, codeOfMyPost",
-                  vrn,
-                  ContactPreference.digital,
-                  ContactPreference.paper
+              lazy val result = {
+                mockIndividualAuthorised()
+                mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
+                mockUpdateContactPreference(
+                  vrn, ContactPreference.paper)(Future(Right(UpdatePPOBSuccess("success")))
                 )
-              )
-              reset(mockAuditingService)
+                controller.submit(yesRequest)
+              }
+
+              "return 303 (SEE OTHER)" in {
+                status(result) shouldBe Status.SEE_OTHER
+              }
+
+              "audit the change landline number event" in {
+                verifyExtendedAudit(
+                  PaperContactPreferenceAuditModel(
+                    "firstLine, codeOfMyPost",
+                    vrn,
+                    ContactPreference.digital,
+                    ContactPreference.paper
+                  )
+                )
+                reset(mockAuditingService)
+              }
+
+              s"Redirect to the '${controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url}'" in {
+                redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url)
+              }
             }
 
-            s"Redirect to the '${controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url}'" in {
-              redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("letter").url)
+            "the customer info call fails" should {
+
+              lazy val result = {
+                mockIndividualAuthorised()
+                mockGetCustomerInfo(vrn)(Left(ErrorModel(INTERNAL_SERVER_ERROR, "")))
+                mockUpdateContactPreference(
+                  vrn, ContactPreference.paper)(Future(Right(UpdatePPOBSuccess("success")))
+                )
+                controller.submit(yesRequest)
+              }
+
+              "return an internal server error" in {
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
             }
           }
 

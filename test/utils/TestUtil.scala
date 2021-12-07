@@ -111,6 +111,10 @@ trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with Materialize
   )
 
   lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)
+  lazy val userWithValidationEmail: User[AnyContentAsEmpty.type] =
+    User[AnyContentAsEmpty.type](vrn, active = true)(request.withSession(validationEmailKey -> "old.email@email.com"))
+  lazy val userWithEmptyValidationEmail: User[AnyContentAsEmpty.type] =
+    User[AnyContentAsEmpty.type](vrn, active = true)(request.withSession(validationEmailKey -> ""))
   lazy val agent: User[AnyContentAsEmpty.type] =
     User[AnyContentAsEmpty.type](vrn, active = true, Some(arn))(fakeRequestWithClientsVRN)
 

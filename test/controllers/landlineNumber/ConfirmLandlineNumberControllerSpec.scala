@@ -43,30 +43,87 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
   "Calling the show action in ConfirmLandlineNumberController" when {
 
-    "there is a landline number in session" should {
+    "there is a non-empty landline number in session" when {
 
-      "show the Confirm landline Number page" in {
-        mockIndividualAuthorised()
-        val result = controller.show(requestWithPrepopLandlineNumber)
+      "there is a non-empty old landline number in session" should {
 
-        status(result) shouldBe Status.OK
+        "show the Confirm landline Number page" in {
+          mockIndividualAuthorised()
+          val result = controller.show(requestWithAllLandlineNumbers)
+
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "there is an empty old landline number in session" should {
+
+        "show the Confirm landline Number page" in {
+          mockIndividualAuthorised()
+          val result = controller.show(requestWithPrepopLandlineNumber.withSession(SessionKeys.validationLandlineKey -> ""))
+
+          status(result) shouldBe Status.OK
+        }
+      }
+    }
+
+    "there is an empty landline number in session" when {
+
+      "there is a non-empty old landline number in session" should {
+
+        "redirect to the capture landline number page" in {
+          mockIndividualAuthorised()
+          val result = controller.show(request.withSession(SessionKeys.validationLandlineKey -> testValidationLandline,
+            SessionKeys.prepopulationLandlineKey -> ""))
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        }
+      }
+
+      "there is an empty old landline number in session" should {
+
+        "redirect to the capture landline number page" in {
+          mockIndividualAuthorised()
+          val result = controller.show(request.withSession(SessionKeys.validationLandlineKey -> "", SessionKeys.prepopulationLandlineKey -> ""))
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        }
       }
     }
 
     "there isn't a landline number in session" should {
 
-      lazy val result = {
-        mockIndividualAuthorised()
-        controller.show(request)
+      "there is an old landline number in session" should {
+
+        lazy val result = {
+          mockIndividualAuthorised()
+          controller.show(requestWithValidationLandlineNumber)
+        }
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to enter a new landline number" in {
+          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        }
       }
 
-      "return 303" in {
-        status(result) shouldBe Status.SEE_OTHER
-      }
+      "there is no old landline number in session" should {
 
-      "redirect the user to enter a new landline number" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        lazy val result = {
+          mockIndividualAuthorised()
+          controller.show(request)
+        }
 
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to enter a new landline number" in {
+          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        }
       }
     }
 
@@ -87,43 +144,132 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
     "there is a landline number in session" when {
 
-      "the landline number has been updated successfully" should {
+      "there is a non-empty validation landline number in session" when {
 
-        lazy val result = {
-          mockIndividualAuthorised()
-          mockUpdateLandlineNumber(
-            vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
-          )
-          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
-        }
+        "the landline number has been updated successfully" should {
 
-        "return 303" in {
-          status(result) shouldBe Status.SEE_OTHER
-        }
-
-        "audit the change landline number event" in {
-          verifyExtendedAudit(
-            ChangedLandlineNumberAuditModel(
-              None,
-              testPrepopLandline,
-              vrn,
-              isAgent = false,
-              None
+          lazy val result = {
+            mockIndividualAuthorised()
+            mockUpdateLandlineNumber(
+              vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
             )
-          )
-          reset(mockAuditingService)
-        }
+            controller.updateLandlineNumber()(requestWithAllLandlineNumbers)
+          }
 
-        "redirect to the success page" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
-        }
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
 
-        "add the successful change key to the session" in {
-          session(result).get(SessionKeys.landlineChangeSuccessful) shouldBe Some("true")
-        }
+          "audit the change landline number event" in {
+            verifyExtendedAudit(
+              ChangedLandlineNumberAuditModel(
+                Some(testValidationLandline),
+                testPrepopLandline,
+                vrn,
+                isAgent = false,
+                None
+              )
+            )
+            reset(mockAuditingService)
+          }
 
-        "add the inflight change key to the session" in {
-          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          "redirect to the success page" in {
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
+          }
+
+          "add the successful change key to the session" in {
+            session(result).get(SessionKeys.landlineChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight change key to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+        }
+      }
+
+      "there is an empty validation landline number in session" when {
+
+        "the landline number has been updated successfully" should {
+
+          lazy val result = {
+            mockIndividualAuthorised()
+            mockUpdateLandlineNumber(
+              vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
+            )
+            controller.updateLandlineNumber()(requestWithPrepopLandlineNumber.withSession(SessionKeys.validationLandlineKey -> ""))
+          }
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "audit the change landline number event" in {
+            verifyExtendedAudit(
+              ChangedLandlineNumberAuditModel(
+                None,
+                testPrepopLandline,
+                vrn,
+                isAgent = false,
+                None
+              )
+            )
+            reset(mockAuditingService)
+          }
+
+          "redirect to the success page" in {
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
+          }
+
+          "add the successful change key to the session" in {
+            session(result).get(SessionKeys.landlineChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight change key to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+        }
+      }
+
+      "there is no validation landline number in session" when {
+
+        "the landline number has been updated successfully" should {
+
+          lazy val result = {
+            mockIndividualAuthorised()
+            mockUpdateLandlineNumber(
+              vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
+            )
+            controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+          }
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "audit the change landline number event" in {
+            verifyExtendedAudit(
+              ChangedLandlineNumberAuditModel(
+                None,
+                testPrepopLandline,
+                vrn,
+                isAgent = false,
+                None
+              )
+            )
+            reset(mockAuditingService)
+          }
+
+          "redirect to the success page" in {
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
+          }
+
+          "add the successful change key to the session" in {
+            session(result).get(SessionKeys.landlineChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight change key to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
         }
       }
 
