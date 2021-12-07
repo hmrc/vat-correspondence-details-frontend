@@ -84,6 +84,14 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         TestVerifyEmailController.extractSessionEmail(userWithSession) shouldBe Some(testEmail)
       }
     }
+
+    "there is an authenticated request from a user without an email in session" should {
+
+      "return None" in {
+        val userWithoutSession = User[AnyContent](vrn)(request)
+        TestVerifyEmailController.extractSessionEmail(userWithoutSession) shouldBe None
+      }
+    }
   }
 
   "Calling .btaVerifyEmailRedirect" when {

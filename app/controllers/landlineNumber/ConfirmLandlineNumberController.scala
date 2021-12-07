@@ -48,22 +48,13 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
 
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
     val prepopulationLandline = user.session.get(prepopulationLandlineKey).filter(_.nonEmpty)
-    val validationLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
-
-    def numberToShow(prepopulatedValue : Option[String], validationValue : Option[String]) : String = {
-      (prepopulatedValue, validationValue) match {
-        case (None, None) => request2Messages(user)("confirmPhoneNumbers.notProvided")
-        case (None, _) => request2Messages(user)("confirmPhoneNumbers.numberRemoved")
-        case (Some(prepop), _) => prepop
-      }
-    }
 
     prepopulationLandline match {
       case None => Redirect(routes.CaptureLandlineNumberController.show())
-      case _ => Ok(
+      case Some(prepopLandline) => Ok(
         confirmLandlineNumberView(CheckYourAnswersViewModel(
           question = "checkYourAnswers.landlineNumber",
-          answer = numberToShow(prepopulationLandline, validationLandline),
+          answer = prepopLandline,
           changeLink = routes.CaptureLandlineNumberController.show().url,
           changeLinkHiddenText = "checkYourAnswers.landlineNumber.edit",
           continueLink = routes.ConfirmLandlineNumberController.updateLandlineNumber().url

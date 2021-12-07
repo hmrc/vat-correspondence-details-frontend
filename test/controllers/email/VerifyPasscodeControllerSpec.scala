@@ -693,4 +693,96 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
     insolvencyCheck(TestVerifyPasscodeController.updateContactPrefEmail())
   }
+
+  "Calling the sendUpdateRequest action in VerifyPasscodeController" when {
+
+    "the vat subscription service returns a Right" when {
+
+      "the user has a non-empty email in session" should {
+
+        lazy val updateEmailMockResponse = Future.successful(Right(UpdateEmailSuccess("success")))
+
+        lazy val result = {
+          mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+          mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+          TestVerifyPasscodeController.sendUpdateRequest(testEmail)(userWithValidationEmail)
+        }
+
+        "return a 303" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "have the correct redirect location" in {
+          redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+        }
+
+        "add the successful email change to session" in {
+          session(result).get(SessionKeys.emailChangeSuccessful) shouldBe Some("true")
+        }
+      }
+
+      "the user has an empty email in session" should {
+
+        lazy val updateEmailMockResponse = Future.successful(Right(UpdateEmailSuccess("success")))
+
+        lazy val result = {
+          mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+          mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+          TestVerifyPasscodeController.sendUpdateRequest(testEmail)(userWithEmptyValidationEmail)
+        }
+
+        "return a 303" in {
+          status(result) shouldBe SEE_OTHER
+        }
+
+        "have the correct redirect location" in {
+          redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+        }
+
+        "add the successful email change to session" in {
+          session(result).get(SessionKeys.emailChangeSuccessful) shouldBe Some("true")
+        }
+      }
+
+    }
+
+    "the vat subscription service returns a CONFLICT" should {
+
+      lazy val updateEmailMockResponse = Future.successful(Left(ErrorModel(CONFLICT, "")))
+
+      lazy val result = {
+        mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+        mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+        TestVerifyPasscodeController.sendUpdateRequest(testEmail)(userWithValidationEmail)
+      }
+
+      "return a 303" in {
+        status(result) shouldBe SEE_OTHER
+      }
+
+      "have the correct redirect location" in {
+        redirectLocation(result) shouldBe Some(mockConfig.btaAccountDetailsUrl)
+      }
+    }
+
+    "the vat subscription service returns an error" should {
+
+      lazy val updateEmailMockResponse = Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, "")))
+
+      lazy val result = {
+        mockGetEmailVerificationState(testEmail)(Future(Some(true)))
+        mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
+        TestVerifyPasscodeController.sendUpdateRequest(testEmail)(userWithValidationEmail)
+      }
+
+      "return an internal server error" in {
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+
+      "not add a successful email change to session" in {
+        session(result).get(SessionKeys.emailChangeSuccessful) shouldBe None
+      }
+    }
+
+  }
 }

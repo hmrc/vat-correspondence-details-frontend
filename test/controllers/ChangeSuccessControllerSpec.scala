@@ -17,15 +17,19 @@
 package controllers
 
 import assets.BaseTestConstants._
-import assets.CustomerInfoConstants.fullCustomerInfoModel
+import assets.CustomerInfoConstants.{customerInfoEmailUnverified, fullCustomerInfoModel, minCustomerInfoModel}
+import common.SessionKeys
 import common.SessionKeys._
 import mocks.MockEmailVerificationService
 import models.User
+import models.contactPreferences.ContactPreference.digital
 import models.errors.ErrorModel
+import models.viewModels.ChangeSuccessViewModel
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import views.html.templates.ChangeSuccessView
+
 import scala.concurrent.Future
 
 class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerificationService {
@@ -190,6 +194,159 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
           }
 
           await(result) shouldBe None
+        }
+      }
+    }
+  }
+
+  "Calling the .constructViewModel" when {
+
+    "there is a full CustomerInformation model passed in" when {
+
+      "there is an agent email" should {
+
+        lazy val result = controller.constructViewModel(Some("agent@email.com"), "vatCorrespondenceLandlineChangeSuccessful", Right(fullCustomerInfoModel))
+        lazy val expectedResult = ChangeSuccessViewModel(
+          controller.getTitleMessageKey("vatCorrespondenceLandlineChangeSuccessful"),
+          Some("agent@email.com"),
+          Some(digital),
+          Some("PepsiMac"),
+          Some(true)
+        )
+
+        "construct the correct view model" in {
+
+          result shouldBe expectedResult
+        }
+      }
+
+      "there is no agent email" should {
+
+        lazy val result = controller.constructViewModel(None, SessionKeys.landlineChangeSuccessful, Right(fullCustomerInfoModel))
+        lazy val expectedResult = ChangeSuccessViewModel(
+          controller.getTitleMessageKey(SessionKeys.landlineChangeSuccessful),
+          None,
+          Some(digital),
+          Some("PepsiMac"),
+          Some(true)
+        )
+
+        "construct the correct view model" in {
+
+          result shouldBe expectedResult
+        }
+      }
+    }
+
+    "there is a minimal customer information model passed in" when {
+
+      "there is an agent email" should {
+
+        lazy val result = controller.constructViewModel(Some("agent@email.com"), SessionKeys.landlineChangeSuccessful, Right(minCustomerInfoModel))
+        lazy val expectedResult = ChangeSuccessViewModel(
+          controller.getTitleMessageKey(SessionKeys.landlineChangeSuccessful),
+          Some("agent@email.com"),
+          None,
+          None,
+          None
+        )
+
+        "construct the correct view model" in {
+
+          result shouldBe expectedResult
+        }
+      }
+
+      "there is no agent email" should {
+
+        lazy val result = controller.constructViewModel(None, SessionKeys.landlineChangeSuccessful, Right(minCustomerInfoModel))
+        lazy val expectedResult = ChangeSuccessViewModel(
+          controller.getTitleMessageKey(SessionKeys.landlineChangeSuccessful),
+          None,
+          None,
+          None,
+          None
+        )
+
+        "construct the correct view model" in {
+
+          result shouldBe expectedResult
+        }
+      }
+    }
+
+    "the user has an unverified email" when {
+
+      "there is an agent email" should {
+
+        lazy val result = controller.constructViewModel(Some("agent@email.com"),
+          SessionKeys.landlineChangeSuccessful, Right(customerInfoEmailUnverified))
+        lazy val expectedResult = ChangeSuccessViewModel(
+          controller.getTitleMessageKey(SessionKeys.landlineChangeSuccessful),
+          Some("agent@email.com"),
+          Some(digital),
+          Some("PepsiMac"),
+          Some(false)
+        )
+
+        "construct the correct view model" in {
+
+          result shouldBe expectedResult
+        }
+      }
+
+      "there is no agent email" should {
+
+        lazy val result = controller.constructViewModel(None, SessionKeys.landlineChangeSuccessful, Right(customerInfoEmailUnverified))
+        lazy val expectedResult = ChangeSuccessViewModel(
+          controller.getTitleMessageKey(SessionKeys.landlineChangeSuccessful),
+          None,
+          Some(digital),
+          Some("PepsiMac"),
+          Some(false)
+        )
+
+        "construct the correct view model" in {
+
+          result shouldBe expectedResult
+        }
+      }
+    }
+
+    "there is no customer information model passed in" when {
+
+      "there is an agent email" should {
+
+        lazy val result = controller.constructViewModel(Some("agent@email.com"),
+          SessionKeys.landlineChangeSuccessful, Left(ErrorModel(INTERNAL_SERVER_ERROR, "")))
+        lazy val expectedResult = ChangeSuccessViewModel(
+          controller.getTitleMessageKey(SessionKeys.landlineChangeSuccessful),
+          Some("agent@email.com"),
+          None,
+          None,
+          None
+        )
+
+        "construct the correct view model" in {
+
+          result shouldBe expectedResult
+        }
+      }
+
+      "there is no agent email" should {
+
+        lazy val result = controller.constructViewModel(None, SessionKeys.landlineChangeSuccessful, Left(ErrorModel(INTERNAL_SERVER_ERROR, "")))
+        lazy val expectedResult = ChangeSuccessViewModel(
+          controller.getTitleMessageKey(SessionKeys.landlineChangeSuccessful),
+          None,
+          None,
+          None,
+          None
+        )
+
+        "construct the correct view model" in {
+
+          result shouldBe expectedResult
         }
       }
     }

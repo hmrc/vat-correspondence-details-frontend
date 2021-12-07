@@ -43,30 +43,87 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
   "Calling the show action in ConfirmMobileNumberController" when {
 
-    "there is a mobile number in session" should {
+    "there is a non-empty mobile number in session" when {
 
-      "show the Confirm mobile Number page" in {
-        mockIndividualAuthorised()
-        val result = controller.show(requestWithPrepopMobileNumber)
+      "there is a non-empty old mobile number in session" should {
 
-        status(result) shouldBe Status.OK
+        "show the Confirm mobile number page" in {
+          mockIndividualAuthorised()
+          val result = controller.show(requestWithAllMobileNumbers)
+
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "there is an empty old landline number in session" should {
+
+        "show the Confirm mobile number page" in {
+          mockIndividualAuthorised()
+          val result = controller.show(requestWithPrepopMobileNumber.withSession(SessionKeys.validationMobileKey -> ""))
+
+          status(result) shouldBe Status.OK
+        }
+      }
+    }
+
+    "there is an empty mobile number in session" when {
+
+      "there is a non-empty old mobile number in session" should {
+
+        "redirect to the capture mobile number page" in {
+          mockIndividualAuthorised()
+          val result = controller.show(request.withSession(SessionKeys.validationMobileKey -> testValidationMobile,
+            SessionKeys.prepopulationMobileKey -> ""))
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+        }
+      }
+
+      "there is an empty old mobile number in session" should {
+
+        "redirect to the capture mobile number page" in {
+          mockIndividualAuthorised()
+          val result = controller.show(request.withSession(SessionKeys.validationMobileKey -> "", SessionKeys.prepopulationMobileKey -> ""))
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+        }
       }
     }
 
     "there isn't a mobile number in session" should {
 
-      lazy val result = {
-        mockIndividualAuthorised()
-        controller.show(request)
+      "there is an old mobile number in session" should {
+
+        lazy val result = {
+          mockIndividualAuthorised()
+          controller.show(requestWithValidationMobileNumber)
+        }
+
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to enter a new mobile number" in {
+          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+        }
       }
 
-      "return 303" in {
-        status(result) shouldBe Status.SEE_OTHER
-      }
+      "there is no old landline number in session" should {
 
-      "redirect the user to enter a new mobile number" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+        lazy val result = {
+          mockIndividualAuthorised()
+          controller.show(request)
+        }
 
+        "return 303" in {
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "redirect the user to enter a new landline number" in {
+          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+        }
       }
     }
 
@@ -87,43 +144,132 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
     "there is a mobile number in session" when {
 
-      "the mobile number has been updated successfully" should {
+      "there is a non-empty validation mobile number in session" when {
 
-        lazy val result = {
-          mockIndividualAuthorised()
-          mockUpdateMobileNumber(
-            vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
-          )
-          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
-        }
+        "the mobile number has been updated successfully" should {
 
-        "return 303" in {
-          status(result) shouldBe Status.SEE_OTHER
-        }
-
-        "audit the change mobile number event" in {
-          verifyExtendedAudit(
-            ChangedMobileNumberAuditModel(
-              None,
-              testPrepopMobile,
-              vrn,
-              isAgent = false,
-              None
+          lazy val result = {
+            mockIndividualAuthorised()
+            mockUpdateMobileNumber(
+              vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
             )
-          )
-          reset(mockAuditingService)
-        }
+            controller.updateMobileNumber()(requestWithAllMobileNumbers)
+          }
 
-        "redirect to the success page" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber().url)
-        }
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
 
-        "add the successful change key to the session" in {
-          session(result).get(SessionKeys.mobileChangeSuccessful) shouldBe Some("true")
-        }
+          "audit the change mobile number event" in {
+            verifyExtendedAudit(
+              ChangedMobileNumberAuditModel(
+                Some(testValidationMobile),
+                testPrepopMobile,
+                vrn,
+                isAgent = false,
+                None
+              )
+            )
+            reset(mockAuditingService)
+          }
 
-        "add the inflight change key to the session" in {
-          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          "redirect to the success page" in {
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber().url)
+          }
+
+          "add the successful change key to the session" in {
+            session(result).get(SessionKeys.mobileChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight change key to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+        }
+      }
+
+      "there is an empty validation mobile number in session" when {
+
+        "the mobile number has been updated successfully" should {
+
+          lazy val result = {
+            mockIndividualAuthorised()
+            mockUpdateMobileNumber(
+              vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
+            )
+            controller.updateMobileNumber()(requestWithPrepopMobileNumber.withSession(SessionKeys.validationMobileKey -> ""))
+          }
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "audit the change mobile number event" in {
+            verifyExtendedAudit(
+              ChangedMobileNumberAuditModel(
+                None,
+                testPrepopMobile,
+                vrn,
+                isAgent = false,
+                None
+              )
+            )
+            reset(mockAuditingService)
+          }
+
+          "redirect to the success page" in {
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber().url)
+          }
+
+          "add the successful change key to the session" in {
+            session(result).get(SessionKeys.mobileChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight change key to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+        }
+      }
+
+      "there is no validation mobile number in session" when {
+
+        "the mobile number has been updated successfully" should {
+
+          lazy val result = {
+            mockIndividualAuthorised()
+            mockUpdateMobileNumber(
+              vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
+            )
+            controller.updateMobileNumber()(requestWithPrepopMobileNumber)
+          }
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "audit the change mobile number event" in {
+            verifyExtendedAudit(
+              ChangedMobileNumberAuditModel(
+                None,
+                testPrepopMobile,
+                vrn,
+                isAgent = false,
+                None
+              )
+            )
+            reset(mockAuditingService)
+          }
+
+          "redirect to the success page" in {
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber().url)
+          }
+
+          "add the successful change key to the session" in {
+            session(result).get(SessionKeys.mobileChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight change key to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
         }
       }
 

@@ -48,22 +48,13 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
 
   def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
     val prepopulationMobile = user.session.get(prepopulationMobileKey).filter(_.nonEmpty)
-    val validationMobile = user.session.get(validationMobileKey).filter(_.nonEmpty)
-
-    def numberToShow(prepopulatedValue : Option[String], validationValue : Option[String]) : String = {
-      (prepopulatedValue, validationValue) match {
-        case (None, None) => request2Messages(user)("confirmPhoneNumbers.notProvided")
-        case (None, _) => request2Messages(user)("confirmPhoneNumbers.numberRemoved")
-        case (Some(prepop), _) => prepop
-      }
-    }
 
     prepopulationMobile match {
       case None => Redirect(routes.CaptureMobileNumberController.show())
-      case _ => Ok(
+      case Some(prepopMobile) => Ok(
         confirmMobileNumberView(CheckYourAnswersViewModel(
           question = "checkYourAnswers.mobileNumber",
-          answer = numberToShow(prepopulationMobile, validationMobile),
+          answer = prepopMobile,
           changeLink = routes.CaptureMobileNumberController.show().url,
           changeLinkHiddenText = "checkYourAnswers.mobileNumber.edit",
           continueLink = routes.ConfirmMobileNumberController.updateMobileNumber().url
