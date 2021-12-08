@@ -31,8 +31,8 @@ object PPOB {
 
   implicit val reads: Reads[PPOB] = (
     addressPath.read[PPOBAddress] and
-    contactDetailsPath.readNullable[ContactDetails].orElse(Reads.pure(None)) and
-    websiteAddressPath.readNullable[String].orElse(Reads.pure(None))
+    contactDetailsPath.readNullable[ContactDetails] and
+    websiteAddressPath.readNullable[String]
   )(PPOB.apply _)
 
   implicit val writes: Writes[PPOB] = (

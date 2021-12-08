@@ -16,7 +16,7 @@
 
 package models
 
-import models.YesNo.id
+import models.YesNo.{id, reads}
 import play.api.libs.json._
 
 sealed trait YesNo {
@@ -27,18 +27,12 @@ object YesNo {
 
   val id = "isYes"
 
-  implicit val writes: Writes[YesNo] = Writes {
-    isYes => Json.obj(id -> isYes.value)
-  }
-
   implicit val reads: Reads[YesNo] = for {
     status <- (__ \ id).read[Boolean].map {
       case true => Yes
       case _ => No
     }
   } yield status
-
-  implicit val format: Format[YesNo] = Format(reads, writes)
 }
 
 object Yes extends YesNo {
@@ -55,5 +49,4 @@ object No extends YesNo {
   implicit val writes: Writes[No.type] = Writes {
     isYes => Json.obj(id -> isYes.value)
   }
-
 }

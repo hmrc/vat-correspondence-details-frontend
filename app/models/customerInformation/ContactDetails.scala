@@ -34,11 +34,11 @@ object ContactDetails {
   private val emailVerifiedPath = JsPath \ "emailVerified"
 
   implicit val reads: Reads[ContactDetails] = (
-    phoneNumberPath.readNullable[String].orElse(Reads.pure(None)) and
-    mobilePath.readNullable[String].orElse(Reads.pure(None)) and
-    faxNumberPath.readNullable[String].orElse(Reads.pure(None)) and
-    emailAddressPath.readNullable[String].orElse(Reads.pure(None)) and
-    emailVerifiedPath.readNullable[Boolean].orElse(Reads.pure(None))
+    phoneNumberPath.readNullable[String] and
+    mobilePath.readNullable[String] and
+    faxNumberPath.readNullable[String] and
+    emailAddressPath.readNullable[String] and
+    emailVerifiedPath.readNullable[Boolean]
   )(ContactDetails.apply _)
 
   implicit val writes: Writes[ContactDetails] = (
