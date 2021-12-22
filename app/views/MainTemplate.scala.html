@@ -118,6 +118,6 @@
   headBlock = Some(head),
   headerBlock = Some(header),
   beforeContentBlock = Some(beforeContentHtml),
-  footerBlock = Some(hmrcStandardFooter(accessibilityStatementUrl = Some(appConfig.accessibilityLinkUrl))),
+  footerBlock = Some(hmrcStandardFooter()),
   bodyEndBlock = Some(scripts)
 )(content)

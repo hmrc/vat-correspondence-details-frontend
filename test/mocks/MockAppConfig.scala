@@ -60,8 +60,6 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
   override val timeoutCountdown: Int = 999
   override val contactHmrcUrl: String = "mockRemoveEmailUrl"
 
-  override val accessibilityLinkUrl: String = "/vat-through-software/accessibility-statement"
-
   override val btaHomeUrl: String = "bta-home"
   override val btaAccountDetailsUrl: String = "/bta-account-details"
 
