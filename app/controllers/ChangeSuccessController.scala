@@ -101,4 +101,4 @@ class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionS
         result.fold(_ => None, details => details.entityName)
       }
     }
-  }
+}
