@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ class AddEmailAddressViewSpec extends ViewBaseSpec with Matchers {
       }
 
       "should have the correct href" in {
-        element(Selectors.backLink).attr("href") shouldBe routes.EmailPreferenceController.show().url
+        element(Selectors.backLink).attr("href") shouldBe routes.EmailPreferenceController.show.url
       }
     }
 
@@ -89,7 +89,7 @@ class AddEmailAddressViewSpec extends ViewBaseSpec with Matchers {
     }
 
     "have the correct submit action URL" in {
-      element(Selectors.form).attr("action") shouldBe controllers.contactPreference.routes.AddEmailAddressController.submit().url
+      element(Selectors.form).attr("action") shouldBe controllers.contactPreference.routes.AddEmailAddressController.submit.url
     }
   }
 

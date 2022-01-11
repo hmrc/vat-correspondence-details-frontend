@@ -73,7 +73,7 @@ class CaptureMobileNumberPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(routes.ConfirmMobileNumberController.show().url)
+            redirectURI(routes.ConfirmMobileNumberController.show.url)
           )
         }
 

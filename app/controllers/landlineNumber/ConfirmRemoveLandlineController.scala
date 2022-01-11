@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: Confi
       case Some(_) =>
         Future.successful(Ok(confirmRemoveLandline(yesNoForm)))
       case None =>
-        Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
+        Future.successful(Redirect(routes.CaptureLandlineNumberController.show))
     }
   }
 
@@ -56,13 +56,13 @@ class ConfirmRemoveLandlineController @Inject()(val confirmRemoveLandline: Confi
             BadRequest(confirmRemoveLandline(errorForm))
           },
           {
-            case Yes => Redirect(controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber())
+            case Yes => Redirect(controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber)
               .addingToSession(prepopulationLandlineKey -> "")
             case No => Redirect(appConfig.manageVatSubscriptionServicePath)
           }
         )
       case None =>
-        Redirect(routes.CaptureLandlineNumberController.show())
+        Redirect(routes.CaptureLandlineNumberController.show)
 
     }
   }

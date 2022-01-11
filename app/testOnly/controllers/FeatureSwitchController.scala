@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,13 +38,13 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
 
   def submitFeatureSwitch: Action[AnyContent] = Action { implicit request =>
     FeatureSwitchForm.form.bindFromRequest().fold(
-      _ => Redirect(routes.FeatureSwitchController.featureSwitch()),
+      _ => Redirect(routes.FeatureSwitchController.featureSwitch),
       success = handleSuccess
     )
   }
 
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.emailVerificationEnabled(model.emailVerification)
-    Redirect(routes.FeatureSwitchController.featureSwitch())
+    Redirect(routes.FeatureSwitchController.featureSwitch)
   }
 }

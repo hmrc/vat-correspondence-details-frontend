@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,7 +158,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
           "redirect to the confirm email view" in {
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(routes.ConfirmEmailController.show().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmEmailController.show.url)
           }
 
           "add the new email to the session" in {
@@ -366,7 +366,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
           }
           "redirect to the confirm email view" in {
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.email.routes.ConfirmEmailController.showContactPref().url)
+            redirectLocation(result) shouldBe Some(controllers.email.routes.ConfirmEmailController.showContactPref.url)
           }
 
           "add the new email to the session" in {

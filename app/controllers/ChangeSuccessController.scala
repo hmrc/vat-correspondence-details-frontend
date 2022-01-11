@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,8 @@ class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionS
         renderView(changeKey)
       case _ =>
         val redirectLocation: Call = changeKey match {
-          case `landlineChangeSuccessful` => controllers.landlineNumber.routes.CaptureLandlineNumberController.show()
-          case `websiteChangeSuccessful` => controllers.website.routes.CaptureWebsiteController.show()
+          case `landlineChangeSuccessful` => controllers.landlineNumber.routes.CaptureLandlineNumberController.show
+          case `websiteChangeSuccessful` => controllers.website.routes.CaptureWebsiteController.show
         }
         Future.successful(Redirect(redirectLocation))
     }

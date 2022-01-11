@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
             SessionKeys.prepopulationLandlineKey -> ""))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
         }
       }
 
@@ -87,7 +87,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           val result = controller.show(request.withSession(SessionKeys.validationLandlineKey -> "", SessionKeys.prepopulationLandlineKey -> ""))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
         }
       }
     }
@@ -106,7 +106,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect the user to enter a new landline number" in {
-          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
         }
       }
 
@@ -122,7 +122,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect the user to enter a new landline number" in {
-          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
         }
       }
     }
@@ -174,7 +174,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "redirect to the success page" in {
-            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber.url)
           }
 
           "add the successful change key to the session" in {
@@ -217,7 +217,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "redirect to the success page" in {
-            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber.url)
           }
 
           "add the successful change key to the session" in {
@@ -260,7 +260,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "redirect to the success page" in {
-            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber().url)
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber.url)
           }
 
           "add the successful change key to the session" in {
@@ -321,7 +321,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to the capture landline number page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
       }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ class ConfirmRemoveMobileControllerSpec extends ControllerBaseSpec {
       }
 
       "redirect to the capture mobile page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
       }
     }
 
@@ -93,7 +93,7 @@ class ConfirmRemoveMobileControllerSpec extends ControllerBaseSpec {
           }
 
           "redirect to the updateMobileNumber() action in ConfirmMobileNumberController" in {
-            redirectLocation(result) shouldBe Some(routes.ConfirmMobileNumberController.updateMobileNumber().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmMobileNumberController.updateMobileNumber.url)
           }
 
           "add a blank prepopulation mobile to the session" in {
@@ -125,7 +125,7 @@ class ConfirmRemoveMobileControllerSpec extends ControllerBaseSpec {
       }
 
       "redirect to the capture mobile page" in {
-       redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+       redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
       }
     }
 

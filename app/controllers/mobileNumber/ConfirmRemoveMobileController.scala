@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ class ConfirmRemoveMobileController @Inject()(val confirmRemoveMobile: ConfirmRe
       case Some(_) =>
         Ok(confirmRemoveMobile(yesNoForm))
       case None =>
-        Redirect(routes.CaptureMobileNumberController.show())
+        Redirect(routes.CaptureMobileNumberController.show)
     }
   }
 
@@ -53,13 +53,13 @@ class ConfirmRemoveMobileController @Inject()(val confirmRemoveMobile: ConfirmRe
             BadRequest(confirmRemoveMobile(errorForm))
           },
           {
-            case Yes => Redirect(routes.ConfirmMobileNumberController.updateMobileNumber())
+            case Yes => Redirect(routes.ConfirmMobileNumberController.updateMobileNumber)
               .addingToSession(prepopulationMobileKey -> "")
             case No => Redirect(appConfig.manageVatSubscriptionServicePath)
           }
         )
       case None =>
-        Redirect(routes.CaptureMobileNumberController.show())
+        Redirect(routes.CaptureMobileNumberController.show)
     }
   }
 }

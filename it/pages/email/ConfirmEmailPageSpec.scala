@@ -68,7 +68,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.email.routes.CaptureEmailController.show().url)
+            redirectURI(controllers.email.routes.CaptureEmailController.show.url)
           )
         }
       }
@@ -163,7 +163,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
             result should have(
               httpStatus(Status.SEE_OTHER),
-              redirectURI(controllers.email.routes.EmailChangeSuccessController.show().url)
+              redirectURI(controllers.email.routes.EmailChangeSuccessController.show.url)
             )
           }
 
@@ -208,7 +208,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
             result should have(
               httpStatus(Status.SEE_OTHER),
-              redirectURI(controllers.email.routes.VerifyEmailController.emailSendVerification().url)
+              redirectURI(controllers.email.routes.VerifyEmailController.emailSendVerification.url)
             )
           }
         }
@@ -255,7 +255,7 @@ class ConfirmEmailPageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.email.routes.CaptureEmailController.show().url)
+            redirectURI(controllers.email.routes.CaptureEmailController.show.url)
           )
         }
       }

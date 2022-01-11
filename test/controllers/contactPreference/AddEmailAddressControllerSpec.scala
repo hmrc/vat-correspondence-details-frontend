@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
           }
 
           "redirect to confirmation page" in {
-            redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney().url)
+            redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney.url)
           }
         }
 

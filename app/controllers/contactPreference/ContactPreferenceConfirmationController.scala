@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
   private[controllers] def renderEmailPreferenceView(implicit user: User[_]): Result = {
     user.session.get(validationEmailKey) match {
       case Some(value) => Ok(preferenceConfirmationView(Seq(value), letterToEmailChangeSuccessful))
-      case _ => Redirect(controllers.contactPreference.routes.EmailToUseController.show())
+      case _ => Redirect(controllers.contactPreference.routes.EmailToUseController.show)
     }
   }
 
@@ -72,9 +72,9 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
     val journeyComplete = user.session.get(changeKey).exists(_.equals("true"))
     changeKey match {
       case `letterToEmailChangeSuccessful` =>
-        if(journeyComplete) Future(renderEmailPreferenceView) else Future(Redirect(routes.EmailToUseController.show()))
+        if(journeyComplete) Future(renderEmailPreferenceView) else Future(Redirect(routes.EmailToUseController.show))
       case `emailToLetterChangeSuccessful` =>
-        if(journeyComplete) renderLetterPreferenceView else Future(Redirect(routes.LetterPreferenceController.show()))
+        if(journeyComplete) renderLetterPreferenceView else Future(Redirect(routes.LetterPreferenceController.show))
     }
   }
 }

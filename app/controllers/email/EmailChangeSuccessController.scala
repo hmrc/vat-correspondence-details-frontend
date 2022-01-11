@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class EmailChangeSuccessController @Inject()(vatSubscriptionService: VatSubscrip
           val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, preference, None, emailVerified)
           Ok(changeSuccessView(viewModel))
         }
-      case _ => Future.successful(Redirect(routes.CaptureEmailController.show().url))
+      case _ => Future.successful(Redirect(routes.CaptureEmailController.show.url))
     }
   }
 }

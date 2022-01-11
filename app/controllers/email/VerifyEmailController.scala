@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
 
   def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async {
 
-    Future.successful(Redirect(routes.VerifyPasscodeController.emailSendVerification()))
+    Future.successful(Redirect(routes.VerifyPasscodeController.emailSendVerification))
 
   }
 
@@ -58,12 +58,12 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
             case (Some(_), Some(true)) =>
               logger.debug("[EmailVerificationController][btaVerifyEmailRedirect] - emailVerified has come back as true. Returning user to BTA")
               Redirect(appConfig.btaAccountDetailsUrl)
-            case (Some(email), _)  => Redirect(routes.VerifyPasscodeController.emailSendVerification())
+            case (Some(email), _)  => Redirect(routes.VerifyPasscodeController.emailSendVerification)
               .addingToSession(SessionKeys.prepopulationEmailKey -> email)
               .addingToSession(SessionKeys.inFlightContactDetailsChangeKey -> s"${details.pendingPpobChanges}")
             case (_, _) =>
               logger.debug("[EmailVerificationController][btaVerifyEmailRedirect] - user does not have an email. Redirecting to capture email page")
-              Redirect(routes.CaptureEmailController.show())
+              Redirect(routes.CaptureEmailController.show)
           }
           case _ => errorHandler.showInternalServerError
         }

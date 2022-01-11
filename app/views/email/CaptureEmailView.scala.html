@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@
 
 @backUrl = @{
   (letterToConfirmedEmail, currentEmail) match {
-    case (true, "") => controllers.contactPreference.routes.AddEmailAddressController.show().url
-    case (true, _) => controllers.contactPreference.routes.EmailToUseController.show().url
+    case (true, "") => controllers.contactPreference.routes.AddEmailAddressController.show.url
+    case (true, _) => controllers.contactPreference.routes.EmailToUseController.show.url
     case _ => appConfig.dynamicJourneyEntryUrl(user.isAgent)
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,7 +148,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
           "redirect to the confirm website view" in {
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.show().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.show.url)
           }
 
           "add the new website to the session" in {

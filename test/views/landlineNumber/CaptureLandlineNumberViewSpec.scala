@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec with Matchers {
           }
 
           "has the correct link location" in {
-            element("#remove-landline").attr("href") shouldBe routes.ConfirmRemoveLandlineController.show().url
+            element("#remove-landline").attr("href") shouldBe routes.ConfirmRemoveLandlineController.show.url
           }
         }
 
@@ -80,7 +80,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec with Matchers {
           }
 
           "has the correct link location" in {
-            element("form").attr("action") shouldBe routes.CaptureLandlineNumberController.submit().url
+            element("form").attr("action") shouldBe routes.CaptureLandlineNumberController.submit.url
           }
         }
 

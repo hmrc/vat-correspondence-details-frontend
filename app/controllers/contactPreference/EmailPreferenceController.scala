@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,9 +62,9 @@ class EmailPreferenceController @Inject()(vatSubscriptionService: VatSubscriptio
             case Right(details) =>
               val result = details.ppob.contactDetails.flatMap(_.emailAddress) match {
                 case Some(_) =>
-                  Redirect(controllers.contactPreference.routes.EmailToUseController.show())
+                  Redirect(controllers.contactPreference.routes.EmailToUseController.show)
                 case None =>
-                  Redirect(controllers.contactPreference.routes.AddEmailAddressController.show())
+                  Redirect(controllers.contactPreference.routes.AddEmailAddressController.show)
               }
               result.addingToSession(SessionKeys.contactPrefUpdate -> "true")
 

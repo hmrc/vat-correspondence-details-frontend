@@ -76,7 +76,7 @@ class CaptureWebsitePageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.website.routes.ConfirmWebsiteController.show().url)
+            redirectURI(controllers.website.routes.ConfirmWebsiteController.show.url)
           )
         }
 

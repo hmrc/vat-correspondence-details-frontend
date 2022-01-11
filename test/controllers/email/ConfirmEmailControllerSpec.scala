@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         }
 
         "has the correct change link URL" in {
-          page.select(".govuk-summary-list__actions a").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show().url
+          page.select(".govuk-summary-list__actions a").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show.url
         }
 
         "has the correct hidden text" in {
@@ -87,7 +87,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         }
 
         "has the correct continue URL" in {
-          page.select(".govuk-button").attr("href") shouldBe controllers.email.routes.VerifyPasscodeController.updateEmailAddress().url
+          page.select(".govuk-button").attr("href") shouldBe controllers.email.routes.VerifyPasscodeController.updateEmailAddress.url
         }
       }
     }
@@ -146,7 +146,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
         "has the correct change link URL" in {
           page.select(".govuk-summary-list__actions a").attr("href") shouldBe
-            controllers.email.routes.CaptureEmailController.showPrefJourney().url
+            controllers.email.routes.CaptureEmailController.showPrefJourney.url
         }
 
         "has the correct hidden text" in {
@@ -155,7 +155,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
         "has the correct continue URL" in {
           page.select(".govuk-button").attr("href") shouldBe
-            controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url
+            controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail.url
         }
       }
     }

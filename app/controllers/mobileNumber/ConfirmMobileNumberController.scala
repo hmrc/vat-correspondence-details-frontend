@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,14 +50,14 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
     val prepopulationMobile = user.session.get(prepopulationMobileKey).filter(_.nonEmpty)
 
     prepopulationMobile match {
-      case None => Redirect(routes.CaptureMobileNumberController.show())
+      case None => Redirect(routes.CaptureMobileNumberController.show)
       case Some(prepopMobile) => Ok(
         confirmMobileNumberView(CheckYourAnswersViewModel(
           question = "checkYourAnswers.mobileNumber",
           answer = prepopMobile,
-          changeLink = routes.CaptureMobileNumberController.show().url,
+          changeLink = routes.CaptureMobileNumberController.show.url,
           changeLinkHiddenText = "checkYourAnswers.mobileNumber.edit",
-          continueLink = routes.ConfirmMobileNumberController.updateMobileNumber().url
+          continueLink = routes.ConfirmMobileNumberController.updateMobileNumber.url
         ))
       )
     }
@@ -71,7 +71,7 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
       enteredMobile match {
         case None =>
           logger.info("[ConfirmMobileNumberController][updateMobileNumber] - No mobile number found in session")
-          Future.successful(Redirect(routes.CaptureMobileNumberController.show()))
+          Future.successful(Redirect(routes.CaptureMobileNumberController.show))
 
         case Some(mobile) => vatSubscriptionService.updateMobileNumber(user.vrn, mobile).map {
           case Right(UpdatePPOBSuccess(_)) =>
@@ -83,9 +83,9 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
                 user.isAgent,
                 user.arn
               ),
-              controllers.mobileNumber.routes.ConfirmMobileNumberController.updateMobileNumber().url
+              controllers.mobileNumber.routes.ConfirmMobileNumberController.updateMobileNumber.url
             )
-            Redirect(controllers.routes.ChangeSuccessController.mobileNumber())
+            Redirect(controllers.routes.ChangeSuccessController.mobileNumber)
               .removingFromSession(validationMobileKey)
               .addingToSession(mobileChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 

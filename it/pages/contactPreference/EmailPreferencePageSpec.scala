@@ -117,7 +117,7 @@ class EmailPreferencePageSpec extends BasePageISpec {
 
           res should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.contactPreference.routes.EmailToUseController.show().url)
+            redirectURI(controllers.contactPreference.routes.EmailToUseController.show.url)
           )
         }
 
@@ -146,7 +146,7 @@ class EmailPreferencePageSpec extends BasePageISpec {
 
           res should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.contactPreference.routes.AddEmailAddressController.show().url)
+            redirectURI(controllers.contactPreference.routes.AddEmailAddressController.show.url)
           )
         }
       }

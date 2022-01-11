@@ -275,7 +275,7 @@ class PasscodePageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.email.routes.VerifyPasscodeController.emailShow().url)
+            redirectURI(controllers.email.routes.VerifyPasscodeController.emailShow.url)
           )
         }
       }
@@ -296,7 +296,7 @@ class PasscodePageSpec extends BasePageISpec {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.email.routes.VerifyPasscodeController.updateEmailAddress().url)
+            redirectURI(controllers.email.routes.VerifyPasscodeController.updateEmailAddress.url)
           )
         }
       }
@@ -336,7 +336,7 @@ class PasscodePageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.email.routes.CaptureEmailController.show().url))
+          redirectURI(controllers.email.routes.CaptureEmailController.show.url))
       }
     }
   }

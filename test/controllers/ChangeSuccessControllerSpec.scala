@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
         }
 
         "redirect the user to the capture landline controller" in {
-          redirectLocation(result) shouldBe Some(controllers.landlineNumber.routes.CaptureLandlineNumberController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.landlineNumber.routes.CaptureLandlineNumberController.show.url)
         }
       }
     }
@@ -137,7 +137,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
         }
 
         "redirect the user to the capture website address controller" in {
-          redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show.url)
         }
       }
     }

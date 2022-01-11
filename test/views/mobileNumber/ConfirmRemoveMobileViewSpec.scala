@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ class ConfirmRemoveMobileViewSpec extends ViewBaseSpec with Matchers {
         "have a form" which {
 
           "has the correct action" in {
-            element(Selectors.form).attr("action") shouldBe routes.ConfirmRemoveMobileController.removeMobileNumber().url
+            element(Selectors.form).attr("action") shouldBe routes.ConfirmRemoveMobileController.removeMobileNumber.url
           }
 
           "has a Yes option" in {

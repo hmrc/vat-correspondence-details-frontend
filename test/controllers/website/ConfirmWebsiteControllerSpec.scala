@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to enter a new website" in {
-        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show.url)
       }
     }
 
@@ -102,7 +102,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect to the website changed success page" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.websiteAddress().url)
+          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.websiteAddress.url)
         }
       }
 
@@ -155,7 +155,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to the capture website page" in {
-        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show.url)
       }
     }
 

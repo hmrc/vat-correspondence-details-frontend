@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
       }
 
       "redirect to the capture landline page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
       }
     }
 
@@ -94,7 +94,7 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
           }
 
           "redirect to the updateLandlineNumber() action in ConfirmLandlineNumberController" in {
-            redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.updateLandlineNumber().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.updateLandlineNumber.url)
           }
 
           "add a blank prepopulation landline to the session" in {
@@ -126,7 +126,7 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
       }
 
       "redirect to the capture landline page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
       }
     }
 
