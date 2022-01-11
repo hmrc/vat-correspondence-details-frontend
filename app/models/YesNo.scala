@@ -16,7 +16,7 @@
 
 package models
 
-import models.YesNo.{id, reads}
+import models.YesNo.id
 import play.api.libs.json._
 
 sealed trait YesNo {

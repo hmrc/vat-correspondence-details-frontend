@@ -67,7 +67,7 @@ class ConfirmMobileNumberPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.routes.ChangeSuccessController.mobileNumber().url)
+          redirectURI(controllers.routes.ChangeSuccessController.mobileNumber.url)
         )
       }
     }

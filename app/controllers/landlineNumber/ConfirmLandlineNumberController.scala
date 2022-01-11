@@ -50,14 +50,14 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
     val prepopulationLandline = user.session.get(prepopulationLandlineKey).filter(_.nonEmpty)
 
     prepopulationLandline match {
-      case None => Redirect(routes.CaptureLandlineNumberController.show())
+      case None => Redirect(routes.CaptureLandlineNumberController.show)
       case Some(prepopLandline) => Ok(
         confirmLandlineNumberView(CheckYourAnswersViewModel(
           question = "checkYourAnswers.landlineNumber",
           answer = prepopLandline,
-          changeLink = routes.CaptureLandlineNumberController.show().url,
+          changeLink = routes.CaptureLandlineNumberController.show.url,
           changeLinkHiddenText = "checkYourAnswers.landlineNumber.edit",
-          continueLink = routes.ConfirmLandlineNumberController.updateLandlineNumber().url
+          continueLink = routes.ConfirmLandlineNumberController.updateLandlineNumber.url
         ))
       )
     }
@@ -71,7 +71,7 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
       enteredLandline match {
         case None =>
           logger.info("[ConfirmLandlineNumberController][updateLandlineNumber] - No landline number found in session")
-          Future.successful(Redirect(routes.CaptureLandlineNumberController.show()))
+          Future.successful(Redirect(routes.CaptureLandlineNumberController.show))
 
         case Some(landline) => vatSubscriptionService.updateLandlineNumber(user.vrn, landline).map {
           case Right(UpdatePPOBSuccess(_)) =>
@@ -83,9 +83,9 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
                 user.isAgent,
                 user.arn
               ),
-              controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber().url
+              controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber.url
             )
-            Redirect(controllers.routes.ChangeSuccessController.landlineNumber())
+            Redirect(controllers.routes.ChangeSuccessController.landlineNumber)
               .removingFromSession(validationLandlineKey)
               .addingToSession(landlineChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 

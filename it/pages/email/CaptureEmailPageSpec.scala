@@ -130,7 +130,7 @@ class CaptureEmailPageSpec extends BasePageISpec {
 
           res should have(
             httpStatus(Status.SEE_OTHER),
-            redirectURI(controllers.email.routes.ConfirmEmailController.show().url)
+            redirectURI(controllers.email.routes.ConfirmEmailController.show.url)
           )
         }
 

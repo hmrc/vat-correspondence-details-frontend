@@ -53,7 +53,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
   def emailShow: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate) { implicit user =>
     extractSessionEmail match {
         case Some(email) => Ok(passcodeView(email, PasscodeForm.form, contactPrefJourney = false))
-        case _ => Redirect(routes.CaptureEmailController.show())
+        case _ => Redirect(routes.CaptureEmailController.show)
       }
     }
 
@@ -66,7 +66,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           passcode => {
             emailVerificationService.verifyPasscode(email, passcode).map {
               case Right(SuccessfullyVerified) | Right(AlreadyVerified) =>
-                Redirect(routes.VerifyPasscodeController.updateEmailAddress())
+                Redirect(routes.VerifyPasscodeController.updateEmailAddress)
               case Right(TooManyAttempts) => BadRequest(passcodeErrorView("passcode.error.tooManyAttempts"))
               case Right(PasscodeNotFound) => BadRequest(passcodeErrorView("passcode.error.expired"))
               case Right(IncorrectPasscode) =>
@@ -79,7 +79,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
             }
           }
         )
-        case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
+        case _ => Future.successful(Redirect(routes.CaptureEmailController.show))
       }
   }
 
@@ -87,16 +87,16 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
       val langCookieValue = user.cookies.get("PLAY_LANG").map(_.value).getOrElse("en")
       extractSessionEmail match {
         case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
-          case Some(true) => Redirect(routes.VerifyPasscodeController.emailShow())
+          case Some(true) => Redirect(routes.VerifyPasscodeController.emailShow)
           case Some(false) =>
             logger.debug(
             "[VerifyPasscodeController][emailSendVerification] - " +
               "Unable to send email verification request. Service responded with 'already verified'"
             )
-            Redirect(routes.VerifyPasscodeController.updateEmailAddress())
+            Redirect(routes.VerifyPasscodeController.updateEmailAddress)
           case _ =>  errorHandler.showInternalServerError
         }
-        case _ => Future.successful(Redirect(routes.CaptureEmailController.show()))
+        case _ => Future.successful(Redirect(routes.CaptureEmailController.show))
       }
   }
 
@@ -105,7 +105,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
         case Some(email) =>
           vatSubscriptionService.updateEmail(user.vrn, email) map {
             case Right(UpdatePPOBSuccess(message)) if message.isEmpty =>
-              Redirect(routes.VerifyPasscodeController.emailSendVerification())
+              Redirect(routes.VerifyPasscodeController.emailSendVerification)
 
             case Right(UpdatePPOBSuccess(_)) =>
               auditService.extendedAudit(
@@ -116,9 +116,9 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
                   user.isAgent,
                   user.arn
                 ),
-                controllers.email.routes.ConfirmEmailController.updateEmailAddress().url
+                controllers.email.routes.ConfirmEmailController.updateEmailAddress.url
               )
-              Redirect(routes.EmailChangeSuccessController.show())
+              Redirect(routes.EmailChangeSuccessController.show)
                 .removingFromSession(prepopulationEmailKey, validationEmailKey)
                 .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
@@ -134,7 +134,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
 
         case _ =>
           logger.info("[VerifyPasscodeController][updateEmailAddress] - No email address found in session")
-          Future.successful(Redirect(routes.CaptureEmailController.show()))
+          Future.successful(Redirect(routes.CaptureEmailController.show))
       }
   }
 
@@ -143,7 +143,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
                                              inFlightContactPrefPredicate) { implicit user =>
       extractSessionEmail match {
         case Some(email) => Ok(passcodeView(email, PasscodeForm.form, contactPrefJourney = true))
-        case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect())
+        case _ => Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect)
       }
   }
 
@@ -158,7 +158,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           passcode => {
             emailVerificationService.verifyPasscode(email, passcode).map {
               case Right(SuccessfullyVerified) | Right(AlreadyVerified) =>
-                Redirect(routes.VerifyPasscodeController.updateContactPrefEmail())
+                Redirect(routes.VerifyPasscodeController.updateContactPrefEmail)
               case Right(TooManyAttempts) => BadRequest(passcodeErrorView("passcode.error.tooManyAttempts"))
               case Right(PasscodeNotFound) => BadRequest(passcodeErrorView("passcode.error.expired"))
               case Right(IncorrectPasscode) =>
@@ -172,7 +172,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           }
         )
         case _ =>
-          Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
+          Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect))
       }
   }
 
@@ -184,16 +184,16 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
 
      extractSessionEmail match {
         case Some(email) => emailVerificationService.createEmailPasscodeRequest(email, langCookieValue) map {
-          case Some(true) => Redirect(routes.VerifyPasscodeController.contactPrefShow())
+          case Some(true) => Redirect(routes.VerifyPasscodeController.contactPrefShow)
           case Some(false) =>
             logger.debug(
               "[VerifyPasscodeController][contactPrefSendVerification] - " +
                 "Unable to send verification request. Service responded with 'already verified'"
             )
-            Redirect(routes.VerifyPasscodeController.updateContactPrefEmail())
+            Redirect(routes.VerifyPasscodeController.updateContactPrefEmail)
           case _ =>  errorHandler.showInternalServerError
         }
-        case _ => Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
+        case _ => Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect))
       }
   }
 
@@ -206,10 +206,10 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           case Some(true) => sendUpdateRequest(email)
           case _ =>
             logger.debug("[VerifyPasscodeController][updateContactPrefEmail] Email has not yet been verified.")
-            Future.successful(Redirect(routes.VerifyPasscodeController.contactPrefSendVerification()))
+            Future.successful(Redirect(routes.VerifyPasscodeController.contactPrefSendVerification))
         }
         case _ =>
-          Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect()))
+          Future.successful(Redirect(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect))
       }
   }
 
@@ -220,8 +220,8 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           user.session.get(SessionKeys.validationEmailKey).filter(_.nonEmpty),
           email,
           user.vrn
-        ), routes.VerifyPasscodeController.updateContactPrefEmail().url)
-        Redirect(controllers.email.routes.EmailChangeSuccessController.show())
+        ), routes.VerifyPasscodeController.updateContactPrefEmail.url)
+        Redirect(controllers.email.routes.EmailChangeSuccessController.show)
           .addingToSession(SessionKeys.emailChangeSuccessful -> "true")
       case Left(ErrorModel(CONFLICT, _)) =>
         logger.debug("[VerifyPasscodeController][sendUpdateRequest] - There is a contact details update request " +

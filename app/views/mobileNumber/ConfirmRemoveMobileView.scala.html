@@ -29,7 +29,7 @@
 @backLink = {
   @govukBackLink(BackLink(
     content = Text(messages("base.back")),
-    href = controllers.mobileNumber.routes.CaptureMobileNumberController.show().url
+    href = controllers.mobileNumber.routes.CaptureMobileNumberController.show.url
   ))
 }
 
@@ -50,7 +50,7 @@
     ))
   }
 
-  @formWithCSRF(action = controllers.mobileNumber.routes.ConfirmRemoveMobileController.removeMobileNumber()) {
+  @formWithCSRF(action = controllers.mobileNumber.routes.ConfirmRemoveMobileController.removeMobileNumber) {
     @govukRadios(Radios(
       fieldset = Some(Fieldset(
         legend = Some(Legend(

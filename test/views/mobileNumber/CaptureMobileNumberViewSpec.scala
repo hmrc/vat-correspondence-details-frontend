@@ -69,7 +69,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec with Matchers {
           }
 
           "has the correct link location" in {
-            element("#remove-mobile").attr("href") shouldBe routes.ConfirmRemoveMobileController.show().url
+            element("#remove-mobile").attr("href") shouldBe routes.ConfirmRemoveMobileController.show.url
           }
         }
 
@@ -80,7 +80,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec with Matchers {
           }
 
           "has the correct link location" in {
-            element("form").attr("action") shouldBe routes.CaptureMobileNumberController.submit().url
+            element("form").attr("action") shouldBe routes.CaptureMobileNumberController.submit.url
           }
         }
 

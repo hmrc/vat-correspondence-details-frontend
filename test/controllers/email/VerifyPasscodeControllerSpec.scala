@@ -88,7 +88,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
 
         "redirect to the capture email page" in {
-          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show.url)
         }
       }
     }
@@ -117,7 +117,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             }
 
             "redirect to the updateEmailAddress action" in {
-              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress().url)
+              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress.url)
             }
           }
 
@@ -134,7 +134,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             }
 
             "redirect to the updateEmailAddress action" in {
-              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress().url)
+              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress.url)
             }
           }
 
@@ -210,7 +210,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
 
         "redirect to the first page in the journey" in {
-          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show.url)
         }
       }
     }
@@ -235,7 +235,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
           }
 
           "redirect to the emailShow route" in {
-            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailShow().url)
+            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailShow.url)
           }
         }
 
@@ -251,7 +251,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
           }
 
           "redirect to the capture email page" in {
-            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress().url)
+            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateEmailAddress.url)
           }
         }
 
@@ -277,7 +277,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
 
         "redirect to the capture email route" in {
-          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show.url)
         }
       }
     }
@@ -303,7 +303,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
           }
 
           "have the correct redirect location" in {
-            redirectLocation(result) shouldBe Some(routes.EmailChangeSuccessController.show().url)
+            redirectLocation(result) shouldBe Some(routes.EmailChangeSuccessController.show.url)
           }
         }
 
@@ -319,7 +319,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
           }
 
           "have the correct redirect location" in {
-            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailSendVerification().url)
+            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailSendVerification.url)
           }
         }
 
@@ -360,7 +360,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
 
         "redirect to the capture email route" in {
-          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureEmailController.show.url)
         }
       }
     }
@@ -391,7 +391,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "redirect to the start of the contact preference journey" in {
           redirectLocation(result) shouldBe
-            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect.url)
         }
       }
     }
@@ -420,7 +420,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             }
 
             "redirect to the updateContactPrefEmail action" in {
-              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail().url)
+              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail.url)
             }
           }
 
@@ -437,7 +437,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             }
 
             "redirect to the updateContactPrefEmail action" in {
-              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail().url)
+              redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail.url)
             }
           }
 
@@ -515,7 +515,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "redirect to the first page in the journey" in {
           redirectLocation(result) shouldBe
-            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect.url)
         }
       }
     }
@@ -542,7 +542,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           "redirect to the contactPrefShow url" in {
             redirectLocation(result) shouldBe
-              Some(controllers.email.routes.VerifyPasscodeController.contactPrefShow().url)
+              Some(controllers.email.routes.VerifyPasscodeController.contactPrefShow.url)
           }
         }
 
@@ -558,7 +558,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
           }
 
           "have the correct redirect location" in {
-            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail().url)
+            redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.updateContactPrefEmail.url)
           }
         }
 
@@ -585,7 +585,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "redirect to the contact preference redirect route" in {
           redirectLocation(result) shouldBe
-            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect.url)
         }
       }
     }
@@ -616,7 +616,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             }
 
             "redirect to the email change success route" in {
-              redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+              redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show.url)
             }
           }
 
@@ -668,7 +668,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           "have the correct redirect location" in {
             redirectLocation(result) shouldBe
-              Some(controllers.email.routes.VerifyPasscodeController.contactPrefSendVerification().url)
+              Some(controllers.email.routes.VerifyPasscodeController.contactPrefSendVerification.url)
           }
         }
       }
@@ -686,7 +686,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "redirect to the capture email route" in {
           redirectLocation(result) shouldBe
-            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect().url)
+            Some(controllers.contactPreference.routes.ContactPreferenceRedirectController.redirect.url)
         }
       }
     }
@@ -713,7 +713,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
 
         "have the correct redirect location" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show.url)
         }
 
         "add the successful email change to session" in {
@@ -736,7 +736,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         }
 
         "have the correct redirect location" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.email.routes.EmailChangeSuccessController.show.url)
         }
 
         "add the successful email change to session" in {

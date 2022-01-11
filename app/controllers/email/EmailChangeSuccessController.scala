@@ -54,7 +54,7 @@ class EmailChangeSuccessController @Inject()(vatSubscriptionService: VatSubscrip
           val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, preference, None, emailVerified)
           Ok(changeSuccessView(viewModel))
         }
-      case _ => Future.successful(Redirect(routes.CaptureEmailController.show().url))
+      case _ => Future.successful(Redirect(routes.CaptureEmailController.show.url))
     }
   }
 }

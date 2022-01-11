@@ -68,7 +68,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
           case _ => authComps.errorHandler.showInternalServerError
         }
 
-      case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
+      case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show))
     }
 
   }
@@ -88,12 +88,12 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
               Future.successful(BadRequest(emailToUseView(error, email))),
             {
               case Yes => handleDynamicRouting(email)
-              case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney()))
+              case No => Future.successful(Redirect(controllers.email.routes.CaptureEmailController.showPrefJourney))
             }
           )
           case _ => Future.successful(authComps.errorHandler.showInternalServerError)
         }
-      case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show()))
+      case _ => Future.successful(Redirect(controllers.contactPreference.routes.EmailPreferenceController.show))
     }
   }
 
@@ -102,7 +102,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
       case Right(details) =>
         details.ppob.contactDetails.flatMap(_.emailVerified) match {
           case Some(true) => updateCommsPreference(email)
-          case _ => Future.successful(Redirect(controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail()))
+          case _ => Future.successful(Redirect(controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail))
         }
       case Left(_) => Future.successful(authComps.errorHandler.showInternalServerError)
     }
@@ -115,7 +115,7 @@ class EmailToUseController @Inject()(val vatSubscriptionService: VatSubscription
             email,
             user.vrn
           ),
-          controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber().url
+          controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber.url
         )
         Redirect(controllers.contactPreference.routes.ContactPreferenceConfirmationController.show("email"))
           .addingToSession(SessionKeys.letterToEmailChangeSuccessful -> "true")

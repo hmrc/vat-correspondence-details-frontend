@@ -84,7 +84,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
         }
 
         "redirect the user to the capture landline controller" in {
-          redirectLocation(result) shouldBe Some(controllers.landlineNumber.routes.CaptureLandlineNumberController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.landlineNumber.routes.CaptureLandlineNumberController.show.url)
         }
       }
     }
@@ -137,7 +137,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
         }
 
         "redirect the user to the capture website address controller" in {
-          redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show.url)
         }
       }
     }

@@ -63,7 +63,7 @@ class ConfirmRemoveMobileViewSpec extends ViewBaseSpec with Matchers {
         "have a form" which {
 
           "has the correct action" in {
-            element(Selectors.form).attr("action") shouldBe routes.ConfirmRemoveMobileController.removeMobileNumber().url
+            element(Selectors.form).attr("action") shouldBe routes.ConfirmRemoveMobileController.removeMobileNumber.url
           }
 
           "has a Yes option" in {

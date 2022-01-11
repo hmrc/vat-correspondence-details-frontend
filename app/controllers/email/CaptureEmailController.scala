@@ -57,7 +57,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
             emailForm(valEmail).fill(prePopulationEmail(valEmail)),
             emailNotChangedError = false,
             valEmail,
-            controllers.email.routes.CaptureEmailController.submit(),
+            controllers.email.routes.CaptureEmailController.submit,
             letterToConfirmedEmail = false
           ))
         case _ => errorHandler.showInternalServerError
@@ -73,7 +73,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
             errorForm,
             notChanged,
             validation,
-            controllers.email.routes.CaptureEmailController.submit(),
+            controllers.email.routes.CaptureEmailController.submit,
             letterToConfirmedEmail = false
           )))
         },
@@ -86,9 +86,9 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
               user.isAgent,
               user.arn
             ),
-            controllers.email.routes.CaptureEmailController.submit().url
+            controllers.email.routes.CaptureEmailController.submit.url
           )
-          Future.successful(Redirect(routes.ConfirmEmailController.show())
+          Future.successful(Redirect(routes.ConfirmEmailController.show)
             .addingToSession(SessionKeys.prepopulationEmailKey -> email))
         }
       )
@@ -106,7 +106,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
               emailForm(valEmail).fill(prePopulationEmail(valEmail)),
               emailNotChangedError = false,
               valEmail,
-              controllers.email.routes.CaptureEmailController.submitPrefJourney(),
+              controllers.email.routes.CaptureEmailController.submitPrefJourney,
               letterToConfirmedEmail = true
             ))
           case _ => errorHandler.showInternalServerError
@@ -126,7 +126,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
               errorForm,
               notChanged,
               validation,
-              controllers.email.routes.CaptureEmailController.submitPrefJourney(),
+              controllers.email.routes.CaptureEmailController.submitPrefJourney,
               letterToConfirmedEmail = true
             )))
           },
@@ -137,9 +137,9 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
                 email,
                 user.vrn
               ),
-              controllers.email.routes.CaptureEmailController.submitPrefJourney().url
+              controllers.email.routes.CaptureEmailController.submitPrefJourney.url
             )
-            Future.successful(Redirect(controllers.email.routes.ConfirmEmailController.showContactPref())
+            Future.successful(Redirect(controllers.email.routes.ConfirmEmailController.showContactPref)
               .addingToSession(SessionKeys.prepopulationEmailKey -> email))
           }
         )

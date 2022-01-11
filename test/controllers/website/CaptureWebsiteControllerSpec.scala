@@ -148,7 +148,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
           "redirect to the confirm website view" in {
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.show().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.show.url)
           }
 
           "add the new website to the session" in {

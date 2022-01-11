@@ -29,7 +29,7 @@
 @backLink = {
   @govukBackLink(BackLink(
     content = Text(messages("base.back")),
-    href = controllers.website.routes.CaptureWebsiteController.show().url
+    href = controllers.website.routes.CaptureWebsiteController.show.url
   ))
 }
 
@@ -49,7 +49,7 @@ backLinkContent = Some(backLink)) {
         ))
     }
 
-  @formWithCSRF(action = controllers.website.routes.ConfirmRemoveWebsiteController.removeWebsiteAddress()) {
+  @formWithCSRF(action = controllers.website.routes.ConfirmRemoveWebsiteController.removeWebsiteAddress) {
 
     @govukRadios(Radios(
         fieldset = Some(Fieldset(

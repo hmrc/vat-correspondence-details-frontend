@@ -115,7 +115,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
       }
 
       "redirect to the preference select page" in {
-        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show.url)
       }
     }
 
@@ -215,7 +215,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         }
 
         "redirect the user to the verification route to update email and contact preference" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url)
+          redirectLocation(result) shouldBe Some(controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail.url)
         }
       }
 
@@ -249,8 +249,8 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.SEE_OTHER
       }
 
-      s"Redirect to the '${controllers.email.routes.CaptureEmailController.showPrefJourney().url}'" in {
-        redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney().url)
+      s"Redirect to the '${controllers.email.routes.CaptureEmailController.showPrefJourney.url}'" in {
+        redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.showPrefJourney.url)
       }
     }
 
@@ -302,8 +302,8 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
         status(result) shouldBe Status.SEE_OTHER
       }
 
-      s"Redirect to the '${controllers.contactPreference.routes.EmailPreferenceController.show().url}'" in {
-        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show().url)
+      s"Redirect to the '${controllers.contactPreference.routes.EmailPreferenceController.show.url}'" in {
+        redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailPreferenceController.show.url)
       }
     }
 

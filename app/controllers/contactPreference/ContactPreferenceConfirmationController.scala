@@ -64,7 +64,7 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
   private[controllers] def renderEmailPreferenceView(implicit user: User[_]): Result = {
     user.session.get(validationEmailKey) match {
       case Some(value) => Ok(preferenceConfirmationView(Seq(value), letterToEmailChangeSuccessful))
-      case _ => Redirect(controllers.contactPreference.routes.EmailToUseController.show())
+      case _ => Redirect(controllers.contactPreference.routes.EmailToUseController.show)
     }
   }
 
@@ -72,9 +72,9 @@ class ContactPreferenceConfirmationController @Inject()(preferenceConfirmationVi
     val journeyComplete = user.session.get(changeKey).exists(_.equals("true"))
     changeKey match {
       case `letterToEmailChangeSuccessful` =>
-        if(journeyComplete) Future(renderEmailPreferenceView) else Future(Redirect(routes.EmailToUseController.show()))
+        if(journeyComplete) Future(renderEmailPreferenceView) else Future(Redirect(routes.EmailToUseController.show))
       case `emailToLetterChangeSuccessful` =>
-        if(journeyComplete) renderLetterPreferenceView else Future(Redirect(routes.LetterPreferenceController.show()))
+        if(journeyComplete) renderLetterPreferenceView else Future(Redirect(routes.LetterPreferenceController.show))
     }
   }
 }

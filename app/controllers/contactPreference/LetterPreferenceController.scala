@@ -90,7 +90,7 @@ class LetterPreferenceController  @Inject()(view: LetterPreferenceView,
                 displayAddress(details.ppob),
                 user.vrn
               ),
-              controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber().url
+              controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber.url
             )
             Redirect(routes.ContactPreferenceConfirmationController.show("letter").url)
               .addingToSession(SessionKeys.emailToLetterChangeSuccessful -> "true")

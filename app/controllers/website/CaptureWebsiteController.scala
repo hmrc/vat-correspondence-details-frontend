@@ -63,7 +63,7 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
           Future.successful(BadRequest(captureWebsiteView(errorForm, validation)))
         },
         website     => {
-          Future.successful(Redirect(routes.ConfirmWebsiteController.show())
+          Future.successful(Redirect(routes.ConfirmWebsiteController.show)
             .addingToSession(SessionKeys.prepopulationWebsiteKey -> website))
         }
       )

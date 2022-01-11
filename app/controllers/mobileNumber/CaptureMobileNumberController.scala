@@ -64,7 +64,7 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
           },
 
           formValue => {
-            Redirect(routes.ConfirmMobileNumberController.show())
+            Redirect(routes.ConfirmMobileNumberController.show)
               .addingToSession(SessionKeys.prepopulationMobileKey -> formValue)
           }
         )

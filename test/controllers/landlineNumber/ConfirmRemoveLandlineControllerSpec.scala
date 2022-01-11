@@ -50,7 +50,7 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
       }
 
       "redirect to the capture landline page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
       }
     }
 
@@ -94,7 +94,7 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
           }
 
           "redirect to the updateLandlineNumber() action in ConfirmLandlineNumberController" in {
-            redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.updateLandlineNumber().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.updateLandlineNumber.url)
           }
 
           "add a blank prepopulation landline to the session" in {
@@ -126,7 +126,7 @@ class ConfirmRemoveLandlineControllerSpec extends ControllerBaseSpec {
       }
 
       "redirect to the capture landline page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
       }
     }
 

@@ -64,7 +64,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
           },
 
           formValue => {
-            Redirect(routes.ConfirmLandlineNumberController.show())
+            Redirect(routes.ConfirmLandlineNumberController.show)
               .addingToSession(SessionKeys.prepopulationLandlineKey -> formValue)
           }
         )

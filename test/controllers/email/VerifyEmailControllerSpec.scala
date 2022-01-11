@@ -70,7 +70,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       }
 
       "redirect to the verify your email page" in {
-        redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailSendVerification().url)
+        redirectLocation(result) shouldBe Some(routes.VerifyPasscodeController.emailSendVerification.url)
       }
     }
   }

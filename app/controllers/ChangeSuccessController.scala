@@ -59,8 +59,8 @@ class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionS
         renderView(changeKey)
       case _ =>
         val redirectLocation: Call = changeKey match {
-          case `landlineChangeSuccessful` => controllers.landlineNumber.routes.CaptureLandlineNumberController.show()
-          case `websiteChangeSuccessful` => controllers.website.routes.CaptureWebsiteController.show()
+          case `landlineChangeSuccessful` => controllers.landlineNumber.routes.CaptureLandlineNumberController.show
+          case `websiteChangeSuccessful` => controllers.website.routes.CaptureWebsiteController.show
         }
         Future.successful(Redirect(redirectLocation))
     }

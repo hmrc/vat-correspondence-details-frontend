@@ -67,7 +67,7 @@ class ConfirmLandlineNumberPageSpec extends BasePageISpec {
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          redirectURI(controllers.routes.ChangeSuccessController.landlineNumber().url)
+          redirectURI(controllers.routes.ChangeSuccessController.landlineNumber.url)
         )
       }
     }

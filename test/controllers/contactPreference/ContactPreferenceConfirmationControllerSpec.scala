@@ -67,8 +67,8 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
             status(result) shouldBe SEE_OTHER
           }
 
-          s"redirect to ${controllers.contactPreference.routes.EmailToUseController.show().url}" in {
-            redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailToUseController.show().url)
+          s"redirect to ${controllers.contactPreference.routes.EmailToUseController.show.url}" in {
+            redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailToUseController.show.url)
           }
         }
       }
@@ -83,8 +83,8 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
           status(result) shouldBe SEE_OTHER
         }
 
-        s"redirect to ${controllers.contactPreference.routes.EmailToUseController.show().url}" in {
-          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailToUseController.show().url)
+        s"redirect to ${controllers.contactPreference.routes.EmailToUseController.show.url}" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.EmailToUseController.show.url)
         }
       }
     }
@@ -137,8 +137,8 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
           status(result) shouldBe SEE_OTHER
         }
 
-        s"redirect to ${controllers.contactPreference.routes.LetterPreferenceController.show().url}" in {
-          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.LetterPreferenceController.show().url)
+        s"redirect to ${controllers.contactPreference.routes.LetterPreferenceController.show.url}" in {
+          redirectLocation(result) shouldBe Some(controllers.contactPreference.routes.LetterPreferenceController.show.url)
         }
       }
     }

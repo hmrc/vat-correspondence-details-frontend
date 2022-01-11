@@ -43,7 +43,7 @@ class ConfirmRemoveWebsiteController @Inject()(confirmRemoveWebsite: ConfirmRemo
       case Some(_) =>
         Ok(confirmRemoveWebsite(formYesNo))
       case _ =>
-        Redirect(routes.CaptureWebsiteController.show())
+        Redirect(routes.CaptureWebsiteController.show)
       }
   }
 
@@ -54,13 +54,13 @@ class ConfirmRemoveWebsiteController @Inject()(confirmRemoveWebsite: ConfirmRemo
           formWithErrors =>
             BadRequest(confirmRemoveWebsite(formWithErrors)),
           {
-            case Yes => Redirect(routes.ConfirmWebsiteController.updateWebsite())
+            case Yes => Redirect(routes.ConfirmWebsiteController.updateWebsite)
               .addingToSession(prepopulationWebsiteKey -> "")
             case No => Redirect(appConfig.manageVatSubscriptionServicePath)
           }
         )
       case _ =>
-        Redirect(routes.CaptureWebsiteController.show())
+        Redirect(routes.CaptureWebsiteController.show)
     }
   }
 }

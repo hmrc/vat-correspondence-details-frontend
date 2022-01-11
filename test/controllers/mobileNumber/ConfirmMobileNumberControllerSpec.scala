@@ -76,7 +76,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
             SessionKeys.prepopulationMobileKey -> ""))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
         }
       }
 
@@ -87,7 +87,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           val result = controller.show(request.withSession(SessionKeys.validationMobileKey -> "", SessionKeys.prepopulationMobileKey -> ""))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
         }
       }
     }
@@ -106,7 +106,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect the user to enter a new mobile number" in {
-          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
         }
       }
 
@@ -122,7 +122,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect the user to enter a new landline number" in {
-          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+          redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
         }
       }
     }
@@ -174,7 +174,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "redirect to the success page" in {
-            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber().url)
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber.url)
           }
 
           "add the successful change key to the session" in {
@@ -217,7 +217,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "redirect to the success page" in {
-            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber().url)
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber.url)
           }
 
           "add the successful change key to the session" in {
@@ -260,7 +260,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "redirect to the success page" in {
-            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber().url)
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber.url)
           }
 
           "add the successful change key to the session" in {
@@ -321,7 +321,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to the capture mobile number page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
       }
     }
 

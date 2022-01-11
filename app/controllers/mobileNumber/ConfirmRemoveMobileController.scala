@@ -40,7 +40,7 @@ class ConfirmRemoveMobileController @Inject()(val confirmRemoveMobile: ConfirmRe
       case Some(_) =>
         Ok(confirmRemoveMobile(yesNoForm))
       case None =>
-        Redirect(routes.CaptureMobileNumberController.show())
+        Redirect(routes.CaptureMobileNumberController.show)
     }
   }
 
@@ -53,13 +53,13 @@ class ConfirmRemoveMobileController @Inject()(val confirmRemoveMobile: ConfirmRe
             BadRequest(confirmRemoveMobile(errorForm))
           },
           {
-            case Yes => Redirect(routes.ConfirmMobileNumberController.updateMobileNumber())
+            case Yes => Redirect(routes.ConfirmMobileNumberController.updateMobileNumber)
               .addingToSession(prepopulationMobileKey -> "")
             case No => Redirect(appConfig.manageVatSubscriptionServicePath)
           }
         )
       case None =>
-        Redirect(routes.CaptureMobileNumberController.show())
+        Redirect(routes.CaptureMobileNumberController.show)
     }
   }
 }

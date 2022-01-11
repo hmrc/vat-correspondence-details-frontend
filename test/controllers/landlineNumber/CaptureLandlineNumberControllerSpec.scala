@@ -159,7 +159,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
           }
 
           "redirect to the confirm contact numbers controller" in {
-            redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.show().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmLandlineNumberController.show.url)
           }
 
           "add the new landline to the session" in {

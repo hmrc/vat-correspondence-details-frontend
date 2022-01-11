@@ -38,25 +38,25 @@
 
 @startJourneyUrl = @{
   if(contactPrefJourney) {
-    controllers.email.routes.CaptureEmailController.showPrefJourney().url
+    controllers.email.routes.CaptureEmailController.showPrefJourney.url
   } else {
-    controllers.email.routes.CaptureEmailController.show().url
+    controllers.email.routes.CaptureEmailController.show.url
   }
 }
 
 @resendVerificationUrl = @{
   if(contactPrefJourney) {
-    controllers.email.routes.VerifyPasscodeController.contactPrefSendVerification().url
+    controllers.email.routes.VerifyPasscodeController.contactPrefSendVerification.url
   } else {
-    controllers.email.routes.VerifyPasscodeController.emailSendVerification().url
+    controllers.email.routes.VerifyPasscodeController.emailSendVerification.url
   }
 }
 
 @formSubmissionAction = @{
   if(contactPrefJourney) {
-    controllers.email.routes.VerifyPasscodeController.contactPrefSubmit()
+    controllers.email.routes.VerifyPasscodeController.contactPrefSubmit
   } else {
-    controllers.email.routes.VerifyPasscodeController.emailSubmit()
+    controllers.email.routes.VerifyPasscodeController.emailSubmit
   }
 }
 

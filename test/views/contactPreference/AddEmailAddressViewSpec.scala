@@ -71,7 +71,7 @@ class AddEmailAddressViewSpec extends ViewBaseSpec with Matchers {
       }
 
       "should have the correct href" in {
-        element(Selectors.backLink).attr("href") shouldBe routes.EmailPreferenceController.show().url
+        element(Selectors.backLink).attr("href") shouldBe routes.EmailPreferenceController.show.url
       }
     }
 
@@ -89,7 +89,7 @@ class AddEmailAddressViewSpec extends ViewBaseSpec with Matchers {
     }
 
     "have the correct submit action URL" in {
-      element(Selectors.form).attr("action") shouldBe controllers.contactPreference.routes.AddEmailAddressController.submit().url
+      element(Selectors.form).attr("action") shouldBe controllers.contactPreference.routes.AddEmailAddressController.submit.url
     }
   }
 

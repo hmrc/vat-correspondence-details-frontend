@@ -51,7 +51,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
       }
 
       "has the correct destination" in {
-        element(".govuk-back-link").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show().url
+        element(".govuk-back-link").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show.url
       }
     }
 
@@ -93,7 +93,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
 
       "has the correct destination" in {
         element(".govuk-details__text > p:nth-of-type(2) > a:nth-child(1)").attr("href") shouldBe
-          routes.VerifyPasscodeController.emailSendVerification().url
+          routes.VerifyPasscodeController.emailSendVerification.url
       }
     }
 
@@ -105,7 +105,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
 
       "has the correct destination" in {
         element(".govuk-details__text > p:nth-of-type(2) > a:nth-child(2)").attr("href") shouldBe
-          routes.CaptureEmailController.show().url
+          routes.CaptureEmailController.show.url
       }
     }
 
@@ -122,7 +122,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
     "have a back link" which {
 
       "has the correct destination" in {
-        element(".govuk-back-link").attr("href") shouldBe controllers.email.routes.CaptureEmailController.showPrefJourney().url
+        element(".govuk-back-link").attr("href") shouldBe controllers.email.routes.CaptureEmailController.showPrefJourney.url
       }
     }
 
@@ -130,7 +130,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
 
       "has the correct destination" in {
         element("details div p:nth-child(2) a:nth-child(1)").attr("href") shouldBe
-          routes.VerifyPasscodeController.contactPrefSendVerification().url
+          routes.VerifyPasscodeController.contactPrefSendVerification.url
       }
     }
 
@@ -138,7 +138,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
 
       "has the correct destination" in {
         element("details div p:nth-child(2) a:nth-child(2)").attr("href") shouldBe
-          routes.CaptureEmailController.showPrefJourney().url
+          routes.CaptureEmailController.showPrefJourney.url
       }
     }
   }

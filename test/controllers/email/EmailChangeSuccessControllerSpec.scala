@@ -119,7 +119,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
         }
 
         "redirect to the capture email page" in {
-          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.email.routes.CaptureEmailController.show.url)
         }
       }
     }

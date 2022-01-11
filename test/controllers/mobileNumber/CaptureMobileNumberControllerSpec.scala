@@ -158,7 +158,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
           }
 
           "redirect to the confirm contact numbers controller" in {
-            redirectLocation(result) shouldBe Some(routes.ConfirmMobileNumberController.show().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmMobileNumberController.show.url)
           }
 
           "add the new mobile to the session" in {

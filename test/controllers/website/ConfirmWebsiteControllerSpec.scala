@@ -63,7 +63,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to enter a new website" in {
-        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show.url)
       }
     }
 
@@ -102,7 +102,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         }
 
         "redirect to the website changed success page" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.websiteAddress().url)
+          redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.websiteAddress.url)
         }
       }
 
@@ -155,7 +155,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect the user to the capture website page" in {
-        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.website.routes.CaptureWebsiteController.show.url)
       }
     }
 

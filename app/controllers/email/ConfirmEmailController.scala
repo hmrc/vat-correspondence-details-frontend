@@ -55,14 +55,14 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
             CheckYourAnswersViewModel(
               question = "checkYourAnswers.emailAddress",
               answer = email,
-              changeLink = routes.CaptureEmailController.show().url,
+              changeLink = routes.CaptureEmailController.show.url,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
-              continueLink =routes.VerifyPasscodeController.updateEmailAddress().url
+              continueLink =routes.VerifyPasscodeController.updateEmailAddress.url
               )
           )
         )
       case _ =>
-        Redirect(routes.CaptureEmailController.show())
+        Redirect(routes.CaptureEmailController.show)
     }
   }
 
@@ -77,13 +77,13 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
             CheckYourAnswersViewModel(
               question = "checkYourAnswers.emailAddress",
               answer = email,
-              changeLink = controllers.email.routes.CaptureEmailController.showPrefJourney().url,
+              changeLink = controllers.email.routes.CaptureEmailController.showPrefJourney.url,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
-              continueLink = controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail().url)
+              continueLink = controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail.url)
           )
         )
       case _ =>
-        Redirect(routes.CaptureEmailController.show())
+        Redirect(routes.CaptureEmailController.show)
     }
   }
 
@@ -93,7 +93,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
       case Some(email) =>
         vatSubscriptionService.updateEmail(user.vrn, email) map {
           case Right(UpdatePPOBSuccess(message)) if message.isEmpty =>
-            Redirect(routes.VerifyEmailController.emailSendVerification())
+            Redirect(routes.VerifyEmailController.emailSendVerification)
 
           case Right(UpdatePPOBSuccess(_)) =>
             auditService.extendedAudit(
@@ -104,9 +104,9 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
                 user.isAgent,
                 user.arn
               ),
-              controllers.email.routes.ConfirmEmailController.updateEmailAddress().url
+              controllers.email.routes.ConfirmEmailController.updateEmailAddress.url
             )
-            Redirect(routes.EmailChangeSuccessController.show())
+            Redirect(routes.EmailChangeSuccessController.show)
               .removingFromSession(prepopulationEmailKey, validationEmailKey)
               .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
@@ -122,7 +122,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
 
       case _ =>
         logger.info("[ConfirmEmailController][updateEmailAddress] - No email address found in session")
-        Future.successful(Redirect(routes.CaptureEmailController.show()))
+        Future.successful(Redirect(routes.CaptureEmailController.show))
     }
   }
 

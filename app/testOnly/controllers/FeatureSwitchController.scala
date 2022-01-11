@@ -38,13 +38,13 @@ class FeatureSwitchController @Inject()(val mcc: MessagesControllerComponents,
 
   def submitFeatureSwitch: Action[AnyContent] = Action { implicit request =>
     FeatureSwitchForm.form.bindFromRequest().fold(
-      _ => Redirect(routes.FeatureSwitchController.featureSwitch()),
+      _ => Redirect(routes.FeatureSwitchController.featureSwitch),
       success = handleSuccess
     )
   }
 
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.emailVerificationEnabled(model.emailVerification)
-    Redirect(routes.FeatureSwitchController.featureSwitch())
+    Redirect(routes.FeatureSwitchController.featureSwitch)
   }
 }

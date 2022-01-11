@@ -52,13 +52,13 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
           confirmWebsiteView(CheckYourAnswersViewModel(
             question = "checkYourAnswers.websiteAddress",
             answer = website,
-            changeLink = routes.CaptureWebsiteController.show().url,
+            changeLink = routes.CaptureWebsiteController.show.url,
             changeLinkHiddenText = "checkYourAnswers.websiteAddress.edit",
-            continueLink = routes.ConfirmWebsiteController.updateWebsite().url
+            continueLink = routes.ConfirmWebsiteController.updateWebsite.url
           )
         ))
       case _ =>
-        Redirect(routes.CaptureWebsiteController.show())
+        Redirect(routes.CaptureWebsiteController.show)
     }
   }
 
@@ -76,9 +76,9 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
                 user.isAgent,
                 user.arn
               ),
-              controllers.website.routes.ConfirmWebsiteController.updateWebsite().url
+              controllers.website.routes.ConfirmWebsiteController.updateWebsite.url
             )
-            Redirect(controllers.routes.ChangeSuccessController.websiteAddress())
+            Redirect(controllers.routes.ChangeSuccessController.websiteAddress)
               .addingToSession(websiteChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
               .removingFromSession(validationWebsiteKey)
 
@@ -93,7 +93,7 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
         }
 
       case _ =>
-        Future.successful(Redirect(routes.CaptureWebsiteController.show()))
+        Future.successful(Redirect(routes.CaptureWebsiteController.show))
     }
   }
 }

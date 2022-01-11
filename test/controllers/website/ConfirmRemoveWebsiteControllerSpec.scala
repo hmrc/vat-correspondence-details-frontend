@@ -50,7 +50,7 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
       }
 
       "redirect to the capture website page" in {
-        redirectLocation(result) shouldBe Some(routes.CaptureWebsiteController.show().url)
+        redirectLocation(result) shouldBe Some(routes.CaptureWebsiteController.show.url)
       }
     }
 
@@ -94,7 +94,7 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
           }
 
           "redirect to the updateWebsite() action in ConfirmWebsiteController" in {
-            redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.updateWebsite().url)
+            redirectLocation(result) shouldBe Some(routes.ConfirmWebsiteController.updateWebsite.url)
           }
 
           "add a blank value to the prepopulation session key" in {
@@ -125,7 +125,7 @@ class ConfirmRemoveWebsiteControllerSpec extends ControllerBaseSpec  {
           }
 
           "redirect to the capture website page" in {
-            redirectLocation(result) shouldBe Some(routes.CaptureWebsiteController.show().url)
+            redirectLocation(result) shouldBe Some(routes.CaptureWebsiteController.show.url)
           }
         }
 
