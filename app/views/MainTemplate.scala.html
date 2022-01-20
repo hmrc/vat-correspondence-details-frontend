@@ -26,7 +26,7 @@
       govukHeader: GovukHeader,
       hmrcStandardHeader: HmrcStandardHeader,
       hmrcStandardFooter: HmrcStandardFooter,
-      hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
+      hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
       hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet)
 
 @(pageTitle: String,
@@ -54,13 +54,6 @@
   <script src='@routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
   <script>window.GOVUKFrontend.initAll();</script>
   <script>window.HMRCFrontend.initAll();</script>
-}
-
-@getHelpHtml = @{
-  hmrcReportTechnicalIssue(ReportTechnicalIssue(
-    serviceCode = appConfig.contactFormServiceIdentifier,
-    language = if (messages.lang.code == "cy") Cy else En
-  ))
 }
 
 @languageSelect = {
@@ -110,7 +103,7 @@
   <div id="content" class="govuk-!-margin-bottom-6">
     @mainContent
   </div>
-  @getHelpHtml
+  @hmrcReportTechnicalIssueHelper()
 }
 
 @govukLayout(

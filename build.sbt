@@ -20,8 +20,8 @@ import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, s
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
-val bootstrapPlayVersion       = "5.18.0"
-val playFrontendHmrc           = "1.31.0-play-28"
+val bootstrapPlayVersion       = "5.19.0"
+val playFrontendHmrc           = "2.0.0-play-28"
 val playPartialsVersion        = "8.2.0-play-28"
 val authClientVersion          = "5.7.0-play-28"
 val playLanguageVersion        = "5.1.0-play-28"
@@ -113,11 +113,9 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     Keys.fork in Test := true,
-    scalaVersion := "2.12.14",
+    scalaVersion := "2.12.15",
     libraryDependencies ++= appDependencies,
-    retrieveManaged := true,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
-  )
+    retrieveManaged := true)
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(

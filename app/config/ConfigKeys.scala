@@ -21,6 +21,7 @@ object ConfigKeys {
   val assetsVersion: String = "assets.version"
 
   val contactFrontendService: String = "contact-frontend.url"
+  val contactFrontendIdentifier: String = "contact-frontend.serviceId"
 
   val govUkSetupAgentServices: String = "govuk.guidance.setupAgentServices.url"
   val hmrcPrivacyNoticeUrl: String = "govuk.guidance.hmrcPrivacyNotice.url"
