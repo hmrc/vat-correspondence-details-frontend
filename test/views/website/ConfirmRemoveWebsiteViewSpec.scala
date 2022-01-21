@@ -88,6 +88,10 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec with Matchers {
           "has a continue button with the correct text" in {
             elementText(Selectors.continueButton) shouldBe "Confirm and continue"
           }
+
+          "have a prevent double click attribute on the button" in {
+            element(Selectors.continueButton).hasAttr("data-prevent-double-click") shouldBe true
+          }
         }
 
         "when the page has errors" should {
