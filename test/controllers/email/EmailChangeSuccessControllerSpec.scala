@@ -38,7 +38,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
   )
 
   val successfulChangeRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(emailChangeSuccessful -> "true").withSession(inFlightContactDetailsChangeKey -> "true")
+    request.withSession(emailChangeSuccessful -> "true")
 
   "Calling the show action" when {
 
