@@ -719,6 +719,9 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         "add the successful email change to session" in {
           session(result).get(SessionKeys.emailChangeSuccessful) shouldBe Some("true")
         }
+        "add the inFlightContactDetailsChangeKey to session" in {
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+        }
       }
 
       "the user has an empty email in session" should {
@@ -741,6 +744,9 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "add the successful email change to session" in {
           session(result).get(SessionKeys.emailChangeSuccessful) shouldBe Some("true")
+        }
+        "add the inFlightContactDetailsChangeKey to session" in {
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
         }
       }
 
@@ -781,6 +787,9 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "not add a successful email change to session" in {
         session(result).get(SessionKeys.emailChangeSuccessful) shouldBe None
+      }
+      "not add a nFlightContactDetailsChangeKey to session" in {
+        session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe None
       }
     }
 
