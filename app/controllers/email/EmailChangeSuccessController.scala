@@ -17,6 +17,7 @@
 package controllers.email
 
 import common.SessionKeys
+import common.SessionKeys.inFlightContactDetailsChangeKey
 import config.AppConfig
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
@@ -52,7 +53,7 @@ class EmailChangeSuccessController @Inject()(vatSubscriptionService: VatSubscrip
 
           val emailVerified = customerDetails.fold(_ => None, _.ppob.contactDetails.flatMap(_.emailVerified))
           val viewModel = ChangeSuccessViewModel("emailChangeSuccess.title", None, preference, None, emailVerified)
-          Ok(changeSuccessView(viewModel))
+          Ok(changeSuccessView(viewModel)).addingToSession(inFlightContactDetailsChangeKey -> "true")
         }
       case _ => Future.successful(Redirect(routes.CaptureEmailController.show.url))
     }
