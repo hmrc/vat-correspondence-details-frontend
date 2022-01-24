@@ -222,7 +222,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           user.vrn
         ), routes.VerifyPasscodeController.updateContactPrefEmail.url)
         Redirect(controllers.email.routes.EmailChangeSuccessController.show)
-          .addingToSession(SessionKeys.emailChangeSuccessful -> "true")
+          .addingToSession(SessionKeys.emailChangeSuccessful -> "true", SessionKeys.inFlightContactDetailsChangeKey -> "true")
       case Left(ErrorModel(CONFLICT, _)) =>
         logger.debug("[VerifyPasscodeController][sendUpdateRequest] - There is a contact details update request " +
           "already in progress. Redirecting user to manage-vat overview page.")
