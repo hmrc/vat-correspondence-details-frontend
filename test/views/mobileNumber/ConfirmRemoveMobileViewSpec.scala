@@ -77,6 +77,10 @@ class ConfirmRemoveMobileViewSpec extends ViewBaseSpec with Matchers {
           "has a continue button with the correct text" in {
             elementText(Selectors.button) shouldBe "Confirm and continue"
           }
+
+          "have a prevent double click attribute on the button" in {
+            element(Selectors.button).hasAttr("data-prevent-double-click") shouldBe true
+          }
         }
       }
 
