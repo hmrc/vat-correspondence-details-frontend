@@ -25,7 +25,6 @@ import stubs.VatSubscriptionStub
 class ConfirmLandlineNumberPageSpec extends BasePageISpec {
 
   val path = "/confirm-new-landline-number"
-  val path_update = "/update-new-landline-number"
   val newLandline = "012345678910"
 
   "Calling the Confirm Landline Number (.show) route" when {
@@ -51,10 +50,11 @@ class ConfirmLandlineNumberPageSpec extends BasePageISpec {
       }
     }
   }
+
   "Calling the Update Landline Number route" when {
 
     def show(sessionKeys: (String, String)*): WSResponse =
-      get(path_update, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))
+      post(path, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))(Map())
 
     "the landline is updated" should {
 

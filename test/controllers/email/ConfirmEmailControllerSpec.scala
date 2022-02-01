@@ -79,15 +79,16 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         }
 
         "has the correct change link URL" in {
-          page.select(".govuk-summary-list__actions a").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show.url
+          page.select(".govuk-summary-list__actions a").attr("href") shouldBe
+            controllers.email.routes.CaptureEmailController.show.url
         }
 
         "has the correct hidden text" in {
           page.select(".govuk-summary-list__actions > a > span:nth-child(2)").text() shouldBe "Change the email address"
         }
 
-        "has the correct continue URL" in {
-          page.select(".govuk-button").attr("href") shouldBe controllers.email.routes.VerifyPasscodeController.updateEmailAddress.url
+        "has the correct form action" in {
+          page.select("form").attr("action") shouldBe controllers.email.routes.VerifyPasscodeController.updateEmailAddress.url
         }
       }
     }
@@ -126,7 +127,8 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     "there is an email in session" should {
 
       mockIndividualAuthorised()
-      lazy val result = TestConfirmEmailController.showContactPref(requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
+      lazy val result = TestConfirmEmailController.showContactPref(
+        requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
 
       "return OK" in {
         status(result) shouldBe Status.OK
@@ -153,8 +155,8 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
           page.select(".govuk-summary-list__actions > a > span:nth-child(2)").text() shouldBe "Change the email address"
         }
 
-        "has the correct continue URL" in {
-          page.select(".govuk-button").attr("href") shouldBe
+        "has the correct form action" in {
+          page.select("form").attr("action") shouldBe
             controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail.url
         }
       }

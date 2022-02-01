@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionService,
                                         changeSuccessView: ChangeSuccessView)
-                                       (implicit val appConfig: AppConfig,
+                                       (implicit appConfig: AppConfig,
                                         mcc: MessagesControllerComponents,
                                         authComps: AuthPredicateComponents,
                                         inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -42,27 +42,28 @@ class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionS
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def landlineNumber: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
-    sessionGuard(landlineChangeSuccessful, prepopulationLandlineKey)
+    sessionGuard(landlineChangeSuccessful)
   }
 
   def mobileNumber: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
-    sessionGuard(mobileChangeSuccessful, prepopulationMobileKey)
+    sessionGuard(mobileChangeSuccessful)
   }
 
   def websiteAddress: Action[AnyContent] = allowAgentPredicate.async { implicit user =>
-    sessionGuard(websiteChangeSuccessful, prepopulationWebsiteKey)
+    sessionGuard(websiteChangeSuccessful)
   }
 
-  private[controllers] def sessionGuard(changeKey: String, prePopKey: String)(implicit user: User[_]): Future[Result] =
-    user.session.get(prePopKey) match {
-      case Some(_) if user.session.get(changeKey).exists(_.equals("true")) =>
-        renderView(changeKey)
-      case _ =>
-        val redirectLocation: Call = changeKey match {
-          case `landlineChangeSuccessful` => controllers.landlineNumber.routes.CaptureLandlineNumberController.show
-          case `websiteChangeSuccessful` => controllers.website.routes.CaptureWebsiteController.show
-        }
-        Future.successful(Redirect(redirectLocation))
+  private[controllers] def sessionGuard(changeKey: String)(implicit user: User[_]): Future[Result] =
+    if (user.session.get(changeKey).exists(_.equals("true"))) {
+      renderView(changeKey)
+    } else {
+      val redirectLocation: String = changeKey match {
+        case `landlineChangeSuccessful` => controllers.landlineNumber.routes.CaptureLandlineNumberController.show.url
+        case `mobileChangeSuccessful` => controllers.mobileNumber.routes.CaptureMobileNumberController.show.url
+        case `websiteChangeSuccessful` => controllers.website.routes.CaptureWebsiteController.show.url
+        case _ => appConfig.manageVatSubscriptionServiceUrl
+      }
+      Future.successful(Redirect(redirectLocation))
     }
 
   private[controllers] def renderView(changeKey: String)(implicit user: User[_]): Future[Result] =

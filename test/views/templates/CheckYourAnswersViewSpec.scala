@@ -21,6 +21,7 @@ import models.viewModels.CheckYourAnswersViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers
+import play.api.mvc.Call
 import views.ViewBaseSpec
 import views.html.templates.CheckYourAnswersView
 
@@ -33,7 +34,7 @@ class CheckYourAnswersViewSpec extends ViewBaseSpec with Matchers {
       "Answer",
       "/change-link",
       "Edit the answer",
-      "/continue-link"
+      Call("POST", "/continue-link")
     )
 
     val injectedView: CheckYourAnswersView = inject[CheckYourAnswersView]
@@ -84,9 +85,13 @@ class CheckYourAnswersViewSpec extends ViewBaseSpec with Matchers {
         elementText(".govuk-button") shouldBe "Continue"
       }
 
-      "has the correct URL" in {
-        element(".govuk-button").attr("href") shouldBe "/continue-link"
+      "has the prevent double click attribute" in {
+        element(".govuk-button").hasAttr("data-prevent-double-click") shouldBe true
       }
+    }
+
+    "have a form with the correct action" in {
+      element("form").attr("action") shouldBe "/continue-link"
     }
   }
 }

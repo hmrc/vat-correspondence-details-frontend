@@ -74,7 +74,7 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec with Matchers {
         "when an option is selected" should {
 
           "has the correct action" in {
-            element("form").attr("action") shouldBe routes.ConfirmRemoveWebsiteController.removeWebsiteAddress.url
+            element("form").attr("action") shouldBe routes.ConfirmWebsiteController.removeWebsiteAddress.url
           }
 
           "has a Yes option" in {

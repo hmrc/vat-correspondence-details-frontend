@@ -63,7 +63,7 @@ class ConfirmRemoveLandlineViewSpec extends ViewBaseSpec with Matchers {
         "have a form" which {
 
           "has the correct action" in {
-            element(Selectors.form).attr("action") shouldBe routes.ConfirmRemoveLandlineController.removeLandlineNumber.url
+            element(Selectors.form).attr("action") shouldBe routes.ConfirmLandlineNumberController.removeLandlineNumber.url
           }
 
           "has a Yes option" in {

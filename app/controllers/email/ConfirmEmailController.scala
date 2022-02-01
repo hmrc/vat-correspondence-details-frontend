@@ -57,8 +57,8 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               answer = email,
               changeLink = routes.CaptureEmailController.show.url,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
-              continueLink =routes.VerifyPasscodeController.updateEmailAddress.url
-              )
+              continueLink = routes.VerifyPasscodeController.updateEmailAddress
+            )
           )
         )
       case _ =>
@@ -79,7 +79,8 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               answer = email,
               changeLink = controllers.email.routes.CaptureEmailController.showPrefJourney.url,
               changeLinkHiddenText = "checkYourAnswers.emailAddress.edit",
-              continueLink = controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail.url)
+              continueLink = controllers.email.routes.VerifyPasscodeController.updateContactPrefEmail
+            )
           )
         )
       case _ =>

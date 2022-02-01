@@ -27,6 +27,7 @@ import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
+import views.html.mobileNumber.ConfirmRemoveMobileView
 import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.Future
@@ -38,6 +39,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
     mockErrorHandler,
     mockVatSubscriptionService,
     inject[CheckYourAnswersView],
+    inject[ConfirmRemoveMobileView],
     mockAuditingService
   )
 
@@ -150,9 +152,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
           lazy val result = {
             mockIndividualAuthorised()
-            mockUpdateMobileNumber(
-              vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
-            )
+            mockUpdateMobileNumber(vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success"))))
             controller.updateMobileNumber()(requestWithAllMobileNumbers)
           }
 
@@ -162,13 +162,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
           "audit the change mobile number event" in {
             verifyExtendedAudit(
-              ChangedMobileNumberAuditModel(
-                Some(testValidationMobile),
-                testPrepopMobile,
-                vrn,
-                isAgent = false,
-                None
-              )
+              ChangedMobileNumberAuditModel(Some(testValidationMobile), testPrepopMobile, vrn, isAgent = false, None)
             )
             reset(mockAuditingService)
           }
@@ -183,6 +177,14 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
           "add the inflight change key to the session" in {
             session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+
+          "remove the existing mobile number from the session" in {
+            session(result).get(SessionKeys.validationMobileKey) shouldBe None
+          }
+
+          "remove the mobile prepop value from the session" in {
+            session(result).get(SessionKeys.prepopulationMobileKey) shouldBe None
           }
         }
       }
@@ -193,9 +195,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
           lazy val result = {
             mockIndividualAuthorised()
-            mockUpdateMobileNumber(
-              vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
-            )
+            mockUpdateMobileNumber(vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success"))))
             controller.updateMobileNumber()(requestWithPrepopMobileNumber.withSession(SessionKeys.validationMobileKey -> ""))
           }
 
@@ -204,15 +204,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change mobile number event" in {
-            verifyExtendedAudit(
-              ChangedMobileNumberAuditModel(
-                None,
-                testPrepopMobile,
-                vrn,
-                isAgent = false,
-                None
-              )
-            )
+            verifyExtendedAudit(ChangedMobileNumberAuditModel(None, testPrepopMobile, vrn, isAgent = false, None))
             reset(mockAuditingService)
           }
 
@@ -226,6 +218,14 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
           "add the inflight change key to the session" in {
             session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+
+          "remove the existing mobile number from the session" in {
+            session(result).get(SessionKeys.validationMobileKey) shouldBe None
+          }
+
+          "remove the mobile prepop value from the session" in {
+            session(result).get(SessionKeys.prepopulationMobileKey) shouldBe None
           }
         }
       }
@@ -236,9 +236,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
           lazy val result = {
             mockIndividualAuthorised()
-            mockUpdateMobileNumber(
-              vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success")))
-            )
+            mockUpdateMobileNumber(vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success"))))
             controller.updateMobileNumber()(requestWithPrepopMobileNumber)
           }
 
@@ -247,15 +245,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change mobile number event" in {
-            verifyExtendedAudit(
-              ChangedMobileNumberAuditModel(
-                None,
-                testPrepopMobile,
-                vrn,
-                isAgent = false,
-                None
-              )
-            )
+            verifyExtendedAudit(ChangedMobileNumberAuditModel(None, testPrepopMobile, vrn, isAgent = false, None))
             reset(mockAuditingService)
           }
 
@@ -269,6 +259,10 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
           "add the inflight change key to the session" in {
             session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+
+          "remove the mobile prepop value from the session" in {
+            session(result).get(SessionKeys.prepopulationMobileKey) shouldBe None
           }
         }
       }
@@ -336,5 +330,136 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
     }
 
     insolvencyCheck(controller.updateMobileNumber())
+  }
+
+  "Calling the removeShow() action" when {
+
+    "there is a validation mobile number in session" should {
+
+      "return 200" in {
+        val result = controller.removeShow()(requestWithValidationMobileNumber)
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "there isn't a validation mobile number in session" should {
+
+      lazy val result = controller.removeShow()(request)
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the capture mobile page" in {
+        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
+      }
+    }
+
+    "the user is not authorised" should {
+
+      "return 403" in {
+        val result = {
+          mockIndividualWithoutEnrolment()
+          controller.removeShow()(request)
+        }
+
+        status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+
+    insolvencyCheck(controller.removeShow())
+  }
+
+  "Calling the removeMobileNumber() action" when {
+
+    "there is a validation mobile number in session" when {
+
+      "the form has errors" should {
+
+        lazy val result = controller.removeMobileNumber()(requestWithValidationMobileNumber)
+
+        "return 400" in {
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+
+      "the form is submitted successfully" when {
+
+        "a Yes is submitted" should {
+
+          lazy val result = {
+            mockUpdateMobileNumber(vrn, "")(Future(Right(UpdatePPOBSuccess("success"))))
+            controller.removeMobileNumber()(
+              requestWithValidationMobileNumber.withFormUrlEncodedBody("yes_no" -> "yes"))
+          }
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the mobileNumber action in ChangeSuccessController" in {
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.mobileNumber.url)
+          }
+
+          "audit the change mobile number event" in {
+            verifyExtendedAudit(ChangedMobileNumberAuditModel(Some(testValidationMobile), "", vrn, isAgent = false, None))
+            reset(mockAuditingService)
+          }
+
+          "add the successful change key to the session" in {
+            session(result).get(SessionKeys.mobileChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight change key to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+
+          "remove the existing mobile number from the session" in {
+            session(result).get(SessionKeys.validationMobileKey) shouldBe None
+          }
+        }
+
+        "a No is submitted" should {
+
+          lazy val result = controller.removeMobileNumber()(
+            requestWithValidationMobileNumber.withFormUrlEncodedBody("yes_no" -> "no"))
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the business details page" in {
+            redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+          }
+        }
+      }
+    }
+
+    "there isn't a validation mobile number in session" should {
+
+      lazy val result = controller.removeMobileNumber()(request)
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the capture mobile page" in {
+        redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
+      }
+    }
+
+    "the user is not authorised" should {
+
+      "return 403" in {
+        val result = {
+          mockIndividualWithoutEnrolment()
+          controller.removeMobileNumber()(request)
+        }
+
+        status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+
+    insolvencyCheck(controller.removeMobileNumber())
   }
 }

@@ -54,7 +54,7 @@ trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with Materialize
     request.withSession(prepopulationEmailKey -> testEmail)
 
   lazy val requestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(prepopulationWebsiteKey -> testWebsite)
+    request.withSession(validationWebsiteKey -> testWebsite, prepopulationWebsiteKey -> testWebsite)
 
   lazy val requestWithValidationPhoneNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     validationLandlineKey -> testValidationLandline,
