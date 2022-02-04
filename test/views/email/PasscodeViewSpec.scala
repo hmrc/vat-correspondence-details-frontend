@@ -112,6 +112,10 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
     "have a button with the correct text" in {
       elementText(".govuk-button") shouldBe "Continue"
     }
+
+    "have the prevent double click attribute on the continue button" in {
+      element(".govuk-button").hasAttr("data-prevent-double-click") shouldBe true
+    }
   }
 
   "The passcode view in the change of contact preference journey" should {

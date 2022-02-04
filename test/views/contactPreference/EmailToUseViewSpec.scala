@@ -66,6 +66,10 @@ class EmailToUseViewSpec extends ViewBaseSpec with Matchers {
       elementText(Selectors.button) shouldBe viewMessages.continue
     }
 
+    "have the prevent double click attribute on the continue button" in {
+      element(Selectors.button).hasAttr("data-prevent-double-click") shouldBe true
+    }
+
     "not display an error" in {
       document.select(Selectors.error).isEmpty shouldBe true
     }
