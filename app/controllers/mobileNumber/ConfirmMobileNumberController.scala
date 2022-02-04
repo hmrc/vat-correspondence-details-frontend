@@ -16,6 +16,7 @@
 
 package controllers.mobileNumber
 
+import javax.inject.{Inject, Singleton}
 import audit.AuditingService
 import audit.models.ChangedMobileNumberAuditModel
 import common.SessionKeys
@@ -24,25 +25,30 @@ import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
-import javax.inject.{Inject, Singleton}
+import forms.YesNoForm
+import models.{No, User, Yes, YesNo}
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import models.viewModels.CheckYourAnswersViewModel
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.VatSubscriptionService
 import utils.LoggerUtil
+import views.html.mobileNumber.ConfirmRemoveMobileView
 import views.html.templates.CheckYourAnswersView
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
-                                              val vatSubscriptionService: VatSubscriptionService,
+class ConfirmMobileNumberController @Inject()(errorHandler: ErrorHandler,
+                                              vatSubscriptionService: VatSubscriptionService,
                                               confirmMobileNumberView: CheckYourAnswersView,
+                                              confirmRemoveMobile: ConfirmRemoveMobileView,
                                               auditService: AuditingService)
-                                             (implicit val appConfig: AppConfig,
-                                                mcc: MessagesControllerComponents,
-                                                authComps: AuthPredicateComponents,
-                                                inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
+                                             (implicit appConfig: AppConfig,
+                                              mcc: MessagesControllerComponents,
+                                              authComps: AuthPredicateComponents,
+                                              inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
@@ -57,47 +63,80 @@ class ConfirmMobileNumberController @Inject()(val errorHandler: ErrorHandler,
           answer = prepopMobile,
           changeLink = routes.CaptureMobileNumberController.show.url,
           changeLinkHiddenText = "checkYourAnswers.mobileNumber.edit",
-          continueLink = routes.ConfirmMobileNumberController.updateMobileNumber.url
+          continueLink = routes.ConfirmMobileNumberController.updateMobileNumber
         ))
       )
     }
   }
 
+  private[controllers] def performUpdate(newNumber: String, pageUrl: String)(implicit user: User[_]): Future[Result] =
+    vatSubscriptionService.updateMobileNumber(user.vrn, newNumber).map {
+      case Right(UpdatePPOBSuccess(_)) =>
+        auditService.extendedAudit(
+          ChangedMobileNumberAuditModel(
+            user.session.get(validationMobileKey).filter(_.nonEmpty),
+            newNumber,
+            user.vrn,
+            user.isAgent,
+            user.arn
+          ),
+          pageUrl
+        )
+        Redirect(controllers.routes.ChangeSuccessController.mobileNumber)
+          .removingFromSession(validationMobileKey, prepopulationMobileKey)
+          .addingToSession(mobileChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
+
+      case Left(ErrorModel(CONFLICT, _)) =>
+        logger.warn("[ConfirmMobileNumberController][performUpdate] - There is a contact details update request " +
+          "already in progress. Redirecting user to manage-vat overview page.")
+        Redirect(appConfig.manageVatSubscriptionServicePath)
+          .addingToSession(inFlightContactDetailsChangeKey -> "true")
+
+      case Left(_) =>
+        errorHandler.showInternalServerError
+    }
+
   def updateMobileNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async {
     implicit user =>
       val enteredMobile = user.session.get(SessionKeys.prepopulationMobileKey)
-      val existingMobile = user.session.get(validationMobileKey).filter(_.nonEmpty)
 
       enteredMobile match {
         case None =>
           logger.info("[ConfirmMobileNumberController][updateMobileNumber] - No mobile number found in session")
           Future.successful(Redirect(routes.CaptureMobileNumberController.show))
 
-        case Some(mobile) => vatSubscriptionService.updateMobileNumber(user.vrn, mobile).map {
-          case Right(UpdatePPOBSuccess(_)) =>
-            auditService.extendedAudit(
-              ChangedMobileNumberAuditModel(
-                existingMobile,
-                mobile,
-                user.vrn,
-                user.isAgent,
-                user.arn
-              ),
-              controllers.mobileNumber.routes.ConfirmMobileNumberController.updateMobileNumber.url
-            )
-            Redirect(controllers.routes.ChangeSuccessController.mobileNumber)
-              .removingFromSession(validationMobileKey)
-              .addingToSession(mobileChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
-
-          case Left(ErrorModel(CONFLICT, _)) =>
-            logger.warn("[ConfirmMobileNumberController][updateMobileNumber] - There is a contact details update request " +
-              "already in progress. Redirecting user to manage-vat overview page.")
-            Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "true")
-
-          case Left(_) =>
-            errorHandler.showInternalServerError
-        }
+        case Some(mobile) =>
+          performUpdate(mobile, controllers.mobileNumber.routes.ConfirmMobileNumberController.updateMobileNumber.url)
       }
+  }
+
+  val yesNoForm: Form[YesNo] = YesNoForm.yesNoForm("confirmRemoveMobile.error")
+
+  def removeShow(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
+    user.session.get(validationMobileKey).filter(_.nonEmpty) match {
+      case Some(_) =>
+        Ok(confirmRemoveMobile(yesNoForm))
+      case None =>
+        Redirect(routes.CaptureMobileNumberController.show)
+    }
+  }
+
+  def removeMobileNumber(): Action[AnyContent] = (allowAgentPredicate andThen
+                                                  inFlightMobileNumberPredicate).async { implicit user =>
+    user.session.get(validationMobileKey).filter(_.nonEmpty) match {
+      case Some(_) =>
+        yesNoForm.bindFromRequest.fold(
+          errorForm => {
+            Future.successful(BadRequest(confirmRemoveMobile(errorForm)))
+          },
+          {
+            case Yes =>
+              performUpdate("", controllers.mobileNumber.routes.ConfirmMobileNumberController.removeMobileNumber.url)
+            case No => Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
+          }
+        )
+      case None =>
+        Future.successful(Redirect(routes.CaptureMobileNumberController.show))
+    }
   }
 }

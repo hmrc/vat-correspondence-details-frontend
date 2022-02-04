@@ -50,7 +50,7 @@
     ))
   }
 
-  @formWithCSRF(action = controllers.mobileNumber.routes.ConfirmRemoveMobileController.removeMobileNumber) {
+  @formWithCSRF(action = controllers.mobileNumber.routes.ConfirmMobileNumberController.removeMobileNumber) {
     @govukRadios(Radios(
       fieldset = Some(Fieldset(
         legend = Some(Legend(

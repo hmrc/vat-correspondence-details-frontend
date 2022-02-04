@@ -24,22 +24,29 @@ import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
+import forms.YesNoForm
+import models.{No, User, Yes, YesNo}
+
 import javax.inject.{Inject, Singleton}
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import models.viewModels.CheckYourAnswersViewModel
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.VatSubscriptionService
 import utils.LoggerUtil
+import views.html.landlineNumber.ConfirmRemoveLandlineView
 import views.html.templates.CheckYourAnswersView
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
-                                                val vatSubscriptionService: VatSubscriptionService,
+class ConfirmLandlineNumberController @Inject()(errorHandler: ErrorHandler,
+                                                vatSubscriptionService: VatSubscriptionService,
                                                 confirmLandlineNumberView: CheckYourAnswersView,
+                                                confirmRemoveLandline: ConfirmRemoveLandlineView,
                                                 auditService: AuditingService)
-                                               (implicit val appConfig: AppConfig,
+                                               (implicit appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
                                                 inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
@@ -57,47 +64,83 @@ class ConfirmLandlineNumberController @Inject()(val errorHandler: ErrorHandler,
           answer = prepopLandline,
           changeLink = routes.CaptureLandlineNumberController.show.url,
           changeLinkHiddenText = "checkYourAnswers.landlineNumber.edit",
-          continueLink = routes.ConfirmLandlineNumberController.updateLandlineNumber.url
+          continueLink = routes.ConfirmLandlineNumberController.updateLandlineNumber
         ))
       )
     }
   }
 
+  private def performUpdate(newNumber: String, pageUrl: String)(implicit user: User[_]): Future[Result] =
+    vatSubscriptionService.updateLandlineNumber(user.vrn, newNumber).map {
+      case Right(UpdatePPOBSuccess(_)) =>
+        auditService.extendedAudit(
+          ChangedLandlineNumberAuditModel(
+            user.session.get(validationLandlineKey).filter(_.nonEmpty),
+            newNumber,
+            user.vrn,
+            user.isAgent,
+            user.arn
+          ),
+          pageUrl
+        )
+        Redirect(controllers.routes.ChangeSuccessController.landlineNumber)
+          .removingFromSession(validationLandlineKey, prepopulationLandlineKey)
+          .addingToSession(landlineChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
+
+      case Left(ErrorModel(CONFLICT, _)) =>
+        logger.warn("[ConfirmLandlineNumberController][performUpdate] - There is a contact details update request " +
+          "already in progress. Redirecting user to manage-vat overview page.")
+        Redirect(appConfig.manageVatSubscriptionServicePath)
+          .addingToSession(inFlightContactDetailsChangeKey -> "true")
+
+      case Left(_) =>
+        errorHandler.showInternalServerError
+  }
+
   def updateLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async {
     implicit user =>
       val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey)
-      val existingLandline = user.session.get(validationLandlineKey).filter(_.nonEmpty)
 
       enteredLandline match {
         case None =>
           logger.info("[ConfirmLandlineNumberController][updateLandlineNumber] - No landline number found in session")
           Future.successful(Redirect(routes.CaptureLandlineNumberController.show))
 
-        case Some(landline) => vatSubscriptionService.updateLandlineNumber(user.vrn, landline).map {
-          case Right(UpdatePPOBSuccess(_)) =>
-            auditService.extendedAudit(
-              ChangedLandlineNumberAuditModel(
-                existingLandline,
-                landline,
-                user.vrn,
-                user.isAgent,
-                user.arn
-              ),
-              controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber.url
-            )
-            Redirect(controllers.routes.ChangeSuccessController.landlineNumber)
-              .removingFromSession(validationLandlineKey)
-              .addingToSession(landlineChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
-
-          case Left(ErrorModel(CONFLICT, _)) =>
-            logger.warn("[ConfirmLandlineNumberController][updateLandlineNumber] - There is a contact details update request " +
-              "already in progress. Redirecting user to manage-vat overview page.")
-            Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "true")
-
-          case Left(_) =>
-            errorHandler.showInternalServerError
-        }
+        case Some(landline) =>
+          performUpdate(landline, controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber.url)
       }
+  }
+
+  val yesNoForm: Form[YesNo] = YesNoForm.yesNoForm("confirmRemoveLandline.error")
+
+  def removeShow(): Action[AnyContent] = (allowAgentPredicate andThen
+                                          inFlightLandlineNumberPredicate).async { implicit user =>
+    user.session.get(validationLandlineKey).filter(_.nonEmpty) match {
+      case Some(_) =>
+        Future.successful(Ok(confirmRemoveLandline(yesNoForm)))
+      case None =>
+        Future.successful(Redirect(routes.CaptureLandlineNumberController.show))
+    }
+  }
+
+  def removeLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen
+                                                    inFlightLandlineNumberPredicate).async { implicit user =>
+    user.session.get(validationLandlineKey).filter(_.nonEmpty) match {
+      case Some(_) =>
+        yesNoForm.bindFromRequest.fold(
+          errorForm => {
+            Future.successful(BadRequest(confirmRemoveLandline(errorForm)))
+          },
+          {
+            case Yes =>
+              performUpdate("", controllers.landlineNumber.routes.ConfirmLandlineNumberController.removeLandlineNumber.url)
+
+            case No => Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
+          }
+        )
+      case None =>
+        Future.successful(Redirect(routes.CaptureLandlineNumberController.show))
+
+    }
   }
 }

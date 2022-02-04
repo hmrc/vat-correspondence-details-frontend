@@ -69,7 +69,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec with Matchers {
           }
 
           "has the correct link location" in {
-            element("#remove-mobile").attr("href") shouldBe routes.ConfirmRemoveMobileController.show.url
+            element("#remove-mobile").attr("href") shouldBe routes.ConfirmMobileNumberController.removeShow.url
           }
         }
 

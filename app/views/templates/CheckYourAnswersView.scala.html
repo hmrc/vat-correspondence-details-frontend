@@ -18,7 +18,8 @@
 
 @this(mainTemplate: MainTemplate,
       govukSummaryList: GovukSummaryList,
-      govukButton: GovukButton)
+      govukButton: GovukButton,
+      formWithCSRF: FormWithCSRF)
 
 @(model: CheckYourAnswersViewModel)(implicit messages: Messages, appConfig: config.AppConfig, user: User[_])
 
@@ -50,8 +51,10 @@
     )
   ))
 
-  @govukButton(Button(
-    content = Text(messages("common.continue")),
-    href = Some(model.continueLink)
-  ))
+  @formWithCSRF(action = model.continueLink) {
+    @govukButton(Button(
+      content = Text(messages("common.continue")),
+      preventDoubleClick = true
+    ))
+  }
 }

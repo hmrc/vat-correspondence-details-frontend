@@ -23,21 +23,28 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.AuthPredicateComponents
 import controllers.BaseController
 import controllers.predicates.inflight.InFlightPredicateComponents
+import forms.YesNoForm
+import models.{No, User, Yes, YesNo}
+
 import javax.inject.{Inject, Singleton}
 import models.errors.ErrorModel
 import models.viewModels.CheckYourAnswersViewModel
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.VatSubscriptionService
 import utils.LoggerUtil
 import views.html.templates.CheckYourAnswersView
+import views.html.website.ConfirmRemoveWebsiteView
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
-                                         val vatSubscriptionService: VatSubscriptionService,
+class ConfirmWebsiteController @Inject()(errorHandler: ErrorHandler,
+                                         vatSubscriptionService: VatSubscriptionService,
                                          confirmWebsiteView: CheckYourAnswersView,
+                                         confirmRemoveWebsite: ConfirmRemoveWebsiteView,
                                          auditService: AuditingService)
-                                        (implicit val appConfig: AppConfig,
+                                        (implicit appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
                                          authComps: AuthPredicateComponents,
                                          inFlightComps: InFlightPredicateComponents) extends BaseController with LoggerUtil {
@@ -54,7 +61,7 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
             answer = website,
             changeLink = routes.CaptureWebsiteController.show.url,
             changeLinkHiddenText = "checkYourAnswers.websiteAddress.edit",
-            continueLink = routes.ConfirmWebsiteController.updateWebsite.url
+            continueLink = routes.ConfirmWebsiteController.updateWebsite
           )
         ))
       case _ =>
@@ -62,36 +69,65 @@ class ConfirmWebsiteController @Inject()(val errorHandler: ErrorHandler,
     }
   }
 
-  def updateWebsite(): Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
+  private[controllers] def performUpdate(newWebsite: String, pageUrl: String)(implicit user: User[_]): Future[Result] =
+    vatSubscriptionService.updateWebsite(user.vrn, newWebsite) map {
+      case Right(_) =>
+        auditService.extendedAudit(
+          ChangedWebsiteAddressAuditModel(
+            user.session.get(validationWebsiteKey).filter(_.nonEmpty),
+            newWebsite,
+            user.vrn,
+            user.isAgent,
+            user.arn
+          ),
+          pageUrl
+        )
+        Redirect(controllers.routes.ChangeSuccessController.websiteAddress)
+          .addingToSession(websiteChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
+          .removingFromSession(validationWebsiteKey, prepopulationWebsiteKey)
 
+      case Left(ErrorModel(CONFLICT, _)) =>
+        logger.warn("[ConfirmWebsiteController][performUpdate] - There is a contact details update request " +
+          "already in progress. Redirecting user to manage-vat overview page.")
+        Redirect(appConfig.manageVatSubscriptionServicePath)
+          .addingToSession(inFlightContactDetailsChangeKey -> "true")
+
+      case Left(_) =>
+        errorHandler.showInternalServerError
+    }
+
+  def updateWebsite(): Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
     user.session.get(prepopulationWebsiteKey) match {
       case Some(website) =>
-        vatSubscriptionService.updateWebsite(user.vrn, website) map {
-          case Right(_) =>
-            auditService.extendedAudit(
-              ChangedWebsiteAddressAuditModel(
-                user.session.get(validationWebsiteKey),
-                website,
-                user.vrn,
-                user.isAgent,
-                user.arn
-              ),
-              controllers.website.routes.ConfirmWebsiteController.updateWebsite.url
-            )
-            Redirect(controllers.routes.ChangeSuccessController.websiteAddress)
-              .addingToSession(websiteChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
-              .removingFromSession(validationWebsiteKey)
+        performUpdate(website, controllers.website.routes.ConfirmWebsiteController.updateWebsite.url)
+      case _ =>
+        Future.successful(Redirect(routes.CaptureWebsiteController.show))
+    }
+  }
 
-          case Left(ErrorModel(CONFLICT, _)) =>
-            logger.warn("[ConfirmWebsiteController][updateWebsite] - There is a contact details update request " +
-              "already in progress. Redirecting user to manage-vat overview page.")
-            Redirect(appConfig.manageVatSubscriptionServicePath)
-              .addingToSession(inFlightContactDetailsChangeKey -> "true")
+  val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("confirmWebsiteRemove.error")
 
-          case Left(_) =>
-            errorHandler.showInternalServerError
-        }
+  def removeShow(): Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
+    user.session.get(validationWebsiteKey).filter(_.nonEmpty) match {
+      case Some(_) =>
+        Ok(confirmRemoveWebsite(formYesNo))
+      case _ =>
+        Redirect(routes.CaptureWebsiteController.show)
+    }
+  }
 
+  def removeWebsiteAddress(): Action[AnyContent] = (allowAgentPredicate andThen
+                                                    inFlightWebsitePredicate).async { implicit user =>
+    user.session.get(validationWebsiteKey).filter(_.nonEmpty) match {
+      case Some(_) =>
+        formYesNo.bindFromRequest.fold(
+          formWithErrors =>
+            Future.successful(BadRequest(confirmRemoveWebsite(formWithErrors))),
+          {
+            case Yes => performUpdate("", controllers.website.routes.ConfirmWebsiteController.removeWebsiteAddress.url)
+            case No => Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
+          }
+        )
       case _ =>
         Future.successful(Redirect(routes.CaptureWebsiteController.show))
     }

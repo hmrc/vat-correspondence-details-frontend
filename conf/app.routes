@@ -41,14 +41,14 @@ POST        /new-website-address                             controllers.website
 
 # confirm website
 GET         /confirm-new-website-address                     controllers.website.ConfirmWebsiteController.show
-GET         /update-website-address                          controllers.website.ConfirmWebsiteController.updateWebsite
+POST        /confirm-new-website-address                     controllers.website.ConfirmWebsiteController.updateWebsite
 
 # website change successfull
 GET         /website-address-confirmation                    controllers.ChangeSuccessController.websiteAddress
 
 # remove website address
-GET         /remove-website-address                          controllers.website.ConfirmRemoveWebsiteController.show
-POST        /remove-website-address                          controllers.website.ConfirmRemoveWebsiteController.removeWebsiteAddress
+GET         /remove-website-address                          controllers.website.ConfirmWebsiteController.removeShow
+POST        /remove-website-address                          controllers.website.ConfirmWebsiteController.removeWebsiteAddress
 
 # capture landline number
 GET         /new-landline-number                             controllers.landlineNumber.CaptureLandlineNumberController.show
@@ -56,11 +56,11 @@ POST        /new-landline-number                             controllers.landlin
 
 # confirm landline number
 GET         /confirm-new-landline-number                     controllers.landlineNumber.ConfirmLandlineNumberController.show
-GET         /update-new-landline-number                      controllers.landlineNumber.ConfirmLandlineNumberController.updateLandlineNumber
+POST        /confirm-new-landline-number                     controllers.landlineNumber.ConfirmLandlineNumberController.updateLandlineNumber
 
 # remove landline number
-GET         /confirm-remove-landline-number                  controllers.landlineNumber.ConfirmRemoveLandlineController.show
-POST        /confirm-remove-landline-number                  controllers.landlineNumber.ConfirmRemoveLandlineController.removeLandlineNumber
+GET         /confirm-remove-landline-number                  controllers.landlineNumber.ConfirmLandlineNumberController.removeShow
+POST        /confirm-remove-landline-number                  controllers.landlineNumber.ConfirmLandlineNumberController.removeLandlineNumber
 
 # landline number change successful
 GET         /landline-number-confirmation                    controllers.ChangeSuccessController.landlineNumber
@@ -71,11 +71,11 @@ POST        /new-mobile-number                               controllers.mobileN
 
 # confirm mobile number
 GET         /confirm-new-mobile-number                       controllers.mobileNumber.ConfirmMobileNumberController.show
-GET         /update-new-mobile-number                        controllers.mobileNumber.ConfirmMobileNumberController.updateMobileNumber
+POST        /confirm-new-mobile-number                       controllers.mobileNumber.ConfirmMobileNumberController.updateMobileNumber
 
 # remove mobile number
-GET         /confirm-remove-mobile-number                    controllers.mobileNumber.ConfirmRemoveMobileController.show
-POST        /confirm-remove-mobile-number                    controllers.mobileNumber.ConfirmRemoveMobileController.removeMobileNumber
+GET         /confirm-remove-mobile-number                    controllers.mobileNumber.ConfirmMobileNumberController.removeShow
+POST        /confirm-remove-mobile-number                    controllers.mobileNumber.ConfirmMobileNumberController.removeMobileNumber
 
 # mobile number change successful
 GET         /mobile-number-confirmation                      controllers.ChangeSuccessController.mobileNumber

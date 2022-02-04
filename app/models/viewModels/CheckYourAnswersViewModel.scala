@@ -16,8 +16,10 @@
 
 package models.viewModels
 
+import play.api.mvc.Call
+
 case class CheckYourAnswersViewModel(question: String,
                                      answer: String,
                                      changeLink: String,
                                      changeLinkHiddenText: String,
-                                     continueLink: String)
+                                     continueLink: Call)

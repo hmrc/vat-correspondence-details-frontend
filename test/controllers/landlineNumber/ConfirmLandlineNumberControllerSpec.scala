@@ -27,10 +27,10 @@ import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
+import views.html.landlineNumber.ConfirmRemoveLandlineView
 import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.Future
-
 
 class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
@@ -38,6 +38,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
     mockErrorHandler,
     mockVatSubscriptionService,
     inject[CheckYourAnswersView],
+    inject[ConfirmRemoveLandlineView],
     mockAuditingService
   )
 
@@ -150,9 +151,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
           lazy val result = {
             mockIndividualAuthorised()
-            mockUpdateLandlineNumber(
-              vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
-            )
+            mockUpdateLandlineNumber(vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success"))))
             controller.updateLandlineNumber()(requestWithAllLandlineNumbers)
           }
 
@@ -162,13 +161,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
           "audit the change landline number event" in {
             verifyExtendedAudit(
-              ChangedLandlineNumberAuditModel(
-                Some(testValidationLandline),
-                testPrepopLandline,
-                vrn,
-                isAgent = false,
-                None
-              )
+              ChangedLandlineNumberAuditModel(Some(testValidationLandline), testPrepopLandline, vrn, isAgent = false, None)
             )
             reset(mockAuditingService)
           }
@@ -183,6 +176,14 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
           "add the inflight change key to the session" in {
             session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+
+          "remove the existing landline number from the session" in {
+            session(result).get(SessionKeys.validationLandlineKey) shouldBe None
+          }
+
+          "remove the landline prepop value from the session" in {
+            session(result).get(SessionKeys.prepopulationLandlineKey) shouldBe None
           }
         }
       }
@@ -193,9 +194,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
           lazy val result = {
             mockIndividualAuthorised()
-            mockUpdateLandlineNumber(
-              vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
-            )
+            mockUpdateLandlineNumber(vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success"))))
             controller.updateLandlineNumber()(requestWithPrepopLandlineNumber.withSession(SessionKeys.validationLandlineKey -> ""))
           }
 
@@ -204,15 +203,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change landline number event" in {
-            verifyExtendedAudit(
-              ChangedLandlineNumberAuditModel(
-                None,
-                testPrepopLandline,
-                vrn,
-                isAgent = false,
-                None
-              )
-            )
+            verifyExtendedAudit(ChangedLandlineNumberAuditModel(None, testPrepopLandline, vrn, isAgent = false, None))
             reset(mockAuditingService)
           }
 
@@ -226,6 +217,14 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
           "add the inflight change key to the session" in {
             session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+
+          "remove the existing landline number from the session" in {
+            session(result).get(SessionKeys.validationLandlineKey) shouldBe None
+          }
+
+          "remove the landline prepop value from the session" in {
+            session(result).get(SessionKeys.prepopulationLandlineKey) shouldBe None
           }
         }
       }
@@ -236,9 +235,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
           lazy val result = {
             mockIndividualAuthorised()
-            mockUpdateLandlineNumber(
-              vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success")))
-            )
+            mockUpdateLandlineNumber(vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success"))))
             controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
           }
 
@@ -247,15 +244,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change landline number event" in {
-            verifyExtendedAudit(
-              ChangedLandlineNumberAuditModel(
-                None,
-                testPrepopLandline,
-                vrn,
-                isAgent = false,
-                None
-              )
-            )
+            verifyExtendedAudit(ChangedLandlineNumberAuditModel(None, testPrepopLandline, vrn, isAgent = false, None))
             reset(mockAuditingService)
           }
 
@@ -269,6 +258,10 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
           "add the inflight change key to the session" in {
             session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+
+          "remove the landline prepop value from the session" in {
+            session(result).get(SessionKeys.prepopulationLandlineKey) shouldBe None
           }
         }
       }
@@ -336,5 +329,136 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
     }
 
     insolvencyCheck(controller.updateLandlineNumber())
+  }
+
+  "Calling the removeShow() action" when {
+
+    "there is a validation landline number in session" should {
+
+      "return 200" in {
+        val result = controller.removeShow()(requestWithValidationLandlineNumber)
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "there isn't a validation landline number in session" should {
+
+      lazy val result = controller.removeShow()(request)
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the capture landline page" in {
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
+      }
+    }
+
+    "the user is not authorised" should {
+
+      "return 403" in {
+        val result = {
+          mockIndividualWithoutEnrolment()
+          controller.removeShow()(request)
+        }
+
+        status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+
+    insolvencyCheck(controller.removeShow())
+  }
+
+  "Calling the removeLandlineNumber() action" when {
+
+    "there is a validation landline number in session" when {
+
+      "the form has errors" should {
+
+        lazy val result = controller.removeLandlineNumber()(requestWithValidationLandlineNumber)
+
+        "return 400" in {
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+
+      "the form is submitted successfully" when {
+
+        "a Yes is submitted" should {
+
+          lazy val result = {
+            mockUpdateLandlineNumber(vrn, "")(Future(Right(UpdatePPOBSuccess("success"))))
+            controller.removeLandlineNumber()(
+              requestWithValidationLandlineNumber.withFormUrlEncodedBody("yes_no" -> "yes"))
+          }
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the landlineNumber action in ChangeSuccessController" in {
+            redirectLocation(result) shouldBe Some(controllers.routes.ChangeSuccessController.landlineNumber.url)
+          }
+
+          "audit the change landline number event" in {
+            verifyExtendedAudit(ChangedLandlineNumberAuditModel(Some(testValidationLandline), "", vrn, isAgent = false, None))
+            reset(mockAuditingService)
+          }
+
+          "remove the existing landline number from the session" in {
+            session(result).get(SessionKeys.validationLandlineKey) shouldBe None
+          }
+
+          "add the successful change key to the session" in {
+            session(result).get(SessionKeys.landlineChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight change key to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
+        }
+
+        "a No is submitted" should {
+
+          lazy val result = controller.removeLandlineNumber()(
+            requestWithValidationLandlineNumber.withFormUrlEncodedBody("yes_no" -> "no"))
+
+          "return 303" in {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+
+          "redirect to the business details page" in {
+            redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
+          }
+        }
+      }
+    }
+
+    "there isn't a validation landline number in session" should {
+
+      lazy val result = controller.removeLandlineNumber()(request)
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the capture landline page" in {
+        redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
+      }
+    }
+
+    "the user is not authorised" should {
+
+      "return 403" in {
+        val result = {
+          mockIndividualWithoutEnrolment()
+          controller.removeLandlineNumber()(request)
+        }
+
+        status(result) shouldBe Status.FORBIDDEN
+      }
+    }
+
+    insolvencyCheck(controller.removeLandlineNumber())
   }
 }

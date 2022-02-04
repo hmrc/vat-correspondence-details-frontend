@@ -69,7 +69,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec with Matchers {
           }
 
           "has the correct link location" in {
-            element("#remove-landline").attr("href") shouldBe routes.ConfirmRemoveLandlineController.show.url
+            element("#remove-landline").attr("href") shouldBe routes.ConfirmLandlineNumberController.removeShow.url
           }
         }
 

@@ -25,7 +25,6 @@ import stubs.VatSubscriptionStub
 class ConfirmMobileNumberPageSpec extends BasePageISpec {
 
   val path = "/confirm-new-mobile-number"
-  val path_update = "/update-new-mobile-number"
   val newMobile = "012345678910"
 
   "Calling the Confirm Mobile Number (.show) route" when {
@@ -54,7 +53,7 @@ class ConfirmMobileNumberPageSpec extends BasePageISpec {
   "Calling the Update Mobile Number route" when {
 
     def show(sessionKeys: (String, String)*): WSResponse =
-      get(path_update, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))
+      post(path, Map(sessionKeys: _*) ++ formatInflightChange(Some("false")))(Map())
 
     "the mobile is updated" should {
 
