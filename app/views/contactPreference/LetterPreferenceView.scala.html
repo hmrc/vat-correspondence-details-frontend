@@ -81,6 +81,11 @@
       }
     ))
 
-    @govukButton(Button(content = Text(messages("common.continue"))))
+    @govukButton(
+        Button(
+            content = Text(messages("common.continue")),
+            preventDoubleClick = true
+        )
+    )
   }
 }

@@ -109,8 +109,16 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
       }
     }
 
+    "have a form with the correct action" in {
+      element("form").attr("action") shouldBe "/vat-through-software/account/correspondence/email-enter-code"
+    }
+
     "have a button with the correct text" in {
       elementText(".govuk-button") shouldBe "Continue"
+    }
+
+    "have the prevent double click attribute on the continue button" in {
+      element(".govuk-button").hasAttr("data-prevent-double-click") shouldBe true
     }
   }
 

@@ -58,8 +58,19 @@ class LetterPreferenceViewSpec extends ViewBaseSpec with Matchers {
       elementText(Selectors.hint) shouldBe LetterPreferenceMessages.hint
     }
 
-    "have the correct continue button text" in {
-      elementText(Selectors.button) shouldBe LetterPreferenceMessages.continue
+    "have a form with the correct action" in {
+      element("form").attr("action") shouldBe "/vat-through-software/account/correspondence/contact-preference-letter"
+    }
+
+    "have continue button" which {
+
+      "has the correct button text" in {
+        elementText(Selectors.button) shouldBe LetterPreferenceMessages.continue
+      }
+
+      "has the prevent double click attribute" in {
+        element(Selectors.button).hasAttr("data-prevent-double-click") shouldBe true
+      }
     }
 
     "display the Yes option correctly with an address" in {
