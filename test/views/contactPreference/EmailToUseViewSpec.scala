@@ -62,6 +62,10 @@ class EmailToUseViewSpec extends ViewBaseSpec with Matchers {
       elementText(Selectors.noOption) shouldBe viewMessages.no
     }
 
+    "have a form with the correct action" in {
+      element("form").attr("action") shouldBe "/vat-through-software/account/correspondence/preference-confirm-email"
+    }
+
     "have the correct continue button text" in {
       elementText(Selectors.button) shouldBe viewMessages.continue
     }
@@ -69,6 +73,8 @@ class EmailToUseViewSpec extends ViewBaseSpec with Matchers {
     "have the prevent double click attribute on the continue button" in {
       element(Selectors.button).hasAttr("data-prevent-double-click") shouldBe true
     }
+
+
 
     "not display an error" in {
       document.select(Selectors.error).isEmpty shouldBe true
