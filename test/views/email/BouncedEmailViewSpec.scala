@@ -17,6 +17,7 @@
 package views.email
 
 import forms.BouncedEmailForm
+import models.customerInformation.VerifyAdd
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers
@@ -30,7 +31,7 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
 
   "Rendering the bounced email page with no errors" should {
 
-    val form: Form[Option[String]] = BouncedEmailForm.bouncedEmailForm
+    val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm
 
     lazy val view = bouncedEmailView(form, "123@abc.com")(request, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -57,16 +58,16 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
     }
 
     "have the correct hint text for the radio button options" in {
-      elementText("#verify-add-item-hint") shouldBe
+      elementText("#verifyAdd-item-hint") shouldBe
         "We’ll send a confirmation code to this email address. You can enter it on the next screen."
-      elementText("#verify-add-2-item-hint") shouldBe
+      elementText("#verifyAdd-2-item-hint") shouldBe
         "This will replace 123@abc.com as your contact email address for your VAT account."
     }
   }
 
   "Rendering the bounced email page with errors" should {
 
-    val form: Form[Option[String]] = BouncedEmailForm.bouncedEmailForm.bind(Map("verifyAdd" -> ""))
+    val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm.bind(Map("verifyAdd" -> ""))
 
     lazy val view = bouncedEmailView(form, "123@abc.com")(request, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
@@ -89,9 +90,9 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
     }
 
     "have the correct hint text for the radio button options" in {
-      elementText("#verify-add-item-hint") shouldBe
+      elementText("#verifyAdd-item-hint") shouldBe
         "We’ll send a confirmation code to this email address. You can enter it on the next screen."
-      elementText("#verify-add-2-item-hint") shouldBe
+      elementText("#verifyAdd-2-item-hint") shouldBe
         "This will replace 123@abc.com as your contact email address for your VAT account."
     }
   }

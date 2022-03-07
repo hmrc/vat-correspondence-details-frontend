@@ -16,6 +16,61 @@
 
 package forms
 
-class BouncedEmailFormSpec {
+import models.customerInformation.{Add, Verify, VerifyAdd}
+import org.scalatest.matchers.should.Matchers
+import play.api.i18n.Messages
+import utils.TestUtil
+
+class BouncedEmailFormSpec extends TestUtil with Matchers {
+
+  "Binding a form with valid data" should {
+
+    val data = Map(VerifyAdd.id -> Verify.value)
+    val form = BouncedEmailForm.bouncedEmailForm.bind(data)
+
+    "result in a form with no errors" in {
+      form.hasErrors shouldBe false
+    }
+
+    "generate the correct model" in {
+      form.value shouldBe Some(Verify)
+    }
+  }
+
+  "Binding a form with invalid data" when {
+
+    "the no option has been selected" should {
+
+      val missingOption: Map[String, String] = Map.empty
+      val form = BouncedEmailForm.bouncedEmailForm.bind(missingOption)
+
+      "result in a form with errors" in {
+        form.hasErrors shouldBe true
+      }
+
+      "throw the correct error message" in {
+        Messages(form.errors.head.message) shouldBe "Choose an option"
+      }
+    }
+  }
+
+  "A form built from a valid model" when {
+
+    "verifying the email address" should {
+
+      "generate the correct mapping" in {
+        val form = BouncedEmailForm.bouncedEmailForm.fill(Verify)
+        form.data shouldBe Map(VerifyAdd.id -> Verify.value)
+      }
+    }
+
+    "adding a new email address to replace the unverified one" should {
+
+      "generate the correct mapping" in {
+        val form = BouncedEmailForm.bouncedEmailForm.fill(Add)
+        form.data shouldBe Map(VerifyAdd.id -> Add.value)
+      }
+    }
+  }
 
 }
