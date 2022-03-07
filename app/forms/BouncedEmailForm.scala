@@ -16,40 +16,41 @@
 
 package forms
 
+import models.customerInformation.{Add, VerifyAdd, Verify}
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import play.api.data.format.Formatter
 
 object BouncedEmailForm {
 
-  val verifyAdd: String = "verify_add"
+//  val verifyAdd: String = "verify_add"
+//
+//  val verify: String = "verify"
+//
+//  val add: String = "add"
 
-  val verify: String = "verify"
+  private val formatter: Formatter[VerifyAdd] = new Formatter[VerifyAdd] {
 
-  val add: String = "add"
-
-  private val formatter: Formatter[Option[String]] = new Formatter[Option[String]] {
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], VerifyAdd] = {
       data.get(key) match {
-        case Some("verify") => Right(Some("verify"))
-        case Some("add") => Right(Some("add"))
+        case Some(Verify.value) => Right(Verify)
+        case Some(Add.value) => Right(Add)
         case _ => Left(Seq(FormError(key, "bouncedEmail.formError")))
       }
     }
 
-    override def unbind(key: String, value: Option[String]): Map[String, String] = {
+    override def unbind(key: String, value: VerifyAdd): Map[String, String] = {
       val stringValue = value match {
-        case Some("verify") => "verify"
-        case Some("add") => "add"
+        case Verify => Verify.value
+        case Add => Add.value
       }
       Map(key -> stringValue)
     }
   }
 
-  def bouncedEmailForm: Form[Option[String]] = Form(
+  def bouncedEmailForm: Form[VerifyAdd] = Form(
     single(
-      verifyAdd -> of(formatter)
+      VerifyAdd.id -> of(formatter)
     )
   )
 

@@ -21,10 +21,13 @@ import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
+import forms.BouncedEmailForm
 import forms.LandlineNumberForm._
+
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
+import views.html.email.BouncedEmailView
 import views.html.landlineNumber.CaptureLandlineNumberView
 
 import scala.concurrent.ExecutionContext
@@ -32,6 +35,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatSubscriptionService,
                                                 val errorHandler: ErrorHandler,
+//                                                bouncedEmailView: BouncedEmailView,
                                                 captureLandlineNumberView: CaptureLandlineNumberView)
                                                (implicit val appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
@@ -52,6 +56,11 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
         case _ => errorHandler.showInternalServerError
       }
   }
+
+//  def show: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
+//
+//    Ok(bouncedEmailView(BouncedEmailForm.bouncedEmailForm, "123@abc.com"))
+//  }
 
   def submit: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate) { implicit user =>
     val validationLandline: Option[String] = user.session.get(SessionKeys.validationLandlineKey)
