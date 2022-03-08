@@ -53,6 +53,9 @@ trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with Materialize
   lazy val requestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(prepopulationEmailKey -> testEmail)
 
+  lazy val requestWithValidationEmail: FakeRequest[AnyContentAsEmpty.type] =
+    request.withSession(validationEmailKey -> testEmail)
+
   lazy val requestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
     request.withSession(validationWebsiteKey -> testWebsite, prepopulationWebsiteKey -> testWebsite)
 
@@ -105,6 +108,9 @@ trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with Materialize
   lazy val requestWithPaperPref: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     currentContactPrefKey -> paper
   )
+
+  lazy val requestWithBadFormAndEmail = requestWithValidationEmail
+    .withFormUrlEncodedBody("" -> "")
 
   lazy val insolventRequest: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
     insolventWithoutAccessKey -> "true"
