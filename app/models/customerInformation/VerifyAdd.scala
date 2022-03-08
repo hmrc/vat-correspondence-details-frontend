@@ -25,26 +25,18 @@ trait VerifyAdd {
 object VerifyAdd {
   val id: String = "verifyAdd"
 
-  implicit val writes: Writes[VerifyAdd] = Writes {
-    verifyAddOption => Json.obj(id -> verifyAddOption.value)
-  }
-
   implicit val reads: Reads[VerifyAdd] = for {
     verifyAddOption <- (__ \ id).read[String].map{
       case Verify.value => Verify
       case Add.value => Add
     }
   } yield verifyAddOption
-
-  implicit val format: Format[VerifyAdd] = Format(reads, writes)
 }
 
 object Verify extends VerifyAdd {
   override val value = "verify"
-  implicit val writes: Writes[Verify.type] = Writes { _ => Json.obj("verifyAdd" -> value)}
 }
 
 object Add extends VerifyAdd {
   override val value = "add"
-  implicit val writes: Writes[Add.type] = Writes { _ => Json.obj("verifyAdd" -> value)}
 }

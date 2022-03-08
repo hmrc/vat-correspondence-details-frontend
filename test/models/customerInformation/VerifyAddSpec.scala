@@ -24,20 +24,12 @@ class VerifyAddSpec extends TestUtil with Matchers {
 
   "VerifyAdd.Verify" should {
 
-    "serialize to the correct JSON" in {
-      Json.toJson(Verify) shouldBe Json.obj(VerifyAdd.id -> Verify.value)
-    }
-
     "deserialize from the correct JSON" in {
       Json.obj(VerifyAdd.id -> Verify.value).as[VerifyAdd] shouldBe Verify
     }
   }
 
   "VerifyAdd.Add" should {
-
-    "serialize to the correct JSON" in {
-      Json.toJson(Add) shouldBe Json.obj(VerifyAdd.id -> Add.value)
-    }
 
     "deserialize from the correct JSON" in {
       Json.obj(VerifyAdd.id -> Add.value).as[VerifyAdd] shouldBe Add

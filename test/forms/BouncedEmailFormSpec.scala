@@ -53,7 +53,7 @@ class BouncedEmailFormSpec extends TestUtil with Matchers {
 
   "Binding a form with invalid data" when {
 
-    "the no option has been selected" should {
+    "no option has been selected" should {
 
       val missingOption: Map[String, String] = Map.empty
       val form = BouncedEmailForm.bouncedEmailForm.bind(missingOption)

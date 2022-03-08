@@ -91,8 +91,12 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
       elementText("h1") shouldBe "Choose how to fix your email address"
     }
 
-    "should display an error" in {
-      elementText(".govuk-error-summary") shouldBe "There is a problem Choose an option"
+    "should display the correct form error title" in {
+      elementText(".govuk-error-summary__title") shouldBe "There is a problem"
+    }
+
+    "should display the correct from error text" in {
+      elementText(".govuk-error-summary__body") shouldBe "Choose an option"
     }
 
     "have the correct radio button options" in {

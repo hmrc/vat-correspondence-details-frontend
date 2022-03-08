@@ -26,7 +26,7 @@ govukRadios : GovukRadios)
 @(bouncedEmailForm: Form[VerifyAdd], emailAddress: String)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
 @verifyContent = {
- <p class="govuk-label govuk-!-margin-0">@messages("bouncedEmail.verify") <strong>@emailAddress</strong></p>
+ @messages("bouncedEmail.verify") <strong>@emailAddress</strong>
 }
 
 @addHintHtml = {
@@ -65,7 +65,6 @@ govukRadios : GovukRadios)
    )),
    items = Seq(
     RadioItem(
-
      content = HtmlContent(verifyContent),
      value = Some(Verify.value),
      hint = Some(Hint(
@@ -74,7 +73,6 @@ govukRadios : GovukRadios)
      checked = bouncedEmailForm("verifyAdd").value.contains(Verify.value)
     ),
     RadioItem(
-
      content = Text(messages("bouncedEmail.add")),
      value = Some(Add.value),
      hint = Some(Hint(

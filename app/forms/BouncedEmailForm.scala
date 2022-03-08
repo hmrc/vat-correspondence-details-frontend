@@ -23,12 +23,6 @@ import play.api.data.format.Formatter
 
 object BouncedEmailForm {
 
-//  val verifyAdd: String = "verify_add"
-//
-//  val verify: String = "verify"
-//
-//  val add: String = "add"
-
   private val formatter: Formatter[VerifyAdd] = new Formatter[VerifyAdd] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], VerifyAdd] = {
