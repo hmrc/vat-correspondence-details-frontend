@@ -63,6 +63,17 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
       elementText("#verifyAdd-2-item-hint") shouldBe
         "This will replace 123@abc.com as your contact email address for your VAT account."
     }
+
+    "have a continue button" which {
+
+      "has the correct text" in {
+        elementText(".govuk-button") shouldBe "Continue"
+      }
+
+      "has the prevent double click attribute" in {
+        element(".govuk-button").hasAttr("data-prevent-double-click") shouldBe true
+      }
+    }
   }
 
   "Rendering the bounced email page with errors" should {

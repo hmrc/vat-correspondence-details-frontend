@@ -60,7 +60,7 @@ govukRadios : GovukRadios)
     legend = Some(Legend(
      content = Text(messages("bouncedEmail.title")),
      isPageHeading = true,
-     classes = "govuk-fieldset__legend--l"
+     classes = "govuk-fieldset__legend--xl"
     ))
    )),
    items = Seq(
@@ -88,4 +88,11 @@ govukRadios : GovukRadios)
    }
   ))
  }
+
+ @govukButton(
+  Button(
+   content = Text(messages("common.continue")),
+   preventDoubleClick = true
+  )
+ )
 }

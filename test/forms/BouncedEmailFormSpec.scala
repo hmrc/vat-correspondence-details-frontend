@@ -23,7 +23,7 @@ import utils.TestUtil
 
 class BouncedEmailFormSpec extends TestUtil with Matchers {
 
-  "Binding a form with valid data" should {
+  "Binding a form with valid data for verifying the email address" should {
 
     val data = Map(VerifyAdd.id -> Verify.value)
     val form = BouncedEmailForm.bouncedEmailForm.bind(data)
@@ -34,6 +34,20 @@ class BouncedEmailFormSpec extends TestUtil with Matchers {
 
     "generate the correct model" in {
       form.value shouldBe Some(Verify)
+    }
+  }
+
+  "Binding a form with valid data for adding another email address" should {
+
+    val data = Map(VerifyAdd.id -> Add.value)
+    val form = BouncedEmailForm.bouncedEmailForm.bind(data)
+
+    "result in a form with no errors" in {
+      form.hasErrors shouldBe false
+    }
+
+    "generate the correct model" in {
+      form.value shouldBe Some(Add)
     }
   }
 
