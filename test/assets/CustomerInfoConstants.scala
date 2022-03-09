@@ -171,6 +171,14 @@ object CustomerInfoConstants {
     )
   )
 
+  val customerInfoNoEmailVerifiedField: CustomerInformation = fullCustomerInfoModel.copy(
+    ppob = fullPPOBModel.copy(
+      contactDetails = Some(fullContactDetailsModel.copy(
+        emailVerified = None
+      ))
+    )
+  )
+
   val minCustomerInfoModel: CustomerInformation =
     CustomerInformation(minPPOBModel, None, None, None, None, None, None, isInsolvent = false, None, None)
 
