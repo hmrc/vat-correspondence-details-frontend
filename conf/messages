@@ -182,3 +182,12 @@ passcode.error.tooManyAttempts = This is because you have entered the wrong code
 passcode.error.expired = The code we sent you has expired.
 passcode.error.vatAccount = Return to your VAT account
 passcode.error.retry = to start the process again.
+
+bouncedEmail.title = Choose how to fix your email address
+bouncedEmail.formError = Choose an option
+bouncedEmail.formHint = You can either verify your current email or add a new one.
+bouncedEmail.verify = Verify
+bouncedEmail.verify.hint = We’ll send a confirmation code to this email address. You can enter it on the next screen.
+bouncedEmail.add = Add a new email address
+bouncedEmail.add.hint.pt1 = This will replace
+bouncedEmail.add.hint.pt2 = as your contact email address for your VAT account.

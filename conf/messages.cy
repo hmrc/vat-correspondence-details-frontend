@@ -180,3 +180,12 @@ passcode.error.tooManyAttempts = Y rheswm am hyn yw eich bod wedi nodi’r cod a
 passcode.error.expired = Mae’r cod a anfonom atoch wedi dod i ben.
 passcode.error.vatAccount = Ewch yn ôl i’ch cyfrif TAW
 passcode.error.retry = er mwyn dechrau’r broses eto.
+
+bouncedEmail.title = Dewiswch sut i drwsio’ch cyfeiriad e-bost
+bouncedEmail.formError = Dewiswch opsiwn
+bouncedEmail.formHint = Gallwch naill ai dilysu’ch e-bost presennol neu ychwanegu un newydd.
+bouncedEmail.verify = Dilysu
+bouncedEmail.verify.hint = Byddwn yn anfon cod cadarnhau i’r cyfeiriad e-bost hwn. Gallwch ei nodi ar y sgrin nesaf.
+bouncedEmail.add = Ychwanegu cyfeiriad e-bost newydd
+bouncedEmail.add.hint.pt1 = Bydd hyn yn disodli
+bouncedEmail.add.hint.pt2 = fel eich cyfeiriad e-bost cyswllt ar gyfer eich cyfrif TAW.
