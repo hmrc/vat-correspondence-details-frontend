@@ -35,8 +35,10 @@ object VerifyAdd {
 
 object Verify extends VerifyAdd {
   override val value = "verify"
+  implicit val writes: Writes[Verify.type] = Writes { _ => Json.obj("verifyAdd" -> value)}
 }
 
 object Add extends VerifyAdd {
   override val value = "add"
+  implicit val writes: Writes[Add.type] = Writes { _ => Json.obj("verifyAdd" -> value)}
 }
