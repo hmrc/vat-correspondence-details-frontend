@@ -305,6 +305,26 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
           "have the correct redirect location" in {
             redirectLocation(result) shouldBe Some(routes.EmailChangeSuccessController.show.url)
           }
+
+          "remove the validation email from the session" in {
+            session(result).get(SessionKeys.validationEmailKey) shouldBe None
+          }
+
+          "remove the prepopulation email from the session" in {
+            session(result).get(SessionKeys.prepopulationEmailKey) shouldBe None
+          }
+
+          "remove the manageVatRequestForFixEmail value from the session" in {
+            session(result).get(SessionKeys.manageVatRequestToFixEmail) shouldBe None
+          }
+
+          "add the emailChangeSuccessful value to the session" in {
+            session(result).get(SessionKeys.emailChangeSuccessful) shouldBe Some("true")
+          }
+
+          "add the inflight indicator to the session" in {
+            session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+          }
         }
 
         "an UpdatePPOBSuccess comes back with an empty message" should {

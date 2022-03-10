@@ -28,6 +28,10 @@ common.yes = Yes
 common.no = No
 common.accountDetails = View your account details
 
+breadcrumbs.bta = Business tax account
+breadcrumbs.yourVatAccount = Your VAT account
+breadcrumbs.yourBusinessDetails = Your business details
+
 standardError.title = There is a problem with the service
 standardError.heading = Sorry, there is a problem with the service
 standardError.message = Try again later.

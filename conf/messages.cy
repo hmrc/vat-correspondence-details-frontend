@@ -28,6 +28,10 @@ common.yes = Iawn
 common.no = Na
 common.accountDetails = Bwrw golwg dros fanylion eich cyfrif
 
+breadcrumbs.bta = Cyfrif Treth Busnes
+breadcrumbs.yourVatAccount = Eich cyfrif TAW
+breadcrumbs.yourBusinessDetails = Manylion eich busnes
+
 standardError.title = Mae problem gyda’r gwasanaeth
 standardError.heading = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 standardError.message = Rhowch gynnig arall arni yn nes ymlaen.

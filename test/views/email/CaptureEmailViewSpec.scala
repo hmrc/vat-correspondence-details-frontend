@@ -16,7 +16,10 @@
 
 package views.email
 
+import assets.BaseTestConstants.vrn
+import common.SessionKeys
 import forms.EmailForm._
+import models.User
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers
@@ -211,6 +214,20 @@ class CaptureEmailViewSpec extends ViewBaseSpec with Matchers {
             element(Selectors.backLink).attr("href") shouldBe "/vat-through-software/account/correspondence/contact-preference/add-email-address"
           }
         }
+      }
+    }
+
+    "the user has the relevant session key to show they have come from the 'fix your email' page" should {
+
+      val user = User(vrn)(request.withSession(SessionKeys.manageVatRequestToFixEmail -> "true"))
+      lazy val view: Html = injectedView(
+        emailForm(testEmail), emailNotChangedError = false, testEmail, Call("POST", "/"), letterToConfirmedEmail = false
+      )(user, messages, mockConfig)
+
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have a back link to the 'fix your email' page" in {
+        element(Selectors.backLink).attr("href") shouldBe controllers.email.routes.BouncedEmailController.show.url
       }
     }
   }

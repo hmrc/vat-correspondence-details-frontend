@@ -16,17 +16,18 @@
 
 package controllers.email
 
+import javax.inject.{Inject, Singleton}
+
 import audit.AuditingService
 import audit.models.{ChangedContactPrefEmailAuditModel, ChangedEmailAddressAuditModel}
 import common.SessionKeys
-import common.SessionKeys.{emailChangeSuccessful, inFlightContactDetailsChangeKey, prepopulationEmailKey, validationEmailKey}
+import common.SessionKeys.{emailChangeSuccessful, inFlightContactDetailsChangeKey, manageVatRequestToFixEmail, prepopulationEmailKey, validationEmailKey}
 import config.{AppConfig, ErrorHandler}
 import connectors.httpParsers.VerifyPasscodeHttpParser._
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.PasscodeForm
-import javax.inject.{Inject, Singleton}
 import models.User
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
@@ -34,6 +35,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{EmailVerificationService, VatSubscriptionService}
 import utils.LoggerUtil
 import views.html.email.{PasscodeErrorView, PasscodeView}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -119,7 +121,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
                 controllers.email.routes.ConfirmEmailController.updateEmailAddress.url
               )
               Redirect(routes.EmailChangeSuccessController.show)
-                .removingFromSession(prepopulationEmailKey, validationEmailKey)
+                .removingFromSession(prepopulationEmailKey, validationEmailKey, manageVatRequestToFixEmail)
                 .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
             case Left(ErrorModel(CONFLICT, _)) =>

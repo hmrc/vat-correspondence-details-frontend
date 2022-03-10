@@ -69,7 +69,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override lazy val appName: String = sc.getString("appName")
 
-  override lazy val contactFormServiceIdentifier = sc.getString(Keys.contactFrontendIdentifier)
+  override lazy val contactFormServiceIdentifier: String = sc.getString(Keys.contactFrontendIdentifier)
   override lazy val contactFrontendService: String = sc.getString(Keys.contactFrontendService)
   override lazy val feedbackFormPartialUrl: String = s"$contactFrontendService/contact/beta-feedback/form"
   override lazy val reportAProblemPartialUrl =

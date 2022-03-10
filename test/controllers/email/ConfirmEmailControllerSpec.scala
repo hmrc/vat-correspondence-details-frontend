@@ -215,6 +215,26 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         "redirect to the email changed success page" in {
           redirectLocation(result) shouldBe Some("/vat-through-software/account/correspondence/email-address-confirmation")
         }
+
+        "remove the validation email from the session" in {
+          session(result).get(SessionKeys.validationEmailKey) shouldBe None
+        }
+
+        "remove the prepopulation email from the session" in {
+          session(result).get(SessionKeys.prepopulationEmailKey) shouldBe None
+        }
+
+        "remove the manageVatRequestForFixEmail value from the session" in {
+          session(result).get(SessionKeys.manageVatRequestToFixEmail) shouldBe None
+        }
+
+        "add the emailChangeSuccessful value to the session" in {
+          session(result).get(SessionKeys.emailChangeSuccessful) shouldBe Some("true")
+        }
+
+        "add the inflight indicator to the session" in {
+          session(result).get(SessionKeys.inFlightContactDetailsChangeKey) shouldBe Some("true")
+        }
       }
 
       "there was a conflict returned when trying to update the email address" should {

@@ -17,14 +17,15 @@
 package controllers.email
 
 import com.google.inject.Inject
-import common.SessionKeys
+import common.SessionKeys._
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.YesNoForm.yesNoForm
-import models.{No, User, Yes}
-import play.api.mvc.{Action, AnyContent}
+import models.{No, Yes}
+import play.api.mvc.{Action, AnyContent, Request}
+import play.mvc.Http.HeaderNames
 import services.VatSubscriptionService
 import utils.LoggerUtil
 
@@ -38,35 +39,45 @@ class BouncedEmailController @Inject()(val errorHandler: ErrorHandler,
 
   implicit val ec: ExecutionContext = authComps.mcc.executionContext
 
+  private[controllers] def manageVatReferrerCheck(implicit request: Request[_]): Boolean = {
+    val manageVatReferrerUrl = if(appConfig.manageVatSubscriptionServiceUrl.contains("localhost")) {
+      appConfig.manageVatSubscriptionServiceUrl
+    }  else  {
+      appConfig.manageVatSubscriptionServicePath
+    }
+    request.session.get(manageVatRequestToFixEmail) match {
+      case Some("true") => true
+      case _ => request.headers.get(HeaderNames.REFERER).fold(false)(_.contains(manageVatReferrerUrl))
+    }
+  }
+
   def show: Action[AnyContent] = blockAgentPredicate.async { implicit user =>
     subscriptionService.getCustomerInfo(user.vrn) map {
-      case Right(details) => {
+      case Right(details) =>
         val email = details.ppob.contactDetails.flatMap(_.emailAddress)
         val emailVerified = details.ppob.contactDetails.flatMap(_.emailVerified)
 
         (email, emailVerified) match {
           case (Some(_), Some(true)) => Redirect(appConfig.vatOverviewUrl)
           case (Some(email), _) => Ok(email) //TODO: put view in here and pass in email along with form
-            .addingToSession(SessionKeys.validationEmailKey -> email)
+            .addingToSession(validationEmailKey -> email, manageVatRequestToFixEmail -> manageVatReferrerCheck.toString)
           case _ => Redirect(appConfig.vatOverviewUrl)
         }
-      }
       case _ => errorHandler.showInternalServerError
     }
   }
 
   def submit: Action[AnyContent] = blockAgentPredicate { implicit user =>
-    user.session.get(SessionKeys.validationEmailKey) match {
-      case Some(email) => {
+    user.session.get(validationEmailKey) match {
+      case Some(email) =>
         yesNoForm("error").bindFromRequest.fold(
           errorForm => BadRequest(""), //TODO: put bounced email view in here and replace yesNoForm with BouncedEmailForm
           {
             case Yes => Redirect(routes.VerifyPasscodeController.emailSendVerification)
-              .addingToSession(SessionKeys.prepopulationEmailKey -> email)
+              .addingToSession(prepopulationEmailKey -> email)
             case No => Redirect(routes.CaptureEmailController.show)
           }
         )
-      }
       case None => errorHandler.showInternalServerError
     }
   }
