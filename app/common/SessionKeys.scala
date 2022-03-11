@@ -23,6 +23,7 @@ object SessionKeys {
   val mtdVatvcVerifiedAgentEmail: String = "mtdVatvcVerifiedAgentEmail"
   val mtdVatvcAgentClientName: String = "mtdVatvcAgentClientName"
 
+  val manageVatRequestToFixEmail: String = "vatCorrespondenceManageVatRequestToFixEmail"
   val validationEmailKey: String = "vatCorrespondenceValidationEmail"
   val prepopulationEmailKey: String = "vatCorrespondencePrepopulationEmail"
   val emailChangeSuccessful: String = "vatCorrespondenceEmailChangeSuccessful"

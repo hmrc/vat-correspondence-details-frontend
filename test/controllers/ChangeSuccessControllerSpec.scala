@@ -431,7 +431,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
       }
 
       "redirect to the manage VAT change of circs overview page" in {
-        redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServiceUrl)
+        redirectLocation(result) shouldBe Some(mockConfig.manageVatSubscriptionServicePath)
       }
     }
   }

@@ -61,7 +61,7 @@ class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionS
         case `landlineChangeSuccessful` => controllers.landlineNumber.routes.CaptureLandlineNumberController.show.url
         case `mobileChangeSuccessful` => controllers.mobileNumber.routes.CaptureMobileNumberController.show.url
         case `websiteChangeSuccessful` => controllers.website.routes.CaptureWebsiteController.show.url
-        case _ => appConfig.manageVatSubscriptionServiceUrl
+        case _ => appConfig.manageVatSubscriptionServicePath
       }
       Future.successful(Redirect(redirectLocation))
     }

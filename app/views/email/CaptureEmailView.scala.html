@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import common.SessionKeys
 @import config.AppConfig
 
 @this(mainTemplate: MainTemplate,
@@ -31,9 +32,10 @@
   letterToConfirmedEmail: Boolean)(implicit user: User[_], messages: Messages, appConfig: AppConfig)
 
 @backUrl = @{
-  (letterToConfirmedEmail, currentEmail) match {
-    case (true, "") => controllers.contactPreference.routes.AddEmailAddressController.show.url
-    case (true, _) => controllers.contactPreference.routes.EmailToUseController.show.url
+  (letterToConfirmedEmail, currentEmail, user.session.get(SessionKeys.manageVatRequestToFixEmail).isDefined) match {
+    case (_, _, true) => controllers.email.routes.BouncedEmailController.show.url
+    case (true, "", _) => controllers.contactPreference.routes.AddEmailAddressController.show.url
+    case (true, _, _) => controllers.contactPreference.routes.EmailToUseController.show.url
     case _ => appConfig.dynamicJourneyEntryUrl(user.isAgent)
   }
 }

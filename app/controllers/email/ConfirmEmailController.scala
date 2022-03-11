@@ -108,7 +108,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
               controllers.email.routes.ConfirmEmailController.updateEmailAddress.url
             )
             Redirect(routes.EmailChangeSuccessController.show)
-              .removingFromSession(prepopulationEmailKey, validationEmailKey)
+              .removingFromSession(prepopulationEmailKey, validationEmailKey, manageVatRequestToFixEmail)
               .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
           case Left(ErrorModel(CONFLICT, _)) =>

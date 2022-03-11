@@ -17,12 +17,16 @@
 package controllers.email
 
 import assets.CustomerInfoConstants._
+import common.SessionKeys
 import common.SessionKeys._
 import controllers.ControllerBaseSpec
+import mocks.MockAppConfig
 import models.errors.ErrorModel
+import play.api.Configuration
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, session, status}
+import play.mvc.Http.HeaderNames
 import utils.TestUtil
 
 class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
@@ -191,6 +195,46 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
       "return 401 (Unauthorized)" in {
         mockAgentAuthorised()
         status(result) shouldBe UNAUTHORIZED
+      }
+    }
+  }
+
+  "The .manageVatReferrerCheck function" should {
+
+    "return true" when {
+
+      "there is an existing value of 'true' for the manageVatRequestToFixEmail session key" in {
+        testController.manageVatReferrerCheck(request.withSession(
+          SessionKeys.manageVatRequestToFixEmail -> "true")) shouldBe true
+      }
+
+      "the manage VAT host URL contains localhost and the referrer contains the local address" in {
+        object LocalhostMockConfig extends MockAppConfig(inject[Configuration]) {
+          override val manageVatSubscriptionServiceUrl: String = "http://localhost:9150"
+        }
+
+        object LocalhostController extends BouncedEmailController(mockErrorHandler, mockVatSubscriptionService)(
+          mockAuthPredicateComponents, mockInFlightPredicateComponents, LocalhostMockConfig)
+
+        LocalhostController.manageVatReferrerCheck(request.withHeaders(
+          HeaderNames.REFERER -> "http://localhost:9150")) shouldBe true
+      }
+
+      "the manage VAT host URL does not contain localhost and the referrer contains the manage VAT business details URL" in {
+        testController.manageVatReferrerCheck(request.withHeaders(
+          HeaderNames.REFERER -> mockConfig.manageVatSubscriptionServicePath)) shouldBe true
+      }
+    }
+
+    "return false" when {
+
+      "the referrer does not contain the manage VAT business details URL" in {
+        testController.manageVatReferrerCheck(request.withHeaders(
+          HeaderNames.REFERER -> "https://www.google.com/change-business-details")) shouldBe false
+      }
+
+      "the referrer is blank" in {
+        testController.manageVatReferrerCheck(request) shouldBe false
       }
     }
   }

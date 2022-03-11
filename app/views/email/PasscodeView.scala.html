@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import common.SessionKeys
 @import config.AppConfig
 
 @this(mainTemplate: MainTemplate,
@@ -37,10 +38,10 @@
 }
 
 @startJourneyUrl = @{
-  if(contactPrefJourney) {
-    controllers.email.routes.CaptureEmailController.showPrefJourney.url
-  } else {
-    controllers.email.routes.CaptureEmailController.show.url
+  (contactPrefJourney, request.session.get(SessionKeys.manageVatRequestToFixEmail).isDefined) match {
+    case (_, true) => controllers.email.routes.BouncedEmailController.show.url
+    case (true, _) => controllers.email.routes.CaptureEmailController.showPrefJourney.url
+    case (false, _) => controllers.email.routes.CaptureEmailController.show.url
   }
 }
 

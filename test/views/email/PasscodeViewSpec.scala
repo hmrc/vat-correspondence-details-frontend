@@ -16,8 +16,11 @@
 
 package views.email
 
+import assets.BaseTestConstants.vrn
+import common.SessionKeys
 import controllers.email.routes
 import forms.PasscodeForm
+import models.User
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers
@@ -31,94 +34,109 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
   val injectedView: PasscodeView = inject[PasscodeView]
   val testForm: Form[String] = PasscodeForm.form
 
-  "The passcode view in the change of email journey" should {
+  "The passcode view in the change of email journey" when {
 
-    lazy val view: Html = injectedView(testEmail, testForm, contactPrefJourney = false)(user, messages, mockConfig)
-    lazy implicit val document: Document = Jsoup.parse(view.body)
+    "the user has no session keys to determine back link location" should {
 
-    "have the correct document title" in {
-      document.title shouldBe "Enter code to confirm your email address - Manage your VAT account - GOV.UK"
-    }
+      lazy val view: Html = injectedView(testEmail, testForm, contactPrefJourney = false)(user, messages, mockConfig)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    "have the correct heading" in {
-      elementText("h1") shouldBe "Enter code to confirm your email address"
-    }
-
-    "have a back link" which {
-
-      "has the correct text" in {
-        elementText(".govuk-back-link") shouldBe "Back"
+      "have the correct document title" in {
+        document.title shouldBe "Enter code to confirm your email address - Manage your VAT account - GOV.UK"
       }
 
-      "has the correct destination" in {
-        element(".govuk-back-link").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show.url
+      "have the correct heading" in {
+        elementText("h1") shouldBe "Enter code to confirm your email address"
+      }
+
+      "have a back link" which {
+
+        "has the correct text" in {
+          elementText(".govuk-back-link") shouldBe "Back"
+        }
+
+        "has the correct destination" in {
+          element(".govuk-back-link").attr("href") shouldBe controllers.email.routes.CaptureEmailController.show.url
+        }
+      }
+
+      "have the correct first paragraph" in {
+        elementText("div > div > div > p:nth-of-type(1)") shouldBe s"We have sent a code to: $testEmail"
+      }
+
+      "have the correct panel paragraph" in {
+        elementText(".govuk-inset-text") shouldBe "Open a new tab or window if you need to access your emails online."
+      }
+
+      "have the correct subheading for the form" in {
+        elementText("label > span:nth-child(1)") shouldBe "Confirmation code"
+      }
+
+      "have the correct form hint" in {
+        elementText("#form-hint") shouldBe "For example, DNCLRK"
+      }
+
+      "have the correct progressive disclosure text" in {
+        elementText(".govuk-details__summary-text") shouldBe "I have not received the email"
+      }
+
+      "have the correct first paragraph inside of the progressive disclosure" in {
+        elementText(".govuk-details__text > p:nth-of-type(1)") shouldBe
+          "The email might take a few minutes to arrive. Its subject line is: ‘Confirm your email address - VAT account’."
+      }
+
+      "have the correct second paragraph inside of the progressive disclosure" in {
+        elementText(".govuk-details__text > p:nth-of-type(2)") shouldBe "Check your spam or junk folder. " +
+          "If the email has still not arrived, you can request a new code or provide another email address."
+      }
+
+      "have a link to resend the passcode" which {
+
+        "has the correct text" in {
+          elementText(".govuk-details__text > p:nth-child(2) a:nth-child(1)") shouldBe "request a new code"
+        }
+
+        "has the correct destination" in {
+          element(".govuk-details__text > p:nth-of-type(2) > a:nth-child(1)").attr("href") shouldBe
+            routes.VerifyPasscodeController.emailSendVerification.url
+        }
+      }
+
+      "have a link to enter a new email address" which {
+
+        "has the correct text" in {
+          elementText(".govuk-details__text > p:nth-of-type(2) > a:nth-child(2)") shouldBe "provide another email address"
+        }
+
+        "has the correct destination" in {
+          element(".govuk-details__text > p:nth-of-type(2) > a:nth-child(2)").attr("href") shouldBe
+            routes.CaptureEmailController.show.url
+        }
+      }
+
+      "have a form with the correct action" in {
+        element("form").attr("action") shouldBe "/vat-through-software/account/correspondence/email-enter-code"
+      }
+
+      "have a button with the correct text" in {
+        elementText(".govuk-button") shouldBe "Continue"
+      }
+
+      "have the prevent double click attribute on the continue button" in {
+        element(".govuk-button").hasAttr("data-prevent-double-click") shouldBe true
       }
     }
 
-    "have the correct first paragraph" in {
-      elementText("div > div > div > p:nth-of-type(1)") shouldBe s"We have sent a code to: $testEmail"
-    }
+    "the user has the relevant session key to show they have come from the 'fix your email' page" should {
 
-    "have the correct panel paragraph" in {
-      elementText(".govuk-inset-text") shouldBe "Open a new tab or window if you need to access your emails online."
-    }
+      val user = User(vrn)(request.withSession(SessionKeys.manageVatRequestToFixEmail -> "false"))
+      lazy val view: Html = injectedView(testEmail, testForm, contactPrefJourney = false)(user, messages, mockConfig)
 
-    "have the correct subheading for the form" in {
-      elementText("label > span:nth-child(1)") shouldBe "Confirmation code"
-    }
+      lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    "have the correct form hint" in {
-      elementText("#form-hint") shouldBe "For example, DNCLRK"
-    }
-
-    "have the correct progressive disclosure text" in {
-      elementText(".govuk-details__summary-text") shouldBe "I have not received the email"
-    }
-
-    "have the correct first paragraph inside of the progressive disclosure" in {
-      elementText(".govuk-details__text > p:nth-of-type(1)") shouldBe
-        "The email might take a few minutes to arrive. Its subject line is: ‘Confirm your email address - VAT account’."
-    }
-
-    "have the correct second paragraph inside of the progressive disclosure" in {
-      elementText(".govuk-details__text > p:nth-of-type(2)") shouldBe "Check your spam or junk folder. " +
-        "If the email has still not arrived, you can request a new code or provide another email address."
-    }
-
-    "have a link to resend the passcode" which {
-
-      "has the correct text" in {
-        elementText(".govuk-details__text > p:nth-child(2) a:nth-child(1)") shouldBe "request a new code"
+      "have a back link to the 'fix your email' page" in {
+        element(".govuk-back-link").attr("href") shouldBe controllers.email.routes.BouncedEmailController.show.url
       }
-
-      "has the correct destination" in {
-        element(".govuk-details__text > p:nth-of-type(2) > a:nth-child(1)").attr("href") shouldBe
-          routes.VerifyPasscodeController.emailSendVerification.url
-      }
-    }
-
-    "have a link to enter a new email address" which {
-
-      "has the correct text" in {
-        elementText(".govuk-details__text > p:nth-of-type(2) > a:nth-child(2)") shouldBe "provide another email address"
-      }
-
-      "has the correct destination" in {
-        element(".govuk-details__text > p:nth-of-type(2) > a:nth-child(2)").attr("href") shouldBe
-          routes.CaptureEmailController.show.url
-      }
-    }
-
-    "have a form with the correct action" in {
-      element("form").attr("action") shouldBe "/vat-through-software/account/correspondence/email-enter-code"
-    }
-
-    "have a button with the correct text" in {
-      elementText(".govuk-button") shouldBe "Continue"
-    }
-
-    "have the prevent double click attribute on the continue button" in {
-      element(".govuk-button").hasAttr("data-prevent-double-click") shouldBe true
     }
   }
 

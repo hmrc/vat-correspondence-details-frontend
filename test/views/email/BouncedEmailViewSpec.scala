@@ -33,7 +33,7 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
 
     val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm
 
-    lazy val view = bouncedEmailView(form, "123@abc.com")(request, messages, mockConfig)
+    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = false)(request, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct page title" in {
@@ -42,6 +42,32 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
 
     "have the correct page heading" in {
       elementText("h1") shouldBe "Choose how to fix your email address"
+    }
+
+    "have 2 breadcrumbs" in {
+      element(".govuk-breadcrumbs__list").childrenSize() shouldBe 2
+    }
+
+    "have a BTA breadcrumb" which {
+
+      "has the correct text" in {
+        elementText("li.govuk-breadcrumbs__list-item:nth-child(1) > a") shouldBe "Business tax account"
+      }
+
+      "have a link to BTA" in {
+        element("li.govuk-breadcrumbs__list-item:nth-child(1) > a").attr("href") shouldBe mockConfig.btaHomeUrl
+      }
+    }
+
+    "have a VAT overview breadcrumb" which {
+
+      "has the correct text" in {
+        elementText("li.govuk-breadcrumbs__list-item:nth-child(2) > a") shouldBe "Your VAT account"
+      }
+
+      "has a link to the VAT overview page" in {
+        element("li.govuk-breadcrumbs__list-item:nth-child(2) > a").attr("href") shouldBe mockConfig.vatOverviewUrl
+      }
     }
 
     "not display an error" in {
@@ -80,7 +106,7 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
 
     val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm.bind(Map("verifyAdd" -> ""))
 
-    lazy val view = bouncedEmailView(form, "123@abc.com")(request, messages, mockConfig)
+    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = false)(request, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct error document title" in {
@@ -112,4 +138,48 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
     }
   }
 
+  "Rendering the bounced email page as a request from manage VAT" should {
+
+    val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm
+    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = true)(request, messages, mockConfig)
+    lazy implicit val document: Document = Jsoup.parse(view.body)
+
+    "have 3 breadcrumbs" in {
+      element(".govuk-breadcrumbs__list").childrenSize() shouldBe 3
+    }
+
+    "have a BTA breadcrumb" which {
+
+      "has the correct text" in {
+        elementText("li.govuk-breadcrumbs__list-item:nth-child(1) > a") shouldBe "Business tax account"
+      }
+
+      "have a link to BTA" in {
+        element("li.govuk-breadcrumbs__list-item:nth-child(1) > a").attr("href") shouldBe mockConfig.btaHomeUrl
+      }
+    }
+
+    "have a VAT overview breadcrumb" which {
+
+      "has the correct text" in {
+        elementText("li.govuk-breadcrumbs__list-item:nth-child(2) > a") shouldBe "Your VAT account"
+      }
+
+      "has a link to the VAT overview page" in {
+        element("li.govuk-breadcrumbs__list-item:nth-child(2) > a").attr("href") shouldBe mockConfig.vatOverviewUrl
+      }
+    }
+
+    "have a business details breadcrumb" which {
+
+      "has the correct text" in {
+        elementText("li.govuk-breadcrumbs__list-item:nth-child(3) > a") shouldBe "Your business details"
+      }
+
+      "has a link to the Your Business Details page" in {
+        element("li.govuk-breadcrumbs__list-item:nth-child(3) > a").attr("href") shouldBe
+          mockConfig.manageVatSubscriptionServicePath
+      }
+    }
+  }
 }

@@ -17,13 +17,15 @@
 @import models.customerInformation._
 
 @this(mainTemplate: MainTemplate,
-formWithCSRF: FormWithCSRF,
-govukBackLink: GovukBackLink,
-govukButton : GovukButton,
-govukErrorSummary: GovukErrorSummary,
-govukRadios : GovukRadios)
+      formWithCSRF: FormWithCSRF,
+      govukBackLink: GovukBackLink,
+      govukButton : GovukButton,
+      govukErrorSummary: GovukErrorSummary,
+      govukRadios : GovukRadios,
+      govukBreadcrumbs: GovukBreadcrumbs)
 
-@(bouncedEmailForm: Form[VerifyAdd], emailAddress: String)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@(bouncedEmailForm: Form[VerifyAdd], emailAddress: String, isManageVatRequest: Boolean)(
+  implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
 @verifyContent = {
  @messages("bouncedEmail.verify") <strong>@emailAddress</strong>
@@ -31,13 +33,28 @@ govukRadios : GovukRadios)
 
 @addHintHtml = {
  <p class="govuk-hint govuk-!-margin-0">@messages("bouncedEmail.add.hint.pt1") @emailAddress @messages("bouncedEmail.add.hint.pt2")
- }
+}
+
+@additionalBreadcrumb = @{
+  if(isManageVatRequest) {
+    Seq(BreadcrumbsItem(
+     content = Text(messages("breadcrumbs.yourBusinessDetails")), href = Some(appConfig.manageVatSubscriptionServicePath))
+    )
+  } else Seq()
+}
 
 @mainTemplate(
  pageTitle =
   if(bouncedEmailForm.errors.nonEmpty) messages("common.error.prefixTitle", messages("bouncedEmail.title"))
   else messages("bouncedEmail.title")
 ) {
+
+  @govukBreadcrumbs(Breadcrumbs(
+    items = Seq(
+      BreadcrumbsItem(content = Text(messages("breadcrumbs.bta")), href = Some(appConfig.btaHomeUrl)),
+      BreadcrumbsItem(content = Text(messages("breadcrumbs.yourVatAccount")), href = Some(appConfig.vatOverviewUrl))
+    ) ++ additionalBreadcrumb
+  ))
 
  @if(bouncedEmailForm.hasErrors) {
   @govukErrorSummary(ErrorSummary(
