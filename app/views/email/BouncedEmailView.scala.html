@@ -68,7 +68,7 @@
   ))
  }
 
- @formWithCSRF(action = Call("POST", "/submit")) {
+ @formWithCSRF(action = controllers.email.routes.BouncedEmailController.submit) {
   @govukRadios(Radios(
    idPrefix = Some(bouncedEmailForm("verifyAdd").id),
    name = "verifyAdd",
@@ -102,12 +102,12 @@
     ErrorMessage(content = Text(messages(err.message, err.args: _*)))
    }
   ))
- }
 
- @govukButton(
-  Button(
-   content = Text(messages("common.continue")),
-   preventDoubleClick = true
+  @govukButton(
+    Button(
+      content = Text(messages("common.continue")),
+      preventDoubleClick = true
+    )
   )
- )
+ }
 }

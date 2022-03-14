@@ -148,6 +148,7 @@ object CustomerInfoConstants {
   )
 
   val pendingChangesModel: PendingChanges = PendingChanges(Some(fullPPOBModel), Some(digital))
+  val noPendingChangeModel: PendingChanges = PendingChanges(None, None)
   val pendingChangesJson: JsObject = Json.obj("PPOBDetails" -> fullPPOBModel, "commsPreference" -> digital)
 
   val fullCustomerInfoModel: CustomerInformation = CustomerInformation(
@@ -163,7 +164,28 @@ object CustomerInfoConstants {
     insolvencyType = None
   )
 
-  val customerInfoEmailUnverified: CustomerInformation = fullCustomerInfoModel.copy(
+  val noPendingChangeCustomerInfoModel: CustomerInformation = CustomerInformation(
+    fullPPOBModel,
+    Some(noPendingChangeModel),
+    Some("Pepsi"),
+    Some("Mac"),
+    Some("PepsiMac Ltd"),
+    Some("PepsiMac"),
+    Some(digital),
+    isInsolvent = false,
+    continueToTrade = Some(true),
+    insolvencyType = None
+  )
+
+  val customerInfoEmailUnverified: CustomerInformation = noPendingChangeCustomerInfoModel.copy(
+    ppob = fullPPOBModel.copy(
+      contactDetails = Some(fullContactDetailsModel.copy(
+        emailVerified = Some(false)
+      ))
+    )
+  )
+
+  val customerInfoEmailUnverifiedPPOBPending: CustomerInformation = fullCustomerInfoModel.copy(
     ppob = fullPPOBModel.copy(
       contactDetails = Some(fullContactDetailsModel.copy(
         emailVerified = Some(false)

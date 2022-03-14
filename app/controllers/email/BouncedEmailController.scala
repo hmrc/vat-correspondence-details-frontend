@@ -17,32 +17,38 @@
 package controllers.email
 
 import com.google.inject.Inject
+import common.SessionKeys
 import common.SessionKeys._
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
-import forms.YesNoForm.yesNoForm
-import models.{No, Yes}
-import play.api.mvc.{Action, AnyContent, Request}
+import forms.BouncedEmailForm
+import play.api.mvc.Request
 import play.mvc.Http.HeaderNames
+import models.customerInformation.{Add, Verify, VerifyAdd}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
 import utils.LoggerUtil
-
+import views.html.email.BouncedEmailView
 import scala.concurrent.ExecutionContext
 
 class BouncedEmailController @Inject()(val errorHandler: ErrorHandler,
-                                       val subscriptionService: VatSubscriptionService)
+                                       val subscriptionService: VatSubscriptionService,
+                                       bouncedEmailView: BouncedEmailView)
                                       (implicit val authComps: AuthPredicateComponents,
                                        inFlightComps: InFlightPredicateComponents,
                                        appConfig: AppConfig) extends BaseController with LoggerUtil {
 
   implicit val ec: ExecutionContext = authComps.mcc.executionContext
 
+  val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm
+
   private[controllers] def manageVatReferrerCheck(implicit request: Request[_]): Boolean = {
-    val manageVatReferrerUrl = if(appConfig.manageVatSubscriptionServiceUrl.contains("localhost")) {
+    val manageVatReferrerUrl = if (appConfig.manageVatSubscriptionServiceUrl.contains("localhost")) {
       appConfig.manageVatSubscriptionServiceUrl
-    }  else  {
+    } else {
       appConfig.manageVatSubscriptionServicePath
     }
     request.session.get(manageVatRequestToFixEmail) match {
@@ -56,11 +62,13 @@ class BouncedEmailController @Inject()(val errorHandler: ErrorHandler,
       case Right(details) =>
         val email = details.ppob.contactDetails.flatMap(_.emailAddress)
         val emailVerified = details.ppob.contactDetails.flatMap(_.emailVerified)
+        val ppobPending = details.pendingPpobChanges
 
         (email, emailVerified) match {
           case (Some(_), Some(true)) => Redirect(appConfig.vatOverviewUrl)
-          case (Some(email), _) => Ok(email) //TODO: put view in here and pass in email along with form
-            .addingToSession(validationEmailKey -> email, manageVatRequestToFixEmail -> manageVatReferrerCheck.toString)
+          case (Some(email), _) if !ppobPending => Ok(bouncedEmailView(form, email, manageVatReferrerCheck))
+            .addingToSession(SessionKeys.validationEmailKey -> email, manageVatRequestToFixEmail -> manageVatReferrerCheck.toString,
+              SessionKeys.inFlightContactDetailsChangeKey -> "false")
           case _ => Redirect(appConfig.vatOverviewUrl)
         }
       case _ => errorHandler.showInternalServerError
@@ -70,12 +78,12 @@ class BouncedEmailController @Inject()(val errorHandler: ErrorHandler,
   def submit: Action[AnyContent] = blockAgentPredicate { implicit user =>
     user.session.get(validationEmailKey) match {
       case Some(email) =>
-        yesNoForm("error").bindFromRequest.fold(
-          errorForm => BadRequest(""), //TODO: put bounced email view in here and replace yesNoForm with BouncedEmailForm
+        form.bindFromRequest().fold(
+          errorForm => BadRequest(bouncedEmailView(errorForm, email, manageVatReferrerCheck)),
           {
-            case Yes => Redirect(routes.VerifyPasscodeController.emailSendVerification)
+            case Verify => Redirect(routes.VerifyPasscodeController.emailSendVerification)
               .addingToSession(prepopulationEmailKey -> email)
-            case No => Redirect(routes.CaptureEmailController.show)
+            case Add => Redirect(routes.CaptureEmailController.show)
           }
         )
       case None => errorHandler.showInternalServerError
