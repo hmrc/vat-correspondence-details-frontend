@@ -107,7 +107,8 @@ POST        /contact-preference/add-email-address            controllers.contact
 GET         /contact-preference-redirect                     controllers.contactPreference.ContactPreferenceRedirectController.redirect
 GET         /verify-redirect                                 controllers.email.VerifyEmailController.btaVerifyEmailRedirect
 
-GET   /fix-your-email   controllers.email.BouncedEmailController.show
-POST  /fix-your-email   controllers.email.BouncedEmailController.submit
+# add or verify email (bounced email)
+GET         /fix-your-email                                  controllers.email.BouncedEmailController.show
+POST        /fix-your-email                                  controllers.email.BouncedEmailController.submit
 
 ->         /hmrc-frontend                                    hmrcfrontend.Routes

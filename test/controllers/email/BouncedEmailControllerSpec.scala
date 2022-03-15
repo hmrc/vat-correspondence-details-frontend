@@ -28,10 +28,11 @@ import play.api.http.Status._
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, session, status}
 import play.mvc.Http.HeaderNames
 import utils.TestUtil
+import views.html.email.BouncedEmailView
 
 class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
 
-  object testController extends BouncedEmailController(mockErrorHandler, mockVatSubscriptionService)
+  object testController extends BouncedEmailController(mockErrorHandler, mockVatSubscriptionService, inject[BouncedEmailView])
 
   "The BouncedEmailController .show method" when {
 
@@ -70,6 +71,19 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
 
           "add the validation email session value" in {
             session(result).get(validationEmailKey) shouldBe Some("pepsimac@gmail.com")
+          }
+        }
+
+        "the call returns a pending PPOB" should {
+
+          lazy val result = {
+            mockIndividualAuthorised()
+            mockGetCustomerInfo(user.vrn)(Right(customerInfoEmailUnverifiedPPOBPending))
+            testController.show(request)
+          }
+
+          "return 303 (OK)" in {
+            status(result) shouldBe SEE_OTHER
           }
         }
 
@@ -139,7 +153,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
 
             lazy val result = {
               mockIndividualAuthorised()
-              testController.submit(requestWithValidationEmail.withFormUrlEncodedBody("yes_no" -> "yes"))
+              testController.submit(requestWithValidationEmail.withFormUrlEncodedBody("verifyAdd" -> "verify"))
             }
 
             "return 303" in {
@@ -159,7 +173,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
 
             lazy val result = {
               mockIndividualAuthorised()
-              testController.submit(requestWithValidationEmail.withFormUrlEncodedBody("yes_no" -> "no"))
+              testController.submit(requestWithValidationEmail.withFormUrlEncodedBody("verifyAdd" -> "add"))
             }
 
             "return 303" in {
@@ -213,7 +227,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
           override val manageVatSubscriptionServiceUrl: String = "http://localhost:9150"
         }
 
-        object LocalhostController extends BouncedEmailController(mockErrorHandler, mockVatSubscriptionService)(
+        object LocalhostController extends BouncedEmailController(mockErrorHandler, mockVatSubscriptionService, inject[BouncedEmailView])(
           mockAuthPredicateComponents, mockInFlightPredicateComponents, LocalhostMockConfig)
 
         LocalhostController.manageVatReferrerCheck(request.withHeaders(
