@@ -32,11 +32,6 @@
                                         messages: Messages,
                                         appConfig: AppConfig)
 
-@additionalContent = {
-  <span>@messages("passcode.confirmationCode")</span>
-  <span id="form-hint" class="govuk-hint govuk-!-margin-bottom-0">@messages("passcode.formHint")</span>
-}
-
 @startJourneyUrl = @{
   (contactPrefJourney, request.session.get(SessionKeys.manageVatRequestToFixEmail).isDefined) match {
     case (_, true) => controllers.email.routes.BouncedEmailController.show.url
@@ -114,10 +109,13 @@
       name = formField.name,
       value = formField.value,
       label = Label(
-        content = HtmlContent(additionalContent),
+        content = Text(messages("passcode.confirmationCode")),
         forAttr = Some(formField.id),
         classes = "govuk-!-font-weight-bold"
       ),
+      hint = Some(Hint(
+        content = Text(messages("passcode.formHint"))
+      )),
       errorMessage = formField.error.map { error =>
         ErrorMessage(
           content = Text(messages(error.message))
