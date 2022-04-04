@@ -68,12 +68,12 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
         elementText(".govuk-inset-text") shouldBe "Open a new tab or window if you need to access your emails online."
       }
 
-      "have the correct subheading for the form" in {
-        elementText("label > span:nth-child(1)") shouldBe "Confirmation code"
+      "have the correct label for the form" in {
+        elementText("form .govuk-label") shouldBe "Confirmation code"
       }
 
       "have the correct form hint" in {
-        elementText("#form-hint") shouldBe "For example, DNCLRK"
+        elementText("form .govuk-hint") shouldBe "For example, DNCLRK"
       }
 
       "have the correct progressive disclosure text" in {
