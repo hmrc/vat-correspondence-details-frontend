@@ -49,7 +49,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       "result in an email address being retrieved if there is an email" in {
         mockIndividualAuthorised()
-        val user = User[AnyContent](vrn, active = true, None)(requestWithEmail)
+        val user = User[AnyContent](vrn, active = true, None)(getRequestWithEmail)
 
         TestConfirmEmailController.extractSessionEmail(user) shouldBe Some(testEmail)
       }
@@ -61,7 +61,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     "there is an email in session" should {
 
       mockIndividualAuthorised()
-      lazy val result = TestConfirmEmailController.show(requestWithEmail)
+      lazy val result = TestConfirmEmailController.show(getRequestWithEmail)
 
       "return OK" in {
         status(result) shouldBe Status.OK
@@ -97,7 +97,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       lazy val result = {
         mockIndividualAuthorised()
-        TestConfirmEmailController.show(request)
+        TestConfirmEmailController.show(getRequest)
       }
 
       "return 303" in {
@@ -113,7 +113,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = TestConfirmEmailController.show(requestWithEmail)
+        val result = TestConfirmEmailController.show(getRequestWithEmail)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -128,7 +128,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       mockIndividualAuthorised()
       lazy val result = TestConfirmEmailController.showContactPref(
-        requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
+        getRequestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper))
 
       "return OK" in {
         status(result) shouldBe Status.OK
@@ -166,7 +166,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       lazy val result = {
         mockIndividualAuthorised()
-        TestConfirmEmailController.showContactPref(request.withSession(SessionKeys.currentContactPrefKey -> paper))
+        TestConfirmEmailController.showContactPref(getRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
       }
 
       "return 303" in {
@@ -182,7 +182,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = TestConfirmEmailController.showContactPref(requestWithEmail)
+        val result = TestConfirmEmailController.showContactPref(getRequestWithEmail)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -200,7 +200,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         lazy val result = {
           mockIndividualAuthorised()
           mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdatePPOBSuccess("success"))))
-          TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+          TestConfirmEmailController.updateEmailAddress()(postRequestWithEmail)
         }
 
         "return 303" in {
@@ -243,7 +243,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateEmailAddress(vrn, testEmail)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+          TestConfirmEmailController.updateEmailAddress()(postRequestWithEmail)
         }
 
         "return 303" in {
@@ -261,7 +261,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateEmailAddress(vrn, testEmail)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify email address"))))
-          TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+          TestConfirmEmailController.updateEmailAddress()(postRequestWithEmail)
         }
 
         "return 500" in {
@@ -279,7 +279,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
       lazy val result = {
         mockIndividualAuthorised()
         mockUpdateEmailAddress(vrn, testEmail)(Future(Right(UpdatePPOBSuccess(""))))
-        TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+        TestConfirmEmailController.updateEmailAddress()(postRequestWithEmail)
       }
 
       "return 303" in {
@@ -294,7 +294,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
     "there isn't an email in session" should {
       lazy val result = {
         mockIndividualAuthorised()
-        TestConfirmEmailController.updateEmailAddress()(request)
+        TestConfirmEmailController.updateEmailAddress()(postRequest)
       }
 
       "return 303" in {
@@ -310,7 +310,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = TestConfirmEmailController.updateEmailAddress()(requestWithEmail)
+        val result = TestConfirmEmailController.updateEmailAddress()(postRequestWithEmail)
 
         status(result) shouldBe Status.FORBIDDEN
       }

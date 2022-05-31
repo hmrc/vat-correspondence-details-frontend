@@ -50,7 +50,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
   )
 
   def userWithSession(inflightPPOBValue: String): User[AnyContentAsEmpty.type] =
-    User[AnyContentAsEmpty.type]("999943620")(request.withSession(inFlightContactDetailsChangeKey -> inflightPPOBValue))
+    User[AnyContentAsEmpty.type]("999943620")(getRequest.withSession(inFlightContactDetailsChangeKey -> inflightPPOBValue))
 
   val userWithoutSession: User[AnyContentAsEmpty.type] = User("999999999")(FakeRequest())
 

@@ -39,8 +39,8 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
   val digitalPrefPredicate = new ContactPrefPredicate(predicateComponents, blockedPref = paper)
   val paperPrefPredicate = new ContactPrefPredicate(predicateComponents, blockedPref = digital)
 
-  val digitalUser: User[AnyContentAsEmpty.type] = User("999999999")(requestWithDigitalPref)
-  val paperUser: User[AnyContentAsEmpty.type] = User("999999999")(requestWithPaperPref)
+  val digitalUser: User[AnyContentAsEmpty.type] = User("999999999")(getRequestWithDigitalPref)
+  val paperUser: User[AnyContentAsEmpty.type] = User("999999999")(getRequestWithPaperPref)
 
   "The ContactPrefPredicate" when {
 

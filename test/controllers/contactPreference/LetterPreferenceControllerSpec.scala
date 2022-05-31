@@ -43,7 +43,8 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
   lazy val view: LetterPreferenceView = inject[LetterPreferenceView]
   lazy val controller = new LetterPreferenceController(view, mockVatSubscriptionService, mockErrorHandler, mockAuditingService)
-  lazy val requestWithSession: FakeRequest[AnyContentAsEmpty.type] = request.withSession((SessionKeys.currentContactPrefKey -> digital))
+  lazy val getRequestWithSession: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(SessionKeys.currentContactPrefKey -> digital)
+  lazy val postRequestWithSession: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(SessionKeys.currentContactPrefKey -> digital)
 
   "Calling .show()" when {
 
@@ -57,7 +58,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
             lazy val result = {
               mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-              controller.show(requestWithSession)
+              controller.show(getRequestWithSession)
             }
 
             lazy val page = Jsoup.parse(contentAsString(result))
@@ -79,7 +80,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
             lazy val result = {
               mockGetCustomerInfo(vrn)(Right(minCustomerInfoModel))
-              controller.show(requestWithSession)
+              controller.show(getRequestWithSession)
             }
 
             lazy val page = Jsoup.parse(contentAsString(result))
@@ -98,7 +99,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
           lazy val result = {
             mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
-            controller.show(requestWithSession)
+            controller.show(getRequestWithSession)
           }
 
           "return an INTERNAL_SERVER_ERROR result" in {
@@ -110,7 +111,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
       "the user currently has a paper preference" should {
 
         lazy val result = {
-          controller.show(request.withSession(SessionKeys.currentContactPrefKey -> paper))
+          controller.show(getRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
         }
 
         "return an SEE_OTHER result" in {
@@ -127,7 +128,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
       lazy val result = {
         mockIndividualWithoutEnrolment()
-        controller.show(request)
+        controller.show(getRequest)
       }
 
       "return a FORBIDDEN result" in {
@@ -146,7 +147,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
         "'Yes' is submitted" should {
 
-          val yesRequest = requestWithSession.withFormUrlEncodedBody(yesNo -> yes)
+          val yesRequest = postRequestWithSession.withFormUrlEncodedBody(yesNo -> yes)
 
           "the contact preference has been updated successfully" when {
 
@@ -240,7 +241,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
         "'No' is submitted'" should {
 
           lazy val result = {
-            controller.submit(requestWithSession.withFormUrlEncodedBody(yesNo -> _no))
+            controller.submit(postRequestWithSession.withFormUrlEncodedBody(yesNo -> _no))
           }
 
           "return a SEE_OTHER result" in {
@@ -257,7 +258,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
           "call to customer info is successful" should {
             lazy val result = {
               mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-              controller.submit(requestWithSession.withFormUrlEncodedBody())
+              controller.submit(postRequestWithSession.withFormUrlEncodedBody())
             }
 
             "return a BAD_REQUEST result" in {
@@ -273,7 +274,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
             lazy val result = {
               mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
-              controller.submit(requestWithSession.withFormUrlEncodedBody())
+              controller.submit(postRequestWithSession.withFormUrlEncodedBody())
             }
 
             "return an INTERNAL_SERVER_ERROR result" in {
@@ -286,7 +287,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
       "the user currently has a paper preference" should {
 
         lazy val result = {
-          controller.submit(request.withSession(SessionKeys.currentContactPrefKey -> paper))
+          controller.submit(postRequestWithSession.withSession(SessionKeys.currentContactPrefKey -> paper))
         }
 
         "return an SEE_OTHER result" in {
@@ -303,7 +304,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
 
       lazy val result = {
         mockIndividualWithoutEnrolment()
-        controller.submit(requestWithSession)
+        controller.submit(postRequestWithSession)
       }
 
       "return a FORBIDDEN result" in {

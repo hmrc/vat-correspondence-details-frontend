@@ -219,7 +219,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec with Matchers {
 
     "the user has the relevant session key to show they have come from the 'fix your email' page" should {
 
-      val user = User(vrn)(request.withSession(SessionKeys.manageVatRequestToFixEmail -> "true"))
+      val user = User(vrn)(getRequest.withSession(SessionKeys.manageVatRequestToFixEmail -> "true"))
       lazy val view: Html = injectedView(
         emailForm(testEmail), emailNotChangedError = false, testEmail, Call("POST", "/"), letterToConfirmedEmail = false
       )(user, messages, mockConfig)

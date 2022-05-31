@@ -30,7 +30,7 @@ class PreferenceConfirmationViewSpec extends ViewBaseSpec with Matchers {
 
     "changeType is email" should {
 
-      lazy val view = injectedView(Seq("pepsi-mac@test.com"), "vatCorrespondenceLetterToEmailChangeSuccessful")
+      lazy val view = injectedView(Seq("pepsi-mac@test.com"), "vatCorrespondenceLetterToEmailChangeSuccessful")(getRequest, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {
@@ -74,7 +74,8 @@ class PreferenceConfirmationViewSpec extends ViewBaseSpec with Matchers {
 
     "changeType is letter" should {
 
-      lazy val view = injectedView(Seq("Address line 1", "Address line 2", "Address line 3"), "vatCorrespondenceEmailToLetterChangeSuccessful")
+      lazy val view = injectedView(Seq("Address line 1", "Address line 2", "Address line 3"),
+        "vatCorrespondenceEmailToLetterChangeSuccessful")(getRequest, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "render all lines of address" in {

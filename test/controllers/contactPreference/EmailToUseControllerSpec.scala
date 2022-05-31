@@ -43,17 +43,17 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
   val testValidationEmail: String = "validation@example.com"
 
-  lazy val existingEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    requestWithPaperPref.withSession(
+  lazy val existingEmailSessionGetRequest: FakeRequest[AnyContentAsEmpty.type] =
+    getRequestWithPaperPref.withSession(
       SessionKeys.validationEmailKey -> testValidationEmail,
       SessionKeys.contactPrefUpdate -> "true"
     )
 
-  lazy val noEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    requestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true")
+  lazy val noEmailSessionGetRequest: FakeRequest[AnyContentAsEmpty.type] =
+    getRequestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true")
 
-  lazy val noPrefUpdateValueSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    requestWithPaperPref.withSession(SessionKeys.validationEmailKey -> testValidationEmail)
+  lazy val noPrefUpdateValueSessionGetRequest: FakeRequest[AnyContentAsEmpty.type] =
+    getRequestWithPaperPref.withSession(SessionKeys.validationEmailKey -> testValidationEmail)
 
   val view: EmailToUseView = injector.instanceOf[EmailToUseView]
 
@@ -64,7 +64,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     s"there is an email and the ${SessionKeys.contactPrefUpdate} value is in session" should {
 
       lazy val result = {
-        target().show()(existingEmailSessionRequest)
+        target().show()(existingEmailSessionGetRequest)
       }
 
       "return 200 (OK)" in {
@@ -86,7 +86,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
 
       lazy val result = {
         mockVatSubscriptionCall()
-        target().show()(noEmailSessionRequest)
+        target().show()(noEmailSessionGetRequest)
       }
 
       "return 200 (OK)" in {
@@ -107,7 +107,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     s"the ${SessionKeys.contactPrefUpdate} value is not in session" should {
 
       lazy val result = {
-        target().show()(noPrefUpdateValueSessionRequest)
+        target().show()(noPrefUpdateValueSessionGetRequest)
       }
 
       s"return a $SEE_OTHER" in {
@@ -127,7 +127,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     "the user submits after selecting an 'Yes' option" when {
 
       lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-        requestWithPaperPref
+        postRequestWithPaperPref
           .withFormUrlEncodedBody((yesNo, "yes"))
           .withSession(
             SessionKeys.validationEmailKey -> testValidationEmail,
@@ -235,7 +235,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     "the user submits after selecting an 'No' option" should {
 
       lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-        requestWithPaperPref
+        postRequestWithPaperPref
           .withFormUrlEncodedBody((yesNo, "no"))
           .withSession(
             SessionKeys.validationEmailKey -> testValidationEmail,
@@ -257,7 +257,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     "the user submits without selecting an option" should {
 
       lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-        requestWithPaperPref
+        postRequestWithPaperPref
           .withFormUrlEncodedBody((yesNo, ""))
           .withSession(
             SessionKeys.validationEmailKey -> testValidationEmail,
@@ -275,7 +275,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     "the user does not have an email in session" should {
 
       lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-        requestWithPaperPref
+        postRequestWithPaperPref
           .withFormUrlEncodedBody((yesNo, "no"))
           .withSession(SessionKeys.contactPrefUpdate -> "true")
       lazy val result = {
@@ -290,7 +290,7 @@ class EmailToUseControllerSpec extends ControllerBaseSpec {
     s"the ${SessionKeys.contactPrefUpdate} key is not in session" should {
 
       lazy val yesRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-        requestWithPaperPref
+        postRequestWithPaperPref
           .withFormUrlEncodedBody((yesNo, "yes"))
           .withSession(SessionKeys.validationEmailKey -> testValidationEmail)
 

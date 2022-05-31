@@ -28,7 +28,7 @@ class FeatureSwitchControllerSpec extends ControllerBaseSpec {
 
   "Calling the .featureSwitch action" should {
 
-    lazy val result = target.featureSwitch(request.withCSRFToken)
+    lazy val result = target.featureSwitch(getRequest.withCSRFToken)
 
     "return 200" in {
       await(result.map(_.header.status)) shouldBe Status.OK
@@ -45,7 +45,7 @@ class FeatureSwitchControllerSpec extends ControllerBaseSpec {
 
   "Calling the .submitFeatureSwitch action" should {
 
-    lazy val result = target.submitFeatureSwitch(request.withCSRFToken)
+    lazy val result = target.submitFeatureSwitch(getRequest.withCSRFToken)
 
     "return 303" in {
       await(result.map(_.header.status)) shouldBe Status.SEE_OTHER

@@ -129,7 +129,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
 
     "the user has the relevant session key to show they have come from the 'fix your email' page" should {
 
-      val user = User(vrn)(request.withSession(SessionKeys.manageVatRequestToFixEmail -> "false"))
+      val user = User(vrn)(getRequest.withSession(SessionKeys.manageVatRequestToFixEmail -> "false"))
       lazy val view: Html = injectedView(testEmail, testForm, contactPrefJourney = false)(user, messages, mockConfig)
 
       lazy implicit val document: Document = Jsoup.parse(view.body)

@@ -36,7 +36,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec with Matchers {
 
   "The Inflight change pending view" when {
 
-    lazy val view = injectedView()
+    lazy val view = injectedView()(getRequest, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct title" in {

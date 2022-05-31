@@ -37,7 +37,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
   ".show is called" should {
 
     lazy val result = {
-      controller.show(requestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
+      controller.show(getRequestWithPaperPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
     }
 
     "return an OK result" in {
@@ -62,7 +62,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
 
     lazy val result = {
       mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-      controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
+      controller.submit(postRequestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
     }
 
     "return a SEE_OTHER result" in {
@@ -82,7 +82,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
 
     lazy val result = {
       mockGetCustomerInfo(vrn)(Right(minCustomerInfoModel))
-      controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
+      controller.submit(postRequestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
     }
 
     "return a SEE_OTHER result" in {
@@ -102,7 +102,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
 
     lazy val result = {
       mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
-      controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
+      controller.submit(postRequestWithPaperPref.withFormUrlEncodedBody(yesNo -> yes))
 
     }
 
@@ -114,7 +114,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
   ".submit is called with a No" should {
 
     lazy val result = {
-      controller.submit(requestWithPaperPref.withFormUrlEncodedBody(yesNo -> _no))
+      controller.submit(postRequestWithPaperPref.withFormUrlEncodedBody(yesNo -> _no))
     }
 
     "return a SEE_OTHER result" in {
@@ -131,7 +131,7 @@ class EmailPreferenceControllerSpec extends ControllerBaseSpec {
     "return a BAD_REQUEST result" in {
 
       lazy val result = {
-        controller.submit(requestWithPaperPref.withFormUrlEncodedBody())
+        controller.submit(postRequestWithPaperPref.withFormUrlEncodedBody())
       }
 
       status(result) shouldBe BAD_REQUEST

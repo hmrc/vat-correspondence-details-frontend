@@ -30,7 +30,7 @@ trait ControllerBaseSpec extends MockAuth with MockHttp with MockAuditingService
 
       "return 401 (Unauthorised)" in {
         mockMissingBearerToken()
-        val result = controllerAction(request)
+        val result = controllerAction(getRequest)
         status(result) shouldBe Status.UNAUTHORIZED
       }
     }

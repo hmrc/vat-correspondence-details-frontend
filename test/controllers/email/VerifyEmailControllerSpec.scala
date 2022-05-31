@@ -37,8 +37,8 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     mockVatSubscriptionService
   )
 
-  lazy val emptyEmailSessionRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.prepopulationEmailKey -> "")
+  lazy val emptyEmailSessionGetRequest: FakeRequest[AnyContentAsEmpty.type] =
+    getRequest.withSession(SessionKeys.prepopulationEmailKey -> "")
 
   val ppobAddress: PPOBAddress = PPOBAddress("", None, None, None, None, None, "")
   val currentEmail = "current@email.com"
@@ -62,7 +62,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
 
       lazy val result = {
         mockCreateEmailVerificationRequest(Some(true))
-        TestVerifyEmailController.emailSendVerification()(requestWithEmail)
+        TestVerifyEmailController.emailSendVerification()(getRequestWithEmail)
       }
 
       "return 303 (SEE_OTHER)" in {
@@ -80,7 +80,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "there is an authenticated request from a user with an email in session" should {
 
       "result in an email address being retrieved if there is an email" in {
-        val userWithSession = User[AnyContent](vrn)(requestWithEmail)
+        val userWithSession = User[AnyContent](vrn)(getRequestWithEmail)
         TestVerifyEmailController.extractSessionEmail(userWithSession) shouldBe Some(testEmail)
       }
     }
@@ -88,7 +88,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
     "there is an authenticated request from a user without an email in session" should {
 
       "return None" in {
-        val userWithoutSession = User[AnyContent](vrn)(request)
+        val userWithoutSession = User[AnyContent](vrn)(getRequest)
         TestVerifyEmailController.extractSessionEmail(userWithoutSession) shouldBe None
       }
     }
@@ -107,7 +107,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
               contactDetails = Some(contactDetailsUnverifiedEmail)
             )
           )))
-          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionGetRequest
             .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
           )
         }
@@ -132,7 +132,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
           mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(
             pendingChanges = None
           )))
-          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionGetRequest
             .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
           )
         }
@@ -149,7 +149,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       "the user has no email" should {
         lazy val result = {
           mockCustomer()
-          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+          TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionGetRequest
             .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
           )
         }
@@ -166,7 +166,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
         "getCustomerInfo returns an error" should {
           lazy val result = {
             mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
-            TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest
+            TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionGetRequest
               .withHeaders(HeaderNames.REFERER -> mockConfig.btaAccountDetailsUrl)
             )
           }
@@ -178,7 +178,7 @@ class VerifyEmailControllerSpec extends ControllerBaseSpec with MockEmailVerific
       }
 
       "the user has not come from BTA" should {
-        lazy val result = TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionRequest)
+        lazy val result = TestVerifyEmailController.btaVerifyEmailRedirect()(emptyEmailSessionGetRequest)
 
         "throw an ISE" in {
           status(result) shouldBe INTERNAL_SERVER_ERROR

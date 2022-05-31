@@ -39,7 +39,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
       "the user's current mobile is retrieved from session" should {
 
-        lazy val result = controller.show(requestWithValidationMobileNumber)
+        lazy val result = controller.show(getRequestWithValidationMobileNumber)
 
         lazy val document = Jsoup.parse(contentAsString(result))
 
@@ -60,7 +60,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
     "the previous form value is retrieved from session" should {
 
-      lazy val result = controller.show(requestWithAllMobileNumbers)
+      lazy val result = controller.show(getRequestWithAllMobileNumbers)
       lazy val document = Jsoup.parse(contentAsString(result))
 
       "return 200" in {
@@ -79,7 +79,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
     "there is no mobile number in session" should {
 
-      lazy val result = controller.show(request)
+      lazy val result = controller.show(getRequest)
 
       "return 500" in {
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -93,7 +93,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
     "a user is does not have a valid enrolment" should {
 
-      lazy val result = controller.show(request)
+      lazy val result = controller.show(getRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -108,7 +108,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
     "a user is not logged in" should {
 
-      lazy val result = controller.show(request)
+      lazy val result = controller.show(getRequest)
 
       "return 401" in {
         mockMissingBearerToken()
@@ -125,7 +125,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
       lazy val result = {
         mockAgentAuthorised()
-        controller.show(fakeRequestWithSessionKeys)
+        controller.show(fakeGetRequestWithSessionKeys)
       }
 
       "return 200" in {
@@ -149,7 +149,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
         "the form is successfully submitted" should {
 
-          lazy val result = controller.submit(requestWithValidationMobileNumber
+          lazy val result = controller.submit(postRequestWithValidationMobileNumber
             .withFormUrlEncodedBody("mobileNumber" -> testPrepopMobile)
           )
 
@@ -168,7 +168,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
         "the form is submitted with errors" should {
 
-          lazy val result = controller.submit(requestWithAllMobileNumbers
+          lazy val result = controller.submit(postRequestWithAllMobileNumbers
             .withFormUrlEncodedBody("mobileNumber" -> "")
           )
 
@@ -187,7 +187,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
       "there are no contact numbers in session" when {
 
-        lazy val result = controller.submit(request)
+        lazy val result = controller.submit(postRequest)
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -202,7 +202,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
     "a user is does not have a valid enrolment" should {
 
-      lazy val result = controller.submit(request)
+      lazy val result = controller.submit(postRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -217,7 +217,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
     "a user is not logged in" should {
 
-      lazy val result = controller.submit(request)
+      lazy val result = controller.submit(postRequest)
 
       "return 401" in {
         mockMissingBearerToken()

@@ -84,7 +84,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth with Matchers {
     "there is no client VRN in session" should {
 
       mockAgentAuthorised()
-      lazy val result = Future.successful(await(target(request)))
+      lazy val result = Future.successful(await(target(getRequest)))
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER

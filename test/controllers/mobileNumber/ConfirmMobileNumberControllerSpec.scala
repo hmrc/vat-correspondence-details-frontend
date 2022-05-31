@@ -51,7 +51,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
         "show the Confirm mobile number page" in {
           mockIndividualAuthorised()
-          val result = controller.show(requestWithAllMobileNumbers)
+          val result = controller.show(getRequestWithAllMobileNumbers)
 
           status(result) shouldBe Status.OK
         }
@@ -61,7 +61,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
         "show the Confirm mobile number page" in {
           mockIndividualAuthorised()
-          val result = controller.show(requestWithPrepopMobileNumber.withSession(SessionKeys.validationMobileKey -> ""))
+          val result = controller.show(getRequestWithPrepopMobileNumber.withSession(SessionKeys.validationMobileKey -> ""))
 
           status(result) shouldBe Status.OK
         }
@@ -74,7 +74,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
         "redirect to the capture mobile number page" in {
           mockIndividualAuthorised()
-          val result = controller.show(request.withSession(SessionKeys.validationMobileKey -> testValidationMobile,
+          val result = controller.show(getRequest.withSession(SessionKeys.validationMobileKey -> testValidationMobile,
             SessionKeys.prepopulationMobileKey -> ""))
 
           status(result) shouldBe Status.SEE_OTHER
@@ -86,7 +86,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
         "redirect to the capture mobile number page" in {
           mockIndividualAuthorised()
-          val result = controller.show(request.withSession(SessionKeys.validationMobileKey -> "", SessionKeys.prepopulationMobileKey -> ""))
+          val result = controller.show(getRequest.withSession(SessionKeys.validationMobileKey -> "", SessionKeys.prepopulationMobileKey -> ""))
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(routes.CaptureMobileNumberController.show.url)
@@ -100,7 +100,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
         lazy val result = {
           mockIndividualAuthorised()
-          controller.show(requestWithValidationMobileNumber)
+          controller.show(getRequestWithValidationMobileNumber)
         }
 
         "return 303" in {
@@ -116,7 +116,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
         lazy val result = {
           mockIndividualAuthorised()
-          controller.show(request)
+          controller.show(getRequest)
         }
 
         "return 303" in {
@@ -133,7 +133,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.show(requestWithPrepopMobileNumber)
+        val result = controller.show(getRequestWithPrepopMobileNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -153,7 +153,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           lazy val result = {
             mockIndividualAuthorised()
             mockUpdateMobileNumber(vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success"))))
-            controller.updateMobileNumber()(requestWithAllMobileNumbers)
+            controller.updateMobileNumber()(postRequestWithAllMobileNumbers)
           }
 
           "return 303" in {
@@ -196,7 +196,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           lazy val result = {
             mockIndividualAuthorised()
             mockUpdateMobileNumber(vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success"))))
-            controller.updateMobileNumber()(requestWithPrepopMobileNumber.withSession(SessionKeys.validationMobileKey -> ""))
+            controller.updateMobileNumber()(postRequestWithPrepopMobileNumber.withSession(SessionKeys.validationMobileKey -> ""))
           }
 
           "return 303" in {
@@ -237,7 +237,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           lazy val result = {
             mockIndividualAuthorised()
             mockUpdateMobileNumber(vrn, testPrepopMobile)(Future(Right(UpdatePPOBSuccess("success"))))
-            controller.updateMobileNumber()(requestWithPrepopMobileNumber)
+            controller.updateMobileNumber()(postRequestWithPrepopMobileNumber)
           }
 
           "return 303" in {
@@ -273,7 +273,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateMobileNumber(vrn, testPrepopMobile)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
+          controller.updateMobileNumber()(postRequestWithPrepopMobileNumber)
         }
 
         "return 303" in {
@@ -291,7 +291,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateMobileNumber(vrn, testPrepopMobile)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify mobile number"))))
-          controller.updateMobileNumber()(requestWithPrepopMobileNumber)
+          controller.updateMobileNumber()(postRequestWithPrepopMobileNumber)
         }
 
         "return 500" in {
@@ -307,7 +307,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
     "there isn't a mobile number in session" should {
       lazy val result = {
         mockIndividualAuthorised()
-        controller.updateMobileNumber()(request)
+        controller.updateMobileNumber()(postRequest)
       }
 
       "return 303" in {
@@ -323,7 +323,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.updateMobileNumber()(requestWithPrepopMobileNumber)
+        val result = controller.updateMobileNumber()(postRequestWithPrepopMobileNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -337,14 +337,14 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
     "there is a validation mobile number in session" should {
 
       "return 200" in {
-        val result = controller.removeShow()(requestWithValidationMobileNumber)
+        val result = controller.removeShow()(postRequestWithValidationMobileNumber)
         status(result) shouldBe Status.OK
       }
     }
 
     "there isn't a validation mobile number in session" should {
 
-      lazy val result = controller.removeShow()(request)
+      lazy val result = controller.removeShow()(postRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -360,7 +360,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
       "return 403" in {
         val result = {
           mockIndividualWithoutEnrolment()
-          controller.removeShow()(request)
+          controller.removeShow()(postRequest)
         }
 
         status(result) shouldBe Status.FORBIDDEN
@@ -376,7 +376,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
       "the form has errors" should {
 
-        lazy val result = controller.removeMobileNumber()(requestWithValidationMobileNumber)
+        lazy val result = controller.removeMobileNumber()(postRequestWithValidationMobileNumber)
 
         "return 400" in {
           status(result) shouldBe Status.BAD_REQUEST
@@ -390,7 +390,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           lazy val result = {
             mockUpdateMobileNumber(vrn, "")(Future(Right(UpdatePPOBSuccess("success"))))
             controller.removeMobileNumber()(
-              requestWithValidationMobileNumber.withFormUrlEncodedBody("yes_no" -> "yes"))
+              postRequestWithValidationMobileNumber.withFormUrlEncodedBody("yes_no" -> "yes"))
           }
 
           "return 303" in {
@@ -422,7 +422,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
         "a No is submitted" should {
 
           lazy val result = controller.removeMobileNumber()(
-            requestWithValidationMobileNumber.withFormUrlEncodedBody("yes_no" -> "no"))
+            postRequestWithValidationMobileNumber.withFormUrlEncodedBody("yes_no" -> "no"))
 
           "return 303" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -437,7 +437,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
     "there isn't a validation mobile number in session" should {
 
-      lazy val result = controller.removeMobileNumber()(request)
+      lazy val result = controller.removeMobileNumber()(postRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -453,7 +453,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
       "return 403" in {
         val result = {
           mockIndividualWithoutEnrolment()
-          controller.removeMobileNumber()(request)
+          controller.removeMobileNumber()(postRequest)
         }
 
         status(result) shouldBe Status.FORBIDDEN

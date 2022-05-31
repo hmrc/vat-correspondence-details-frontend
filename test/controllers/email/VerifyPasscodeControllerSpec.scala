@@ -44,15 +44,18 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
     mockAuditingService
   )
 
-  lazy val paperRequestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
-    requestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper)
+  lazy val paperGetRequestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
+    getRequestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper)
+
+  lazy val paperPostRequestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
+    postRequestWithEmail.withSession(SessionKeys.currentContactPrefKey -> paper)
 
   "Calling the extractSessionEmail function in VerifyPasscodeController" when {
 
     "the user has an email address in session" should {
 
       "return the email address" in {
-        val userWithSession = User[AnyContent](vrn)(requestWithEmail)
+        val userWithSession = User[AnyContent](vrn)(getRequestWithEmail)
         TestVerifyPasscodeController.extractSessionEmail(userWithSession) shouldBe Some(testEmail)
       }
     }
@@ -60,7 +63,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
     "the user does not have an email address in session" should {
 
       "return None" in {
-        val user = User[AnyContent](vrn)(request)
+        val user = User[AnyContent](vrn)(getRequest)
         TestVerifyPasscodeController.extractSessionEmail(user) shouldBe None
       }
     }
@@ -72,7 +75,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there is an email in session" should {
 
-        lazy val result = TestVerifyPasscodeController.emailShow()(requestWithEmail)
+        lazy val result = TestVerifyPasscodeController.emailShow()(getRequestWithEmail)
 
         "return 200 (OK)" in {
           status(result) shouldBe Status.OK
@@ -81,7 +84,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there isn't an email in session" should {
 
-        lazy val result = TestVerifyPasscodeController.emailShow()(request)
+        lazy val result = TestVerifyPasscodeController.emailShow()(getRequest)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
@@ -108,7 +111,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(SuccessfullyVerified))
-              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+              TestVerifyPasscodeController.emailSubmit(postRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -125,7 +128,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(AlreadyVerified))
-              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+              TestVerifyPasscodeController.emailSubmit(postRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -142,7 +145,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(TooManyAttempts))
-              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+              TestVerifyPasscodeController.emailSubmit(postRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -155,7 +158,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(PasscodeNotFound))
-              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+              TestVerifyPasscodeController.emailSubmit(postRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "580008"))
             }
 
@@ -168,7 +171,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(IncorrectPasscode))
-              TestVerifyPasscodeController.emailSubmit(requestWithEmail.withFormUrlEncodedBody("passcode" -> "PASSME"))
+              TestVerifyPasscodeController.emailSubmit(postRequestWithEmail.withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
             "return 400" in {
@@ -180,7 +183,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Err0r")))
-              TestVerifyPasscodeController.emailSubmit(requestWithEmail
+              TestVerifyPasscodeController.emailSubmit(postRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -192,7 +195,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "the form is unsuccessfully submitted" should {
 
-          lazy val result = TestVerifyPasscodeController.emailSubmit(requestWithEmail
+          lazy val result = TestVerifyPasscodeController.emailSubmit(postRequestWithEmail
             .withFormUrlEncodedBody("passcode" -> "FAIL"))
 
           "return 400" in {
@@ -203,7 +206,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there is no email in session" when {
 
-        lazy val result = TestVerifyPasscodeController.emailSubmit(request)
+        lazy val result = TestVerifyPasscodeController.emailSubmit(postRequest)
 
         "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
@@ -227,7 +230,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockCreateEmailPasscodeRequest(Some(true))
-            TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
+            TestVerifyPasscodeController.emailSendVerification()(getRequestWithEmail)
           }
 
           "return 303 (SEE_OTHER)" in {
@@ -243,7 +246,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockCreateEmailPasscodeRequest(Some(false))
-            TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
+            TestVerifyPasscodeController.emailSendVerification()(getRequestWithEmail)
           }
 
           "return 303 (SEE_OTHER)" in {
@@ -259,7 +262,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockCreateEmailPasscodeRequest(None)
-            TestVerifyPasscodeController.emailSendVerification()(requestWithEmail)
+            TestVerifyPasscodeController.emailSendVerification()(getRequestWithEmail)
           }
 
           "return 500 (INTERNAL_SERVER_ERROR)" in {
@@ -270,7 +273,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there isn't an email in session" should {
 
-        lazy val result = TestVerifyPasscodeController.emailSendVerification()(request)
+        lazy val result = TestVerifyPasscodeController.emailSendVerification()(getRequest)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
@@ -295,7 +298,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockUpdateEmail()(Future(Right(UpdatePPOBSuccess("success"))))
-            TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail)
+            TestVerifyPasscodeController.updateEmailAddress()(postRequestWithEmail)
           }
 
           "return SEE_OTHER" in {
@@ -331,7 +334,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockUpdateEmail()(Future(Right(UpdatePPOBSuccess(""))))
-            TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail)
+            TestVerifyPasscodeController.updateEmailAddress()(postRequestWithEmail)
           }
 
           "return SEE_OTHER" in {
@@ -347,7 +350,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockUpdateEmail()(Future(Left(ErrorModel(CONFLICT, ""))))
-            TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail)
+            TestVerifyPasscodeController.updateEmailAddress()(postRequestWithEmail)
           }
 
           "return SEE_OTHER" in {
@@ -362,7 +365,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
         "an unexpected error comes back" should {
           lazy val result = {
             mockUpdateEmail()(Future(Left(ErrorModel(1, ""))))
-            TestVerifyPasscodeController.updateEmailAddress()(requestWithEmail)
+            TestVerifyPasscodeController.updateEmailAddress()(postRequestWithEmail)
           }
 
           "produce an internal server error" in {
@@ -373,7 +376,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there isn't an email in session" should {
 
-        lazy val result = TestVerifyPasscodeController.updateEmailAddress()(request)
+        lazy val result = TestVerifyPasscodeController.updateEmailAddress()(postRequest)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
@@ -394,7 +397,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there is an email in session" should {
 
-        lazy val result = TestVerifyPasscodeController.contactPrefShow()(paperRequestWithEmail)
+        lazy val result = TestVerifyPasscodeController.contactPrefShow()(paperGetRequestWithEmail)
 
         "return 200 (OK)" in {
           status(result) shouldBe Status.OK
@@ -403,7 +406,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there isn't an email in session" should {
 
-        lazy val result = TestVerifyPasscodeController.contactPrefShow()(requestWithPaperPref)
+        lazy val result = TestVerifyPasscodeController.contactPrefShow()(getRequestWithPaperPref)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
@@ -431,7 +434,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(SuccessfullyVerified))
-              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+              TestVerifyPasscodeController.contactPrefSubmit(paperPostRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -448,7 +451,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(AlreadyVerified))
-              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+              TestVerifyPasscodeController.contactPrefSubmit(paperPostRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -465,7 +468,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(TooManyAttempts))
-              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+              TestVerifyPasscodeController.contactPrefSubmit(paperPostRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -478,7 +481,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(PasscodeNotFound))
-              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+              TestVerifyPasscodeController.contactPrefSubmit(paperPostRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "580008"))
             }
 
@@ -491,7 +494,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Right(IncorrectPasscode))
-              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+              TestVerifyPasscodeController.contactPrefSubmit(paperPostRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -504,7 +507,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
             lazy val result = {
               mockVerifyPasscodeRequest(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Err0r")))
-              TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+              TestVerifyPasscodeController.contactPrefSubmit(paperPostRequestWithEmail
                 .withFormUrlEncodedBody("passcode" -> "PASSME"))
             }
 
@@ -516,7 +519,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         "the form is unsuccessfully submitted" should {
 
-          lazy val result = TestVerifyPasscodeController.contactPrefSubmit(paperRequestWithEmail
+          lazy val result = TestVerifyPasscodeController.contactPrefSubmit(paperPostRequestWithEmail
             .withFormUrlEncodedBody("passcode" -> "FAIL"))
 
           "return 400" in {
@@ -527,7 +530,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there is no email in session" when {
 
-        lazy val result = TestVerifyPasscodeController.contactPrefSubmit(requestWithPaperPref)
+        lazy val result = TestVerifyPasscodeController.contactPrefSubmit(postRequestWithPaperPref)
 
         "return 303" in {
           status(result) shouldBe Status.SEE_OTHER
@@ -553,7 +556,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockCreateEmailPasscodeRequest(Some(true))
-            TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
+            TestVerifyPasscodeController.contactPrefSendVerification()(paperGetRequestWithEmail)
           }
 
           "return 303 (SEE_OTHER)" in {
@@ -570,7 +573,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockCreateEmailPasscodeRequest(Some(false))
-            TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
+            TestVerifyPasscodeController.contactPrefSendVerification()(paperGetRequestWithEmail)
           }
 
           "return 303 (SEE_OTHER)" in {
@@ -586,7 +589,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockCreateEmailPasscodeRequest(None)
-            TestVerifyPasscodeController.contactPrefSendVerification()(paperRequestWithEmail)
+            TestVerifyPasscodeController.contactPrefSendVerification()(paperGetRequestWithEmail)
           }
 
           "return an INTERNAL_SERVER_ERROR" in {
@@ -597,7 +600,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
       "there isn't an email in session" should {
 
-        lazy val result = TestVerifyPasscodeController.contactPrefSendVerification()(requestWithPaperPref)
+        lazy val result = TestVerifyPasscodeController.contactPrefSendVerification()(getRequestWithPaperPref)
 
         "return 303 (SEE_OTHER)" in {
           status(result) shouldBe SEE_OTHER
@@ -628,7 +631,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             lazy val result = {
               mockGetEmailVerificationState(testEmail)(Future(Some(true)))
               mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
-              TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
+              TestVerifyPasscodeController.updateContactPrefEmail()(paperPostRequestWithEmail)
             }
 
             "return SEE_OTHER" in {
@@ -647,7 +650,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             lazy val result = {
               mockGetEmailVerificationState(testEmail)(Future(Some(true)))
               mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
-              TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
+              TestVerifyPasscodeController.updateContactPrefEmail()(paperPostRequestWithEmail)
             }
 
             "return SEE_OTHER" in {
@@ -666,7 +669,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
             lazy val result = {
               mockGetEmailVerificationState(testEmail)(Future(Some(true)))
               mockUpdateContactPrefEmailAddress(vrn, testEmail, updateEmailMockResponse)
-              TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
+              TestVerifyPasscodeController.updateContactPrefEmail()(paperPostRequestWithEmail)
             }
 
             "return an internal server error" in {
@@ -679,7 +682,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
           lazy val result = {
             mockGetEmailVerificationState(testEmail)(Future(Some(false)))
-            TestVerifyPasscodeController.updateContactPrefEmail()(paperRequestWithEmail)
+            TestVerifyPasscodeController.updateContactPrefEmail()(paperPostRequestWithEmail)
           }
 
           "return a 303" in {
@@ -697,7 +700,7 @@ class VerifyPasscodeControllerSpec extends ControllerBaseSpec with MockEmailVeri
 
         lazy val result = {
           mockGetEmailVerificationState("")(Future(Some(false)))
-          TestVerifyPasscodeController.updateContactPrefEmail()(requestWithPaperPref)
+          TestVerifyPasscodeController.updateContactPrefEmail()(postRequestWithPaperPref)
         }
 
         "return 303 (SEE_OTHER)" in {

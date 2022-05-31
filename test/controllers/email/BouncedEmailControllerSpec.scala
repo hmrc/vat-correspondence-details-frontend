@@ -45,7 +45,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
           lazy val result = {
             mockIndividualAuthorised()
             mockGetCustomerInfo(user.vrn)(Right(fullCustomerInfoModel))
-            testController.show(request)
+            testController.show(getRequest)
           }
 
           "return 303" in {
@@ -62,7 +62,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
           lazy val result = {
             mockIndividualAuthorised()
             mockGetCustomerInfo(user.vrn)(Right(customerInfoEmailUnverified))
-            testController.show(request)
+            testController.show(getRequest)
           }
 
           "return 200 (OK)" in {
@@ -79,7 +79,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
           lazy val result = {
             mockIndividualAuthorised()
             mockGetCustomerInfo(user.vrn)(Right(customerInfoEmailUnverifiedPPOBPending))
-            testController.show(request)
+            testController.show(getRequest)
           }
 
           "return 303 (OK)" in {
@@ -92,7 +92,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
           lazy val result = {
             mockIndividualAuthorised()
             mockGetCustomerInfo(user.vrn)(Right(minCustomerInfoModel))
-            testController.show(request)
+            testController.show(getRequest)
           }
 
           "return 303" in {
@@ -110,7 +110,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
         lazy val result = {
           mockIndividualAuthorised()
           mockGetCustomerInfo(user.vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
-          testController.show(request)
+          testController.show(getRequest)
         }
 
         "return 500 (ISE)" in {
@@ -139,7 +139,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
 
         "the form fails to bind" should {
 
-          lazy val result = testController.submit(requestWithBadFormAndEmail)
+          lazy val result = testController.submit(postRequestWithBadFormAndEmail)
 
           "return 400 (bad request)" in {
             mockIndividualAuthorised()
@@ -153,7 +153,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
 
             lazy val result = {
               mockIndividualAuthorised()
-              testController.submit(requestWithValidationEmail.withFormUrlEncodedBody("verifyAdd" -> "verify"))
+              testController.submit(postRequestWithValidationEmail.withFormUrlEncodedBody("verifyAdd" -> "verify"))
             }
 
             "return 303" in {
@@ -173,7 +173,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
 
             lazy val result = {
               mockIndividualAuthorised()
-              testController.submit(requestWithValidationEmail.withFormUrlEncodedBody("verifyAdd" -> "add"))
+              testController.submit(postRequestWithValidationEmail.withFormUrlEncodedBody("verifyAdd" -> "add"))
             }
 
             "return 303" in {
@@ -193,7 +193,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
 
         lazy val result = {
           mockIndividualAuthorised()
-          testController.submit(request.withFormUrlEncodedBody("yes_no" -> "no"))
+          testController.submit(postRequest.withFormUrlEncodedBody("yes_no" -> "no"))
         }
 
         "return ISE (500)" in {
@@ -218,7 +218,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
     "return true" when {
 
       "there is an existing value of 'true' for the manageVatRequestToFixEmail session key" in {
-        testController.manageVatReferrerCheck(request.withSession(
+        testController.manageVatReferrerCheck(getRequest.withSession(
           SessionKeys.manageVatRequestToFixEmail -> "true")) shouldBe true
       }
 
@@ -230,12 +230,12 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
         object LocalhostController extends BouncedEmailController(mockErrorHandler, mockVatSubscriptionService, inject[BouncedEmailView])(
           mockAuthPredicateComponents, mockInFlightPredicateComponents, LocalhostMockConfig)
 
-        LocalhostController.manageVatReferrerCheck(request.withHeaders(
+        LocalhostController.manageVatReferrerCheck(getRequest.withHeaders(
           HeaderNames.REFERER -> "http://localhost:9150")) shouldBe true
       }
 
       "the manage VAT host URL does not contain localhost and the referrer contains the manage VAT business details URL" in {
-        testController.manageVatReferrerCheck(request.withHeaders(
+        testController.manageVatReferrerCheck(getRequest.withHeaders(
           HeaderNames.REFERER -> mockConfig.manageVatSubscriptionServicePath)) shouldBe true
       }
     }
@@ -243,12 +243,12 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
     "return false" when {
 
       "the referrer does not contain the manage VAT business details URL" in {
-        testController.manageVatReferrerCheck(request.withHeaders(
+        testController.manageVatReferrerCheck(getRequest.withHeaders(
           HeaderNames.REFERER -> "https://www.google.com/change-business-details")) shouldBe false
       }
 
       "the referrer is blank" in {
-        testController.manageVatReferrerCheck(request) shouldBe false
+        testController.manageVatReferrerCheck(getRequest) shouldBe false
       }
     }
   }
