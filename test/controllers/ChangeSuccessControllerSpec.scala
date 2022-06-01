@@ -45,7 +45,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
       "the user is a principal entity" should {
 
-        lazy val result: Future[Result] = controller.landlineNumber(request.withSession(landlineChangeSuccessful -> "true"))
+        lazy val result: Future[Result] = controller.landlineNumber(getRequest.withSession(landlineChangeSuccessful -> "true"))
 
         "return 200" in {
           mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
@@ -57,7 +57,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
       "the user is an agent" should {
 
         lazy val result: Future[Result] =
-          controller.landlineNumber(request.withSession(landlineChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
+          controller.landlineNumber(getRequest.withSession(landlineChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
 
         "return 200" in {
           mockAgentAuthorised()
@@ -69,7 +69,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
     "the landlineChangeSuccessful session key has an unexpected value" should {
 
-      lazy val result: Future[Result] = controller.landlineNumber(request.withSession(landlineChangeSuccessful -> "false"))
+      lazy val result: Future[Result] = controller.landlineNumber(getRequest.withSession(landlineChangeSuccessful -> "false"))
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -82,7 +82,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
     "there is no landlineChangeSuccessful key in session" should {
 
-      lazy val result: Future[Result] = controller.landlineNumber(request)
+      lazy val result: Future[Result] = controller.landlineNumber(getRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -102,7 +102,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
       "the user is a principal entity" should {
 
-        lazy val result: Future[Result] = controller.mobileNumber(request.withSession(mobileChangeSuccessful -> "true"))
+        lazy val result: Future[Result] = controller.mobileNumber(getRequest.withSession(mobileChangeSuccessful -> "true"))
 
         "return 200" in {
           mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
@@ -114,7 +114,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
       "the user is an agent" should {
 
         lazy val result: Future[Result] =
-          controller.mobileNumber(request.withSession(mobileChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
+          controller.mobileNumber(getRequest.withSession(mobileChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
 
         "return 200" in {
           mockAgentAuthorised()
@@ -126,7 +126,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
     "the mobileChangeSuccessful session key has an unexpected value" should {
 
-      lazy val result: Future[Result] = controller.mobileNumber(request.withSession(mobileChangeSuccessful -> "false"))
+      lazy val result: Future[Result] = controller.mobileNumber(getRequest.withSession(mobileChangeSuccessful -> "false"))
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -139,7 +139,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
     "there is no mobileChangeSuccessful key in session" should {
 
-      lazy val result: Future[Result] = controller.mobileNumber(request)
+      lazy val result: Future[Result] = controller.mobileNumber(getRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -159,7 +159,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
       "the user is a principal entity" when {
 
-        lazy val result: Future[Result] = controller.websiteAddress(request.withSession(websiteChangeSuccessful -> "true"))
+        lazy val result: Future[Result] = controller.websiteAddress(getRequest.withSession(websiteChangeSuccessful -> "true"))
 
         "return 200" in {
           mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
@@ -173,7 +173,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
         lazy val result: Future[Result] = {
           mockAgentAuthorised()
           mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-          controller.websiteAddress(request.withSession(websiteChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
+          controller.websiteAddress(getRequest.withSession(websiteChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
         }
 
         "return 200" in {
@@ -184,7 +184,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
     "the websiteChangeSuccessful session key has an unexpected value" should {
 
-      lazy val result: Future[Result] = controller.websiteAddress(request.withSession(websiteChangeSuccessful -> "false"))
+      lazy val result: Future[Result] = controller.websiteAddress(getRequest.withSession(websiteChangeSuccessful -> "false"))
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -197,7 +197,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
     "there is no websiteChangeSuccessful key in session" should {
 
-      lazy val result: Future[Result] = controller.websiteAddress(request)
+      lazy val result: Future[Result] = controller.websiteAddress(getRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -228,7 +228,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
 
     "there is an entity name in session" should {
 
-      lazy val result = controller.getClientEntityName(User(vrn, arn = Some(arn))(request.withSession(
+      lazy val result = controller.getClientEntityName(User(vrn, arn = Some(arn))(getRequest.withSession(
         mtdVatvcAgentClientName -> "Jorip Biscuit Co"
       )))
 
@@ -244,7 +244,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
         "return the entity name" in {
           val result = {
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-            controller.getClientEntityName(User(vrn, arn = Some(arn))(request))
+            controller.getClientEntityName(User(vrn, arn = Some(arn))(getRequest))
           }
 
           await(result) shouldBe Some("PepsiMac")
@@ -256,7 +256,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
         "return None" in {
           val result = {
             mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Error")))
-            controller.getClientEntityName(User(vrn, arn = Some(arn))(request))
+            controller.getClientEntityName(User(vrn, arn = Some(arn))(getRequest))
           }
 
           await(result) shouldBe None
@@ -423,7 +423,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
     "an unrecognised change key & value are provided" should {
 
       implicit lazy val user: User[AnyContentAsEmpty.type] =
-        User[AnyContentAsEmpty.type](vrn, active = true)(request.withSession("faxChangeSuccessful" -> "yep"))
+        User[AnyContentAsEmpty.type](vrn, active = true)(getRequest.withSession("faxChangeSuccessful" -> "yep"))
       lazy val result = controller.sessionGuard("faxChangeSuccessful")
 
       "return 303" in {

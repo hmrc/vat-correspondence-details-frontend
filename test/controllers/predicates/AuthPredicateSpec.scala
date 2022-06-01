@@ -107,7 +107,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
 
         "return ISE (500)" in {
           mockUserWithoutAffinity()
-          status(allowAgentPredicate(request)) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(allowAgentPredicate(getRequest)) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
 
@@ -159,7 +159,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
 
             "return 200 (OK)" in {
               mockIndividualAuthorised()
-              status(allowAgentPredicate(request)) shouldBe Status.OK
+              status(allowAgentPredicate(getRequest)) shouldBe Status.OK
             }
           }
         }

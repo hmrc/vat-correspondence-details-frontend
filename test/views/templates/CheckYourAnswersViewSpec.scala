@@ -16,7 +16,6 @@
 
 package views.templates
 
-import models.User
 import models.viewModels.CheckYourAnswersViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -38,7 +37,7 @@ class CheckYourAnswersViewSpec extends ViewBaseSpec with Matchers {
     )
 
     val injectedView: CheckYourAnswersView = inject[CheckYourAnswersView]
-    lazy val view = injectedView(viewModel)(messages, mockConfig, User("1111111111"))
+    lazy val view = injectedView(viewModel)(messages, mockConfig, user)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct page title" in {

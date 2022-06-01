@@ -58,7 +58,7 @@ class MainTemplateSpec extends ViewBaseSpec with Matchers {
 
     "the user type cannot be determined" should {
 
-      lazy val view = injectedView("Title")(Html(""))(request, messages, mockConfig)
+      lazy val view = injectedView("Title")(Html(""))(getRequest, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct service name" in {

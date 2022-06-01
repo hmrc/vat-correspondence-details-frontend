@@ -40,7 +40,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
         s"$validationEmailKey is in session" should {
 
           lazy val result = {
-            controller.show("email")(requestWithPaperPref.withSession(
+            controller.show("email")(getRequestWithPaperPref.withSession(
               validationEmailKey -> "asd@asd.com",
               letterToEmailChangeSuccessful -> "true"
             ))
@@ -58,7 +58,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
         s"$validationEmailKey is not in session" should {
 
           lazy val result = {
-            controller.show("email")(requestWithPaperPref.withSession(
+            controller.show("email")(getRequestWithPaperPref.withSession(
               letterToEmailChangeSuccessful -> "true"
             ))
           }
@@ -76,7 +76,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
       s"$letterToEmailChangeSuccessful is not in session" should {
 
         lazy val result = {
-          controller.show("email")(requestWithPaperPref)
+          controller.show("email")(getRequestWithPaperPref)
         }
 
         "return 303" in {
@@ -97,7 +97,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
 
           lazy val result = {
             mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
-            controller.show("letter")(requestWithDigitalPref.withSession(
+            controller.show("letter")(getRequestWithDigitalPref.withSession(
               emailToLetterChangeSuccessful -> "true"
             ))
           }
@@ -116,7 +116,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
 
           lazy val result = {
             mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
-            controller.show("letter")(requestWithDigitalPref.withSession(
+            controller.show("letter")(getRequestWithDigitalPref.withSession(
               emailToLetterChangeSuccessful -> "true"
             ))
           }
@@ -130,7 +130,7 @@ class ContactPreferenceConfirmationControllerSpec extends ControllerBaseSpec {
       s"$emailToLetterChangeSuccessful is not in session" should {
 
         lazy val result = {
-          controller.show("letter")(requestWithDigitalPref)
+          controller.show("letter")(getRequestWithDigitalPref)
         }
 
         "return 303" in {

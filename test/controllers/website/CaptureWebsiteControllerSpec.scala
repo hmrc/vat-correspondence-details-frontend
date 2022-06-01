@@ -43,7 +43,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
       "the user's current website is retrieved from session" should {
 
-        lazy val result = target().show(request.withSession(
+        lazy val result = target().show(getRequest.withSession(
           common.SessionKeys.validationWebsiteKey -> testValidationWebsite)
         )
 
@@ -67,7 +67,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
     "the previous form value is retrieved from session" should {
 
-      lazy val result = target().show(request.withSession(
+      lazy val result = target().show(getRequest.withSession(
         common.SessionKeys.validationWebsiteKey -> testValidationWebsite,
         common.SessionKeys.prepopulationWebsiteKey -> testValidWebsite)
       )
@@ -89,7 +89,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
     "there is no website in session" when {
 
-      lazy val result = target().show(request)
+      lazy val result = target().show(getRequest)
 
       "return 500" in {
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -103,7 +103,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
     "a user does not have a valid enrolment" should {
 
-      lazy val result = target().show(request)
+      lazy val result = target().show(getRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -118,7 +118,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
     "a user is not logged in" should {
 
-      lazy val result = target().show(request)
+      lazy val result = target().show(getRequest)
 
       "return 401" in {
         mockMissingBearerToken()
@@ -142,7 +142,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
         "the form is successfully submitted" should {
 
-          lazy val result = target().submit(request
+          lazy val result = target().submit(postRequest
             .withFormUrlEncodedBody("website" -> testValidWebsite)
             .withSession(common.SessionKeys.validationWebsiteKey -> testValidationWebsite))
 
@@ -158,7 +158,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
         "the form is unsuccessfully submitted" should {
 
-          lazy val result = target().submit(request
+          lazy val result = target().submit(postRequest
             .withFormUrlEncodedBody("website" -> testInvalidWebsite)
             .withSession(common.SessionKeys.validationWebsiteKey -> testValidationWebsite))
 
@@ -175,7 +175,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
       "there is no website in session" when {
 
-        lazy val result = target().submit(request)
+        lazy val result = target().submit(postRequest)
 
 
         "render the error view" in {
@@ -191,7 +191,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
     "a user does not have a valid enrolment" should {
 
-      lazy val result = target().submit(request)
+      lazy val result = target().submit(postRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -206,7 +206,7 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
     "a user is not logged in" should {
 
-      lazy val result = target().submit(request)
+      lazy val result = target().submit(postRequest)
 
       "return 401" in {
         mockMissingBearerToken()

@@ -27,7 +27,7 @@ class UserSpec extends TestUtil with Matchers {
     val enrolments = Enrolments(Set(
       Enrolment("HMRC-MTD-VAT", Seq(EnrolmentIdentifier("VRN", "123456789")), "")
     ))
-    val user = User(enrolments)(request)
+    val user = User(enrolments)(getRequest)
 
     "construct a user correctly with a VRN" in {
       user.vrn shouldBe "123456789"
@@ -45,7 +45,7 @@ class UserSpec extends TestUtil with Matchers {
     ))
 
     "throw an error with the correct error message" in {
-      intercept[AuthorisationException](User(enrolments)(request)).reason shouldBe "VRN Missing"
+      intercept[AuthorisationException](User(enrolments)(getRequest)).reason shouldBe "VRN Missing"
     }
   }
 

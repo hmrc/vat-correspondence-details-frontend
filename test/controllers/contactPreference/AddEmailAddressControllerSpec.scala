@@ -31,7 +31,8 @@ import views.html.contactPreference.AddEmailAddressView
 class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
   lazy val controller = new AddEmailAddressController(mockErrorHandler, inject[AddEmailAddressView])
-  lazy val requestWithSession: FakeRequest[AnyContentAsEmpty.type] = request.withSession(SessionKeys.currentContactPrefKey -> paper)
+  lazy val getRequestWithSession: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(SessionKeys.currentContactPrefKey -> paper)
+  lazy val postRequestWithSession: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(SessionKeys.currentContactPrefKey -> paper)
 
   "AddEmailAddressController .show is called" when {
 
@@ -40,7 +41,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
       "user has paper preference" should {
 
         lazy val result = {
-          controller.show(requestWithSession.withSession(SessionKeys.contactPrefUpdate -> "true"))
+          controller.show(getRequestWithSession.withSession(SessionKeys.contactPrefUpdate -> "true"))
         }
 
         "return an OK result" in {
@@ -55,7 +56,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
       "user has a digital preference" should {
         lazy val result = {
-          controller.show(requestWithDigitalPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
+          controller.show(getRequestWithDigitalPref.withSession(SessionKeys.contactPrefUpdate -> "true"))
         }
 
         "return a 303 result" in {
@@ -71,7 +72,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
     "user is unauthorised" should {
 
       lazy val result = {
-        controller.show(request)
+        controller.show(getRequest)
       }
 
       "return a 401 (Unauthorised) result" in {
@@ -90,7 +91,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
         "'Yes' is submitted'" should {
 
           lazy val result = {
-            controller.submit(requestWithSession.withFormUrlEncodedBody(yesNo -> yes))
+            controller.submit(postRequestWithSession.withFormUrlEncodedBody(yesNo -> yes))
           }
 
           "return a SEE_OTHER result" in {
@@ -105,7 +106,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
         "'No' is submitted'" should {
 
           lazy val result = {
-            controller.submit()(requestWithSession.withFormUrlEncodedBody(yesNo -> YesNoForm.no))
+            controller.submit()(postRequestWithSession.withFormUrlEncodedBody(yesNo -> YesNoForm.no))
           }
 
           "return a SEE_OTHER result" in {
@@ -120,7 +121,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
         "Nothing is submitted (form has errors)" when {
 
           lazy val result = {
-            controller.submit()(requestWithSession.withFormUrlEncodedBody())
+            controller.submit()(postRequestWithSession.withFormUrlEncodedBody())
           }
 
           "return a BAD_REQUEST result" in {
@@ -136,7 +137,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
       "the user currently has a paper preference" should {
 
         lazy val result = {
-          controller.submit(request.withSession(SessionKeys.currentContactPrefKey -> digital))
+          controller.submit(postRequest.withSession(SessionKeys.currentContactPrefKey -> digital))
         }
 
         "return a SEE_OTHER result" in {
@@ -152,7 +153,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
     "user is unauthorised" should {
       lazy val result = {
         mockIndividualWithoutEnrolment()
-        controller.submit(requestWithSession)
+        controller.submit(postRequestWithSession)
       }
 
       "return a FORBIDDEN result" in {

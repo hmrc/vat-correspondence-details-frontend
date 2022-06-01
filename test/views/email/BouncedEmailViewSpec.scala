@@ -33,7 +33,7 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
 
     val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm
 
-    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = false)(request, messages, mockConfig)
+    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = false)(getRequest, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct page title" in {
@@ -106,7 +106,7 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
 
     val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm.bind(Map("verifyAdd" -> ""))
 
-    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = false)(request, messages, mockConfig)
+    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = false)(getRequest, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have the correct error document title" in {
@@ -141,7 +141,7 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
   "Rendering the bounced email page as a request from manage VAT" should {
 
     val form: Form[VerifyAdd] = BouncedEmailForm.bouncedEmailForm
-    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = true)(request, messages, mockConfig)
+    lazy val view = bouncedEmailView(form, "123@abc.com", isManageVatRequest = true)(getRequest, messages, mockConfig)
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have 3 breadcrumbs" in {

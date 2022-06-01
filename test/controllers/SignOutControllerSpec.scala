@@ -43,7 +43,7 @@ class SignOutControllerSpec extends ControllerBaseSpec {
 
         lazy val result: Future[Result] = {
           mockAuth(Future.successful(Some(AffinityGroup.Agent)))
-          controller.signOut(feedbackOnSignOut = true)(request)
+          controller.signOut(feedbackOnSignOut = true)(getRequest)
         }
 
         "return 303" in {
@@ -59,7 +59,7 @@ class SignOutControllerSpec extends ControllerBaseSpec {
 
         lazy val result: Future[Result] = {
           mockAuth(Future.successful(Some(AffinityGroup.Individual)))
-          controller.signOut(feedbackOnSignOut = true)(request)
+          controller.signOut(feedbackOnSignOut = true)(getRequest)
         }
 
         "return 303" in {
@@ -75,7 +75,7 @@ class SignOutControllerSpec extends ControllerBaseSpec {
 
         lazy val result: Future[Result] = {
           mockAuth(Future.failed(MissingBearerToken()))
-          controller.signOut(feedbackOnSignOut = true)(request)
+          controller.signOut(feedbackOnSignOut = true)(getRequest)
         }
 
         "return 303" in {
@@ -90,7 +90,7 @@ class SignOutControllerSpec extends ControllerBaseSpec {
 
     "feedback on sign-out is disabled" should {
 
-      lazy val result: Future[Result] = controller.signOut(feedbackOnSignOut = false)(request)
+      lazy val result: Future[Result] = controller.signOut(feedbackOnSignOut = false)(getRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER

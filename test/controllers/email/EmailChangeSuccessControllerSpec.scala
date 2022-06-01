@@ -38,7 +38,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
   )
 
   val successfulChangeRequest: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(emailChangeSuccessful -> "true")
+    getRequest.withSession(emailChangeSuccessful -> "true")
 
   "Calling the show action" when {
 
@@ -111,7 +111,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
 
         lazy val result = {
           mockIndividualAuthorised()
-          TestController.show(request)
+          TestController.show(getRequest)
         }
 
         "return 303" in {
@@ -128,7 +128,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
 
       lazy val result = {
         mockIndividualWithoutEnrolment()
-        TestController.show(request)
+        TestController.show(getRequest)
       }
 
       "return 403" in {

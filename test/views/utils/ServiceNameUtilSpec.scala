@@ -40,7 +40,7 @@ class ServiceNameUtilSpec extends TestUtil with Matchers {
     "not given a User" should {
 
       "return the generic service name" in {
-        ServiceNameUtil.generateHeader(request, messages) shouldBe "VAT"
+        ServiceNameUtil.generateHeader(getRequest, messages) shouldBe "VAT"
       }
     }
   }
@@ -64,7 +64,7 @@ class ServiceNameUtilSpec extends TestUtil with Matchers {
     "not given a User" should {
 
       "return None" in {
-        ServiceNameUtil.generateServiceUrl(request, mockConfig) shouldBe None
+        ServiceNameUtil.generateServiceUrl(getRequest, mockConfig) shouldBe None
       }
     }
   }

@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errors.StandardErrorView
 import assets.BaseTestConstants._
 import org.scalatest.wordspec.AnyWordSpecLike
+import play.api.test.Helpers.CONTENT_TYPE
 
 trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with MaterializerSupport with BeforeAndAfterEach with Injecting {
 
@@ -46,81 +47,125 @@ trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with Materialize
   val testEmail = "test@email.co.uk"
   val testWebsite = "https://www.test-website.co.uk"
 
-  implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+  implicit lazy val getRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/path").withSession(
     inFlightContactDetailsChangeKey -> "false",
     insolventWithoutAccessKey -> "false"
   )
-  lazy val requestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(prepopulationEmailKey -> testEmail)
 
-  lazy val requestWithValidationEmail: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(validationEmailKey -> testEmail)
+  implicit lazy val postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "/path")
+    .withHeaders(CONTENT_TYPE -> "application/x-www-form-urlencoded")
+    .withSession(
+    inFlightContactDetailsChangeKey -> "false",
+    insolventWithoutAccessKey -> "false"
+  )
 
-  lazy val requestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(validationWebsiteKey -> testWebsite, prepopulationWebsiteKey -> testWebsite)
+  lazy val getRequestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
+    getRequest.withSession(prepopulationEmailKey -> testEmail)
 
-  lazy val requestWithValidationPhoneNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val postRequestWithEmail: FakeRequest[AnyContentAsEmpty.type] =
+    postRequest.withSession(prepopulationEmailKey -> testEmail)
+
+  lazy val postRequestWithValidationEmail: FakeRequest[AnyContentAsEmpty.type] =
+    postRequest.withSession(validationEmailKey -> testEmail)
+
+  lazy val getRequestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
+    getRequest.withSession(validationWebsiteKey -> testWebsite, prepopulationWebsiteKey -> testWebsite)
+
+  lazy val postRequestWithWebsite: FakeRequest[AnyContentAsEmpty.type] =
+    postRequest.withSession(validationWebsiteKey -> testWebsite, prepopulationWebsiteKey -> testWebsite)
+
+  lazy val requestWithValidationPhoneNumbers: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     validationLandlineKey -> testValidationLandline,
     validationMobileKey -> testValidationMobile
   )
 
-  lazy val requestWithValidationLandlineNumber: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val getRequestWithValidationLandlineNumber: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     validationLandlineKey -> testValidationLandline
   )
 
-  lazy val requestWithValidationMobileNumber: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val postRequestWithValidationLandlineNumber: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(
+    validationLandlineKey -> testValidationLandline
+  )
+
+  lazy val getRequestWithValidationMobileNumber: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     validationMobileKey -> testValidationMobile
   )
 
-  lazy val requestWithPrepopLandlineNumber: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val postRequestWithValidationMobileNumber: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(
+    validationMobileKey -> testValidationMobile
+  )
+
+  lazy val getRequestWithPrepopLandlineNumber: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     prepopulationLandlineKey -> testPrepopLandline
   )
 
-  lazy val requestWithPrepopMobileNumber: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val postRequestWithPrepopLandlineNumber: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(
+    prepopulationLandlineKey -> testPrepopLandline
+  )
+
+  lazy val getRequestWithPrepopMobileNumber: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
+    prepopulationMobileKey -> testPrepopMobile
+  )
+
+  lazy val postRequestWithPrepopMobileNumber: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(
     prepopulationMobileKey -> testPrepopMobile
   )
 
   lazy val fakeRequestWithClientsVRN: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(mtdVatvcClientVrn -> vrn)
+    getRequest.withSession(mtdVatvcClientVrn -> vrn)
 
-  lazy val fakeRequestWithSessionKeys: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(
+  lazy val fakeGetRequestWithSessionKeys: FakeRequest[AnyContentAsEmpty.type] =
+    getRequest.withSession(
       mtdVatvcClientVrn -> vrn,
       validationMobileKey -> testValidationMobile,
       validationLandlineKey -> testValidationLandline,
       validationWebsiteKey -> testWebsite
     )
 
-  lazy val requestWithAllLandlineNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val getRequestWithAllLandlineNumbers: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     validationLandlineKey -> testValidationLandline,
     prepopulationLandlineKey -> testPrepopLandline
   )
 
-  lazy val requestWithAllMobileNumbers: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val postRequestWithAllLandlineNumbers: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(
+    validationLandlineKey -> testValidationLandline,
+    prepopulationLandlineKey -> testPrepopLandline
+  )
+
+  lazy val getRequestWithAllMobileNumbers: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     validationMobileKey -> testValidationMobile,
     prepopulationMobileKey -> testPrepopMobile
   )
 
-  lazy val requestWithDigitalPref: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val postRequestWithAllMobileNumbers: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(
+    validationMobileKey -> testValidationMobile,
+    prepopulationMobileKey -> testPrepopMobile
+  )
+
+  lazy val getRequestWithDigitalPref: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     currentContactPrefKey -> digital
   )
 
-  lazy val requestWithPaperPref: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val getRequestWithPaperPref: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     currentContactPrefKey -> paper
   )
 
-  lazy val requestWithBadFormAndEmail = requestWithValidationEmail
+  lazy val postRequestWithPaperPref: FakeRequest[AnyContentAsEmpty.type] = postRequest.withSession(
+    currentContactPrefKey -> paper
+  )
+
+  lazy val postRequestWithBadFormAndEmail = postRequestWithValidationEmail
     .withFormUrlEncodedBody("" -> "")
 
-  lazy val insolventRequest: FakeRequest[AnyContentAsEmpty.type] = request.withSession(
+  lazy val insolventRequest: FakeRequest[AnyContentAsEmpty.type] = getRequest.withSession(
     insolventWithoutAccessKey -> "true"
   )
 
-  lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(request)
+  lazy val user: User[AnyContentAsEmpty.type] = User[AnyContentAsEmpty.type](vrn, active = true)(getRequest)
   lazy val userWithValidationEmail: User[AnyContentAsEmpty.type] =
-    User[AnyContentAsEmpty.type](vrn, active = true)(request.withSession(validationEmailKey -> "old.email@email.com"))
+    User[AnyContentAsEmpty.type](vrn, active = true)(getRequest.withSession(validationEmailKey -> "old.email@email.com"))
   lazy val userWithEmptyValidationEmail: User[AnyContentAsEmpty.type] =
-    User[AnyContentAsEmpty.type](vrn, active = true)(request.withSession(validationEmailKey -> ""))
+    User[AnyContentAsEmpty.type](vrn, active = true)(getRequest.withSession(validationEmailKey -> ""))
   lazy val agent: User[AnyContentAsEmpty.type] =
     User[AnyContentAsEmpty.type](vrn, active = true, Some(arn))(fakeRequestWithClientsVRN)
 

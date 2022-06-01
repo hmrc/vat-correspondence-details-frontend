@@ -54,7 +54,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the validation email is retrieved from session" should {
 
-          lazy val result = target().show(request
+          lazy val result = target().show(getRequest
             .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
           lazy val document = Jsoup.parse(contentAsString(result))
 
@@ -74,7 +74,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the previous form value is retrieved from session" should {
 
-          lazy val result = target().show(request.withSession(
+          lazy val result = target().show(getRequest.withSession(
             common.SessionKeys.validationEmailKey -> testValidationEmail,
             common.SessionKeys.prepopulationEmailKey -> testValidEmail)
           )
@@ -97,7 +97,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       "there is no email in session" when {
 
-        lazy val result = target().show(request)
+        lazy val result = target().show(getRequest)
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -112,7 +112,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user is does not have a valid enrolment" should {
 
-      lazy val result = target().show(request)
+      lazy val result = target().show(getRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -128,7 +128,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user is not logged in" should {
 
-      lazy val result = target().submit(request)
+      lazy val result = target().submit(getRequest)
 
       "return 401" in {
         mockMissingBearerToken()
@@ -152,7 +152,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the form is successfully submitted" should {
 
-          lazy val result = target().submit(request
+          lazy val result = target().submit(postRequest
             .withFormUrlEncodedBody("email" -> testValidEmail)
             .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
 
@@ -180,7 +180,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the form is unsuccessfully submitted" should {
 
-          lazy val result = target().submit(request
+          lazy val result = target().submit(postRequest
             .withFormUrlEncodedBody("email" -> testInvalidEmail)
             .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
 
@@ -197,7 +197,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       "there is no email in session" when {
 
-        lazy val result = target().submit(request)
+        lazy val result = target().submit(postRequest)
 
         "render the error view" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -212,7 +212,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user is does not have a valid enrolment" should {
 
-      lazy val result = target().submit(request)
+      lazy val result = target().submit(postRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -227,7 +227,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user is not logged in" should {
 
-      lazy val result = target().submit(request)
+      lazy val result = target().submit(postRequest)
 
       "return 401" in {
         mockMissingBearerToken()
@@ -252,7 +252,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         "the validation email is retrieved from session" should {
 
           lazy val result ={
-            target().showPrefJourney(request.withSession(
+            target().showPrefJourney(getRequest.withSession(
               SessionKeys.validationEmailKey -> testValidationEmail,
               SessionKeys.currentContactPrefKey -> paper
             ))
@@ -276,7 +276,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         "the previous form value is retrieved from session" should {
 
           lazy val result = {
-            target().showPrefJourney(request.withSession(
+            target().showPrefJourney(getRequest.withSession(
               SessionKeys.validationEmailKey -> testValidationEmail,
               SessionKeys.prepopulationEmailKey -> testValidEmail,
               SessionKeys.currentContactPrefKey -> paper
@@ -301,7 +301,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       "there is no email in session" when {
 
-        lazy val result = target().showPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
+        lazy val result = target().showPrefJourney(getRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -316,7 +316,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user does not have a valid enrolment" should {
 
-      lazy val result = target().showPrefJourney(request)
+      lazy val result = target().showPrefJourney(getRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -331,7 +331,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user is not logged in" should {
 
-      lazy val result = target().submitPrefJourney(request)
+      lazy val result = target().submitPrefJourney(getRequest)
 
       "return 401" in {
         mockMissingBearerToken()
@@ -356,7 +356,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         "the form is successfully submitted" should {
 
           lazy val result = {
-            target().submitPrefJourney(request
+            target().submitPrefJourney(postRequest
               .withFormUrlEncodedBody("email" -> testValidEmail)
               .withSession(
                 SessionKeys.validationEmailKey -> testValidationEmail,
@@ -387,7 +387,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
         "the form is unsuccessfully submitted" should {
 
           lazy val result = {
-            target().submitPrefJourney(request
+            target().submitPrefJourney(postRequest
               .withFormUrlEncodedBody("email" -> testInvalidEmail)
               .withSession(
                 SessionKeys.validationEmailKey -> testValidationEmail,
@@ -409,7 +409,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
       "there is no email in session" when {
 
-        lazy val result = target().submitPrefJourney(request.withSession(SessionKeys.currentContactPrefKey -> paper))
+        lazy val result = target().submitPrefJourney(postRequest.withSession(SessionKeys.currentContactPrefKey -> paper))
 
         "render the error view" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -424,7 +424,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user does not have a valid enrolment" should {
 
-      lazy val result = target().submitPrefJourney(request)
+      lazy val result = target().submitPrefJourney(postRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -439,7 +439,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
     "a user is not logged in" should {
 
-      lazy val result = target().submit(request)
+      lazy val result = target().submit(postRequest)
 
       "return 401" in {
         mockMissingBearerToken()

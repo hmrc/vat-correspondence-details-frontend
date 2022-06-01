@@ -50,7 +50,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         "show the Confirm landline Number page" in {
           mockIndividualAuthorised()
-          val result = controller.show(requestWithAllLandlineNumbers)
+          val result = controller.show(getRequestWithAllLandlineNumbers)
 
           status(result) shouldBe Status.OK
         }
@@ -60,7 +60,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         "show the Confirm landline Number page" in {
           mockIndividualAuthorised()
-          val result = controller.show(requestWithPrepopLandlineNumber.withSession(SessionKeys.validationLandlineKey -> ""))
+          val result = controller.show(getRequestWithPrepopLandlineNumber.withSession(SessionKeys.validationLandlineKey -> ""))
 
           status(result) shouldBe Status.OK
         }
@@ -73,7 +73,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         "redirect to the capture landline number page" in {
           mockIndividualAuthorised()
-          val result = controller.show(request.withSession(SessionKeys.validationLandlineKey -> testValidationLandline,
+          val result = controller.show(getRequest.withSession(SessionKeys.validationLandlineKey -> testValidationLandline,
             SessionKeys.prepopulationLandlineKey -> ""))
 
           status(result) shouldBe Status.SEE_OTHER
@@ -85,7 +85,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         "redirect to the capture landline number page" in {
           mockIndividualAuthorised()
-          val result = controller.show(request.withSession(SessionKeys.validationLandlineKey -> "", SessionKeys.prepopulationLandlineKey -> ""))
+          val result = controller.show(getRequest.withSession(SessionKeys.validationLandlineKey -> "", SessionKeys.prepopulationLandlineKey -> ""))
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(routes.CaptureLandlineNumberController.show.url)
@@ -99,7 +99,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         lazy val result = {
           mockIndividualAuthorised()
-          controller.show(requestWithValidationLandlineNumber)
+          controller.show(getRequestWithValidationLandlineNumber)
         }
 
         "return 303" in {
@@ -115,7 +115,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
         lazy val result = {
           mockIndividualAuthorised()
-          controller.show(request)
+          controller.show(getRequest)
         }
 
         "return 303" in {
@@ -132,7 +132,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.show(requestWithPrepopLandlineNumber)
+        val result = controller.show(getRequestWithPrepopLandlineNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -152,7 +152,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           lazy val result = {
             mockIndividualAuthorised()
             mockUpdateLandlineNumber(vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success"))))
-            controller.updateLandlineNumber()(requestWithAllLandlineNumbers)
+            controller.updateLandlineNumber()(postRequestWithAllLandlineNumbers)
           }
 
           "return 303" in {
@@ -195,7 +195,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           lazy val result = {
             mockIndividualAuthorised()
             mockUpdateLandlineNumber(vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success"))))
-            controller.updateLandlineNumber()(requestWithPrepopLandlineNumber.withSession(SessionKeys.validationLandlineKey -> ""))
+            controller.updateLandlineNumber()(postRequestWithPrepopLandlineNumber.withSession(SessionKeys.validationLandlineKey -> ""))
           }
 
           "return 303" in {
@@ -236,7 +236,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           lazy val result = {
             mockIndividualAuthorised()
             mockUpdateLandlineNumber(vrn, testPrepopLandline)(Future(Right(UpdatePPOBSuccess("success"))))
-            controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+            controller.updateLandlineNumber()(postRequestWithPrepopLandlineNumber)
           }
 
           "return 303" in {
@@ -272,7 +272,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateLandlineNumber(vrn, testPrepopLandline)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+          controller.updateLandlineNumber()(postRequestWithPrepopLandlineNumber)
         }
 
         "return 303" in {
@@ -290,7 +290,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateLandlineNumber(vrn, testPrepopLandline)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify landline number"))))
-          controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+          controller.updateLandlineNumber()(postRequestWithPrepopLandlineNumber)
         }
 
         "return 500" in {
@@ -306,7 +306,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
     "there isn't a landline number in session" should {
       lazy val result = {
         mockIndividualAuthorised()
-        controller.updateLandlineNumber()(request)
+        controller.updateLandlineNumber()(getRequest)
       }
 
       "return 303" in {
@@ -322,7 +322,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.updateLandlineNumber()(requestWithPrepopLandlineNumber)
+        val result = controller.updateLandlineNumber()(postRequestWithPrepopLandlineNumber)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -336,14 +336,14 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
     "there is a validation landline number in session" should {
 
       "return 200" in {
-        val result = controller.removeShow()(requestWithValidationLandlineNumber)
+        val result = controller.removeShow()(postRequestWithValidationLandlineNumber)
         status(result) shouldBe Status.OK
       }
     }
 
     "there isn't a validation landline number in session" should {
 
-      lazy val result = controller.removeShow()(request)
+      lazy val result = controller.removeShow()(getRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -359,7 +359,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
       "return 403" in {
         val result = {
           mockIndividualWithoutEnrolment()
-          controller.removeShow()(request)
+          controller.removeShow()(postRequest)
         }
 
         status(result) shouldBe Status.FORBIDDEN
@@ -375,7 +375,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
       "the form has errors" should {
 
-        lazy val result = controller.removeLandlineNumber()(requestWithValidationLandlineNumber)
+        lazy val result = controller.removeLandlineNumber()(postRequestWithValidationLandlineNumber)
 
         "return 400" in {
           status(result) shouldBe Status.BAD_REQUEST
@@ -389,7 +389,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           lazy val result = {
             mockUpdateLandlineNumber(vrn, "")(Future(Right(UpdatePPOBSuccess("success"))))
             controller.removeLandlineNumber()(
-              requestWithValidationLandlineNumber.withFormUrlEncodedBody("yes_no" -> "yes"))
+              postRequestWithValidationLandlineNumber.withFormUrlEncodedBody("yes_no" -> "yes"))
           }
 
           "return 303" in {
@@ -421,7 +421,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
         "a No is submitted" should {
 
           lazy val result = controller.removeLandlineNumber()(
-            requestWithValidationLandlineNumber.withFormUrlEncodedBody("yes_no" -> "no"))
+            postRequestWithValidationLandlineNumber.withFormUrlEncodedBody("yes_no" -> "no"))
 
           "return 303" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -436,7 +436,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
     "there isn't a validation landline number in session" should {
 
-      lazy val result = controller.removeLandlineNumber()(request)
+      lazy val result = controller.removeLandlineNumber()(postRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -452,7 +452,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
       "return 403" in {
         val result = {
           mockIndividualWithoutEnrolment()
-          controller.removeLandlineNumber()(request)
+          controller.removeLandlineNumber()(postRequest)
         }
 
         status(result) shouldBe Status.FORBIDDEN

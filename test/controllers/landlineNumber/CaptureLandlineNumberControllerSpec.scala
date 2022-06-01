@@ -39,7 +39,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
       "the user's current landline is retrieved from session" should {
 
-        lazy val result = controller.show(requestWithValidationLandlineNumber)
+        lazy val result = controller.show(getRequestWithValidationLandlineNumber)
 
         lazy val document = Jsoup.parse(contentAsString(result))
 
@@ -61,7 +61,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
     "the previous form value is retrieved from session" should {
 
-      lazy val result = controller.show(requestWithAllLandlineNumbers)
+      lazy val result = controller.show(getRequestWithAllLandlineNumbers)
       lazy val document = Jsoup.parse(contentAsString(result))
 
       "return 200" in {
@@ -80,7 +80,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
     "there is no landline number in session" should {
 
-      lazy val result = controller.show(request)
+      lazy val result = controller.show(getRequest)
 
       "return 500" in {
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -94,7 +94,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
     "a user is does not have a valid enrolment" should {
 
-      lazy val result = controller.show(request)
+      lazy val result = controller.show(getRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -109,7 +109,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
     "a user is not logged in" should {
 
-      lazy val result = controller.show(request)
+      lazy val result = controller.show(getRequest)
 
       "return 401" in {
         mockMissingBearerToken()
@@ -126,7 +126,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
       lazy val result = {
         mockAgentAuthorised()
-        controller.show(fakeRequestWithSessionKeys)
+        controller.show(fakeGetRequestWithSessionKeys)
       }
 
       "return 200" in {
@@ -150,7 +150,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
         "the form is successfully submitted" should {
 
-          lazy val result = controller.submit(requestWithValidationLandlineNumber
+          lazy val result = controller.submit(postRequestWithValidationLandlineNumber
             .withFormUrlEncodedBody("landlineNumber" -> testPrepopLandline)
           )
 
@@ -169,7 +169,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
         "the form is submitted with errors" should {
 
-          lazy val result = controller.submit(requestWithAllLandlineNumbers
+          lazy val result = controller.submit(postRequestWithAllLandlineNumbers
             .withFormUrlEncodedBody("landlineNumber" -> "")
           )
 
@@ -186,7 +186,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
       "there are no contact numbers in session" when {
 
-        lazy val result = controller.submit(request)
+        lazy val result = controller.submit(postRequest)
 
         "return 500" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -201,7 +201,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
     "a user is does not have a valid enrolment" should {
 
-      lazy val result = controller.submit(request)
+      lazy val result = controller.submit(postRequest)
 
       "return 403" in {
         mockIndividualWithoutEnrolment()
@@ -216,7 +216,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
     "a user is not logged in" should {
 
-      lazy val result = controller.submit(request)
+      lazy val result = controller.submit(postRequest)
 
       "return 401" in {
         mockMissingBearerToken()

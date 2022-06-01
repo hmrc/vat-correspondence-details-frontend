@@ -44,8 +44,11 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
     mockAuditingService
   )
 
-  lazy val requestWithValidationWebsite: FakeRequest[AnyContentAsEmpty.type] =
-    request.withSession(SessionKeys.validationWebsiteKey -> testWebsite)
+  lazy val getRequestWithValidationWebsite: FakeRequest[AnyContentAsEmpty.type] =
+    getRequest.withSession(SessionKeys.validationWebsiteKey -> testWebsite)
+
+  lazy val postRequestWithValidationWebsite: FakeRequest[AnyContentAsEmpty.type] =
+    postRequest.withSession(SessionKeys.validationWebsiteKey -> testWebsite)
 
   "Calling the show action in ConfirmWebsiteController" when {
 
@@ -53,7 +56,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "show the Confirm Website page" in {
         mockIndividualAuthorised()
-        val result = controller.show(requestWithWebsite)
+        val result = controller.show(getRequestWithWebsite)
 
         status(result) shouldBe Status.OK
       }
@@ -63,7 +66,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       lazy val result = {
         mockIndividualAuthorised()
-        controller.show(request)
+        controller.show(getRequest)
       }
 
       "return 303" in {
@@ -79,7 +82,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.show(requestWithWebsite)
+        val result = controller.show(getRequestWithWebsite)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -97,7 +100,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         lazy val result = {
           mockIndividualAuthorised()
           mockUpdateWebsite(vrn, testWebsite)(Future(Right(UpdatePPOBSuccess("success"))))
-          controller.updateWebsite()(requestWithWebsite)
+          controller.updateWebsite()(postRequestWithWebsite)
         }
 
         "return 303" in {
@@ -136,7 +139,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateWebsite(vrn, testWebsite)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
-          controller.updateWebsite()(requestWithWebsite)
+          controller.updateWebsite()(postRequestWithWebsite)
         }
 
         "return 303" in {
@@ -154,7 +157,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
           mockIndividualAuthorised()
           mockUpdateWebsite(vrn, testWebsite)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify website"))))
-          controller.updateWebsite()(requestWithWebsite)
+          controller.updateWebsite()(postRequestWithWebsite)
         }
 
         "return 500" in {
@@ -171,7 +174,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       lazy val result = {
         mockIndividualAuthorised()
-        controller.updateWebsite()(request)
+        controller.updateWebsite()(postRequest)
       }
 
       "return 303" in {
@@ -187,7 +190,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "return forbidden (403)" in {
         mockIndividualWithoutEnrolment()
-        val result = controller.updateWebsite()(requestWithWebsite)
+        val result = controller.updateWebsite()(postRequestWithWebsite)
 
         status(result) shouldBe Status.FORBIDDEN
       }
@@ -201,14 +204,14 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
     "there is a website address in session" should {
 
       "return 200" in {
-        val result = controller.removeShow()(requestWithValidationWebsite)
+        val result = controller.removeShow()(postRequestWithValidationWebsite)
         status(result) shouldBe Status.OK
       }
     }
 
     "there isn't a website address in session" should {
 
-      lazy val result = controller.removeShow()(request)
+      lazy val result = controller.removeShow()(postRequest)
 
       "return 303" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -224,7 +227,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       "return 403" in {
         val result = {
           mockIndividualWithoutEnrolment()
-          controller.removeShow()(requestWithValidationWebsite)
+          controller.removeShow()(postRequestWithValidationWebsite)
         }
 
         status(result) shouldBe Status.FORBIDDEN
@@ -240,7 +243,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "the form has errors" should {
 
-        lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsite)
+        lazy val result = controller.removeWebsiteAddress()(postRequestWithValidationWebsite)
 
         "return 400" in {
           status(result) shouldBe Status.BAD_REQUEST
@@ -253,7 +256,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
           lazy val result = {
             mockUpdateWebsite(vrn, "")(Future(Right(UpdatePPOBSuccess("success"))))
-            controller.removeWebsiteAddress()(requestWithValidationWebsite
+            controller.removeWebsiteAddress()(postRequestWithValidationWebsite
               .withFormUrlEncodedBody("yes_no" -> "yes"))
           }
 
@@ -285,7 +288,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
         "the No option is submitted" should {
 
-          lazy val result = controller.removeWebsiteAddress()(requestWithValidationWebsite
+          lazy val result = controller.removeWebsiteAddress()(postRequestWithValidationWebsite
             .withFormUrlEncodedBody("yes_no" -> "no"))
 
           "return 303" in {
@@ -299,7 +302,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
         "there isn't a validation website address in session" should {
 
-          lazy val result = controller.removeWebsiteAddress()(request)
+          lazy val result = controller.removeWebsiteAddress()(postRequest)
 
           "return 303" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -315,7 +318,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
           "return 403" in {
             val result = {
               mockIndividualWithoutEnrolment()
-              controller.removeWebsiteAddress()(requestWithValidationWebsite)
+              controller.removeWebsiteAddress()(postRequestWithValidationWebsite)
             }
 
             status(result) shouldBe Status.FORBIDDEN

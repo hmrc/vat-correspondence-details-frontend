@@ -35,7 +35,7 @@ class NotSignedUpViewSpec extends ViewBaseSpec with Matchers {
 
   "Rendering the unauthorised page" should {
 
-    lazy implicit val document: Document = Jsoup.parse(injectedView().body)
+    lazy implicit val document: Document = Jsoup.parse(injectedView()(getRequest, messages, mockConfig).body)
 
     "have the correct document title" in {
       document.title shouldBe "You can not use this service yet - VAT - GOV.UK"

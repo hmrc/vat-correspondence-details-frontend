@@ -114,7 +114,7 @@ class ContactPreferenceRedirectControllerSpec extends ControllerBaseSpec with Mo
     "redirect them to the agent hub page" in {
       lazy val result = {
         mockAgentAuthorised()
-        controller.redirect()(request)
+        controller.redirect()(getRequest)
       }
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(mockConfig.vatAgentClientLookupAgentHubPath)
