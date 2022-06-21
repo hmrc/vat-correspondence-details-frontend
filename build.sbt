@@ -22,16 +22,10 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 val appName = "vat-correspondence-details-frontend"
 val bootstrapPlayVersion       = "5.24.0"
 val playFrontendHmrc           = "3.21.0-play-28"
-val playLanguageVersion        = "5.2.0-play-28"
-val scalaTestPlusVersion       = "5.1.0"
-val scalatestVersion           = "3.1.4"
-val pegdownVersion             = "1.6.0"
 val jsoupVersion               = "1.14.1"
 val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "3.6.0"
-val wiremockVersion            = "2.26.3"
 val playJsonJodaVersion        = "2.9.2"
-val flexmarkVersion            = "0.36.8"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
@@ -63,19 +57,14 @@ val compile = Seq(
   ws,
   "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
   "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc,
-  "uk.gov.hmrc"       %% "play-language"              % playLanguageVersion,
   "com.typesafe.play" %% "play-json-joda"             % playJsonJodaVersion
 )
 
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
-  "org.scalatest"          %% "scalatest"                   % scalatestVersion      % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play"          % scalaTestPlusVersion  % scope,
-  "org.scalatestplus"      %% "mockito-3-4"                 % mockitoVersion        % scope,
-  "org.scalamock"          %% "scalamock-scalatest-support" % scalaMockVersion      % scope,
-  "org.pegdown"            %  "pegdown"                     % pegdownVersion        % scope,
-  "org.jsoup"              %  "jsoup"                       % jsoupVersion          % scope,
-  "com.github.tomakehurst" %  "wiremock-jre8"               % wiremockVersion       % scope,
-  "com.vladsch.flexmark"   %  "flexmark-all"                % flexmarkVersion       % scope
+  "uk.gov.hmrc"       %% "bootstrap-test-play-28"      % bootstrapPlayVersion  % scope,
+  "org.scalatestplus" %% "mockito-3-4"                 % mockitoVersion        % scope,
+  "org.scalamock"     %% "scalamock-scalatest-support" % scalaMockVersion      % scope,
+  "org.jsoup"         %  "jsoup"                       % jsoupVersion          % scope
 )
 
 TwirlKeys.templateImports ++= Seq(
