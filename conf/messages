@@ -5,11 +5,6 @@ base.finish = Finish
 base.pageTitle = {0} - {1} - GOV.UK
 base.clientFinish = Back to client’s details
 
-banner.newService = This is a new service – your
-banner.feedback = feedback
-banner.feedbackImprove = will help us to improve it.
-banner.phaseName = BETA
-
 common.clientService = Manage your VAT account
 common.agentService = Your client’s VAT details
 common.vat = VAT
@@ -39,6 +34,11 @@ standardError.message = Try again later.
 notFound.title = Page not found
 notFound.heading = This page cannot be found
 notFound.message = Please check that you have entered the correct web address.
+
+sessionTimeout.title = Your session has timed out
+sessionTimeout.helpOne = To manage your VAT account, you will have to
+sessionTimeout.helpTwo = sign in
+sessionTimeout.helpThree = using your Government Gateway ID.
 
 unauthorised.title = You can not use this service yet
 unauthorised.instructions = You need to
@@ -90,13 +90,15 @@ captureMobile.error.notChanged = You have not made any changes to the mobile num
 captureMobile.error.invalid = Enter a mobile number in the correct format, like 07946 123456 or 00447946 123456 and you cannot enter a plus sign.
 captureMobile.remove = Remove mobile number
 
-sessionTimeout.title = Your session has timed out
-sessionTimeout.helpOne = To manage your VAT account, you will have to
-sessionTimeout.helpTwo = sign in
-sessionTimeout.helpThree = using your Government Gateway ID.
-
 confirmWebsiteRemove.title = Are you sure you want to remove the website address?
 confirmWebsiteRemove.error = Select yes if you want to remove the website address
+
+confirmRemoveLandline.title = Are you sure you want to remove the landline number?
+confirmRemoveLandline.heading = Are you sure you want to remove the landline number?
+confirmRemoveLandline.error = Select yes if you want to remove the landline number
+
+confirmRemoveMobile.title = Are you sure you want to remove the mobile number?
+confirmRemoveMobile.error = Select yes if you want to remove the mobile number
 
 checkYourAnswers.title = Check your answers
 checkYourAnswers.vatBusinessDetails = VAT business details
@@ -110,6 +112,11 @@ checkYourAnswers.websiteAddress.edit = Change the website address
 checkYourAnswers.mobileNumber = Mobile number
 checkYourAnswers.mobileNumber.edit = Change the mobile number
 
+emailChangeSuccess.title = You have asked to change your email address for VAT
+landlineChangeSuccess.title.change = You have asked to change the landline number
+mobileChangeSuccess.title.change = You have asked to change the mobile number
+websiteChangeSuccess.title.change = You have asked to change the website address
+
 emailPreference.title = Do you want us to send you emails instead of letters?
 emailPreference.hint = We currently send messages about your VAT by letter.
 emailPreference.error = Select yes if you want communications by email
@@ -120,39 +127,21 @@ letterPreference.yes = Yes, send letters to {0}
 letterPreference.no = No, I want to continue to receive emails
 letterPreference.error = Select yes if you want communications by letter
 
-emailChangeSuccess.title = You have asked to change your email address for VAT
-
-landlineChangeSuccess.title.change = You have asked to change the landline number
-mobileChangeSuccess.title.change = You have asked to change the mobile number
-
-websiteChangeSuccess.title.change = You have asked to change the website address
-
 changeSuccess.helpOne.emailVerified = We’ll send you an email within 2 working days with an update or you can check your HMRC secure messages.
 changeSuccess.helpOne.digital = We’ll send you an email within 2 working days with an update, followed by a letter to your principal place of business. You can also check your HMRC secure messages for an update.
 changeSuccess.helpOne.paper = We’ll send a letter to your principal place of business with an update within 15 working days.
 changeSuccess.helpTwo = Make sure your contact details are up to date.
+changeSuccess.agent.email.partOne = We’ll send an email to
+changeSuccess.agent.email.partTwo = within 2 working days telling you whether we can accept your request.
 
 changeEmailSuccess.helpTwo = If you also asked us to change the way we contact you about VAT, we’ll do this at the same time.
 changeEmailSuccess.helpThree = You need to update your email address for other taxes separately.
-
-changeSuccess.agent.email.partOne = We’ll send an email to
-changeSuccess.agent.email.partTwo = within 2 working days telling you whether we can accept your request.
 
 inFlightChange.title = There is already a change pending
 inFlightChange.recentRequest = We are dealing with a recent request to change something on this VAT account.
 inFlightChange.untilWeAccept = Until we accept that request, you cannot make a further change.
 inFlightChange.acceptOrReject = HMRC accepts or rejects changes to VAT accounts within 2 working days.
 inFlightChange.backToAccountDetails = Back to account details
-
-confirmPhoneNumbers.notProvided = Not provided
-confirmPhoneNumbers.numberRemoved = Number removed
-
-confirmRemoveLandline.title = Are you sure you want to remove the landline number?
-confirmRemoveLandline.heading = Are you sure you want to remove the landline number?
-confirmRemoveLandline.error = Select yes if you want to remove the landline number
-
-confirmRemoveMobile.title = Are you sure you want to remove the mobile number?
-confirmRemoveMobile.error = Select yes if you want to remove the mobile number
 
 emailToUse.title = Do you want us to use this email address to contact you about VAT?
 emailToUse.error = Select yes if this is the email address you want us to use
@@ -180,7 +169,6 @@ passcode.stillNotArrived.3 = or
 passcode.stillNotArrived.4 = provide another email address
 passcode.error.empty = Enter the confirmation code
 passcode.error.invalid = Enter the 6 character confirmation code
-
 passcode.error.title = You need to start again
 passcode.error.tooManyAttempts = This is because you have entered the wrong code too many times.
 passcode.error.expired = The code we sent you has expired.

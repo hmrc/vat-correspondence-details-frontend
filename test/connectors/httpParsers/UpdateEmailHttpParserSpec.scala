@@ -34,13 +34,13 @@ class UpdateEmailHttpParserSpec extends AnyWordSpecLike with Matchers with Eithe
       "return a updateEmailSuccess when the response Json can be parsed" in {
         val httpResponse = HttpResponse(Status.OK, Json.obj("formBundle" -> s"$formBundle").toString)
 
-        read("", "", httpResponse).right.value shouldBe updateEmailSuccess
+        read("", "", httpResponse) shouldBe Right(updateEmailSuccess)
       }
 
       "return the expected Left Error Model when the response Json cannot be parsed" in {
         val httpResponse = HttpResponse(Status.OK, Json.obj("notExpectedKey" -> s"$formBundle").toString)
 
-        read("", "", httpResponse).left.value shouldBe ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON.")
+        read("", "", httpResponse) shouldBe Left(ErrorModel(INTERNAL_SERVER_ERROR, "The endpoint returned invalid JSON."))
       }
     }
 
@@ -50,7 +50,7 @@ class UpdateEmailHttpParserSpec extends AnyWordSpecLike with Matchers with Eithe
           INTERNAL_SERVER_ERROR,
           ""
         )
-        read("", "", httpResponse).left.value shouldBe ErrorModel(INTERNAL_SERVER_ERROR, httpResponse.body)
+        read("", "", httpResponse) shouldBe Left(ErrorModel(INTERNAL_SERVER_ERROR, httpResponse.body))
       }
     }
 

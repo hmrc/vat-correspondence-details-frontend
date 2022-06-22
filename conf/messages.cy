@@ -5,11 +5,6 @@ base.finish = Gorffen
 base.pageTitle = {0} - {1} - GOV.UK
 base.clientFinish = Yn ôl i fanylion y cleient
 
-banner.newService = Gwasanaeth newydd yw hwn – bydd eich
-banner.feedback = adborth
-banner.feedbackImprove = yn ein helpu i’w wella.
-banner.phaseName = BETA
-
 common.clientService = Rheoli eich cyfrif TAW
 common.agentService = Manylion TAW eich cleient
 common.vat = TAW
@@ -39,6 +34,11 @@ standardError.message = Rhowch gynnig arall arni yn nes ymlaen.
 notFound.title = Heb ddod o hyd i’r dudalen
 notFound.heading = Ni ellir dod o hyd i’r dudalen hon
 notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
+
+sessionTimeout.title = Mae’ch sesiwn wedi’i therfynu
+sessionTimeout.helpOne = I reoli’ch cyfrif TAW, bydd yn rhaid i chi
+sessionTimeout.helpTwo = fewngofnodi
+sessionTimeout.helpThree = gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
 
 unauthorised.title = Ni allwch ddefnyddio’r gwasanaeth hwn eto
 unauthorised.instructions = Mae angen i chi
@@ -78,13 +78,27 @@ captureWebsite.error.invalid = Nodwch gyfeiriad gwefan yn y fformat cywir, fel w
 captureWebsite.error.empty = Nodwch gyfeiriad gwefan
 captureWebsite.error.notChanged = Nodwch gyfeiriad gwefan newydd
 
-sessionTimeout.title = Mae’ch sesiwn wedi’i therfynu
-sessionTimeout.helpOne = I reoli’ch cyfrif TAW, bydd yn rhaid i chi
-sessionTimeout.helpTwo = fewngofnodi
-sessionTimeout.helpThree = gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
+captureLandline.title = Beth yw’r rhif ffôn llinell dir?
+captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00441632 960000. Ni allwch nodi arwydd plws.
+captureLandline.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif llinell dir
+captureLandline.error.invalid = Nodwch rif ffôn llinell dir yn y fformat cywir, fel 01632 960000 neu 00441632 960000 ac ni allwch nodi arwydd plws.
+captureLandline.remove = Dileu rhif ffôn llinell dir
+
+captureMobile.title = Beth yw’r rhif ffôn symudol?
+captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00447946 123456. Ni allwch nodi arwydd plws.
+captureMobile.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif ffôn symudol
+captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07946 123456 neu 00447946 123456 ac ni allwch nodi arwydd plws.
+captureMobile.remove = Dileu rhif ffôn symudol
 
 confirmWebsiteRemove.title = A ydych yn siŵr eich bod am dynnu cyfeiriad y wefan?
 confirmWebsiteRemove.error = Dewiswch ‘Iawn’ os ydych am dynnu cyfeiriad y wefan
+
+confirmRemoveLandline.title = A ydych yn siŵr eich bod am dynnu’r rhif ffôn llinell dir?
+confirmRemoveLandline.heading = A ydych yn siŵr eich bod am dynnu’r rhif ffôn llinell dir?
+confirmRemoveLandline.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ffôn llinell dir
+
+confirmRemoveMobile.title = A ydych yn siŵr eich bod am dynnu’r rhif ffôn symudol?
+confirmRemoveMobile.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ffôn symudol
 
 checkYourAnswers.title = Gwiriwch eich atebion
 checkYourAnswers.vatBusinessDetails = Manylion busnes TAW
@@ -98,6 +112,10 @@ checkYourAnswers.websiteAddress.edit = Newid cyfeiriad y wefan
 checkYourAnswers.mobileNumber = Rhif ffôn symudol
 checkYourAnswers.mobileNumber.edit = Newid y rhif ffôn symudol
 
+emailChangeSuccess.title = Rydych wedi gofyn am gael newid eich cyfeiriad e-bost ar gyfer TAW
+landlineChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif llinell dir
+mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symudol
+websiteChangeSuccess.title.change = Rydych wedi gofyn am newid cyfeiriad y wefan
 
 emailPreference.title = A ydych am i ni anfon e-byst atoch yn hytrach na llythyrau?
 emailPreference.hint = Ar hyn o bryd, rydym yn anfon negeseuon ynghylch eich TAW atoch drwy lythyr.
@@ -109,48 +127,21 @@ letterPreference.yes = Iawn, anfonwch lythyrau i {0}
 letterPreference.no = Na, hoffwn barhau i gael e-byst
 letterPreference.error = Dewiswch ‘Iawn’ os hoffech gael gohebiaeth drwy lythyr
 
-emailChangeSuccess.title = Rydych wedi gofyn am gael newid eich cyfeiriad e-bost ar gyfer TAW
-
-websiteChangeSuccess.title.change = Rydych wedi gofyn am newid cyfeiriad y wefan
-
 changeSuccess.helpOne.emailVerified = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith gyda diweddariad, neu gallwch wirio’ch negeseuon diogel oddi wrth CThEM.
 changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEM i gael diweddariad.
 changeSuccess.helpOne.paper = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
 changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
+changeSuccess.agent.email.partOne = Byddwn yn anfon e-bost i
+changeSuccess.agent.email.partTwo = cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a allwn dderbyn eich cais ai peidio.
 
 changeEmailSuccess.helpTwo = Os gwnaethoch hefyd ofyn i ni newid y ffordd rydym yn cysylltu â chi ynghylch TAW, byddwn yn gwneud hynny ar yr un pryd.
 changeEmailSuccess.helpThree = Mae angen i chi ddiweddaru’ch cyfeiriad e-bost ar gyfer trethi eraill ar wahân.
-
-changeSuccess.agent.email.partOne = Byddwn yn anfon e-bost i
-changeSuccess.agent.email.partTwo = cyn pen 2 ddiwrnod gwaith i roi gwybod i chi a allwn dderbyn eich cais ai peidio.
 
 inFlightChange.title = Mae newid ar y gweill eisoes
 inFlightChange.recentRequest = Rydym yn delio â chais diweddar i newid rhywbeth ar y cyfrif TAW hwn.
 inFlightChange.untilWeAccept = Ni allwch wneud newid pellach tan i ni dderbyn y cais hwnnw.
 inFlightChange.acceptOrReject = Mae CThEM yn derbyn neu’n gwrthod newidiadau i gyfrifon TAW cyn pen 2 ddiwrnod gwaith.
 inFlightChange.backToAccountDetails = Yn ôl i fanylion y cyfrif
-
-captureLandline.title = Beth yw’r rhif ffôn llinell dir?
-captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00441632 960000. Ni allwch nodi arwydd plws.
-captureLandline.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif llinell dir
-captureLandline.error.invalid = Nodwch rif ffôn llinell dir yn y fformat cywir, fel 01632 960000 neu 00441632 960000 ac ni allwch nodi arwydd plws.
-captureLandline.remove = Dileu rhif ffôn llinell dir
-
-captureMobile.title = Beth yw’r rhif ffôn symudol?
-captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00447946 123456. Ni allwch nodi arwydd plws.
-captureMobile.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif ffôn symudol
-captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07946 123456 neu 00447946 123456 ac ni allwch nodi arwydd plws.
-captureMobile.remove = Dileu rhif ffôn symudol
-
-confirmRemoveLandline.title = A ydych yn siŵr eich bod am dynnu’r rhif ffôn llinell dir?
-confirmRemoveLandline.heading = A ydych yn siŵr eich bod am dynnu’r rhif ffôn llinell dir?
-confirmRemoveLandline.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ffôn llinell dir
-
-confirmRemoveMobile.title = A ydych yn siŵr eich bod am dynnu’r rhif ffôn symudol?
-confirmRemoveMobile.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ffôn symudol
-
-landlineChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif llinell dir
-mobileChangeSuccess.title.change = Rydych wedi gofyn am newid y rhif ffôn symudol
 
 emailToUse.title = A ydych am i ni ddefnyddio’r cyfeiriad e-bost hwn er mwyn cysylltu â chi ynghylch TAW?
 emailToUse.error = Dewiswch ‘Iawn’ os mai dyma’r cyfeiriad e-bost rydych am i ni ei ddefnyddio
@@ -178,7 +169,6 @@ passcode.stillNotArrived.3 = neu
 passcode.stillNotArrived.4 = roi cyfeiriad e-bost arall
 passcode.error.empty = Nodwch y cod cadarnhau
 passcode.error.invalid = Nodwch y cod cadarnhau sy’n 6 chymeriad
-
 passcode.error.title = Mae’n rhaid i chi ddechrau eto
 passcode.error.tooManyAttempts = Y rheswm am hyn yw eich bod wedi nodi’r cod anghywir gormod o weithiau.
 passcode.error.expired = Mae’r cod a anfonom atoch wedi dod i ben.
