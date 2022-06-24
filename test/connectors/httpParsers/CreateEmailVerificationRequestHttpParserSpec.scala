@@ -32,7 +32,7 @@ class CreateEmailVerificationRequestHttpParserSpec extends AnyWordSpecLike with 
 
       "return an EmailVerificationRequestSent object" in {
         val httpResponse: HttpResponse = HttpResponse(CREATED, "")
-        read("", "", httpResponse).right.value shouldBe EmailVerificationRequestSent
+        read("", "", httpResponse) shouldBe Right(EmailVerificationRequestSent)
       }
     }
 
@@ -40,7 +40,7 @@ class CreateEmailVerificationRequestHttpParserSpec extends AnyWordSpecLike with 
 
       "return an EmailAlreadyVerified object" in {
         val httpResponse: HttpResponse = HttpResponse(CONFLICT, "")
-        read("", "", httpResponse).right.value shouldBe EmailAlreadyVerified
+        read("", "", httpResponse) shouldBe Right(EmailAlreadyVerified)
       }
     }
 
@@ -48,7 +48,7 @@ class CreateEmailVerificationRequestHttpParserSpec extends AnyWordSpecLike with 
 
       "return an error model with the status and response body" in {
         val httpResponse: HttpResponse = HttpResponse(INTERNAL_SERVER_ERROR, "")
-        read("", "", httpResponse).left.value shouldBe EmailVerificationRequestFailure(INTERNAL_SERVER_ERROR, httpResponse.body)
+        read("", "", httpResponse) shouldBe Left(EmailVerificationRequestFailure(INTERNAL_SERVER_ERROR, httpResponse.body))
       }
     }
   }
