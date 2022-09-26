@@ -20,8 +20,8 @@ import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, s
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
-val bootstrapPlayVersion       = "5.24.0"
-val playFrontendHmrc           = "3.21.0-play-28"
+val bootstrapPlayVersion       = "7.4.0"
+val playFrontendHmrc           = "3.28.0-play-28"
 val jsoupVersion               = "1.14.1"
 val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "3.6.0"
@@ -93,16 +93,16 @@ lazy val microservice = Project(appName, file("."))
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
-    Keys.fork in Test := true,
-    scalaVersion := "2.12.15",
+    Test / Keys.fork := true,
+    scalaVersion := "2.12.16",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true)
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
-    Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest) (base => Seq(base / "it")).value,
+    IntegrationTest / Keys.fork := false,
+    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false
+    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
+    IntegrationTest / parallelExecution := false
   )
