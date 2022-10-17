@@ -20,8 +20,8 @@ import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, s
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
-val bootstrapPlayVersion       = "7.4.0"
-val playFrontendHmrc           = "3.28.0-play-28"
+val bootstrapPlayVersion       = "7.8.0"
+val playFrontendHmrc           = "3.32.0-play-28"
 val jsoupVersion               = "1.14.1"
 val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "3.6.0"
