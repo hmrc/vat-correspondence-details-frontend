@@ -38,7 +38,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth with Matchers {
     "the agent is authorised with a Client VRN in session" should {
 
       "return 200" in {
-        mockAgentAuthorised()
+        mockAgentAuthorised
         val result = target(fakeRequestWithClientsVRN)
         status(result) shouldBe Status.OK
       }
@@ -72,7 +72,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth with Matchers {
       lazy val result = Future.successful(await(target(fakeRequestWithClientsVRN)))
 
       "return Internal Server Error (500)" in {
-        mockAgentWithoutAffinity()
+        mockAgentWithoutAffinity
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
@@ -83,7 +83,7 @@ class AuthoriseAsAgentWithClientSpec extends MockAuth with Matchers {
 
     "there is no client VRN in session" should {
 
-      mockAgentAuthorised()
+      mockAgentAuthorised
       lazy val result = Future.successful(await(target(getRequest)))
 
       "return 303" in {

@@ -96,7 +96,7 @@ class ConfirmWebsiteController @Inject()(errorHandler: ErrorHandler,
         errorHandler.showInternalServerError
     }
 
-  def updateWebsite(): Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
+  def updateWebsite: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
     user.session.get(prepopulationWebsiteKey) match {
       case Some(website) =>
         performUpdate(website, controllers.website.routes.ConfirmWebsiteController.updateWebsite.url)
@@ -107,7 +107,7 @@ class ConfirmWebsiteController @Inject()(errorHandler: ErrorHandler,
 
   val formYesNo: Form[YesNo] = YesNoForm.yesNoForm("confirmWebsiteRemove.error")
 
-  def removeShow(): Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
+  def removeShow: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate) { implicit user =>
     user.session.get(validationWebsiteKey).filter(_.nonEmpty) match {
       case Some(_) =>
         Ok(confirmRemoveWebsite(formYesNo))
@@ -116,11 +116,11 @@ class ConfirmWebsiteController @Inject()(errorHandler: ErrorHandler,
     }
   }
 
-  def removeWebsiteAddress(): Action[AnyContent] = (allowAgentPredicate andThen
+  def removeWebsiteAddress: Action[AnyContent] = (allowAgentPredicate andThen
                                                     inFlightWebsitePredicate).async { implicit user =>
     user.session.get(validationWebsiteKey).filter(_.nonEmpty) match {
       case Some(_) =>
-        formYesNo.bindFromRequest.fold(
+        formYesNo.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(BadRequest(confirmRemoveWebsite(formWithErrors))),
           {

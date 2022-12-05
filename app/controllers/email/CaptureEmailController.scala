@@ -66,7 +66,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
 
   def submit: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
     (sessionValidationEmail, sessionPrePopulationEmail) match {
-      case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
+      case (Some(validation), _) => emailForm(validation).bindFromRequest().fold(
         errorForm => {
           val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
           Future.successful(BadRequest(captureEmailView(
@@ -119,7 +119,7 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
       inFlightContactPrefPredicate).async { implicit user =>
 
       (sessionValidationEmail, sessionPrePopulationEmail) match {
-        case (Some(validation), _) => emailForm(validation).bindFromRequest.fold(
+        case (Some(validation), _) => emailForm(validation).bindFromRequest().fold(
           errorForm => {
             val notChanged: Boolean = errorForm.errors.head.message == user.messages.apply("captureEmail.error.notChanged")
             Future.successful(BadRequest(captureEmailView(

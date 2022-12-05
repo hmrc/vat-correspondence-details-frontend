@@ -27,6 +27,7 @@ import org.jsoup.Jsoup
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.Results.BadRequest
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -60,7 +61,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
 
       "the inflight indicator is set to 'commsPref' and the blockIfPendingPref parameter is true" should {
 
-        lazy val result = Future.successful(await(inflightCommsPrefPredicate.refine(userWithSession("commsPref"))).left.get)
+        lazy val result = Future.successful(await(inflightCommsPrefPredicate.refine(userWithSession("commsPref"))).swap.getOrElse(BadRequest))
         lazy val document = Jsoup.parse(contentAsString(result))
 
         "return 409" in {
@@ -74,7 +75,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
 
       "the inflight indicator is set to 'true'" should {
 
-        lazy val result = Future.successful(await(inflightPPOBPredicate.refine(userWithSession("true"))).left.get)
+        lazy val result = Future.successful(await(inflightPPOBPredicate.refine(userWithSession("true"))).swap.getOrElse(BadRequest))
         lazy val document = Jsoup.parse(contentAsString(result))
 
         "return 409" in {
@@ -102,7 +103,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
 
         lazy val result = {
           setup()
-          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
+          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).swap.getOrElse(BadRequest))
         }
         lazy val document = Jsoup.parse(contentAsString(result))
 
@@ -125,7 +126,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
 
           lazy val result = {
             setup(Right(customerInfoPendingContactPrefModel))
-            Future.successful(await(inflightCommsPrefPredicate.refine(userWithoutSession)).left.get)
+            Future.successful(await(inflightCommsPrefPredicate.refine(userWithoutSession)).swap.getOrElse(BadRequest))
           }
           lazy val document = Jsoup.parse(contentAsString(result))
 
@@ -146,7 +147,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
 
           lazy val result = {
             setup(Right(customerInfoPendingContactPrefModel))
-            Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
+            Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).swap.getOrElse(BadRequest))
           }
 
           "return 303" in {
@@ -167,7 +168,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
 
         lazy val result = {
           setup(Right(minCustomerInfoModel.copy(ppob = fullPPOBModel)))
-          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
+          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).swap.getOrElse(BadRequest))
         }
 
         "return 303" in {
@@ -203,7 +204,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
 
         lazy val result = {
           setup(Right(minCustomerInfoModel.copy(pendingChanges = Some(PendingChanges(None, None)))))
-          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
+          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).swap.getOrElse(BadRequest))
         }
 
         "return 303" in {
@@ -223,7 +224,7 @@ class InFlightPredicateSpec extends MockAuth with Matchers {
 
         lazy val result = {
           setup(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
-          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).left.get)
+          Future.successful(await(inflightPPOBPredicate.refine(userWithoutSession)).swap.getOrElse(BadRequest))
         }
 
         "return 500" in {

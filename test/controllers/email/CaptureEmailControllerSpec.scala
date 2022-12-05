@@ -115,7 +115,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       lazy val result = target().show(getRequest)
 
       "return 403" in {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         status(result) shouldBe Status.FORBIDDEN
       }
 
@@ -131,7 +131,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       lazy val result = target().submit(getRequest)
 
       "return 401" in {
-        mockMissingBearerToken()
+        mockMissingBearerToken
         status(result) shouldBe Status.UNAUTHORIZED
       }
 
@@ -215,7 +215,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       lazy val result = target().submit(postRequest)
 
       "return 403" in {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         status(result) shouldBe Status.FORBIDDEN
       }
 
@@ -230,7 +230,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       lazy val result = target().submit(postRequest)
 
       "return 401" in {
-        mockMissingBearerToken()
+        mockMissingBearerToken
         status(result) shouldBe Status.UNAUTHORIZED
       }
 
@@ -319,7 +319,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       lazy val result = target().showPrefJourney(getRequest)
 
       "return 403" in {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         status(result) shouldBe Status.FORBIDDEN
       }
 
@@ -334,7 +334,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       lazy val result = target().submitPrefJourney(getRequest)
 
       "return 401" in {
-        mockMissingBearerToken()
+        mockMissingBearerToken
         status(result) shouldBe Status.UNAUTHORIZED
       }
 
@@ -427,7 +427,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       lazy val result = target().submitPrefJourney(postRequest)
 
       "return 403" in {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         status(result) shouldBe Status.FORBIDDEN
       }
 
@@ -442,7 +442,7 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
       lazy val result = target().submit(postRequest)
 
       "return 401" in {
-        mockMissingBearerToken()
+        mockMissingBearerToken
         status(result) shouldBe Status.UNAUTHORIZED
       }
 

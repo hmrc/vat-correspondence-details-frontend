@@ -152,7 +152,7 @@ class AddEmailAddressControllerSpec extends ControllerBaseSpec {
 
     "user is unauthorised" should {
       lazy val result = {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         controller.submit(postRequestWithSession)
       }
 

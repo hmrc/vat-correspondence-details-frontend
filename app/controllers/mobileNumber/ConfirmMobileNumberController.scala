@@ -96,7 +96,7 @@ class ConfirmMobileNumberController @Inject()(errorHandler: ErrorHandler,
         errorHandler.showInternalServerError
     }
 
-  def updateMobileNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async {
+  def updateMobileNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate).async {
     implicit user =>
       val enteredMobile = user.session.get(SessionKeys.prepopulationMobileKey)
 
@@ -112,7 +112,7 @@ class ConfirmMobileNumberController @Inject()(errorHandler: ErrorHandler,
 
   val yesNoForm: Form[YesNo] = YesNoForm.yesNoForm("confirmRemoveMobile.error")
 
-  def removeShow(): Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
+  def removeShow: Action[AnyContent] = (allowAgentPredicate andThen inFlightMobileNumberPredicate) { implicit user =>
     user.session.get(validationMobileKey).filter(_.nonEmpty) match {
       case Some(_) =>
         Ok(confirmRemoveMobile(yesNoForm))
@@ -121,11 +121,11 @@ class ConfirmMobileNumberController @Inject()(errorHandler: ErrorHandler,
     }
   }
 
-  def removeMobileNumber(): Action[AnyContent] = (allowAgentPredicate andThen
+  def removeMobileNumber: Action[AnyContent] = (allowAgentPredicate andThen
                                                   inFlightMobileNumberPredicate).async { implicit user =>
     user.session.get(validationMobileKey).filter(_.nonEmpty) match {
       case Some(_) =>
-        yesNoForm.bindFromRequest.fold(
+        yesNoForm.bindFromRequest().fold(
           errorForm => {
             Future.successful(BadRequest(confirmRemoveMobile(errorForm)))
           },

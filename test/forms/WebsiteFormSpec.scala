@@ -65,7 +65,7 @@ class WebsiteFormSpec extends TestUtil with Matchers {
     "validate that website does not exceed max length" in {
       val exceed = websiteForm("").bind(Map("website" -> ("a" * (maxLength + 1)))).errors
       exceed should contain(FormError("website", maxLengthErrorMessage))
-      exceed.seq.size shouldBe 1
+      exceed.size shouldBe 1
     }
 
     "validate that email allows max length" in {

@@ -51,7 +51,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
           "a digital preference is retrieved" should {
 
             lazy val result = {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
               TestController.show(successfulChangeRequest)
             }
@@ -70,7 +70,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
           "a paper preference is retrieved" should {
 
             lazy val result = {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel.copy(commsPreference = Some("PAPER"))))
               TestController.show(successfulChangeRequest)
             }
@@ -90,7 +90,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
         "an invalid response is retrieved from the customer info service" should {
 
           lazy val result = {
-            mockIndividualAuthorised()
+            mockIndividualAuthorised
             mockGetCustomerInfo(vrn)(Left(ErrorModel(Status.BAD_GATEWAY, "Error")))
             TestController.show(successfulChangeRequest)
           }
@@ -110,7 +110,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
       "the user does not have the email change success key in the session" should {
 
         lazy val result = {
-          mockIndividualAuthorised()
+          mockIndividualAuthorised
           TestController.show(getRequest)
         }
 
@@ -127,7 +127,7 @@ class EmailChangeSuccessControllerSpec extends ControllerBaseSpec {
     "a user is does not have a valid enrolment" should {
 
       lazy val result = {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         TestController.show(getRequest)
       }
 

@@ -127,7 +127,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
     "user is unauthorised" should {
 
       lazy val result = {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         controller.show(getRequest)
       }
 
@@ -154,7 +154,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
             "the customer info call is successful" should {
 
               lazy val result = {
-                mockIndividualAuthorised()
+                mockIndividualAuthorised
                 mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
                 mockUpdateContactPreference(
                   vrn, ContactPreference.paper)(Future(Right(UpdatePPOBSuccess("success")))
@@ -186,7 +186,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
             "the customer info call fails" should {
 
               lazy val result = {
-                mockIndividualAuthorised()
+                mockIndividualAuthorised
                 mockGetCustomerInfo(vrn)(Left(ErrorModel(INTERNAL_SERVER_ERROR, "")))
                 mockUpdateContactPreference(
                   vrn, ContactPreference.paper)(Future(Right(UpdatePPOBSuccess("success")))
@@ -203,7 +203,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
           "there was a conflict returned when trying to update the contact preference" should {
 
             lazy val result = {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               mockUpdateContactPreference(
                 vrn, ContactPreference.paper)(Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress")))
               )
@@ -222,7 +222,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
           "there was an unexpected error trying to update the contact preference" should {
 
             lazy val result = {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               mockUpdateContactPreference(vrn, ContactPreference.paper)(
                 Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't update contact preference"))))
               controller.submit(yesRequest)
@@ -303,7 +303,7 @@ class LetterPreferenceControllerSpec extends ControllerBaseSpec with MockVatSubs
     "user is unauthorised" should {
 
       lazy val result = {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         controller.submit(postRequestWithSession)
       }
 

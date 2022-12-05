@@ -97,7 +97,7 @@ class ConfirmLandlineNumberController @Inject()(errorHandler: ErrorHandler,
         errorHandler.showInternalServerError
   }
 
-  def updateLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async {
+  def updateLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen inFlightLandlineNumberPredicate).async {
     implicit user =>
       val enteredLandline = user.session.get(SessionKeys.prepopulationLandlineKey)
 
@@ -113,7 +113,7 @@ class ConfirmLandlineNumberController @Inject()(errorHandler: ErrorHandler,
 
   val yesNoForm: Form[YesNo] = YesNoForm.yesNoForm("confirmRemoveLandline.error")
 
-  def removeShow(): Action[AnyContent] = (allowAgentPredicate andThen
+  def removeShow: Action[AnyContent] = (allowAgentPredicate andThen
                                           inFlightLandlineNumberPredicate).async { implicit user =>
     user.session.get(validationLandlineKey).filter(_.nonEmpty) match {
       case Some(_) =>
@@ -123,11 +123,11 @@ class ConfirmLandlineNumberController @Inject()(errorHandler: ErrorHandler,
     }
   }
 
-  def removeLandlineNumber(): Action[AnyContent] = (allowAgentPredicate andThen
+  def removeLandlineNumber: Action[AnyContent] = (allowAgentPredicate andThen
                                                     inFlightLandlineNumberPredicate).async { implicit user =>
     user.session.get(validationLandlineKey).filter(_.nonEmpty) match {
       case Some(_) =>
-        yesNoForm.bindFromRequest.fold(
+        yesNoForm.bindFromRequest().fold(
           errorForm => {
             Future.successful(BadRequest(confirmRemoveLandline(errorForm)))
           },

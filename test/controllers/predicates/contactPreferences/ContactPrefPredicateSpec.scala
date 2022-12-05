@@ -26,6 +26,7 @@ import models.errors.ErrorModel
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.Results.BadRequest
 import play.api.test.Helpers._
 
 import scala.concurrent.Future
@@ -50,7 +51,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
         "this preference is blocked" should {
 
-          lazy val result = Future.successful(await(paperPrefPredicate.refine(digitalUser)).left.get)
+          lazy val result = Future.successful(await(paperPrefPredicate.refine(digitalUser)).swap.getOrElse(BadRequest))
 
           "return 303" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -63,7 +64,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
         "this preference is allowed" should {
 
-          lazy val result = await(digitalPrefPredicate.refine(digitalUser)).right.get
+          lazy val result = await(digitalPrefPredicate.refine(digitalUser)).toOption.get
 
           "let the request pass through" in {
             result shouldBe digitalUser
@@ -75,7 +76,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
         "this preference is blocked" should {
 
-          lazy val result = Future.successful(await(digitalPrefPredicate.refine(paperUser)).left.get)
+          lazy val result = Future.successful(await(digitalPrefPredicate.refine(paperUser)).swap.getOrElse(BadRequest))
 
           "return 303" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -88,7 +89,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
         "this preference is allowed" should {
 
-          lazy val result = await(paperPrefPredicate.refine(paperUser)).right.get
+          lazy val result = await(paperPrefPredicate.refine(paperUser)).toOption.get
 
           "let the request pass through" in {
             result shouldBe paperUser
@@ -105,7 +106,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
           lazy val result = {
             mockGetCustomerInfo(user.vrn)(Right(fullCustomerInfoModel))
-            Future.successful(await(paperPrefPredicate.refine(user)).left.get)
+            Future.successful(await(paperPrefPredicate.refine(user)).swap.getOrElse(BadRequest))
           }
 
           "return 303" in {
@@ -125,7 +126,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
           lazy val result = {
             mockGetCustomerInfo(user.vrn)(Right(fullCustomerInfoModel))
-            await(digitalPrefPredicate.refine(user)).right.get
+            await(digitalPrefPredicate.refine(user)).toOption.get
           }
 
           "let the request pass through" in {
@@ -140,7 +141,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
           lazy val result = {
             mockGetCustomerInfo(user.vrn)(Right(customerInfoPaperPrefModel))
-            Future.successful(await(digitalPrefPredicate.refine(user)).left.get)
+            Future.successful(await(digitalPrefPredicate.refine(user)).swap.getOrElse(BadRequest))
           }
 
           "return 303" in {
@@ -160,7 +161,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
           lazy val result = {
             mockGetCustomerInfo(user.vrn)(Right(customerInfoPaperPrefModel))
-            await(paperPrefPredicate.refine(user)).right.get
+            await(paperPrefPredicate.refine(user)).toOption.get
           }
 
           "let the request pass through" in {
@@ -173,7 +174,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
         lazy val result = {
           mockGetCustomerInfo(user.vrn)(Right(minCustomerInfoModel))
-          Future.successful(await(paperPrefPredicate.refine(user)).left.get)
+          Future.successful(await(paperPrefPredicate.refine(user)).swap.getOrElse(BadRequest))
         }
 
         "return 500" in {
@@ -185,7 +186,7 @@ class ContactPrefPredicateSpec extends MockAuth with Matchers {
 
         lazy val result = {
           mockGetCustomerInfo(user.vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "error")))
-          Future.successful(await(paperPrefPredicate.refine(user)).left.get)
+          Future.successful(await(paperPrefPredicate.refine(user)).swap.getOrElse(BadRequest))
         }
 
         "return 500" in {

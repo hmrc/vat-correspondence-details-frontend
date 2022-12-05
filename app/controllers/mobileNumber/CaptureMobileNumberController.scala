@@ -58,7 +58,7 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
 
     validationMobile match {
       case Some(mobile) =>
-        mobileNumberForm(mobile).bindFromRequest.fold(
+        mobileNumberForm(mobile).bindFromRequest().fold(
           errorForm => {
             BadRequest(captureMobileNumberView(errorForm,mobile))
           },

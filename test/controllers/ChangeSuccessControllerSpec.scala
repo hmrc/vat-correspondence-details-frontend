@@ -60,7 +60,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
           controller.landlineNumber(getRequest.withSession(landlineChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
 
         "return 200" in {
-          mockAgentAuthorised()
+          mockAgentAuthorised
           mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
           status(result) shouldBe Status.OK
         }
@@ -117,7 +117,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
           controller.mobileNumber(getRequest.withSession(mobileChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
 
         "return 200" in {
-          mockAgentAuthorised()
+          mockAgentAuthorised
           mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
           status(result) shouldBe Status.OK
         }
@@ -171,7 +171,7 @@ class ChangeSuccessControllerSpec extends ControllerBaseSpec with MockEmailVerif
       "the user is an agent" should {
 
         lazy val result: Future[Result] = {
-          mockAgentAuthorised()
+          mockAgentAuthorised
           mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
           controller.websiteAddress(getRequest.withSession(websiteChangeSuccessful -> "true", mtdVatvcClientVrn -> vrn))
         }

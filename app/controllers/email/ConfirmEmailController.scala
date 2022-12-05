@@ -88,7 +88,7 @@ class ConfirmEmailController @Inject()(val errorHandler: ErrorHandler,
     }
   }
 
-  def updateEmailAddress(): Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+  def updateEmailAddress: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
 
     extractSessionEmail(user) match {
       case Some(email) =>

@@ -58,7 +58,7 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
     val validationWebsite: Option[String] = user.session.get(SessionKeys.validationWebsiteKey)
 
     validationWebsite match {
-      case Some(validation) => websiteForm(validation).bindFromRequest.fold(
+      case Some(validation) => websiteForm(validation).bindFromRequest().fold(
         errorForm => {
           Future.successful(BadRequest(captureWebsiteView(errorForm, validation)))
         },

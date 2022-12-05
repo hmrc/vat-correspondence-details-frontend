@@ -45,7 +45,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
         "the allowAgents parameter is set to true" should {
 
           "return OK (200)" in {
-            mockAgentAuthorised()
+            mockAgentAuthorised
             status(allowAgentPredicate(fakeRequestWithClientsVRN)) shouldBe Status.OK
           }
         }
@@ -60,12 +60,13 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
           lazy val result = Future.successful(await(blockAgentPredicate(agent)))
 
           "return Unauthorized (401)" in {
-            mockAgentAuthorised()
+            mockAgentAuthorised
             status(result) shouldBe Status.UNAUTHORIZED
           }
 
           "show the agent journey disabled page" in {
-            messages(Jsoup.parse(contentAsString(result)).title) shouldBe "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
+            messages(Jsoup.parse(contentAsString(result)).title) shouldBe
+              "You cannot change your client’s email address yet - Your client’s VAT details - GOV.UK"
           }
         }
 
@@ -79,7 +80,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
           lazy val result = Future.successful(await(blockAgentPredicate(agent)))
 
           "return SEE_OTHER (303)" in {
-            mockAgentAuthorised()
+            mockAgentAuthorised
             status(result) shouldBe Status.SEE_OTHER
           }
 
@@ -93,7 +94,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
           lazy val result = Future.successful(await(allowAgentPredicate(agent)))
 
           "return Forbidden" in {
-            mockAgentWithoutEnrolment()
+            mockAgentWithoutEnrolment
             status(result) shouldBe Status.FORBIDDEN
           }
 
@@ -106,7 +107,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
       "the agent does not have an affinity group" should {
 
         "return ISE (500)" in {
-          mockUserWithoutAffinity()
+          mockUserWithoutAffinity
           status(allowAgentPredicate(getRequest)) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
@@ -149,7 +150,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
           "it is set to true" should {
 
             "return the Forbidden status (403)" in {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               status(allowAgentPredicate(insolventRequest)) shouldBe Status.FORBIDDEN
             }
 
@@ -158,7 +159,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
           "it is set to false" should {
 
             "return 200 (OK)" in {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               status(allowAgentPredicate(getRequest)) shouldBe Status.OK
             }
           }
@@ -171,7 +172,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
             "the user is insolvent and not continuing to trade" should {
 
               val result = {
-                mockIndividualAuthorised()
+                mockIndividualAuthorised
                 mockGetCustomerInfo(vrn)(Right(customerInfoInsolvent))
                 allowAgentPredicate(FakeRequest())
               }
@@ -188,7 +189,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
             "the user is not insolvent and can continue to trade" should {
 
               val result = {
-                mockIndividualAuthorised()
+                mockIndividualAuthorised
                 mockGetCustomerInfo(vrn)(Right(fullCustomerInfoModel))
                 allowAgentPredicate(FakeRequest())
               }
@@ -207,7 +208,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
           "the CustomerInfo call fails" should {
 
             val result = {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               mockGetCustomerInfo(vrn)(Left(errorModel))
               allowAgentPredicate(FakeRequest())
             }
@@ -225,7 +226,7 @@ class AuthPredicateSpec extends MockAuth with MaterializerSupport with Matchers 
         lazy val result = Future.successful(await(allowAgentPredicate(user)))
 
         "return Forbidden (403)" in {
-          mockIndividualWithoutEnrolment()
+          mockIndividualWithoutEnrolment
           status(result) shouldBe Status.FORBIDDEN
         }
 

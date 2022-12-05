@@ -59,7 +59,7 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
 
     validationLandline match {
       case Some(landline) =>
-        landlineNumberForm(landline).bindFromRequest.fold(
+        landlineNumberForm(landline).bindFromRequest().fold(
           errorForm => {
             BadRequest(captureLandlineNumberView(errorForm, landline))
           },

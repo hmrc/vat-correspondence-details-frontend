@@ -41,7 +41,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuthConnector)
-    mockIndividualAuthorised()
+    mockIndividualAuthorised
   }
 
   val sessionTimeoutView: SessionTimeoutView = injector.instanceOf[SessionTimeoutView]
@@ -115,7 +115,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
     MockPredicate
   }
 
-  def mockIndividualAuthorised(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockIndividualAuthorised: OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.successful(
       new ~(Some(AffinityGroup.Individual),
         Enrolments(Set(Enrolment("HMRC-MTD-VAT",
@@ -125,7 +125,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       )
     ))
 
-  def mockAgentAuthorised(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockAgentAuthorised: OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.successful(
       new ~(Some(AffinityGroup.Agent),
         Enrolments(Set(Enrolment("HMRC-AS-AGENT",
@@ -136,7 +136,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       )
     ))
 
-  def mockAgentWithoutEnrolment(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockAgentWithoutEnrolment: OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.successful(
       new ~(Some(AffinityGroup.Agent),
         Enrolments(Set(Enrolment("OTHER_ENROLMENT",
@@ -146,7 +146,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       )
     ))
 
-  def mockIndividualWithoutEnrolment(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockIndividualWithoutEnrolment: OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.successful(
       new ~(Some(AffinityGroup.Individual),
         Enrolments(Set(Enrolment("OTHER_ENROLMENT",
@@ -156,7 +156,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       )
     ))
 
-  def mockUserWithoutAffinity(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockUserWithoutAffinity: OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.successful(
       new ~(None,
         Enrolments(Set(Enrolment("HMRC-MTD-VAT",
@@ -166,7 +166,7 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       )
     ))
 
-  def mockAgentWithoutAffinity(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockAgentWithoutAffinity: OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.successful(
       new ~(None,
         Enrolments(Set(Enrolment("HMRC-AS-AGENT",
@@ -177,9 +177,9 @@ trait MockAuth extends TestUtil with BeforeAndAfterEach with MockitoSugar with M
       )
     ))
 
-  def mockMissingBearerToken()(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockMissingBearerToken: OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.failed(MissingBearerToken()))
 
-  def mockAuthorisationException()(): OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
+  def mockAuthorisationException: OngoingStubbing[Future[~[Option[AffinityGroup], Enrolments]]] =
     setupAuthResponse(Future.failed(InsufficientEnrolments()))
 }
