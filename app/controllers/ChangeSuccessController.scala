@@ -28,6 +28,7 @@ import models.viewModels.ChangeSuccessViewModel
 import play.api.mvc._
 import services.VatSubscriptionService
 import views.html.templates.ChangeSuccessView
+import controllers.BaseController
 
 import scala.concurrent.{ExecutionContext, Future}
 

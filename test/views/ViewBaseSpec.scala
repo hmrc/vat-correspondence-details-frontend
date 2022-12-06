@@ -23,7 +23,7 @@ import _root_.utils.TestUtil
 import org.jsoup.Jsoup
 import play.twirl.api.Html
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 trait ViewBaseSpec extends TestUtil with GuiceOneAppPerSuite {
 

@@ -47,7 +47,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
 
   }
 
-  def btaVerifyEmailRedirect(): Action[AnyContent] = blockAgentPredicate.async {
+  def btaVerifyEmailRedirect: Action[AnyContent] = blockAgentPredicate.async {
     implicit user =>
 
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(user, user.session)

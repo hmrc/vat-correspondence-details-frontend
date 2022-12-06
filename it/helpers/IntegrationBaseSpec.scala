@@ -76,7 +76,7 @@ trait IntegrationBaseSpec extends CustomMatchers with GuiceOneServerPerSuite wit
     def user: User = new User()
   }
 
-  def given: PreconditionBuilder = new PreconditionBuilder
+  def `given`: PreconditionBuilder = new PreconditionBuilder
 
   class User()(implicit builder: PreconditionBuilder) {
     def isAuthenticated: PreconditionBuilder = {

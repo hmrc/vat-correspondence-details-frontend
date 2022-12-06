@@ -20,11 +20,11 @@ import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, s
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
-val bootstrapPlayVersion       = "7.8.0"
-val playFrontendHmrc           = "3.32.0-play-28"
+val bootstrapPlayVersion       = "7.12.0"
+val playFrontendHmrc           = "3.34.0-play-28"
 val jsoupVersion               = "1.14.1"
 val mockitoVersion             = "3.2.9.0"
-val scalaMockVersion           = "3.6.0"
+val scalaMockVersion           = "5.2.0"
 val playJsonJodaVersion        = "2.9.2"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
@@ -63,7 +63,7 @@ val compile = Seq(
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc"       %% "bootstrap-test-play-28"      % bootstrapPlayVersion  % scope,
   "org.scalatestplus" %% "mockito-3-4"                 % mockitoVersion        % scope,
-  "org.scalamock"     %% "scalamock-scalatest-support" % scalaMockVersion      % scope,
+  "org.scalamock"     %% "scalamock"                   % scalaMockVersion      % scope,
   "org.jsoup"         %  "jsoup"                       % jsoupVersion          % scope
 )
 
@@ -94,7 +94,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     Test / Keys.fork := true,
-    scalaVersion := "2.12.16",
+    scalaVersion := "2.13.8",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true)
   .configs(IntegrationTest)

@@ -43,7 +43,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
         "the call returns an email address that is verified" should {
 
           lazy val result = {
-            mockIndividualAuthorised()
+            mockIndividualAuthorised
             mockGetCustomerInfo(user.vrn)(Right(fullCustomerInfoModel))
             testController.show(getRequest)
           }
@@ -60,7 +60,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
         "the call returns an email address that is unverified or the emailVerified field is not returned" should {
 
           lazy val result = {
-            mockIndividualAuthorised()
+            mockIndividualAuthorised
             mockGetCustomerInfo(user.vrn)(Right(customerInfoEmailUnverified))
             testController.show(getRequest)
           }
@@ -77,7 +77,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
         "the call returns a pending PPOB" should {
 
           lazy val result = {
-            mockIndividualAuthorised()
+            mockIndividualAuthorised
             mockGetCustomerInfo(user.vrn)(Right(customerInfoEmailUnverifiedPPOBPending))
             testController.show(getRequest)
           }
@@ -90,7 +90,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
         "the call doesn't return an email" should {
 
           lazy val result = {
-            mockIndividualAuthorised()
+            mockIndividualAuthorised
             mockGetCustomerInfo(user.vrn)(Right(minCustomerInfoModel))
             testController.show(getRequest)
           }
@@ -108,7 +108,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
       "the VAT subscription call is unsuccessful" should {
 
         lazy val result = {
-          mockIndividualAuthorised()
+          mockIndividualAuthorised
           mockGetCustomerInfo(user.vrn)(Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "")))
           testController.show(getRequest)
         }
@@ -124,7 +124,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
       lazy val result = testController.show(agent)
 
       "return 401 (Unauthorized)" in {
-        mockAgentAuthorised()
+        mockAgentAuthorised
         status(result) shouldBe UNAUTHORIZED
       }
     }
@@ -142,7 +142,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
           lazy val result = testController.submit(postRequestWithBadFormAndEmail)
 
           "return 400 (bad request)" in {
-            mockIndividualAuthorised()
+            mockIndividualAuthorised
             status(result) shouldBe BAD_REQUEST
           }
         }
@@ -152,7 +152,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
           "the Verify Email option is bound" should {
 
             lazy val result = {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               testController.submit(postRequestWithValidationEmail.withFormUrlEncodedBody("verifyAdd" -> "verify"))
             }
 
@@ -172,7 +172,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
           "the Add Email option is bound" should {
 
             lazy val result = {
-              mockIndividualAuthorised()
+              mockIndividualAuthorised
               testController.submit(postRequestWithValidationEmail.withFormUrlEncodedBody("verifyAdd" -> "add"))
             }
 
@@ -192,7 +192,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
       "the user's email is not in session" should {
 
         lazy val result = {
-          mockIndividualAuthorised()
+          mockIndividualAuthorised
           testController.submit(postRequest.withFormUrlEncodedBody("yes_no" -> "no"))
         }
 
@@ -207,7 +207,7 @@ class BouncedEmailControllerSpec extends ControllerBaseSpec with TestUtil {
       lazy val result = testController.submit(agent)
 
       "return 401 (Unauthorized)" in {
-        mockAgentAuthorised()
+        mockAgentAuthorised
         status(result) shouldBe UNAUTHORIZED
       }
     }

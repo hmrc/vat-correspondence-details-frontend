@@ -97,7 +97,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
       lazy val result = controller.show(getRequest)
 
       "return 403" in {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         status(result) shouldBe Status.FORBIDDEN
       }
 
@@ -112,7 +112,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
       lazy val result = controller.show(getRequest)
 
       "return 401" in {
-        mockMissingBearerToken()
+        mockMissingBearerToken
         status(result) shouldBe Status.UNAUTHORIZED
       }
 
@@ -125,7 +125,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
     "a user is an agent" should {
 
       lazy val result = {
-        mockAgentAuthorised()
+        mockAgentAuthorised
         controller.show(fakeGetRequestWithSessionKeys)
       }
 
@@ -204,7 +204,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
       lazy val result = controller.submit(postRequest)
 
       "return 403" in {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         status(result) shouldBe Status.FORBIDDEN
       }
 
@@ -219,7 +219,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
       lazy val result = controller.submit(postRequest)
 
       "return 401" in {
-        mockMissingBearerToken()
+        mockMissingBearerToken
         status(result) shouldBe Status.UNAUTHORIZED
       }
 

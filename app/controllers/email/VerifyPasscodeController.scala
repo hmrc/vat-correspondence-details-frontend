@@ -102,7 +102,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
       }
   }
 
-  def updateEmailAddress(): Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
+  def updateEmailAddress: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate).async { implicit user =>
       extractSessionEmail(user) match {
         case Some(email) =>
           vatSubscriptionService.updateEmail(user.vrn, email) map {
@@ -200,7 +200,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
   }
 
 
-  def updateContactPrefEmail(): Action[AnyContent] = (contactPreferencePredicate andThen
+  def updateContactPrefEmail: Action[AnyContent] = (contactPreferencePredicate andThen
                                                       paperPrefPredicate andThen
                                                       inFlightContactPrefPredicate).async { implicit user =>
       extractSessionEmail match {

@@ -135,7 +135,7 @@ class EmailFormSpec extends TestUtil with Matchers {
     "validate that email does not exceed max length" in {
       val exceed = emailForm("").bind(Map("email" -> ("a" * (maxLength + 1)))).errors
       exceed should contain(FormError("email", maxLengthErrorMessage))
-      exceed.seq.size shouldBe 1
+      exceed.size shouldBe 1
     }
 
     "validate that email allows max length" in {

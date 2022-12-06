@@ -55,7 +55,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
     "there is a website in session" should {
 
       "show the Confirm Website page" in {
-        mockIndividualAuthorised()
+        mockIndividualAuthorised
         val result = controller.show(getRequestWithWebsite)
 
         status(result) shouldBe Status.OK
@@ -65,7 +65,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
     "there isn't a website in session" should {
 
       lazy val result = {
-        mockIndividualAuthorised()
+        mockIndividualAuthorised
         controller.show(getRequest)
       }
 
@@ -81,7 +81,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
     "the user is not authorised" should {
 
       "return forbidden (403)" in {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         val result = controller.show(getRequestWithWebsite)
 
         status(result) shouldBe Status.FORBIDDEN
@@ -98,7 +98,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       "the website has been updated successfully" should {
 
         lazy val result = {
-          mockIndividualAuthorised()
+          mockIndividualAuthorised
           mockUpdateWebsite(vrn, testWebsite)(Future(Right(UpdatePPOBSuccess("success"))))
           controller.updateWebsite()(postRequestWithWebsite)
         }
@@ -136,7 +136,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       "there was a conflict returned when trying to update the website" should {
 
         lazy val result = {
-          mockIndividualAuthorised()
+          mockIndividualAuthorised
           mockUpdateWebsite(vrn, testWebsite)(
             Future(Left(ErrorModel(CONFLICT, "The back end has indicated there is an update already in progress"))))
           controller.updateWebsite()(postRequestWithWebsite)
@@ -154,7 +154,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
       "there was an unexpected error trying to update the website" should {
 
         lazy val result = {
-          mockIndividualAuthorised()
+          mockIndividualAuthorised
           mockUpdateWebsite(vrn, testWebsite)(
             Future(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Couldn't verify website"))))
           controller.updateWebsite()(postRequestWithWebsite)
@@ -173,7 +173,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
     "there isn't a website in session" should {
 
       lazy val result = {
-        mockIndividualAuthorised()
+        mockIndividualAuthorised
         controller.updateWebsite()(postRequest)
       }
 
@@ -189,7 +189,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
     "the user is not authorised" should {
 
       "return forbidden (403)" in {
-        mockIndividualWithoutEnrolment()
+        mockIndividualWithoutEnrolment
         val result = controller.updateWebsite()(postRequestWithWebsite)
 
         status(result) shouldBe Status.FORBIDDEN
@@ -226,7 +226,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
       "return 403" in {
         val result = {
-          mockIndividualWithoutEnrolment()
+          mockIndividualWithoutEnrolment
           controller.removeShow()(postRequestWithValidationWebsite)
         }
 
@@ -317,7 +317,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
 
           "return 403" in {
             val result = {
-              mockIndividualWithoutEnrolment()
+              mockIndividualWithoutEnrolment
               controller.removeWebsiteAddress()(postRequestWithValidationWebsite)
             }
 
