@@ -38,7 +38,7 @@ class ConfirmRemoveLandlineViewSpec extends ViewBaseSpec with Matchers {
     val noLabel = "#label-no"
     val button = ".govuk-button"
     val errorText = "#yes_no-error"
-    val errorSummaryTitle = "#error-summary-title"
+    val errorSummaryTitle = ".govuk-error-summary__title"
     val errorLink = ".error-link"
   }
 

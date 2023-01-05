@@ -38,7 +38,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec with Matchers {
     val form = "form"
     val emailField = "#email"
     val continueButton = ".govuk-button"
-    val errorSummary = "#error-summary-title"
+    val errorSummary = ".govuk-error-summary__title"
     val removeEmail = "summary"
     val removeEmailDesc = "#content > details > div"
     val removeEmailLink = "#content > details > div > a"

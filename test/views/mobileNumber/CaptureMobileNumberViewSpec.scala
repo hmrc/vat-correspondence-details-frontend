@@ -110,7 +110,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec with Matchers {
         }
 
         "display the error summary" in {
-          element("#error-summary-title").text() shouldBe "There is a problem"
+          element(".govuk-error-summary__title").text() shouldBe "There is a problem"
         }
       }
     }

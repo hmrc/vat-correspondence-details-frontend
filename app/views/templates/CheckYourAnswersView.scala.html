@@ -54,7 +54,7 @@
   @formWithCSRF(action = model.continueLink) {
     @govukButton(Button(
       content = Text(messages("common.continue")),
-      preventDoubleClick = true
+      preventDoubleClick = Some(true)
     ))
   }
 }

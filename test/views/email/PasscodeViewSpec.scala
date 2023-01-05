@@ -182,7 +182,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
     "have an error summary" which {
 
       "has the correct heading" in {
-        elementText("#error-summary-title") shouldBe "There is a problem"
+        elementText(".govuk-error-summary__title") shouldBe "There is a problem"
       }
 
       "has the correct error message" in {

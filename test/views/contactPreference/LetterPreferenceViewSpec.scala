@@ -35,7 +35,7 @@ class LetterPreferenceViewSpec extends ViewBaseSpec with Matchers {
     val yesOption = "label[for=yes_no]"
     val noOption = "label[for=yes_no-2]"
     val hint = ".govuk-inset-text"
-    val errorHeading = "#error-summary-title"
+    val errorHeading = ".govuk-error-summary__title"
     val errorSummaryMessage = ".govuk-error-summary__list > li > a"
     val error = ".govuk-error-message"
     val backLink = ".govuk-back-link"

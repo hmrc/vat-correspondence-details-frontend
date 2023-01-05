@@ -39,7 +39,7 @@ class ConfirmRemoveWebsiteViewSpec extends ViewBaseSpec with Matchers {
     val noOption = "#label-no"
     val errorHeading = ".govuk-error-summary h2"
     val error = ".govuk-error-message"
-    val errorList = "#content > div > div > ul > li > a"
+    val errorList = ".govuk-error-summary__body > ul > li > a"
   }
 
 
