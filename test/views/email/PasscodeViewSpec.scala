@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ class PasscodeViewSpec extends ViewBaseSpec with Matchers {
     "have an error summary" which {
 
       "has the correct heading" in {
-        elementText("#error-summary-title") shouldBe "There is a problem"
+        elementText(".govuk-error-summary__title") shouldBe "There is a problem"
       }
 
       "has the correct error message" in {

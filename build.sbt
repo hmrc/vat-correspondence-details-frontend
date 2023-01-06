@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-correspondence-details-frontend"
 val bootstrapPlayVersion       = "7.12.0"
-val playFrontendHmrc           = "3.34.0-play-28"
+val playFrontendHmrc           = "5.4.0-play-28"
 val jsoupVersion               = "1.14.1"
 val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "5.2.0"

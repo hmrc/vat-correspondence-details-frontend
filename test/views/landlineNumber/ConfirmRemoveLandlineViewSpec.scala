@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class ConfirmRemoveLandlineViewSpec extends ViewBaseSpec with Matchers {
     val noLabel = "#label-no"
     val button = ".govuk-button"
     val errorText = "#yes_no-error"
-    val errorSummaryTitle = "#error-summary-title"
+    val errorSummaryTitle = ".govuk-error-summary__title"
     val errorLink = ".error-link"
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class CaptureEmailViewSpec extends ViewBaseSpec with Matchers {
     val form = "form"
     val emailField = "#email"
     val continueButton = ".govuk-button"
-    val errorSummary = "#error-summary-title"
+    val errorSummary = ".govuk-error-summary__title"
     val removeEmail = "summary"
     val removeEmailDesc = "#content > details > div"
     val removeEmailLink = "#content > details > div > a"
