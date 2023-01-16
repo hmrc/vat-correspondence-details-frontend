@@ -92,7 +92,7 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
           case Some(true) => Redirect(routes.VerifyPasscodeController.emailShow)
           case Some(false) =>
             logger.debug(
-            "[VerifyPasscodeController][emailSendVerification] - " +
+              "[VerifyPasscodeController][emailSendVerification] - " +
               "Unable to send email verification request. Service responded with 'already verified'"
             )
             Redirect(routes.VerifyPasscodeController.updateEmailAddress)
@@ -125,12 +125,13 @@ class VerifyPasscodeController @Inject()(emailVerificationService: EmailVerifica
                 .addingToSession(emailChangeSuccessful -> "true", inFlightContactDetailsChangeKey -> "true")
 
             case Left(ErrorModel(CONFLICT, _)) =>
-              logger.warn("[ConfirmEmailController][updateEmailAddress] - There is an email address update request " +
+              logger.warn("[VerifyPasscodeController][updateEmailAddress] - There is an email address update request " +
                 "already in progress. Redirecting user to manage-vat overview page.")
               Redirect(appConfig.manageVatSubscriptionServicePath)
                 .addingToSession(inFlightContactDetailsChangeKey -> "true")
 
             case Left(_) =>
+              logger.warn("[VerifyPasscodeController][updateEmailAddress] - Unexpected error received from customer info API")
               errorHandler.showInternalServerError
           }
 
