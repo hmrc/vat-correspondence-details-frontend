@@ -42,9 +42,7 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def emailSendVerification: Action[AnyContent] = blockAgentPredicate.async {
-
     Future.successful(Redirect(routes.VerifyPasscodeController.emailSendVerification))
-
   }
 
   def btaVerifyEmailRedirect: Action[AnyContent] = blockAgentPredicate.async {
@@ -56,19 +54,21 @@ class VerifyEmailController @Inject()(val emailVerificationService: EmailVerific
         vatSubscriptionService.getCustomerInfo(user.vrn) map {
           case Right(details) => (details.approvedEmail, details.ppob.contactDetails.flatMap(_.emailVerified)) match {
             case (Some(_), Some(true)) =>
-              logger.debug("[EmailVerificationController][btaVerifyEmailRedirect] - emailVerified has come back as true. Returning user to BTA")
+              logger.debug("[VerifyEmailController][btaVerifyEmailRedirect] - emailVerified has come back as true. Returning user to BTA")
               Redirect(appConfig.btaAccountDetailsUrl)
             case (Some(email), _)  => Redirect(routes.VerifyPasscodeController.emailSendVerification)
               .addingToSession(SessionKeys.prepopulationEmailKey -> email)
               .addingToSession(SessionKeys.inFlightContactDetailsChangeKey -> s"${details.pendingPpobChanges}")
             case (_, _) =>
-              logger.debug("[EmailVerificationController][btaVerifyEmailRedirect] - user does not have an email. Redirecting to capture email page")
+              logger.debug("[VerifyEmailController][btaVerifyEmailRedirect] - user does not have an email. Redirecting to capture email page")
               Redirect(routes.CaptureEmailController.show)
           }
-          case _ => errorHandler.showInternalServerError
+          case _ =>
+            logger.warn("[VerifyEmailController][btaVerifyEmailRedirect] - Unexpected error received from customer info API")
+            errorHandler.showInternalServerError
         }
       } else {
-        logger.debug("[EmailVerificationController][btaVerifyEmailRedirect] - user has not come from BTA account details page. Throwing ISE")
+        logger.warn("[VerifyEmailController][btaVerifyEmailRedirect] - user has not come from BTA account details page. Throwing ISE")
         Future.successful(errorHandler.showInternalServerError)
       }
 
