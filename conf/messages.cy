@@ -57,7 +57,7 @@ agentJourneyDisabled.summary = Ni all asiantau newid cyfeiriad e-bost eu cleient
 agentJourneyDisabled.instructions = Os oes angen i’ch cleient newid ei gyfeiriad e-bost, bydd angen iddo fewngofnodi gan ddefnyddio’i fanylion ei hun ar gyfer Porth y Llywodraeth.
 
 hmrcPrivacyNotice.details = Mae manylion llawn ynghylch sut yr ydym yn defnyddio eich gwybodaeth ar gael yn
-hmrcPrivacyNotice.link = Hysbysiad Preifatrwydd CThEM (yn agor ffenestr neu dab newydd)
+hmrcPrivacyNotice.link = Hysbysiad Preifatrwydd CThEF (yn agor ffenestr neu dab newydd)
 
 captureEmail.title = Beth yw’r cyfeiriad e-bost?
 captureEmail.hint = Byddwn yn defnyddio hwn i anfon diweddariadau ynglŷn â’ch cyfrif TAW atoch, os ydych wedi cytuno i gael eich cysylltu drwy e-bost.
@@ -68,7 +68,7 @@ captureEmail.error.notChanged = Nodwch gyfeiriad e-bost gwahanol
 captureEmail.removeEmail.title = Hoffwn ddileu fy nghyfeiriad e-bost
 captureEmail.removeEmail.contactUs = Cysylltwch â ni (yn agor tab newydd)
 captureEmail.removeEmail.description = i ddileu eich cyfeiriad e-bost.
-captureEmail.onlyAddEmail = Dylech ond lenwi’r maes hwn os yw CThEM wedi rhoi gwybod i chi am wneud hynny.
+captureEmail.onlyAddEmail = Dylech ond lenwi’r maes hwn os yw CThEF wedi rhoi gwybod i chi am wneud hynny.
 
 captureWebsite.title = Beth yw cyfeiriad y wefan?
 captureWebsite.hint = Er enghraifft, www.abc.co…
@@ -127,8 +127,8 @@ letterPreference.yes = Iawn, anfonwch lythyrau i {0}
 letterPreference.no = Na, hoffwn barhau i gael e-byst
 letterPreference.error = Dewiswch ‘Iawn’ os hoffech gael gohebiaeth drwy lythyr
 
-changeSuccess.helpOne.emailVerified = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith gyda diweddariad, neu gallwch wirio’ch negeseuon diogel oddi wrth CThEM.
-changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEM i gael diweddariad.
+changeSuccess.helpOne.emailVerified = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith gyda diweddariad, neu gallwch wirio’ch negeseuon diogel oddi wrth CThEF.
+changeSuccess.helpOne.digital = Byddwn yn anfon e-bost atoch cyn pen 2 ddiwrnod gwaith i roi diweddariad, wedi’i ddilyn gan lythyr i’ch prif fan busnes. Gallwch hefyd wirio’ch negeseuon diogel oddi wrth CThEF i gael diweddariad.
 changeSuccess.helpOne.paper = Byddwn yn anfon llythyr i’ch prif fan busnes i roi diweddariad cyn pen 15 diwrnod gwaith.
 changeSuccess.helpTwo = Sicrhewch fod eich manylion cyswllt wedi’u diweddaru.
 changeSuccess.agent.email.partOne = Byddwn yn anfon e-bost i
@@ -140,7 +140,7 @@ changeEmailSuccess.helpThree = Mae angen i chi ddiweddaru’ch cyfeiriad e-bost 
 inFlightChange.title = Mae newid ar y gweill eisoes
 inFlightChange.recentRequest = Rydym yn delio â chais diweddar i newid rhywbeth ar y cyfrif TAW hwn.
 inFlightChange.untilWeAccept = Ni allwch wneud newid pellach tan i ni dderbyn y cais hwnnw.
-inFlightChange.acceptOrReject = Mae CThEM yn derbyn neu’n gwrthod newidiadau i gyfrifon TAW cyn pen 2 ddiwrnod gwaith.
+inFlightChange.acceptOrReject = Mae CThEF yn derbyn neu’n gwrthod newidiadau i gyfrifon TAW cyn pen 2 ddiwrnod gwaith.
 inFlightChange.backToAccountDetails = Yn ôl i fanylion y cyfrif
 
 emailToUse.title = A ydych am i ni ddefnyddio’r cyfeiriad e-bost hwn er mwyn cysylltu â chi ynghylch TAW?
