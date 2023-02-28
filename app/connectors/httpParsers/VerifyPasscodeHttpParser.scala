@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.ResponseHttpParser.HttpPostResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import models.errors.ErrorModel
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -32,8 +32,8 @@ object VerifyPasscodeHttpParser extends LoggerUtil {
   object PasscodeNotFound extends VerifyPasscodeRequest
   object IncorrectPasscode extends VerifyPasscodeRequest
 
-  implicit object VerifyPasscodeHttpReads extends HttpReads[HttpPostResult[VerifyPasscodeRequest]] {
-    override def read(method: String, url: String, response: HttpResponse): HttpPostResult[VerifyPasscodeRequest] =
+  implicit object VerifyPasscodeHttpReads extends HttpReads[HttpResult[VerifyPasscodeRequest]] {
+    override def read(method: String, url: String, response: HttpResponse): HttpResult[VerifyPasscodeRequest] =
       response.status match {
         case CREATED =>
           logger.debug("[VerifyPasscodeHttpParser][VerifyPasscodeHttpReads][read] - Email successfully verified")

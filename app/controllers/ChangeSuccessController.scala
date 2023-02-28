@@ -18,7 +18,7 @@ package controllers
 
 import common.SessionKeys._
 import config.AppConfig
-import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import javax.inject.{Inject, Singleton}
@@ -81,7 +81,7 @@ class ChangeSuccessController @Inject()(vatSubscriptionService: VatSubscriptionS
 
   private[controllers] def constructViewModel(agentEmail: Option[String],
                                               changeKey: String,
-                                              customerDetails: HttpGetResult[CustomerInformation]): ChangeSuccessViewModel = {
+                                              customerDetails: HttpResult[CustomerInformation]): ChangeSuccessViewModel = {
     val preference: Option[String] = customerDetails.fold(_ => None, _.commsPreference)
     val entityName = customerDetails.fold(_ => None, _.entityName)
     val emailVerified = customerDetails.fold(_ => None, _.ppob.contactDetails.flatMap(_.emailVerified))

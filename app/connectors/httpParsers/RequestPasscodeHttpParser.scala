@@ -17,7 +17,7 @@
 package connectors.httpParsers
 
 
-import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import models.errors.ErrorModel
 import utils.LoggerUtil
 import play.api.http.Status.{CONFLICT, CREATED}
@@ -25,8 +25,8 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object RequestPasscodeHttpParser extends LoggerUtil {
 
-  implicit object RequestPasscodeHttpReads extends HttpReads[HttpGetResult[EmailVerificationPasscodeRequest]] {
-    override def read(method: String, url: String, response: HttpResponse): HttpGetResult[EmailVerificationPasscodeRequest] =
+  implicit object RequestPasscodeHttpReads extends HttpReads[HttpResult[EmailVerificationPasscodeRequest]] {
+    override def read(method: String, url: String, response: HttpResponse): HttpResult[EmailVerificationPasscodeRequest] =
       response.status match {
         case CREATED =>
           logger.debug("[RequestPasscodeHttpParser][RequestPasscodeHttpReads][read] - Email passcode request sent successfully")

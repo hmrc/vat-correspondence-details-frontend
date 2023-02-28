@@ -20,7 +20,7 @@ import assets.BaseTestConstants._
 import assets.CustomerInfoConstants.{customerInfoEmailUnverified, fullCustomerInfoModel}
 import audit.models.DigitalContactPreferenceAuditModel
 import common.SessionKeys
-import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import controllers.ControllerBaseSpec
 import forms.YesNoForm.yesNo
 import models.contactPreferences.ContactPreference
@@ -38,7 +38,7 @@ import scala.concurrent.Future
 
 class EmailToUseControllerSpec extends ControllerBaseSpec {
 
-  def mockVatSubscriptionCall(result: HttpGetResult[CustomerInformation] = Right(fullCustomerInfoModel)): Unit =
+  def mockVatSubscriptionCall(result: HttpResult[CustomerInformation] = Right(fullCustomerInfoModel)): Unit =
     mockGetCustomerInfo("999999999")(result)
 
   val testValidationEmail: String = "validation@example.com"

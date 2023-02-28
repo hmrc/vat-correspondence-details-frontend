@@ -25,7 +25,7 @@ import common.EmailVerificationKeys._
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.CreateEmailVerificationRequestResponse
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateResponse
 import connectors.httpParsers.RequestPasscodeHttpParser.EmailVerificationPasscodeRequest
-import connectors.httpParsers.ResponseHttpParser.HttpPostResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import connectors.httpParsers.VerifyPasscodeHttpParser.VerifyPasscodeRequest
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,7 +61,7 @@ class EmailVerificationConnector @Inject()(http: HttpClient,
   private val requestPasscodeUrl: String = s"${appConfig.emailVerificationBaseUrl}/email-verification/request-passcode"
 
   def requestEmailPasscode(emailAddress: String, lang: String)
-                          (implicit hc: HeaderCarrier): Future[HttpPostResult[EmailVerificationPasscodeRequest]] = {
+                          (implicit hc: HeaderCarrier): Future[HttpResult[EmailVerificationPasscodeRequest]] = {
     val jsonBody =
       Json.obj(
         "email" -> emailAddress,
@@ -69,18 +69,18 @@ class EmailVerificationConnector @Inject()(http: HttpClient,
         "lang" -> lang
       )
 
-    http.POST[JsObject, HttpPostResult[EmailVerificationPasscodeRequest]](requestPasscodeUrl, jsonBody)
+    http.POST[JsObject, HttpResult[EmailVerificationPasscodeRequest]](requestPasscodeUrl, jsonBody)
   }
 
   private val verifyPasscodeUrl: String = s"${appConfig.emailVerificationBaseUrl}/email-verification/verify-passcode"
 
   def verifyPasscode(emailAddress: String, passcode: String)
-                    (implicit hc: HeaderCarrier): Future[HttpPostResult[VerifyPasscodeRequest]] = {
+                    (implicit hc: HeaderCarrier): Future[HttpResult[VerifyPasscodeRequest]] = {
     val jsonBody = Json.obj(
       "email" -> emailAddress,
       "passcode" -> passcode
     )
 
-    http.POST[JsObject, HttpPostResult[VerifyPasscodeRequest]](verifyPasscodeUrl, jsonBody)
+    http.POST[JsObject, HttpResult[VerifyPasscodeRequest]](verifyPasscodeUrl, jsonBody)
   }
 }
