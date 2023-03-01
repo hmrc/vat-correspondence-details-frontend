@@ -19,8 +19,8 @@ import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 
 val appName = "vat-correspondence-details-frontend"
-val bootstrapPlayVersion       = "7.13.0"
-val playFrontendHmrc           = "6.3.0-play-28"
+val bootstrapPlayVersion       = "7.14.0"
+val playFrontendHmrc           = "6.7.0-play-28"
 val jsoupVersion               = "1.14.1"
 val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "5.2.0"
