@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser._
 import connectors.httpParsers.GetEmailVerificationStateHttpParser._
 import connectors.httpParsers.RequestPasscodeHttpParser._
-import connectors.httpParsers.ResponseHttpParser.HttpPostResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import connectors.httpParsers.VerifyPasscodeHttpParser._
 import helpers.IntegrationBaseSpec
 import models.errors.ErrorModel
@@ -138,7 +138,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec with Matchers 
 
         setupStubs()
         val expected = Right(EmailVerificationPasscodeRequestSent)
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
+        val result: HttpResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
 
         result shouldBe expected
       }
@@ -151,7 +151,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec with Matchers 
 
         setupStubs()
         val expected = Right(EmailIsAlreadyVerified)
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
+        val result: HttpResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
 
         result shouldBe expected
       }
@@ -167,7 +167,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec with Matchers 
           INTERNAL_SERVER_ERROR,
           EmailVerificationStub.internalServerErrorJson.toString
         ))
-        val result: HttpPostResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
+        val result: HttpResult[EmailVerificationPasscodeRequest] = await(connector.requestEmailPasscode(testEmail, "en"))
 
         result shouldBe expected
       }
@@ -183,7 +183,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec with Matchers 
 
         setupStubs()
         val expected = Right(SuccessfullyVerified)
-        val result: HttpPostResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
+        val result: HttpResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
 
         result shouldBe expected
       }
@@ -196,7 +196,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec with Matchers 
 
         setupStubs()
         val expected = Right(PasscodeNotFound)
-        val result: HttpPostResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
+        val result: HttpResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
 
         result shouldBe expected
       }
@@ -212,7 +212,7 @@ class EmailVerificationConnectorISpec extends IntegrationBaseSpec with Matchers 
           INTERNAL_SERVER_ERROR,
           EmailVerificationStub.internalServerErrorJson.toString
         ))
-        val result: HttpPostResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
+        val result: HttpResult[VerifyPasscodeRequest] = await(connector.verifyPasscode(testEmail, "ABCDEF"))
 
         result shouldBe expected
       }

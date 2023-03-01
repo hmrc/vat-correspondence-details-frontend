@@ -19,7 +19,7 @@ package services
 import config.AppConfig
 import connectors.VatSubscriptionConnector
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import connectors.httpParsers.ResponseHttpParser.HttpPutResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import javax.inject.{Inject, Singleton}
 import models.User
@@ -80,7 +80,7 @@ class VatSubscriptionService @Inject()(connector: VatSubscriptionConnector, emai
     }
 
   def updateContactPrefEmail(vrn: String, email: String)
-                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpPutResult[UpdateEmailSuccess]] =
+                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[UpdateEmailSuccess]] =
     connector.updateEmail(vrn, email)
 
   def updateWebsite(vrn: String, website: String)

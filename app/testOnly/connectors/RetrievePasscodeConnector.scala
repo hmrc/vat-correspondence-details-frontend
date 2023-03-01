@@ -17,7 +17,7 @@
 package testOnly.connectors
 
 import config.AppConfig
-import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import javax.inject.Inject
 import models.errors.ErrorModel
 import play.api.http.Status
@@ -31,8 +31,8 @@ class RetrievePasscodeConnector @Inject()(val http: HttpClient,
 
   val passcodeUrl: String = config.emailVerificationBaseUrl + "/test-only/passcodes"
 
-  implicit object Reads extends HttpReads[HttpGetResult[Passcode]] {
-    override def read (method: String, url: String, response: HttpResponse): HttpGetResult[Passcode] = {
+  implicit object Reads extends HttpReads[HttpResult[Passcode]] {
+    override def read (method: String, url: String, response: HttpResponse): HttpResult[Passcode] = {
       response.status match {
         case Status.OK => Right(response.json.as[Passcode])
         case status => logger.warn("[RetrievePasscodeConnector][read] - Failed to retrieve passcode. " +
@@ -41,6 +41,6 @@ class RetrievePasscodeConnector @Inject()(val http: HttpClient,
       }
     }
   }
-  def getPasscode(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[Passcode]] = http.GET(passcodeUrl)
+  def getPasscode(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[Passcode]] = http.GET(passcodeUrl)
 }
 

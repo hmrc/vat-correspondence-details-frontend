@@ -21,7 +21,7 @@ import connectors.EmailVerificationConnector
 import connectors.httpParsers.CreateEmailVerificationRequestHttpParser.{EmailAlreadyVerified, EmailVerificationRequestSent}
 import connectors.httpParsers.GetEmailVerificationStateHttpParser.{EmailNotVerified, EmailVerified}
 import connectors.httpParsers.RequestPasscodeHttpParser.{EmailIsAlreadyVerified, EmailVerificationPasscodeRequestSent}
-import connectors.httpParsers.ResponseHttpParser.HttpPostResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import connectors.httpParsers.VerifyPasscodeHttpParser.VerifyPasscodeRequest
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -73,6 +73,6 @@ class EmailVerificationService @Inject()(emailVerificationConnector: EmailVerifi
     }
 
   def verifyPasscode(email: String, passcode: String)
-                    (implicit hc: HeaderCarrier): Future[HttpPostResult[VerifyPasscodeRequest]] =
+                    (implicit hc: HeaderCarrier): Future[HttpResult[VerifyPasscodeRequest]] =
     emailVerificationConnector.verifyPasscode(email, passcode)
 }

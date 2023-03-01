@@ -16,7 +16,7 @@
 
 package mocks
 
-import connectors.httpParsers.ResponseHttpParser.HttpGetResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import connectors.httpParsers.VerifyPasscodeHttpParser.VerifyPasscodeRequest
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
@@ -46,7 +46,7 @@ trait MockEmailVerificationService extends MockitoSugar with BeforeAndAfterEach 
     when(mockEmailVerificationService
       .createEmailVerificationRequest(any(), any())(any[HeaderCarrier])) thenReturn Future.successful(response)
 
-  def mockVerifyPasscodeRequest(response: HttpGetResult[VerifyPasscodeRequest]): Unit =
+  def mockVerifyPasscodeRequest(response: HttpResult[VerifyPasscodeRequest]): Unit =
     when(mockEmailVerificationService
       .verifyPasscode(any(), any())(any[HeaderCarrier])) thenReturn Future.successful(response)
 

@@ -18,7 +18,7 @@ package connectors
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
-import connectors.httpParsers.ResponseHttpParser.HttpPutResult
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import helpers.IntegrationBaseSpec
 import models.User
@@ -111,7 +111,7 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec with Matchers {
         setupStubs()
 
         val expected = Right(UpdateEmailSuccess("success"))
-        val result: HttpPutResult[UpdateEmailSuccess] = await(connector.updateEmail("123456789", email))
+        val result: HttpResult[UpdateEmailSuccess] = await(connector.updateEmail("123456789", email))
 
         result shouldBe expected
       }
@@ -127,7 +127,7 @@ class VatSubscriptionConnectorISpec extends IntegrationBaseSpec with Matchers {
         setupStubs()
 
         val expected = Left(ErrorModel(INTERNAL_SERVER_ERROR, Json.stringify(Json.obj("ha" -> "noway"))))
-        val result: HttpPutResult[UpdateEmailSuccess] = await(connector.updateEmail("123456789", email))
+        val result: HttpResult[UpdateEmailSuccess] = await(connector.updateEmail("123456789", email))
 
         result shouldBe expected
       }

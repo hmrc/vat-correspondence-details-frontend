@@ -18,7 +18,7 @@ package connectors
 
 import common.SessionKeys
 import config.AppConfig
-import connectors.httpParsers.ResponseHttpParser.{HttpGetResult, HttpPutResult}
+import connectors.httpParsers.ResponseHttpParser.HttpResult
 import javax.inject.{Inject, Singleton}
 import models.User
 import models.contactPreferences.ContactPreference
@@ -45,11 +45,11 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
     s"${appConfig.vatSubscriptionHost}/vat-subscription/$vrn/contact-preference"
 
   def getCustomerInfo(vrn: String)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[CustomerInformation]] = {
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[CustomerInformation]] = {
 
     import connectors.httpParsers.GetCustomerInfoHttpParser.CustomerInfoReads
 
-    http.GET[HttpGetResult[CustomerInformation]](getCustomerInfoUrl(vrn)).map {
+    http.GET[HttpResult[CustomerInformation]](getCustomerInfoUrl(vrn)).map {
       case customerInfo@Right(_) =>
         logger.debug(s"[VatSubscriptionConnector][getCustomerInfo] successfully received customer info response")
         customerInfo
@@ -62,7 +62,7 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
   def updatePPOB(vrn: String, ppob: PPOB)
                 (implicit hc: HeaderCarrier,
                  ec: ExecutionContext,
-                 user: User[_]): Future[HttpPutResult[UpdatePPOBSuccess]] = {
+                 user: User[_]): Future[HttpResult[UpdatePPOBSuccess]] = {
 
     import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads
 
@@ -70,7 +70,7 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
       ppob.address, ppob.contactDetails, ppob.websiteAddress, user.session.get(SessionKeys.mtdVatvcVerifiedAgentEmail)
     )
 
-    http.PUT[UpdatePPOB, HttpPutResult[UpdatePPOBSuccess]](updatePPOBUrl(vrn), updateModel).map {
+    http.PUT[UpdatePPOB, HttpResult[UpdatePPOBSuccess]](updatePPOBUrl(vrn), updateModel).map {
       case result@Right(_) =>
         result
       case httpError@Left(error) =>
@@ -79,13 +79,13 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
     }
   }
 
-  def updateEmail(vrn: String, email: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpPutResult[UpdateEmailSuccess]] = {
+  def updateEmail(vrn: String, email: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResult[UpdateEmailSuccess]] = {
 
     import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailReads
 
     val updateModel = UpdateEmailAddress(email)
 
-    http.PUT[UpdateEmailAddress, HttpPutResult[UpdateEmailSuccess]](updateEmailUrl(vrn), updateModel).map {
+    http.PUT[UpdateEmailAddress, HttpResult[UpdateEmailSuccess]](updateEmailUrl(vrn), updateModel).map {
       case result@Right(_) =>
         result
       case httpError@Left(error) =>
@@ -96,13 +96,13 @@ class VatSubscriptionConnector @Inject()(http: HttpClient,
 
   def updateContactPreference(vrn: String, contactPreference: String)
                              (implicit hc: HeaderCarrier,
-                              ec: ExecutionContext): Future[HttpPutResult[UpdatePPOBSuccess]] = {
+                              ec: ExecutionContext): Future[HttpResult[UpdatePPOBSuccess]] = {
 
     import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBReads
 
     val updateModel = ContactPreference(contactPreference)
 
-    http.PUT[ContactPreference, HttpPutResult[UpdatePPOBSuccess]](updateContactPreferenceUrl(vrn), updateModel).map {
+    http.PUT[ContactPreference, HttpResult[UpdatePPOBSuccess]](updateContactPreferenceUrl(vrn), updateModel).map {
       case result@Right(_) =>
         result
       case httpError@Left(error) =>
