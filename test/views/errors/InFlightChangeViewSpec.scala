@@ -36,40 +36,64 @@ class InFlightChangeViewSpec extends ViewBaseSpec with Matchers {
 
   "The Inflight change pending view" when {
 
-    lazy val view = injectedView()(getRequest, messages, mockConfig)
-    lazy implicit val document: Document = Jsoup.parse(view.body)
+    "the user is authenticated" should {
 
-    "have the correct title" in {
-      document.title shouldBe "There is already a change pending - VAT - GOV.UK"
-    }
+      lazy val view = injectedView()(getRequest, user, messages, mockConfig)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
 
-    "have the correct heading" in {
-      elementText(Selectors.heading) shouldBe "There is already a change pending"
-    }
-
-    "have the correct information in the first paragraph" in {
-      elementText(Selectors.paragraphOne) shouldBe
-        "We are dealing with a recent request to change something on this VAT account."
-    }
-
-    "have the correct information in the second paragraph" in {
-      elementText(Selectors.paragraphTwo) shouldBe
-        "Until we accept that request, you cannot make a further change."
-    }
-
-    "have the correct information in the third paragraph" in {
-      elementText(Selectors.paragraphThree) shouldBe
-        "HMRC accepts or rejects changes to VAT accounts within 2 working days."
-    }
-
-    "have a link" which {
-
-      "has the correct text" in {
-        elementText(Selectors.backToAccountDetails) shouldBe "Back to account details"
+      "have the correct title" in {
+        document.title shouldBe "There is already a change pending - Manage your VAT account - GOV.UK"
       }
 
-      "has the correct href" in {
-        element(Selectors.backToAccountDetails).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
+      "have the correct heading" in {
+        elementText(Selectors.heading) shouldBe "There is already a change pending"
+      }
+
+      "have the correct information in the first paragraph" in {
+        elementText(Selectors.paragraphOne) shouldBe
+          "We are dealing with a recent request to change something on this VAT account."
+      }
+
+      "have the correct information in the second paragraph" in {
+        elementText(Selectors.paragraphTwo) shouldBe
+          "Until we accept that request, you cannot make a further change."
+      }
+
+      "have the correct information in the third paragraph" in {
+        elementText(Selectors.paragraphThree) shouldBe
+          "HMRC accepts or rejects changes to VAT accounts within 2 working days."
+      }
+
+      "have a link" which {
+
+        "has the correct text" in {
+          elementText(Selectors.backToAccountDetails) shouldBe "Back to account details"
+        }
+
+        "has the correct href" in {
+          element(Selectors.backToAccountDetails).attr("href") shouldBe mockConfig.btaAccountDetailsUrl
+        }
+      }
+    }
+
+    "the user is an agent" should {
+
+      lazy val view = injectedView()(getRequest, agent, messages, mockConfig)
+      lazy implicit val document: Document = Jsoup.parse(view.body)
+
+      "have the correct title" in {
+        document.title shouldBe "There is already a change pending - Your client’s VAT details - GOV.UK"
+      }
+
+      "has a link" which {
+
+        "has the correct text" in {
+          elementText(Selectors.backToAccountDetails) shouldBe "Back to account details"
+        }
+
+        "has the correct href" in {
+          element(Selectors.backToAccountDetails).attr("href") shouldBe mockConfig.manageVatSubscriptionServicePath
+        }
       }
     }
   }
