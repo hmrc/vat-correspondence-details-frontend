@@ -16,7 +16,7 @@
 
 @this(mainTemplate: MainTemplate)
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@()(implicit request: Request[_], user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @mainTemplate(pageTitle = messages("inFlightChange.title")) {
 
@@ -25,6 +25,6 @@
   <p class="govuk-body">@messages("inFlightChange.untilWeAccept")</p>
   <p class="govuk-body">@messages("inFlightChange.acceptOrReject")</p>
   <p class="govuk-body">
-    <a class="govuk-link" href="@appConfig.btaAccountDetailsUrl">@messages("inFlightChange.backToAccountDetails")</a>
+    <a class="govuk-link" href="@appConfig.dynamicJourneyEntryUrl(user.isAgent)">@messages("inFlightChange.backToAccountDetails")</a>
   </p>
 }
