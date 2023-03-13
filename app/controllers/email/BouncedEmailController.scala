@@ -26,7 +26,7 @@ import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.BouncedEmailForm
 import play.api.mvc.Request
 import play.mvc.Http.HeaderNames
-import models.customerInformation.{Add, Verify, VerifyAdd}
+import models.customerInformation.{Verify, VerifyAdd}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import services.VatSubscriptionService
@@ -67,8 +67,11 @@ class BouncedEmailController @Inject()(val errorHandler: ErrorHandler,
         (email, emailVerified) match {
           case (Some(_), Some(true)) => Redirect(appConfig.vatOverviewUrl)
           case (Some(email), _) if !ppobPending => Ok(bouncedEmailView(form, email, manageVatReferrerCheck))
-            .addingToSession(SessionKeys.validationEmailKey -> email, manageVatRequestToFixEmail -> manageVatReferrerCheck.toString,
-              SessionKeys.inFlightContactDetailsChangeKey -> "false")
+            .addingToSession(
+              SessionKeys.validationEmailKey -> email,
+              manageVatRequestToFixEmail -> manageVatReferrerCheck.toString,
+              SessionKeys.inFlightContactDetailsChangeKey -> "false"
+            )
           case _ => Redirect(appConfig.vatOverviewUrl)
         }
       case _ => errorHandler.showInternalServerError
@@ -83,7 +86,7 @@ class BouncedEmailController @Inject()(val errorHandler: ErrorHandler,
           {
             case Verify => Redirect(routes.VerifyPasscodeController.emailSendVerification)
               .addingToSession(prepopulationEmailKey -> email)
-            case Add => Redirect(routes.CaptureEmailController.show)
+            case _ => Redirect(routes.CaptureEmailController.show)
           }
         )
       case None => errorHandler.showInternalServerError

@@ -38,7 +38,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec with Matchers {
 
     "the user is authenticated" should {
 
-      lazy val view = injectedView()(getRequest, user, messages, mockConfig)
+      lazy val view = injectedView()(user, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {
@@ -78,7 +78,7 @@ class InFlightChangeViewSpec extends ViewBaseSpec with Matchers {
 
     "the user is an agent" should {
 
-      lazy val view = injectedView()(getRequest, agent, messages, mockConfig)
+      lazy val view = injectedView()(agent, messages, mockConfig)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct title" in {

@@ -16,7 +16,7 @@
 
 @this(mainTemplate: MainTemplate)
 
-@()(implicit request: Request[_], user: User[_], messages: Messages, appConfig: config.AppConfig)
+@()(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
 @mainTemplate(pageTitle = messages("inFlightChange.title")) {
 
