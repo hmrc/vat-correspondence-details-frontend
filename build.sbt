@@ -97,6 +97,7 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged := true)
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+  .settings(scalacOptions ++= Seq("-Wconf:cat=unused-imports&site=.*views.html.*:s"))
   .settings(
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
