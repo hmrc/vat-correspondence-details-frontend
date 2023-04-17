@@ -19,16 +19,13 @@ package audit.models
 import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
-
 case class ChangedEmailAddressAuditModel(currentEmailAddress: Option[String],
                                          requestedEmailAddress: String,
-                                         vrn: String,
-                                         isAgent: Boolean,
-                                         arn: Option[String]) extends AuditModel {
+                                         vrn: String) extends AuditModel {
 
-  override val auditType: String = "ChangeEmailAddress"
+  override val auditType: String = "ChangeEmailAddressEnd"
   override val detail: JsValue = Json.toJson(this)
-  override val transactionName: String = "change-vat-email-address"
+  override val transactionName: String = "confirm-vat-email-address"
 
 }
 
@@ -36,8 +33,7 @@ object ChangedEmailAddressAuditModel extends JsonObjectSugar {
 
   implicit val writes: Writes[ChangedEmailAddressAuditModel] = Writes { model =>
     jsonObjNoNulls(
-      "isAgent" -> model.isAgent,
-      "arn" -> model.arn,
+      "isAgent" -> false,
       "vrn" -> model.vrn,
       "currentEmailAddress" -> model.currentEmailAddress,
       "requestedEmailAddress" -> model.requestedEmailAddress

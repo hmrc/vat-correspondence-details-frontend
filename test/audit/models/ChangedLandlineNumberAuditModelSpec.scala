@@ -31,7 +31,6 @@ class ChangedLandlineNumberAuditModelSpec extends AnyWordSpecLike with Matchers 
         Some(testValidationLandline),
         testPrepopLandline,
         vrn,
-        isAgent = false,
         None
       )
 
@@ -53,7 +52,6 @@ class ChangedLandlineNumberAuditModelSpec extends AnyWordSpecLike with Matchers 
         Some(testValidationLandline),
         "",
         vrn,
-        isAgent = true,
         Some(arn)
       )
 
@@ -76,7 +74,6 @@ class ChangedLandlineNumberAuditModelSpec extends AnyWordSpecLike with Matchers 
         None,
         testPrepopLandline,
         vrn,
-        isAgent = false,
         None
       )
 

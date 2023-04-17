@@ -23,7 +23,6 @@ import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
@@ -32,8 +31,7 @@ import views.html.templates.CheckYourAnswersView
 
 import scala.concurrent.Future
 
-
-class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
+class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec {
 
   val controller = new ConfirmMobileNumberController(
     mockErrorHandler,
@@ -162,9 +160,8 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
 
           "audit the change mobile number event" in {
             verifyExtendedAudit(
-              ChangedMobileNumberAuditModel(Some(testValidationMobile), testPrepopMobile, vrn, isAgent = false, None)
+              ChangedMobileNumberAuditModel(Some(testValidationMobile), testPrepopMobile, vrn, None)
             )
-            reset(mockAuditingService)
           }
 
           "redirect to the success page" in {
@@ -204,8 +201,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change mobile number event" in {
-            verifyExtendedAudit(ChangedMobileNumberAuditModel(None, testPrepopMobile, vrn, isAgent = false, None))
-            reset(mockAuditingService)
+            verifyExtendedAudit(ChangedMobileNumberAuditModel(None, testPrepopMobile, vrn, None))
           }
 
           "redirect to the success page" in {
@@ -245,8 +241,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change mobile number event" in {
-            verifyExtendedAudit(ChangedMobileNumberAuditModel(None, testPrepopMobile, vrn, isAgent = false, None))
-            reset(mockAuditingService)
+            verifyExtendedAudit(ChangedMobileNumberAuditModel(None, testPrepopMobile, vrn, None))
           }
 
           "redirect to the success page" in {
@@ -402,8 +397,7 @@ class ConfirmMobileNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change mobile number event" in {
-            verifyExtendedAudit(ChangedMobileNumberAuditModel(Some(testValidationMobile), "", vrn, isAgent = false, None))
-            reset(mockAuditingService)
+            verifyExtendedAudit(ChangedMobileNumberAuditModel(Some(testValidationMobile), "", vrn, None))
           }
 
           "add the successful change key to the session" in {

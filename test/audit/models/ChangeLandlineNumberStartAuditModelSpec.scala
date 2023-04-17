@@ -16,20 +16,19 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{arn, testPrepopMobile, testValidationMobile, vrn}
+import assets.BaseTestConstants.{arn, testValidationLandline, vrn}
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsValue, Json}
-import utils.TestUtil
 
-class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
+class ChangeLandlineNumberStartAuditModelSpec extends AnyWordSpecLike with Matchers {
 
-  "ChangedMobileNumberAuditModel" when {
+  "ChangeLandlineNumberStartAuditModel" when {
 
     "the user is not an agent" should {
 
-      val model = ChangedMobileNumberAuditModel(
-        Some(testValidationMobile),
-        testPrepopMobile,
+      val model = ChangeLandlineNumberStartAuditModel(
+        Some(testValidationLandline),
         vrn,
         None
       )
@@ -37,8 +36,7 @@ class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
       val expectedJson: JsValue = Json.obj(
         "isAgent" -> false,
         "vrn" -> vrn,
-        "currentMobileNumber" -> testValidationMobile,
-        "requestedMobileNumber" -> testPrepopMobile
+        "currentLandlineNumber" -> testValidationLandline
       )
 
       "generate the correct audit detail" in {
@@ -48,9 +46,8 @@ class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
 
     "the user is an agent" should {
 
-      val model = ChangedMobileNumberAuditModel(
-        Some(testValidationMobile),
-        testPrepopMobile,
+      val model = ChangeLandlineNumberStartAuditModel(
+        Some(testValidationLandline),
         vrn,
         Some(arn)
       )
@@ -59,8 +56,7 @@ class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
         "isAgent" -> true,
         "arn" -> arn,
         "vrn" -> vrn,
-        "currentMobileNumber" -> testValidationMobile,
-        "requestedMobileNumber" -> testPrepopMobile
+        "currentLandlineNumber" -> testValidationLandline
       )
 
       "generate the correct audit detail" in {
@@ -68,19 +64,17 @@ class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
       }
     }
 
-    "the user has no existing mobile number" should {
+    "the user has no existing landline number" should {
 
-      val model = ChangedMobileNumberAuditModel(
+      val model = ChangeLandlineNumberStartAuditModel(
         None,
-        testPrepopMobile,
         vrn,
         None
       )
 
       val expectedJson: JsValue = Json.obj(
         "isAgent" -> false,
-        "vrn" -> vrn,
-        "requestedMobileNumber" -> testPrepopMobile
+        "vrn" -> vrn
       )
 
       "generate the correct audit detail" in {

@@ -77,7 +77,6 @@ class ConfirmWebsiteController @Inject()(errorHandler: ErrorHandler,
             user.session.get(validationWebsiteKey).filter(_.nonEmpty),
             newWebsite,
             user.vrn,
-            user.isAgent,
             user.arn
           ),
           pageUrl
@@ -99,7 +98,7 @@ class ConfirmWebsiteController @Inject()(errorHandler: ErrorHandler,
   def updateWebsite: Action[AnyContent] = (allowAgentPredicate andThen inFlightWebsitePredicate).async { implicit user =>
     user.session.get(prepopulationWebsiteKey) match {
       case Some(website) =>
-        performUpdate(website, controllers.website.routes.ConfirmWebsiteController.updateWebsite.url)
+        performUpdate(website, controllers.routes.ChangeSuccessController.websiteAddress.url)
       case _ =>
         Future.successful(Redirect(routes.CaptureWebsiteController.show))
     }

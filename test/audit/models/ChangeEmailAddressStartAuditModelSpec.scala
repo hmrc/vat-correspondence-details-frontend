@@ -20,15 +20,14 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsValue, Json}
 
-class ChangedEmailAddressAuditModelSpec extends AnyWordSpecLike with Matchers {
+class ChangeEmailAddressStartAuditModelSpec extends AnyWordSpecLike with Matchers {
 
-  val model: ChangedEmailAddressAuditModel = ChangedEmailAddressAuditModel(
+  val model: ChangeEmailAddressStartAuditModel = ChangeEmailAddressStartAuditModel(
     currentEmailAddress = Some("testemail@test.com"),
-    requestedEmailAddress = "attemptedchange@test.com",
     vrn = "987654321"
   )
 
-  "ChangedEmailAddressAuditModel" when {
+  "ChangeEmailAddressStartAuditModel" when {
 
     "the user has a current email" should {
 
@@ -37,8 +36,7 @@ class ChangedEmailAddressAuditModelSpec extends AnyWordSpecLike with Matchers {
         val expectedJson: JsValue =  Json.obj(
           "vrn" -> "987654321",
           "isAgent" -> false,
-          "currentEmailAddress" -> "testemail@test.com",
-          "requestedEmailAddress" -> "attemptedchange@test.com"
+          "currentEmailAddress" -> "testemail@test.com"
         )
 
         model.detail shouldBe expectedJson
@@ -53,8 +51,7 @@ class ChangedEmailAddressAuditModelSpec extends AnyWordSpecLike with Matchers {
 
         val expectedJson: JsValue = Json.obj(
           "isAgent" -> false,
-          "vrn" -> "987654321",
-          "requestedEmailAddress" -> "attemptedchange@test.com"
+          "vrn" -> "987654321"
         )
 
         noCurrentEmailModel.detail shouldBe expectedJson

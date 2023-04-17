@@ -22,10 +22,9 @@ import utils.JsonObjectSugar
 case class ChangedWebsiteAddressAuditModel(currentWebsiteAddress: Option[String],
                                            requestedWebsiteAddress: String,
                                            vrn: String,
-                                           isAgent: Boolean,
                                            arn: Option[String]) extends AuditModel {
 
-  override val auditType: String = "ChangeWebsiteAddress"
+  override val auditType: String = "ChangeWebsiteAddressEnd"
   override val detail: JsValue = Json.toJson(this)
   override val transactionName: String = "change-vat-website-address"
 }
@@ -34,7 +33,7 @@ object ChangedWebsiteAddressAuditModel extends JsonObjectSugar {
 
   implicit val writes: Writes[ChangedWebsiteAddressAuditModel] = Writes { model =>
     jsonObjNoNulls(
-      "isAgent" -> model.isAgent,
+      "isAgent" -> model.arn.isDefined,
       "arn" -> model.arn,
       "vrn" -> model.vrn,
       "currentWebsiteAddress" -> model.currentWebsiteAddress,

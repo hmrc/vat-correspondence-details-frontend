@@ -17,12 +17,14 @@
 package controllers.website
 
 import audit.AuditingService
+import audit.models.ChangeWebsiteAddressStartAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.WebsiteForm.websiteForm
+
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
@@ -31,11 +33,11 @@ import views.html.website.CaptureWebsiteView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscriptionService,
-                                         val errorHandler: ErrorHandler,
-                                         val auditService: AuditingService,
+class CaptureWebsiteController @Inject()(vatSubscriptionService: VatSubscriptionService,
+                                         errorHandler: ErrorHandler,
+                                         auditService: AuditingService,
                                          captureWebsiteView: CaptureWebsiteView)
-                                        (implicit val appConfig: AppConfig,
+                                        (implicit appConfig: AppConfig,
                                          mcc: MessagesControllerComponents,
                                          authComps: AuthPredicateComponents,
                                          inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -49,6 +51,10 @@ class CaptureWebsiteController @Inject()(val vatSubscriptionService: VatSubscrip
 
         validationWebsite match {
           case Some(valWebsite) =>
+            auditService.extendedAudit(
+              ChangeWebsiteAddressStartAuditModel(validationWebsite.filter(_.nonEmpty), user.vrn, user.arn),
+              controllers.website.routes.CaptureWebsiteController.show.url
+            )
             Ok(captureWebsiteView(websiteForm(valWebsite).fill(prepopulationWebsite), valWebsite))
           case _ => errorHandler.showInternalServerError
         }

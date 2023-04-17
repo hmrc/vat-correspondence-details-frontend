@@ -208,7 +208,7 @@ class ConfirmEmailControllerSpec extends ControllerBaseSpec  {
         }
 
         "audit the email change event" in {
-          verifyExtendedAudit(ChangedEmailAddressAuditModel(None, testEmail, vrn, isAgent = false, None))
+          verifyExtendedAudit(ChangedEmailAddressAuditModel(None, testEmail, vrn))
           reset(mockAuditingService)
         }
 
