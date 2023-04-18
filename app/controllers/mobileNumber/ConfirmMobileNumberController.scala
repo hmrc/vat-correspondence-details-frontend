@@ -77,7 +77,6 @@ class ConfirmMobileNumberController @Inject()(errorHandler: ErrorHandler,
             user.session.get(validationMobileKey).filter(_.nonEmpty),
             newNumber,
             user.vrn,
-            user.isAgent,
             user.arn
           ),
           pageUrl
@@ -106,7 +105,7 @@ class ConfirmMobileNumberController @Inject()(errorHandler: ErrorHandler,
           Future.successful(Redirect(routes.CaptureMobileNumberController.show))
 
         case Some(mobile) =>
-          performUpdate(mobile, controllers.mobileNumber.routes.ConfirmMobileNumberController.updateMobileNumber.url)
+          performUpdate(mobile, controllers.routes.ChangeSuccessController.mobileNumber.url)
       }
   }
 
@@ -130,8 +129,7 @@ class ConfirmMobileNumberController @Inject()(errorHandler: ErrorHandler,
             Future.successful(BadRequest(confirmRemoveMobile(errorForm)))
           },
           {
-            case Yes =>
-              performUpdate("", controllers.mobileNumber.routes.ConfirmMobileNumberController.removeMobileNumber.url)
+            case Yes => performUpdate("", controllers.routes.ChangeSuccessController.mobileNumber.url)
             case No => Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
           }
         )

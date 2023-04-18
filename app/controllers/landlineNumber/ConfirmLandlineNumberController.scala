@@ -78,7 +78,6 @@ class ConfirmLandlineNumberController @Inject()(errorHandler: ErrorHandler,
             user.session.get(validationLandlineKey).filter(_.nonEmpty),
             newNumber,
             user.vrn,
-            user.isAgent,
             user.arn
           ),
           pageUrl
@@ -107,7 +106,7 @@ class ConfirmLandlineNumberController @Inject()(errorHandler: ErrorHandler,
           Future.successful(Redirect(routes.CaptureLandlineNumberController.show))
 
         case Some(landline) =>
-          performUpdate(landline, controllers.landlineNumber.routes.ConfirmLandlineNumberController.updateLandlineNumber.url)
+          performUpdate(landline, controllers.routes.ChangeSuccessController.landlineNumber.url)
       }
   }
 
@@ -132,9 +131,7 @@ class ConfirmLandlineNumberController @Inject()(errorHandler: ErrorHandler,
             Future.successful(BadRequest(confirmRemoveLandline(errorForm)))
           },
           {
-            case Yes =>
-              performUpdate("", controllers.landlineNumber.routes.ConfirmLandlineNumberController.removeLandlineNumber.url)
-
+            case Yes => performUpdate("", controllers.routes.ChangeSuccessController.landlineNumber.url)
             case No => Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
           }
         )

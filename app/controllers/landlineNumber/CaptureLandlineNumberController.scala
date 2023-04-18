@@ -16,6 +16,8 @@
 
 package controllers.landlineNumber
 
+import audit.AuditingService
+import audit.models.ChangeLandlineNumberStartAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
@@ -31,10 +33,11 @@ import views.html.landlineNumber.CaptureLandlineNumberView
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatSubscriptionService,
-                                                val errorHandler: ErrorHandler,
+class CaptureLandlineNumberController @Inject()(vatSubscriptionService: VatSubscriptionService,
+                                                errorHandler: ErrorHandler,
+                                                auditService: AuditingService,
                                                 captureLandlineNumberView: CaptureLandlineNumberView)
-                                               (implicit val appConfig: AppConfig,
+                                               (implicit appConfig: AppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 authComps: AuthPredicateComponents,
                                                 inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -49,6 +52,10 @@ class CaptureLandlineNumberController @Inject()(val vatSubscriptionService: VatS
 
       validationLandline match {
         case Some(landline) =>
+          auditService.extendedAudit(
+            ChangeLandlineNumberStartAuditModel(validationLandline.filter(_.nonEmpty), user.vrn, user.arn),
+            controllers.landlineNumber.routes.CaptureLandlineNumberController.show.url
+          )
           Ok(captureLandlineNumberView(landlineNumberForm(landline).fill(prepopulationLandline), landline))
         case _ => errorHandler.showInternalServerError
       }

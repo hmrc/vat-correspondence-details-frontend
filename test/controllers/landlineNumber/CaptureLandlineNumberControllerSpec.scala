@@ -17,6 +17,7 @@
 package controllers.landlineNumber
 
 import assets.BaseTestConstants._
+import audit.models.ChangeLandlineNumberStartAuditModel
 import common.SessionKeys._
 import controllers.ControllerBaseSpec
 import mocks.MockVatSubscriptionService
@@ -30,6 +31,7 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
   val controller = new CaptureLandlineNumberController(
     mockVatSubscriptionService,
     mockErrorHandler,
+    mockAuditingService,
     inject[CaptureLandlineNumberView]
   )
 
@@ -56,6 +58,9 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
           document.select("#landlineNumber").attr("value") shouldBe testValidationLandline
         }
 
+        "audit the correct information for the journey start event" in {
+          verifyExtendedAudit(ChangeLandlineNumberStartAuditModel(Some(testValidationLandline), vrn, None))
+        }
       }
     }
 
@@ -75,6 +80,33 @@ class CaptureLandlineNumberControllerSpec extends ControllerBaseSpec with MockVa
 
       "prepopulate the form with the previously entered landline" in {
         document.select("#landlineNumber").attr("value") shouldBe testPrepopLandline
+      }
+
+      "audit the correct information for the journey start event" in {
+        verifyExtendedAudit(ChangeLandlineNumberStartAuditModel(Some(testValidationLandline), vrn, None))
+      }
+    }
+
+    "the user has no current landline number (inflight predicate has set a blank string in session)" should {
+
+      lazy val result = controller.show(getRequest.withSession(validationLandlineKey -> ""))
+      lazy val document = Jsoup.parse(contentAsString(result))
+
+      "return 200" in {
+        status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+
+      "not prepopulate the form" in {
+        document.select("#landlineNumber").attr("value") shouldBe ""
+      }
+
+      "audit the correct information for the journey start event" in {
+        verifyExtendedAudit(ChangeLandlineNumberStartAuditModel(None, vrn, None))
       }
     }
 

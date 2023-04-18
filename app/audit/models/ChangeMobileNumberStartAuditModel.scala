@@ -16,29 +16,26 @@
 
 package audit.models
 
-
 import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
-case class ChangedMobileNumberAuditModel(currentMobileNumber: Option[String],
-                                         requestedMobileNumber: String,
-                                         vrn: String,
-                                         arn: Option[String]) extends AuditModel {
+case class ChangeMobileNumberStartAuditModel(currentMobileNumber: Option[String],
+                                             vrn: String,
+                                             arn: Option[String]) extends AuditModel {
 
-  override val auditType: String = "ChangeMobileNumberEnd"
+  override val auditType: String = "ChangeMobileNumberStart"
   override val detail: JsValue = Json.toJson(this)
   override val transactionName: String = "change-vat-mobile-number"
 }
 
-object ChangedMobileNumberAuditModel extends JsonObjectSugar {
+object ChangeMobileNumberStartAuditModel extends JsonObjectSugar {
 
-  implicit val writes: Writes[ChangedMobileNumberAuditModel] = Writes { model =>
+  implicit val writes: Writes[ChangeMobileNumberStartAuditModel] = Writes { model =>
     jsonObjNoNulls(
       "isAgent" -> model.arn.isDefined,
       "arn" -> model.arn,
       "vrn" -> model.vrn,
-      "currentMobileNumber" -> model.currentMobileNumber,
-      "requestedMobileNumber" -> model.requestedMobileNumber
+      "currentMobileNumber" -> model.currentMobileNumber
     )
   }
 }

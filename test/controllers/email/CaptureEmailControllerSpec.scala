@@ -17,7 +17,7 @@
 package controllers.email
 
 import assets.CustomerInfoConstants.fullCustomerInfoModel
-import audit.models.{AttemptedContactPrefEmailAuditModel, AttemptedEmailAddressAuditModel}
+import audit.models.{AttemptedContactPrefEmailAuditModel, AttemptedEmailAddressAuditModel, ChangeEmailAddressStartAuditModel}
 import common.SessionKeys
 import connectors.httpParsers.GetCustomerInfoHttpParser.GetCustomerInfoResponse
 import controllers.ControllerBaseSpec
@@ -54,8 +54,8 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
         "the validation email is retrieved from session" should {
 
-          lazy val result = target().show(getRequest
-            .withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
+          lazy val result =
+            target().show(getRequest.withSession(common.SessionKeys.validationEmailKey -> testValidationEmail))
           lazy val document = Jsoup.parse(contentAsString(result))
 
           "return 200" in {
@@ -69,6 +69,10 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
           "prepopulate the form with the validation email" in {
             document.select("#email").attr("value") shouldBe testValidationEmail
+          }
+
+          "audit the correct information for the journey start event" in {
+            verifyExtendedAudit(ChangeEmailAddressStartAuditModel(Some(testValidationEmail), user.vrn))
           }
         }
 
@@ -91,6 +95,33 @@ class CaptureEmailControllerSpec extends ControllerBaseSpec {
 
           "prepopulate the form with the previously entered form value" in {
             document.select("#email").attr("value") shouldBe testValidEmail
+          }
+
+          "audit the correct information for the journey start event" in {
+            verifyExtendedAudit(ChangeEmailAddressStartAuditModel(Some(testValidationEmail), user.vrn))
+          }
+        }
+
+        "the user has no current email address (inflight predicate has set a blank string in session)" should {
+          lazy val result =
+            target().show(getRequest.withSession(common.SessionKeys.validationEmailKey -> ""))
+          lazy val document = Jsoup.parse(contentAsString(result))
+
+          "return 200" in {
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "not prepopulate the form" in {
+            document.select("#email").attr("value") shouldBe ""
+          }
+
+          "audit the correct information for the journey start event" in {
+            verifyExtendedAudit(ChangeEmailAddressStartAuditModel(None, user.vrn))
           }
         }
       }

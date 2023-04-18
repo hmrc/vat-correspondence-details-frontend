@@ -22,10 +22,9 @@ import utils.JsonObjectSugar
 case class ChangedLandlineNumberAuditModel(currentLandlineNumber: Option[String],
                                            requestedLandlineNumber: String,
                                            vrn: String,
-                                           isAgent: Boolean,
                                            arn: Option[String]) extends AuditModel {
 
-  override val auditType: String = "ChangeLandlineNumber"
+  override val auditType: String = "ChangeLandlineNumberEnd"
   override val detail: JsValue = Json.toJson(this)
   override val transactionName: String = "change-vat-landline-number"
 }
@@ -34,7 +33,7 @@ object ChangedLandlineNumberAuditModel extends JsonObjectSugar {
 
   implicit val writes: Writes[ChangedLandlineNumberAuditModel] = Writes { model =>
     jsonObjNoNulls(
-      "isAgent" -> model.isAgent,
+      "isAgent" -> model.arn.isDefined,
       "arn" -> model.arn,
       "vrn" -> model.vrn,
       "currentLandlineNumber" -> model.currentLandlineNumber,

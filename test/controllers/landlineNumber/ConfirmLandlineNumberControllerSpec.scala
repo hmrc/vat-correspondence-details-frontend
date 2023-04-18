@@ -23,7 +23,6 @@ import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.test.Helpers._
@@ -161,9 +160,8 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
 
           "audit the change landline number event" in {
             verifyExtendedAudit(
-              ChangedLandlineNumberAuditModel(Some(testValidationLandline), testPrepopLandline, vrn, isAgent = false, None)
+              ChangedLandlineNumberAuditModel(Some(testValidationLandline), testPrepopLandline, vrn, None)
             )
-            reset(mockAuditingService)
           }
 
           "redirect to the success page" in {
@@ -203,8 +201,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change landline number event" in {
-            verifyExtendedAudit(ChangedLandlineNumberAuditModel(None, testPrepopLandline, vrn, isAgent = false, None))
-            reset(mockAuditingService)
+            verifyExtendedAudit(ChangedLandlineNumberAuditModel(None, testPrepopLandline, vrn, None))
           }
 
           "redirect to the success page" in {
@@ -244,8 +241,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change landline number event" in {
-            verifyExtendedAudit(ChangedLandlineNumberAuditModel(None, testPrepopLandline, vrn, isAgent = false, None))
-            reset(mockAuditingService)
+            verifyExtendedAudit(ChangedLandlineNumberAuditModel(None, testPrepopLandline, vrn, None))
           }
 
           "redirect to the success page" in {
@@ -401,8 +397,7 @@ class ConfirmLandlineNumberControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the change landline number event" in {
-            verifyExtendedAudit(ChangedLandlineNumberAuditModel(Some(testValidationLandline), "", vrn, isAgent = false, None))
-            reset(mockAuditingService)
+            verifyExtendedAudit(ChangedLandlineNumberAuditModel(Some(testValidationLandline), "", vrn, None))
           }
 
           "remove the existing landline number from the session" in {

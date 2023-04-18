@@ -23,7 +23,6 @@ import controllers.ControllerBaseSpec
 import models.customerInformation.UpdatePPOBSuccess
 import models.errors.ErrorModel
 import org.jsoup.Jsoup
-import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR}
 import play.api.mvc.AnyContentAsEmpty
@@ -108,8 +107,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
         }
 
         "audit the website change event" in {
-          verifyExtendedAudit(ChangedWebsiteAddressAuditModel(Some(testWebsite), testWebsite, vrn, isAgent = false, None))
-          reset(mockAuditingService)
+          verifyExtendedAudit(ChangedWebsiteAddressAuditModel(Some(testWebsite), testWebsite, vrn, None))
         }
 
         "redirect to the website changed success page" in {
@@ -269,8 +267,7 @@ class ConfirmWebsiteControllerSpec extends ControllerBaseSpec  {
           }
 
           "audit the website change event" in {
-            verifyExtendedAudit(ChangedWebsiteAddressAuditModel(Some(testWebsite), "", vrn, isAgent = false, None))
-            reset(mockAuditingService)
+            verifyExtendedAudit(ChangedWebsiteAddressAuditModel(Some(testWebsite), "", vrn, None))
           }
 
           "add the successful change key to the session" in {

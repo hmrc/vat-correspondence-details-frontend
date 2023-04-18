@@ -19,17 +19,12 @@ import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 
 val appName = "vat-correspondence-details-frontend"
-val bootstrapPlayVersion       = "7.14.0"
-val playFrontendHmrc           = "6.7.0-play-28"
-val jsoupVersion               = "1.14.1"
+val bootstrapPlayVersion       = "7.15.0"
+val playFrontendHmrc           = "7.3.0-play-28"
 val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "5.2.0"
-val playJsonJodaVersion        = "2.9.2"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
-lazy val plugins: Seq[Plugins] = Seq.empty
-lazy val playSettings: Seq[Setting[_]] = Seq.empty
-RoutesKeys.routesImport := Seq.empty
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
@@ -55,15 +50,13 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 val compile = Seq(
   ws,
   "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
-  "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc,
-  "com.typesafe.play" %% "play-json-joda"             % playJsonJodaVersion
+  "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc
 )
 
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc"       %% "bootstrap-test-play-28"      % bootstrapPlayVersion  % scope,
   "org.scalatestplus" %% "mockito-3-4"                 % mockitoVersion        % scope,
-  "org.scalamock"     %% "scalamock"                   % scalaMockVersion      % scope,
-  "org.jsoup"         %  "jsoup"                       % jsoupVersion          % scope
+  "org.scalamock"     %% "scalamock"                   % scalaMockVersion      % scope
 )
 
 TwirlKeys.templateImports ++= Seq(
@@ -86,7 +79,6 @@ lazy val microservice = Project(appName, file("."))
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(PlayKeys.playDefaultPort := 9148)
   .settings(coverageSettings: _*)
-  .settings(playSettings: _*)
   .settings(majorVersion := 0)
   .settings(scalaSettings: _*)
   .settings(defaultSettings(): _*)
@@ -94,7 +86,9 @@ lazy val microservice = Project(appName, file("."))
     Test / Keys.fork := true,
     scalaVersion := "2.13.8",
     libraryDependencies ++= appDependencies,
-    retrieveManaged := true)
+    retrieveManaged := true,
+    RoutesKeys.routesImport := Seq.empty
+  )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(scalacOptions ++= Seq("-Wconf:cat=unused-imports&site=.*views.html.*:s"))

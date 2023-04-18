@@ -17,13 +17,14 @@
 package controllers.email
 
 import audit.AuditingService
-import audit.models.{AttemptedContactPrefEmailAuditModel, AttemptedEmailAddressAuditModel}
+import audit.models.{AttemptedContactPrefEmailAuditModel, AttemptedEmailAddressAuditModel, ChangeEmailAddressStartAuditModel}
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.EmailForm._
+
 import javax.inject.{Inject, Singleton}
 import models.User
 import play.api.mvc._
@@ -33,11 +34,11 @@ import views.html.email.CaptureEmailView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscriptionService,
-                                       val errorHandler: ErrorHandler,
-                                       val auditService: AuditingService,
+class CaptureEmailController @Inject()(vatSubscriptionService: VatSubscriptionService,
+                                       errorHandler: ErrorHandler,
+                                       auditService: AuditingService,
                                        captureEmailView: CaptureEmailView)
-                                      (implicit val appConfig: AppConfig,
+                                      (implicit appConfig: AppConfig,
                                        mcc: MessagesControllerComponents,
                                        authComps: AuthPredicateComponents,
                                        inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -53,6 +54,10 @@ class CaptureEmailController @Inject()(val vatSubscriptionService: VatSubscripti
   def show: Action[AnyContent] = (blockAgentPredicate andThen inFlightEmailPredicate) { implicit user =>
     sessionValidationEmail match {
         case Some(valEmail) =>
+          auditService.extendedAudit(
+            ChangeEmailAddressStartAuditModel(sessionValidationEmail.filter(_.nonEmpty), user.vrn),
+            controllers.email.routes.CaptureEmailController.show.url
+          )
           Ok(captureEmailView(
             emailForm(valEmail).fill(prePopulationEmail(valEmail)),
             emailNotChangedError = false,

@@ -16,12 +16,15 @@
 
 package controllers.mobileNumber
 
+import audit.AuditingService
+import audit.models.ChangeMobileNumberStartAuditModel
 import common.SessionKeys
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseController
 import controllers.predicates.AuthPredicateComponents
 import controllers.predicates.inflight.InFlightPredicateComponents
 import forms.MobileNumberForm._
+
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import services.VatSubscriptionService
@@ -30,10 +33,11 @@ import views.html.mobileNumber.CaptureMobileNumberView
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSubscriptionService,
-                                              val errorHandler: ErrorHandler,
+class CaptureMobileNumberController @Inject()(vatSubscriptionService: VatSubscriptionService,
+                                              errorHandler: ErrorHandler,
+                                              auditService: AuditingService,
                                               captureMobileNumberView: CaptureMobileNumberView)
-                                             (implicit val appConfig: AppConfig,
+                                             (implicit appConfig: AppConfig,
                                               mcc: MessagesControllerComponents,
                                               authComps: AuthPredicateComponents,
                                               inFlightComps: InFlightPredicateComponents) extends BaseController {
@@ -48,6 +52,10 @@ class CaptureMobileNumberController @Inject()(val vatSubscriptionService: VatSub
 
       validationMobile match {
         case Some(mobile) =>
+          auditService.extendedAudit(
+            ChangeMobileNumberStartAuditModel(validationMobile.filter(_.nonEmpty), user.vrn, user.arn),
+            controllers.mobileNumber.routes.CaptureMobileNumberController.show.url
+          )
           Ok(captureMobileNumberView(mobileNumberForm(mobile).fill(prepopulationMobile),mobile))
         case _ => errorHandler.showInternalServerError
       }

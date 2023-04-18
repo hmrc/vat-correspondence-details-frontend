@@ -17,6 +17,7 @@
 package controllers.mobileNumber
 
 import assets.BaseTestConstants._
+import audit.models.ChangeMobileNumberStartAuditModel
 import common.SessionKeys._
 import controllers.ControllerBaseSpec
 import mocks.MockVatSubscriptionService
@@ -30,6 +31,7 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
   val controller = new CaptureMobileNumberController(
     mockVatSubscriptionService,
     mockErrorHandler,
+    mockAuditingService,
     inject[CaptureMobileNumberView]
   )
 
@@ -55,6 +57,10 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
         "prepopulate the form with the user's current mobile" in {
           document.select("#mobileNumber").attr("value") shouldBe testValidationMobile
         }
+
+        "audit the correct information for the journey start event" in {
+          verifyExtendedAudit(ChangeMobileNumberStartAuditModel(Some(testValidationMobile), vrn, None))
+        }
       }
     }
 
@@ -74,6 +80,33 @@ class CaptureMobileNumberControllerSpec extends ControllerBaseSpec with MockVatS
 
       "prepopulate the form with the previously entered mobile" in {
         document.select("#mobileNumber").attr("value") shouldBe testPrepopMobile
+      }
+
+      "audit the correct information for the journey start event" in {
+        verifyExtendedAudit(ChangeMobileNumberStartAuditModel(Some(testValidationMobile), vrn, None))
+      }
+    }
+
+    "the user has no current mobile number (inflight predicate has set a blank string in session)" should {
+
+      lazy val result = controller.show(getRequest.withSession(validationMobileKey -> ""))
+      lazy val document = Jsoup.parse(contentAsString(result))
+
+      "return 200" in {
+        status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+
+      "not prepopulate the form" in {
+        document.select("#mobileNumber").attr("value") shouldBe ""
+      }
+
+      "audit the correct information for the journey start event" in {
+        verifyExtendedAudit(ChangeMobileNumberStartAuditModel(None, vrn, None))
       }
     }
 

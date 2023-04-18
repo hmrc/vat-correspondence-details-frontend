@@ -19,8 +19,6 @@ package audit
 import audit.models.AuditModel
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import org.joda.time.DateTime
-import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -31,9 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuditingService @Inject()(appConfig: AppConfig, auditConnector: AuditConnector) extends LoggerUtil {
-
-  implicit val dateTimeJsReader: Reads[DateTime] = JodaReads.jodaDateReads("yyyyMMddHHmmss")
-  implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites("dd/MM/yyyy HH:mm:ss")
 
   def extendedAudit(auditModel: AuditModel, path: String = "-")(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit = {
     val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path)

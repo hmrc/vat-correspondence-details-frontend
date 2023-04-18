@@ -16,6 +16,8 @@
 
 package controllers.website
 
+import assets.BaseTestConstants.vrn
+import audit.models.ChangeWebsiteAddressStartAuditModel
 import common.SessionKeys
 import controllers.ControllerBaseSpec
 import org.jsoup.Jsoup
@@ -43,9 +45,8 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
       "the user's current website is retrieved from session" should {
 
-        lazy val result = target().show(getRequest.withSession(
-          common.SessionKeys.validationWebsiteKey -> testValidationWebsite)
-        )
+        lazy val result =
+          target().show(getRequest.withSession(common.SessionKeys.validationWebsiteKey -> testValidationWebsite))
 
         lazy val document = Jsoup.parse(contentAsString(result))
 
@@ -62,6 +63,9 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
           document.select("#website").attr("value") shouldBe testValidationWebsite
         }
 
+        "audit the correct information for the journey start event" in {
+          verifyExtendedAudit(ChangeWebsiteAddressStartAuditModel(Some(testValidationWebsite), vrn, None))
+        }
       }
     }
 
@@ -84,6 +88,34 @@ class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
 
       "prepopulate the form with the previously entered form value" in {
         document.select("#website").attr("value") shouldBe testValidWebsite
+      }
+
+      "audit the correct information for the journey start event" in {
+        verifyExtendedAudit(ChangeWebsiteAddressStartAuditModel(Some(testValidationWebsite), vrn, None))
+      }
+    }
+
+    "the user has no current website address (inflight predicate has set a blank string in session)" should {
+
+      lazy val result =
+        target().show(getRequest.withSession(common.SessionKeys.validationWebsiteKey -> ""))
+      lazy val document = Jsoup.parse(contentAsString(result))
+
+      "return 200" in {
+        status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+
+      "not prepopulate the form" in {
+        document.select("#website").attr("value") shouldBe ""
+      }
+
+      "audit the correct information for the journey start event" in {
+        verifyExtendedAudit(ChangeWebsiteAddressStartAuditModel(None, vrn, None))
       }
     }
 

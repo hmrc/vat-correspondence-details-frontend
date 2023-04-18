@@ -16,29 +16,22 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{arn, testPrepopMobile, testValidationMobile, vrn}
+import assets.BaseTestConstants.{arn, testWebsite, vrn}
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsValue, Json}
-import utils.TestUtil
 
-class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
+class ChangeWebsiteAddressStartAuditModelSpec extends AnyWordSpecLike with Matchers {
 
-  "ChangedMobileNumberAuditModel" when {
+  "ChangeWebsiteAddressStartAuditModel" when {
 
     "the user is not an agent" should {
 
-      val model = ChangedMobileNumberAuditModel(
-        Some(testValidationMobile),
-        testPrepopMobile,
-        vrn,
-        None
-      )
-
+      val model = ChangeWebsiteAddressStartAuditModel(Some(testWebsite), vrn, None)
       val expectedJson: JsValue = Json.obj(
         "isAgent" -> false,
         "vrn" -> vrn,
-        "currentMobileNumber" -> testValidationMobile,
-        "requestedMobileNumber" -> testPrepopMobile
+        "currentWebsiteAddress" -> testWebsite
       )
 
       "generate the correct audit detail" in {
@@ -48,19 +41,12 @@ class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
 
     "the user is an agent" should {
 
-      val model = ChangedMobileNumberAuditModel(
-        Some(testValidationMobile),
-        testPrepopMobile,
-        vrn,
-        Some(arn)
-      )
-
+      val model = ChangeWebsiteAddressStartAuditModel(Some(testWebsite), vrn, Some(arn))
       val expectedJson: JsValue = Json.obj(
         "isAgent" -> true,
         "arn" -> arn,
         "vrn" -> vrn,
-        "currentMobileNumber" -> testValidationMobile,
-        "requestedMobileNumber" -> testPrepopMobile
+        "currentWebsiteAddress" -> testWebsite
       )
 
       "generate the correct audit detail" in {
@@ -68,19 +54,12 @@ class ChangedMobileNumberAuditModelSpec extends TestUtil with Matchers {
       }
     }
 
-    "the user has no existing mobile number" should {
+    "the user does not have a current website" should {
 
-      val model = ChangedMobileNumberAuditModel(
-        None,
-        testPrepopMobile,
-        vrn,
-        None
-      )
-
+      val model = ChangeWebsiteAddressStartAuditModel(None, vrn, None)
       val expectedJson: JsValue = Json.obj(
         "isAgent" -> false,
-        "vrn" -> vrn,
-        "requestedMobileNumber" -> testPrepopMobile
+        "vrn" -> vrn
       )
 
       "generate the correct audit detail" in {

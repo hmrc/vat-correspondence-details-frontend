@@ -27,7 +27,7 @@ class ChangedWebsiteAddressAuditModelSpec extends AnyWordSpecLike with Matchers 
 
     "the user is not an agent" should {
 
-      val model = ChangedWebsiteAddressAuditModel(Some(testWebsite), testNewWebsite, vrn, isAgent = false, None)
+      val model = ChangedWebsiteAddressAuditModel(Some(testWebsite), testNewWebsite, vrn, None)
       val expectedJson: JsValue = Json.obj(
         "isAgent" -> false,
         "vrn" -> vrn,
@@ -42,7 +42,7 @@ class ChangedWebsiteAddressAuditModelSpec extends AnyWordSpecLike with Matchers 
 
     "the user is an agent" should {
 
-      val model = ChangedWebsiteAddressAuditModel(Some(testWebsite), testNewWebsite, vrn, isAgent = true, Some(arn))
+      val model = ChangedWebsiteAddressAuditModel(Some(testWebsite), testNewWebsite, vrn, Some(arn))
       val expectedJson: JsValue = Json.obj(
         "isAgent" -> true,
         "arn" -> arn,
@@ -58,7 +58,7 @@ class ChangedWebsiteAddressAuditModelSpec extends AnyWordSpecLike with Matchers 
 
     "the user does not have a current website" should {
 
-      val model = ChangedWebsiteAddressAuditModel(None, testNewWebsite, vrn, isAgent = false, None)
+      val model = ChangedWebsiteAddressAuditModel(None, testNewWebsite, vrn, None)
       val expectedJson: JsValue = Json.obj(
         "isAgent" -> false,
         "vrn" -> vrn,
