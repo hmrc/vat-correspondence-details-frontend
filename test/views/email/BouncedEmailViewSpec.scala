@@ -45,7 +45,7 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
     }
 
     "have 2 breadcrumbs" in {
-      element(".govuk-breadcrumbs__list").childrenSize() shouldBe 2
+      element(".govuk-breadcrumbs__list").children().size() shouldBe 2
     }
 
     "have a BTA breadcrumb" which {
@@ -145,7 +145,7 @@ class BouncedEmailViewSpec extends ViewBaseSpec with Matchers {
     lazy implicit val document: Document = Jsoup.parse(view.body)
 
     "have 3 breadcrumbs" in {
-      element(".govuk-breadcrumbs__list").childrenSize() shouldBe 3
+      element(".govuk-breadcrumbs__list").children().size() shouldBe 3
     }
 
     "have a BTA breadcrumb" which {

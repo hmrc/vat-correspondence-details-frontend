@@ -123,7 +123,7 @@ class ConfirmWebsiteController @Inject()(errorHandler: ErrorHandler,
           formWithErrors =>
             Future.successful(BadRequest(confirmRemoveWebsite(formWithErrors))),
           {
-            case Yes => performUpdate("", controllers.website.routes.ConfirmWebsiteController.removeWebsiteAddress.url)
+            case Yes => performUpdate("", controllers.routes.ChangeSuccessController.websiteAddress.url)
             case No => Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
           }
         )

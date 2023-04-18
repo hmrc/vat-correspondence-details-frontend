@@ -129,8 +129,7 @@ class ConfirmMobileNumberController @Inject()(errorHandler: ErrorHandler,
             Future.successful(BadRequest(confirmRemoveMobile(errorForm)))
           },
           {
-            case Yes =>
-              performUpdate("", controllers.mobileNumber.routes.ConfirmMobileNumberController.removeMobileNumber.url)
+            case Yes => performUpdate("", controllers.routes.ChangeSuccessController.mobileNumber.url)
             case No => Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
           }
         )

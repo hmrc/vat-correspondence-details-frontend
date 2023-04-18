@@ -131,9 +131,7 @@ class ConfirmLandlineNumberController @Inject()(errorHandler: ErrorHandler,
             Future.successful(BadRequest(confirmRemoveLandline(errorForm)))
           },
           {
-            case Yes =>
-              performUpdate("", controllers.landlineNumber.routes.ConfirmLandlineNumberController.removeLandlineNumber.url)
-
+            case Yes => performUpdate("", controllers.routes.ChangeSuccessController.landlineNumber.url)
             case No => Future.successful(Redirect(appConfig.manageVatSubscriptionServicePath))
           }
         )
