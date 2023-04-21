@@ -16,13 +16,11 @@
 
 @import play.twirl.api.HtmlFormat
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
-@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.utils.ServiceNameUtil
 
 @this(govukLayout: GovukLayout,
       hmrcLanguageSelect: HmrcLanguageSelect,
       hmrcTimeoutDialog: HmrcTimeoutDialog,
-      standardBetaBanner: StandardBetaBanner,
       govukHeader: GovukHeader,
       hmrcStandardHeader: HmrcStandardHeader,
       hmrcStandardFooter: HmrcStandardFooter,
@@ -94,7 +92,6 @@
     serviceName = Some(navTitle),
     serviceUrl = ServiceNameUtil.generateServiceUrl,
     signOutUrl = if(showLogout) Some(routes.SignOutController.signOut(feedbackOnSignOut).url) else None,
-    phaseBanner = Some(standardBetaBanner(url = appConfig.feedbackUrl(request.uri))),
     displayHmrcBanner = false
   )
 }
