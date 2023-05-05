@@ -20,7 +20,7 @@ import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, s
 
 val appName = "vat-correspondence-details-frontend"
 val bootstrapPlayVersion       = "7.15.0"
-val playFrontendHmrc           = "7.3.0-play-28"
+val playFrontendHmrc           = "7.7.0-play-28"
 val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "5.2.0"
 
