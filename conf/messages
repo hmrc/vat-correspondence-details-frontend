@@ -100,7 +100,7 @@ confirmRemoveLandline.error = Select yes if you want to remove the landline numb
 confirmRemoveMobile.title = Are you sure you want to remove the mobile number?
 confirmRemoveMobile.error = Select yes if you want to remove the mobile number
 
-checkYourAnswers.title = Check your answers
+checkYourAnswers.title = Check your answer
 checkYourAnswers.vatBusinessDetails = VAT business details
 checkYourAnswers.change = Change
 checkYourAnswers.emailAddress = Email address
