@@ -100,7 +100,7 @@ confirmRemoveLandline.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ff�
 confirmRemoveMobile.title = A ydych yn siŵr eich bod am dynnu’r rhif ffôn symudol?
 confirmRemoveMobile.error = Dewiswch ’Iawn’ os ydych am dynnu’r rhif ffôn symudol
 
-checkYourAnswers.title = Gwiriwch eich atebion
+checkYourAnswers.title = Gwirio’ch ateb
 checkYourAnswers.vatBusinessDetails = Manylion busnes TAW
 checkYourAnswers.change = Newid
 checkYourAnswers.emailAddress = Cyfeiriad e-bost
