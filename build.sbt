@@ -56,7 +56,8 @@ val compile = Seq(
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc"       %% "bootstrap-test-play-28"      % bootstrapPlayVersion  % scope,
   "org.scalatestplus" %% "mockito-3-4"                 % mockitoVersion        % scope,
-  "org.scalamock"     %% "scalamock"                   % scalaMockVersion      % scope
+  "org.scalamock"     %% "scalamock"                   % scalaMockVersion      % scope,
+  "com.github.fge"    %% "json-schema-validator"       % "2.2.13"              % scope
 )
 
 TwirlKeys.templateImports ++= Seq(

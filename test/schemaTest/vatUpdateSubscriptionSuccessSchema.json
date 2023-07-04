@@ -1,0 +1,1522 @@
+{
+  "_id": "vatUpdateSubscriptionSuccess",
+  "url": "\/vat\/subscription\/vrn/[0-9]{9}",
+  "method": "PUT",
+  "responseSchema": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "#1365 VAT Subscription Update response schema",
+    "type": "object",
+    "properties": {
+      "formBundle": {
+        "type": "string",
+        "description": "Form Bundle Number that uniquely identifies the bundle of forms saved within the backend",
+        "pattern": "^[0-9]{12}$"
+      }
+    },
+    "additionalProperties": false
+  },
+  "requestSchema": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "#1365 VAT Subscription Update",
+    "type": "object",
+    "properties": {
+      "messageType": {
+        "description": "Type of message. Possible Values: SubscriptionUpdate",
+        "type": "string",
+        "enum": [
+          "SubscriptionUpdate"
+        ]
+      },
+      "controlInformation": {
+        "description": "Control Information object",
+        "$ref": "#/definitions/controlInformationType"
+      },
+      "requestedChange": {
+        "description": "Requested Change object",
+        "$ref": "#/definitions/requestedChangeType"
+      },
+      "organisationDetails": {
+        "description": "Organisation Details object",
+        "$ref": "#/definitions/organisationDetailsType"
+      },
+      "contactDetails": {
+        "description": "Contact Details object",
+        "$ref": "#/definitions/contactDetailsType"
+      },
+      "returnPeriods": {
+        "description": "Return Periods object",
+        "$ref": "#/definitions/returnPeriodsType"
+      },
+      "businessActivities": {
+        "description": "Return Business Activities object",
+        "$ref": "#/definitions/businessActivitiesType"
+      },
+      "flatRateScheme": {
+        "description": "Return Flat Rate Scheme object",
+        "$ref": "#/definitions/flatRateSchemeType"
+      },
+      "deregistrationInfo": {
+        "description": "Return Deregistration Info object",
+        "$ref": "#/definitions/deregistrationInfoType"
+      },
+      "bankDetails": {
+        "description": "Bank Details object",
+        "$ref": "#/definitions/bankDetailsType"
+      },
+      "declaration": {
+        "description": "Declaration object",
+        "$ref": "#/definitions/declarationType"
+      },
+      "attachments": {
+        "description": "Attachments object",
+        "$ref": "#/definitions/attachmentsType"
+      },
+      "commsPreference": {
+        "description": "Communications Preference object",
+        "$ref": "#/definitions/commsPreferenceType"
+      }
+    },
+    "required": [
+      "messageType",
+      "controlInformation"
+    ],
+    "additionalProperties": false,
+    "definitions": {
+      "dateString": {
+        "description": "Format YYYY-MM-DD",
+        "type": "string",
+        "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"
+      },
+      "controlInformationType": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "description": "Possible values: 100 - E-Portal, 110 - Auto Penalties in ETMP-SAFE, 120 - Legacy Data Upload, 200 - SBI, 300 - Paper, 400 - Telephone, 500 - Dunning, 600 - RTI-Core, 700 - Manual, 800 - Scanning, 900 - Third Party Software, 910 - ETMP-SAFE",
+            "type": "string",
+            "enum": [
+              "100",
+              "110",
+              "120",
+              "200",
+              "300",
+              "400",
+              "500",
+              "600",
+              "700",
+              "800",
+              "900",
+              "910"
+            ]
+          },
+          "welshIndicator": {
+            "description": "Welsh Indicator",
+            "type": "boolean"
+          },
+          "mandationStatus": {
+            "description": "Only sent if change to this is requested. Possible values and (meaning): 1. MTDfB Exempt, 2. MTDfB, 3. Non MTD, 4. Non Digital",
+            "type": "string",
+            "enum": [
+              "1",
+              "2",
+              "3",
+              "4"
+            ]
+          }
+        },
+        "required": [
+          "source",
+          "welshIndicator"
+        ],
+        "additionalProperties": false
+      },
+      "requestedChangeType": {
+        "type": "object",
+        "properties": {
+          "organisationDetails": {
+            "description": "Indicates whether Organisational Details have been changed. Possible values: true or false. If true, section organisationDetails is mandatory.",
+            "type": "boolean"
+          },
+          "PPOBDetails": {
+            "description": "Indicates whether Principal Place of Business have been changed. If true, section ContactInfo--PPOBDetails is mandatory",
+            "type": "boolean"
+          },
+          "correspDetails": {
+            "description": "Indicates whether Correspondence Details have been changed. If true, section ContactInfo--CorrespDetails is mandatory.",
+            "type": "boolean"
+          },
+          "returnPeriod": {
+            "description": "Indicates whether Return Period have been changed. If true, section ReturnPeriod is mandatory.",
+            "type": "boolean"
+          },
+          "businessActivities": {
+            "description": "Indicates whether BusinessActivities have been changed. If true, section BusinessActivities is mandatory.",
+            "type": "boolean"
+          },
+          "flatRateScheme": {
+            "description": "Indicates whether FlatRateScheme have been changed. If true, section FlatRateScheme is mandatory.",
+            "type": "boolean"
+          },
+          "deregInfo": {
+            "description": "Indicates whether DeregisterInformation have been changed. If true, section DeregInfo is mandatory.",
+            "type": "boolean"
+          },
+          "repaymentBankDetails": {
+            "description": "Indicates whether Repayment Bank Details have been changed. If true, section BankDetails is mandatory.",
+            "type": "boolean"
+          },
+          "mandationStatus": {
+            "description": "",
+            "type": "boolean"
+          },
+          "commsPreference": {
+            "description": "Communications Preference",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "organisationDetails",
+          "PPOBDetails",
+          "correspDetails",
+          "returnPeriod",
+          "businessActivities",
+          "flatRateScheme",
+          "deregInfo",
+          "repaymentBankDetails",
+          "mandationStatus",
+          "commsPreference"
+        ],
+        "additionalProperties": false
+      },
+      "organisationDetailsType": {
+        "type": "object",
+        "properties": {
+          "organisationName": {
+            "description": "Organisation Name",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 '’‘()[\\]{}<>!«»\"?/\\\\+=%#*&$€£_\\-@¥.,:;]{1,105}$"
+          },
+          "individualName": {
+            "description": "Individual Name",
+            "$ref": "#/definitions/individualNameType"
+          },
+          "tradingName": {
+            "description": "Trading Name",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 '’‘()[\\]{}<>!«»\"?/\\\\+=%#*&$€£_\\-@¥.,:;]{1,160}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "contactDetailsType": {
+        "type": "object",
+        "properties": {
+          "PPOBDetails": {
+            "description": "Contains Principal Place of Business Details (Address, communication details, website address)",
+            "$ref": "#/definitions/PPOBDetailsType"
+          },
+          "correspDetails": {
+            "description": "Contains Principal Place of Business Details (Address, communication details, website address)",
+            "$ref": "#/definitions/correspDetailsType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "businessActivitiesType": {
+        "type": "object",
+        "properties": {
+          "SICCodes": {
+            "$ref": "#/definitions/SICCodesType"
+          },
+          "landPropertyInterest": {
+            "description": "Land and Property Interest Indicated. Possible values (true, false)",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "SICCodes",
+          "landPropertyInterest"
+        ],
+        "additionalProperties": false
+      },
+      "flatRateSchemeType": {
+        "type": "object",
+        "properties": {
+          "FRSCategory": {
+            "description": "Possible values: 001 Accountancy or book-keeping, 002 Advertising, 003 Agricultural services, 004 Any other activity not listed elsewhere, 005 Architect, civil and structural engineer or surveyor, 006 Boarding or care of animals, 007 Business services not listed elsewhere, 008 Catering services including restaurants and takeaways, 009 Computer and IT consultancy or data processing, 010 Computer repair services, 011 Entertainment or journalism, 012 Estate agency or property management services, 013 Farming or agriculture not listed elsewhere, 014 Film, radio, television or video production, 015 Financial services, 016 Forestry or fishing, 017 General building or construction services, 018 Hairdressing or other beauty treatment services, 019 Hiring or renting goods, 020 Hotel or accommodation, 021 Investigation or security, 022 Labour-only building or construction services, 023 Laundry or dry-cleaning services, 024 Lawyer or legal services, 025 Library, archive, museum or other cultural activity, 026 Management consultancy, 027 Manufacturing fabricated metal products, 028 Manufacturing food, 029 Manufacturing not listed elsewhere, 030 Manufacturing yarn, textiles or clothing, 031 Membership organisation, 032 Mining or quarrying, 033 Packaging, 034 Photography, 035 Post offices, 036 Printing, 037 Publishing, 038 Pubs, 039 Real estate activity not listed elsewhere, 040 Repairing personal or household goods, 041 Repairing vehicles, 042 Retailing food, confectionery, tobacco, newspapers or children's clothing, 043 Retailing pharmaceuticals, medical goods, cosmetics or toiletries, 044 Retailing not listed elsewhere, 045 Retailing vehicles or fuel, 046 Secretarial services, 047 Social work, 048 Sport or recreation, 049 Transport or storage, including couriers, freight, removals and taxis, 050 Travel agency, 051 Veterinary medicine, 052 Wholesaling agricultural products, 053 Wholesaling food, 054 Wholesaling not listed elsewhere, 055 Dealing in waste or scrap, 999 Has FRS",
+            "type": "string",
+            "enum": [
+              "001",
+              "002",
+              "003",
+              "004",
+              "005",
+              "006",
+              "007",
+              "008",
+              "009",
+              "010",
+              "011",
+              "012",
+              "013",
+              "014",
+              "015",
+              "016",
+              "017",
+              "018",
+              "019",
+              "020",
+              "021",
+              "022",
+              "023",
+              "024",
+              "025",
+              "026",
+              "027",
+              "028",
+              "029",
+              "030",
+              "031",
+              "032",
+              "033",
+              "034",
+              "035",
+              "036",
+              "037",
+              "038",
+              "039",
+              "040",
+              "041",
+              "042",
+              "043",
+              "044",
+              "045",
+              "046",
+              "047",
+              "048",
+              "049",
+              "050",
+              "051",
+              "052",
+              "053",
+              "054",
+              "055",
+              "999"
+            ]
+          },
+          "FRSPercentage": {
+            "description": "Decimal 3.2",
+            "$ref": "#/definitions/percentType"
+          },
+          "startDate": {
+            "$ref": "#/definitions/dateString"
+          },
+          "endDate": {
+            "$ref": "#/definitions/dateString"
+          },
+          "limitedCostTrader": {
+            "description": "Are you a limited cost trader?. Possible values (true, false)",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "limitedCostTrader"
+        ],
+        "additionalProperties": false
+      },
+      "deregistrationInfoType": {
+        "type": "object",
+        "properties": {
+          "deregReason": {
+            "description": "Deregistration Reason possible values and meaning: 0001 (Cancelled Insolvent), 0002 (Cancelled - Missing Trader ), 0003 (Trading), 0004 (Ceased Trading (TOGC)) , 0005 (Duplicated Registration), 0006 (Registration Exemption Granted (Zero Rated Supplies)), 0007 (Taken into Group Registration ), 0008 (Disbanding Group), 0009 (Invalid Registration), 0010 (Reduced turnover), 0011 (Joined AFRS), 0012 (Deceased), 0013(Ceased Divisional Trading), 0014 (Making only Exempt Supplies)",
+            "type": "string",
+            "enum": [
+              "0001",
+              "0002",
+              "0003",
+              "0004",
+              "0005",
+              "0006",
+              "0007",
+              "0008",
+              "0009",
+              "0010",
+              "0011",
+              "0012",
+              "0013",
+              "0014"
+            ]
+          },
+          "deregDate": {
+            "type": "string",
+            "description": "Deregistration Date Format: YYYY-MMDD",
+            "$ref": "#/definitions/dateString"
+          },
+          "deregLaterDate": {
+            "type": "string",
+            "description": "Deregistration Later Date Format: YYYYMM-DD",
+            "$ref": "#/definitions/dateString"
+          },
+          "turnoverBelowDeregLimit": {
+            "$ref": "#/definitions/turnoverBelowDeregLimitType"
+          },
+          "zeroRatedExmpApplication": {
+            "$ref": "#/definitions/zeroRatedExmpApplicationType"
+          },
+          "newOwnerDetails": {
+            "$ref": "#/definitions/newOwnerDetailsType"
+          },
+          "disbandingGroupDeregQuestions": {
+            "$ref": "#/definitions/disbandingGroupDeregQuestionsType"
+          },
+          "joinedAFRSDeregQuestions": {
+            "$ref": "#/definitions/joinedAFRSDeregQuestionsType"
+          },
+          "deregDetails": {
+            "$ref": "#/definitions/deregDetailsType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "turnoverBelowDeregLimitType": {
+        "description": "Turnover Below Registration Limit",
+        "type": "object",
+        "properties": {
+          "aboveBelowThreshold": {
+            "description": "Indicates whether above or below the Threshold. Possible values and (meaning): 1 (Blank), 2 (Above), 3 (Below)",
+            "type": "string",
+            "enum": [
+              "1",
+              "2",
+              "3"
+            ]
+          },
+          "taxableSuppliesValue": {
+            "description": "Taxable supplies value",
+            "$ref": "#/definitions/decimalType"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          }
+        },
+        "additionalProperties": false
+      },
+      "zeroRatedExmpApplicationType": {
+        "description": "Zero Rated and Exemption Application",
+        "type": "object",
+        "properties": {
+          "natureOfSupplies": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "repaymentSituation": {
+            "description": "Repayment Situation. Possible values(true, false)",
+            "type": "boolean"
+          },
+          "zeroRatedSuppliesValue": {
+            "description": "Taxable supplies value",
+            "$ref": "#/definitions/decimalType"
+          },
+          "estTotalTaxTurnover": {
+            "description": "Taxable supplies value",
+            "$ref": "#/definitions/decimalType"
+          }
+        },
+        "required": [
+          "repaymentSituation"
+        ],
+        "additionalProperties": false
+      },
+      "newOwnerDetailsType": {
+        "description": "TOGC (Transfer of Going Concern) - COLE (Change of Legal Entity): New Owner Details",
+        "type": "object",
+        "properties": {
+          "retainVATNumber": {
+            "description": "TOCG-COLE Retain VAT number. Possible values (true, false)",
+            "type": "boolean"
+          },
+          "acceptVATConditions": {
+            "description": "Accept VAT conditions for TOGC - COLE. Possible values (true, false)",
+            "type": "boolean"
+          },
+          "newOwnerVRN": {
+            "description": "New owner's VRN.",
+            "type": "string",
+            "pattern": "^[0-9]{9}$"
+          },
+          "VATGroupMember": {
+            "description": "Is the new owner already a VAT Group Member. Possible values (true, false)",
+            "type": "boolean"
+          },
+          "stockAssetTransfer": {
+            "description": "Stock Asset Transfer. Possible values(true, false)",
+            "type": "boolean"
+          },
+          "organisationName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 105
+          },
+          "individualName": {
+            "$ref": "#/definitions/individualNameType"
+          },
+          "tradingName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "address": {
+            "$ref": "#/definitions/addressType"
+          },
+          "commDetails": {
+            "$ref": "#/definitions/commDetailsType"
+          },
+          "webAddress": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 132
+          }
+        },
+        "required": [
+          "retainVATNumber",
+          "acceptVATConditions",
+          "VATGroupMember",
+          "stockAssetTransfer"
+        ],
+        "additionalProperties": false
+      },
+      "deregDetailsType": {
+        "type": "object",
+        "properties": {
+          "optionTaxProperty": {
+            "description": "Option to tax on property. Possible values (true, false).",
+            "type": "boolean"
+          },
+          "cashAccountingScheme": {
+            "description": "Cash accounting scheme. Possible values (true, false).",
+            "type": "boolean"
+          },
+          "OTTStocksAssetsValue": {
+            "description": "OTT, Stocks and Assets Value",
+            "$ref": "#/definitions/decimalType"
+          },
+          "intendSellCapitalAssets": {
+            "description": "Intend to sell Capital Assets. Possible values (true, false).",
+            "type": "boolean"
+          },
+          "additionalTaxInvoices": {
+            "description": "Additional Tax Invoices. Possible values (true, false).",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "optionTaxProperty",
+          "cashAccountingScheme",
+          "intendSellCapitalAssets",
+          "additionalTaxInvoices"
+        ],
+        "additionalProperties": false
+      },
+      "disbandingGroupDeregQuestionsType": {
+        "type": "object",
+        "properties": {
+          "groupDeregQ1": {
+            "description": "Question relates to whether any company leaving the group owns capital assets which are subject to the Capital Goods Scheme on Disbanding Date. Possible values true (Y - Yes) or false (N - No) or no field - Question not answered",
+            "type": "boolean"
+          },
+          "groupDeregQ1Text": {
+            "description": "Mandatory when Question 1 is 'Y'",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "groupDeregQ2": {
+            "description": "Questions follows on from Q1 and whether any company leaving the group would be Partly exempt on Disbanding. Possible values true (Y - Yes) or false (N - No) or no field - Question not answered",
+            "type": "boolean"
+          },
+          "groupDeregQ2Text": {
+            "description": "Mandatory when Question 2 is 'Y'",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "groupDeregQ3": {
+            "description": "Question relates to whether any company has made or received any payments in respect to any supply, part/all of which will be delivered after leaving the group. Possible values true (Y - Yes) or false (N - No) or no field - Question not answered",
+            "type": "boolean"
+          },
+          "groupDeregQ3Text": {
+            "description": "Mandatory when Question 3 is 'Y'",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "groupDeregQ4": {
+            "description": "Question relates to whether a company leaving the group expects to incur input tax, after having left the group, related to any supply made whilst a member of the group. Possible values true (Y - Yes) or false (N - No) or no field - Question not answered",
+            "type": "boolean"
+          },
+          "groupDeregQ4Text": {
+            "description": "Mandatory when Question 4 is 'Y'",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "groupDeregQ5": {
+            "description": "whether a company leaving the group has an interest as a relevant associate in any opted land or buildings. Possible values true (Y -Yes) or false (N - No) or no field - Question not answered.",
+            "type": "boolean"
+          },
+          "groupDeregQ5Text": {
+            "description": "Mandatory when Question 5 answer is 'Y'",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "additionalProperties": false
+      },
+      "joinedAFRSDeregQuestionsType": {
+        "type": "object",
+        "properties": {
+          "AFRSFarmingTurnover": {
+            "description": "AFRS Farming Turnover",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000000000,
+            "multipleOf": 0.01
+          },
+          "AFRSNonFarmingTurnover": {
+            "description": "AFRS Non-Farming Turnover",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000000000,
+            "multipleOf": 0.01
+          }
+        },
+        "additionalProperties": false
+      },
+      "returnPeriodsType": {
+        "type": "object",
+        "properties": {
+          "changeReturnPeriod": {
+            "description": "Non Std Tax Periods Requested",
+            "type": "boolean"
+          },
+          "returnPeriod": {
+            "description": "MA - Quarterly-The last day of Jan, April, July and Oct, MB - Quarterly-The last day of Feb, May, Aug and Nov, MC - Quarterly-The last day of Mar, June, Sep and Dec, MM - Monthly Returns",
+            "type": "string",
+            "enum": [
+              "MA",
+              "MB",
+              "MC",
+              "MM"
+            ]
+          }
+        },
+        "required": [
+          "changeReturnPeriod"
+        ],
+        "additionalProperties": false
+      },
+      "bankDetailsType": {
+        "type": "object",
+        "properties": {
+          "removeBankDetails": {
+            "description": "Indicates whether the current bank details should be removed",
+            "type": "boolean"
+          },
+          "bankBuildSocietyName": {
+            "description": "Bank or Building Society Name",
+            "type": "string",
+            "pattern": "^[0-9a-zA-Z &`\\-\\'\\.^]{1,40}$"
+          },
+          "overseasBank": {
+            "description": "OverseasBank object",
+            "$ref": "#/definitions/overseasBankDetailsType"
+          },
+          "UKBank": {
+            "description": "UKBank object",
+            "$ref": "#/definitions/UKBankDetailsType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UKBankDetailsType": {
+        "type": "object",
+        "properties": {
+          "accountHolderName": {
+            "description": "Account Holder Name",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 '’‘()[\\]{}<>!«»\"?/\\\\+=%#*&$€£_\\-@¥.,:;]{1,60}$"
+          },
+          "bankAccountNumber": {
+            "description": "Bank Account Number",
+            "type": "string",
+            "pattern": "^[0-9]{8}$"
+          },
+          "sortCode": {
+            "description": "Sort Code",
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          },
+          "buildingSocietyNumber": {
+            "description": "Building Society Number. If Building Society number is populated then Sort Code and Bank Account Number must be populated",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{1,20}$"
+          }
+        },
+        "required": [
+          "accountHolderName",
+          "bankAccountNumber",
+          "sortCode"
+        ],
+        "additionalProperties": false
+      },
+      "overseasBankDetailsType": {
+        "type": "object",
+        "properties": {
+          "BIC": {
+            "description": "BIC",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{1,11}$"
+          },
+          "IBAN": {
+            "description": "IBAN",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{1,34}$"
+          }
+        },
+        "required": [
+          "BIC",
+          "IBAN"
+        ],
+        "additionalProperties": false
+      },
+      "declarationType": {
+        "type": "object",
+        "properties": {
+          "applicantDetails": {
+            "description": "Applicant Details object",
+            "$ref": "#/definitions/applicantDetailsType"
+          },
+          "agentOrCapacitor": {
+            "description": "Agent or capacitor object",
+            "$ref": "#/definitions/agentOrCapacitorType"
+          },
+          "signing": {
+            "description": "Signing object",
+            "$ref": "#/definitions/signingType"
+          }
+        },
+        "required": [
+          "signing"
+        ],
+        "additionalProperties": false
+      },
+      "attachmentsType": {
+        "type": "object",
+        "properties": {
+          "taxAgentAuth1TR": {
+            "description": "Tax Agent Authorisation object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          },
+          "taxRepAuth1TR": {
+            "description": "Tax RepAuth 1TR object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          },
+          "otherAttachments": {
+            "description": "Other Attachments object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          },
+          "VAT53": {
+            "description": "VAT53 object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          },
+          "letterOfAuthority": {
+            "description": "Letter of Authority object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          },
+          "attachment1614h": {
+            "description": "Attachment 1614h object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          },
+          "attachment1614a": {
+            "description": "Attachment 1614a object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          },
+          "VAT5L": {
+            "description": "VAT5L object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          },
+          "landPropertyOtherDocs": {
+            "description": "Land Property Other Docs object",
+            "$ref": "#/definitions/attachmentsEnumType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "attachmentsEnumType": {
+        "description": "Possible values: 01 - Attached, 02 - In Post, 99 - N/A",
+        "type": "string",
+        "enum": [
+          "01",
+          "02",
+          "99"
+        ]
+      },
+      "prevIndividualNameType": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "Title: 0001 - Mr, 0002 - Mrs, 0003 - Miss, 0004 - Ms, 0005 - Dr, 0006 - Sir, 0007 - Rev, 0008 - Personal Representative of, 0009 - Professor, 0010 - Lord, 0011 - Lady, 0012 - Dame",
+            "type": "string",
+            "enum": [
+              "0001",
+              "0002",
+              "0003",
+              "0004",
+              "0005",
+              "0006",
+              "0007",
+              "0008",
+              "0009",
+              "0010",
+              "0011",
+              "0012"
+            ]
+          },
+          "firstName": {
+            "description": "First Name",
+            "type": "string",
+            "pattern": "^[a-zA-Z &`\\-\\'\\.^]{1,35}$"
+          },
+          "middleName": {
+            "description": "Middle Name",
+            "type": "string",
+            "pattern": "^[a-zA-Z &`\\-\\'\\.^]{1,35}$"
+          },
+          "lastName": {
+            "description": "Last Name",
+            "type": "string",
+            "pattern": "^[a-zA-Z &`\\-\\'\\.^]{1,35}$"
+          },
+          "nameChangeDate": {
+            "description": "Name Change Date",
+            "$ref": "#/definitions/dateString"
+          }
+        },
+        "additionalProperties": false
+      },
+      "individualNameType": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "Title: 0001 - Mr, 0002 - Mrs, 0003 - Miss, 0004 - Ms, 0005 - Dr, 0006 - Sir, 0007 - Rev, 0008 - Personal Representative of, 0009 - Professor, 0010 - Lord, 0011 - Lady, 0012 - Dame",
+            "type": "string",
+            "enum": [
+              "0001",
+              "0002",
+              "0003",
+              "0004",
+              "0005",
+              "0006",
+              "0007",
+              "0008",
+              "0009",
+              "0010",
+              "0011",
+              "0012"
+            ]
+          },
+          "firstName": {
+            "description": "First Name",
+            "type": "string",
+            "pattern": "^[a-zA-Z &`\\-\\'\\.^]{1,35}$"
+          },
+          "middleName": {
+            "description": "Middle Name",
+            "type": "string",
+            "pattern": "^[a-zA-Z &`\\-\\'\\.^]{1,35}$"
+          },
+          "lastName": {
+            "description": "Last Name",
+            "type": "string",
+            "pattern": "^[a-zA-Z &`\\-\\'\\.^]{1,35}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PPOBDetailsType": {
+        "type": "object",
+        "properties": {
+          "PPOBAddress": {
+            "description": "Principal Place of Business address. Mandatory if any aspect of PPoB details are being changed.",
+            "$ref": "#/definitions/addressTypeNonUK"
+          },
+          "PPOBCommDetails": {
+            "description": "Principal Place of Business communication details.",
+            "$ref": "#/definitions/commDetailsTypePPOB"
+          },
+          "websiteAddress": {
+            "description": "Website Address",
+            "type": "string",
+            "pattern": "^(((HTTP|http)(S|s)?\\:\\/\\/((WWW|www)\\.)?)|((WWW|www)\\.))?[a-zA-Z0-9\\[_~\\:\\/?#\\]@!&'()*+,;=% ]+\\.[a-zA-Z]{2,5}(\\.[a-zA-Z]{2,5})?(\\:[0-9]{1,5})?(\\/[a-zA-Z0-9_-]+(\\/)?)*$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "correspDetailsType": {
+        "type": "object",
+        "properties": {
+          "correspPPOBAddressDiffer": {
+            "description": "Is the correspondence address different to the PPOB address provided? True = the two addresses are NOT the same. False = the two addresses ARE the same.",
+            "type": "boolean"
+          },
+          "correspAddress": {
+            "description": "Correspondence Contact Details address.",
+            "$ref": "#/definitions/addressType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "commDetailsType": {
+        "type": "object",
+        "properties": {
+          "primaryPhoneNumber": {
+            "description": "Telephone Number",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "pattern": "^[A-Z0-9 )/(*#-]+$"
+          },
+          "mobileNumber": {
+            "description": "Mobile Number",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "pattern": "^[A-Z0-9 )/(*#-]+$"
+          },
+          "faxNumber": {
+            "description": "Fax Number",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "pattern": "^[A-Z0-9 )/(*#-]+$"
+          },
+          "emailAddress": {
+            "description": "Email Address",
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 132,
+            "format": "email"
+          }
+        },
+        "additionalProperties": false
+      },
+      "commDetailsTypePPOB": {
+        "type": "object",
+        "properties": {
+          "primaryPhoneNumber": {
+            "description": "Telephone Number",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "pattern": "^[A-Z0-9 )/(*#-]+$"
+          },
+          "mobileNumber": {
+            "description": "Mobile Number",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "pattern": "^[A-Z0-9 )/(*#-]+$"
+          },
+          "faxNumber": {
+            "description": "Fax Number",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "pattern": "^[A-Z0-9 )/(*#-]+$"
+          },
+          "emailAddress": {
+            "description": "Email Address",
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 132,
+            "format": "email"
+          },
+          "emailVerified": {
+            "description": "Email Verified",
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "addressType": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "description": "Address Line 1",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "line2": {
+            "description": "Address Line 2",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "line3": {
+            "description": "Address Line 3",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "line4": {
+            "description": "Address Line 4",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "line5": {
+            "description": "Address Line 5",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "postCode": {
+            "description": "Post code or Zip code",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,10}$"
+          },
+          "countryCode": {
+            "description": "2 digit ISO Country Code",
+            "$ref": "#/definitions/countryCodeType"
+          },
+          "addressValidated": {
+            "description": "Address validated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "line1",
+          "countryCode",
+          "addressValidated"
+        ],
+        "additionalProperties": false
+      },
+      "addressTypeNonUK": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "description": "Address Line 1",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "line2": {
+            "description": "Address Line 2",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "line3": {
+            "description": "Address Line 3",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "line4": {
+            "description": "Address Line 4",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "line5": {
+            "description": "Address Line 5",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,35}$"
+          },
+          "postCode": {
+            "description": "Post code or Zip code",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 \\-,.&'\\/()!]{1,10}$"
+          },
+          "countryCode": {
+            "description": "2 digit ISO Country Code",
+            "$ref": "#/definitions/countryCodeType"
+          },
+          "addressValidated": {
+            "description": "Address validated",
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "applicantDetailsType": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name object",
+            "$ref": "#/definitions/individualNameType"
+          },
+          "prevName": {
+            "description": "Prev Name object",
+            "$ref": "#/definitions/prevIndividualNameType"
+          },
+          "currAddress": {
+            "description": "Curr Address object",
+            "$ref": "#/definitions/addressType"
+          },
+          "commDetails": {
+            "description": "Comm Details object",
+            "$ref": "#/definitions/commDetailsType"
+          },
+          "identification": {
+            "description": "Identification object",
+            "$ref": "#/definitions/identificationType"
+          },
+          "prevAddress": {
+            "description": "Prev Address object",
+            "$ref": "#/definitions/addressType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "agentOrCapacitorType": {
+        "type": "object",
+        "properties": {
+          "individualName": {
+            "description": "Individual Name object",
+            "$ref": "#/definitions/individualNameType"
+          },
+          "organisationName": {
+            "description": "Organisation Name",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 '’‘()[\\]{}<>!«»\"?/\\\\+=%#*&$€£_\\-@¥.,:;]{1,105}$"
+          },
+          "identification": {
+            "description": "Identification object",
+            "$ref": "#/definitions/agentOrCapacitorIdentification"
+          },
+          "commDetails": {
+            "description": "Agent or capacitor Comm Details object",
+            "$ref": "#/definitions/commDetailsType"
+          },
+          "clientIDThisTrader": {
+            "description": "Client ID This Trader",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{1,128}$"
+          },
+          "currAddress": {
+            "description": "Curr Address object",
+            "$ref": "#/definitions/addressType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "signingType": {
+        "type": "object",
+        "properties": {
+          "confirmDeclarationInfoAcceptable": {
+            "description": "I hereby confirm my declaration is accurate and complete",
+            "type": "boolean"
+          },
+          "declarationCapacity": {
+            "description": "Declaration Capacity: 01 - Sole proprietor, 02 - Partner, 03 - Director, 04 - Company secretary, 05 - Self-employed, 06 - Sole trader, 07 - Nominated partner, 08 - Agent, 99 Other",
+            "type": "string",
+            "enum": [
+              "01",
+              "02",
+              "03",
+              "04",
+              "05",
+              "06",
+              "07",
+              "08",
+              "99"
+            ]
+          },
+          "capacityOther": {
+            "description": "Capacity Other. Mandatory if DeclarationCapacity = 99",
+            "type": "string",
+            "pattern": "^[0-9a-zA-Z &`\\-\\'\\.^]{1,100}$"
+          }
+        },
+        "required": [
+          "confirmDeclarationInfoAcceptable"
+        ],
+        "additionalProperties": false
+      },
+      "countryCodeType": {
+        "description": "2-digit ISO code for the country",
+        "type": "string",
+        "enum": [
+          "AD",
+          "AE",
+          "AF",
+          "AG",
+          "AI",
+          "AL",
+          "AM",
+          "AN",
+          "AO",
+          "AQ",
+          "AR",
+          "AS",
+          "AT",
+          "AU",
+          "AW",
+          "AX",
+          "AZ",
+          "BA",
+          "BB",
+          "BD",
+          "BE",
+          "BF",
+          "BG",
+          "BH",
+          "BI",
+          "BJ",
+          "BM",
+          "BN",
+          "BO",
+          "BQ",
+          "BR",
+          "BS",
+          "BT",
+          "BV",
+          "BW",
+          "BY",
+          "BZ",
+          "CA",
+          "CC",
+          "CD",
+          "CF",
+          "CG",
+          "CH",
+          "CI",
+          "CK",
+          "CL",
+          "CM",
+          "CN",
+          "CO",
+          "CR",
+          "CS",
+          "CU",
+          "CV",
+          "CW",
+          "CX",
+          "CY",
+          "CZ",
+          "DE",
+          "DJ",
+          "DK",
+          "DM",
+          "DO",
+          "DZ",
+          "EC",
+          "EE",
+          "EG",
+          "EH",
+          "ER",
+          "ES",
+          "ET",
+          "FI",
+          "FJ",
+          "FK",
+          "FM",
+          "FO",
+          "FR",
+          "GA",
+          "GB",
+          "GD",
+          "GE",
+          "GF",
+          "GG",
+          "GH",
+          "GI",
+          "GL",
+          "GM",
+          "GN",
+          "GP",
+          "GQ",
+          "GR",
+          "GS",
+          "GT",
+          "GU",
+          "GW",
+          "GY",
+          "HK",
+          "HM",
+          "HN",
+          "HR",
+          "HT",
+          "HU",
+          "ID",
+          "IE",
+          "IL",
+          "IM",
+          "IN",
+          "IO",
+          "IQ",
+          "IR",
+          "IS",
+          "IT",
+          "JE",
+          "JM",
+          "JO",
+          "JP",
+          "KE",
+          "KG",
+          "KH",
+          "KI",
+          "KM",
+          "KN",
+          "KP",
+          "KR",
+          "KW",
+          "KY",
+          "KZ",
+          "LA",
+          "LB",
+          "LC",
+          "LI",
+          "LK",
+          "LR",
+          "LS",
+          "LT",
+          "LU",
+          "LV",
+          "LY",
+          "MA",
+          "MC",
+          "MD",
+          "ME",
+          "MF",
+          "MG",
+          "MH",
+          "MK",
+          "ML",
+          "MM",
+          "MN",
+          "MO",
+          "MP",
+          "MQ",
+          "MR",
+          "MS",
+          "MT",
+          "MU",
+          "MV",
+          "MW",
+          "MX",
+          "MY",
+          "MZ",
+          "NA",
+          "NC",
+          "NE",
+          "NF",
+          "NG",
+          "NI",
+          "NL",
+          "NO",
+          "NP",
+          "NR",
+          "NT",
+          "NU",
+          "NZ",
+          "OM",
+          "PA",
+          "PE",
+          "PF",
+          "PG",
+          "PH",
+          "PK",
+          "PL",
+          "PM",
+          "PN",
+          "PR",
+          "PS",
+          "PT",
+          "PW",
+          "PY",
+          "QA",
+          "RE",
+          "RO",
+          "RS",
+          "RU",
+          "RW",
+          "SA",
+          "SB",
+          "SC",
+          "SD",
+          "SE",
+          "SG",
+          "SH",
+          "SI",
+          "SJ",
+          "SK",
+          "SL",
+          "SM",
+          "SN",
+          "SO",
+          "SR",
+          "SS",
+          "ST",
+          "SV",
+          "SX",
+          "SY",
+          "SZ",
+          "TC",
+          "TD",
+          "TF",
+          "TG",
+          "TH",
+          "TJ",
+          "TK",
+          "TL",
+          "TM",
+          "TN",
+          "TO",
+          "TP",
+          "TR",
+          "TT",
+          "TV",
+          "TW",
+          "TZ",
+          "UA",
+          "UG",
+          "UM",
+          "UN",
+          "US",
+          "UY",
+          "UZ",
+          "VA",
+          "VC",
+          "VE",
+          "VG",
+          "VI",
+          "VN",
+          "VU",
+          "WF",
+          "WS",
+          "YE",
+          "YT",
+          "ZA",
+          "ZM",
+          "ZW"
+        ]
+      },
+      "agentOrCapacitorIdentification": {
+        "type": "object",
+        "properties": {
+          "VRN": {
+            "description": "VRN",
+            "type": "string",
+            "pattern": "^[0-9]{9}$"
+          },
+          "ARN": {
+            "description": "ARN",
+            "type": "string",
+            "pattern": "^[A-Z]ARN[0-9]{7}$"
+          },
+          "NINO": {
+            "description": "NINO",
+            "type": "string",
+            "pattern": "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D]$"
+          },
+          "SAUTR": {
+            "description": "SA UTR",
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          },
+          "foreignDetails": {
+            "description": "Foreign Details object",
+            "$ref": "#/definitions/foreignDetailsType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "identificationType": {
+        "type": "object",
+        "properties": {
+          "dateOfBirth": {
+            "description": "Date of birth",
+            "$ref": "#/definitions/dateString"
+          },
+          "NINO": {
+            "description": "NINO",
+            "type": "string",
+            "pattern": "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D]$"
+          },
+          "SAUTR": {
+            "description": "SA UTR",
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          },
+          "foreignDetails": {
+            "description": "Foreign Details object",
+            "$ref": "#/definitions/foreignDetailsType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "foreignDetailsType": {
+        "type": "object",
+        "properties": {
+          "typeOfID": {
+            "description": "Type of ID",
+            "type": "string",
+            "pattern": "^[0-9a-zA-Z &`\\-\\'\\.^]{1,30}$"
+          },
+          "foreignTaxID": {
+            "description": "id Value",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{1,60}$"
+          },
+          "nonUKCountryCode": {
+            "description": "Country Object",
+            "$ref": "#/definitions/countryCodeType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SICCodesType": {
+        "type": "object",
+        "properties": {
+          "primaryMainCode": {
+            "type": "string",
+            "pattern": "^\\d{5}$"
+          },
+          "mainCode2": {
+            "type": "string",
+            "pattern": "^\\d{5}$"
+          },
+          "mainCode3": {
+            "type": "string",
+            "pattern": "^\\d{5}$"
+          },
+          "mainCode4": {
+            "type": "string",
+            "pattern": "^\\d{5}$"
+          }
+        },
+        "required": [
+          "primaryMainCode"
+        ],
+        "additionalProperties": false
+      },
+      "commsPreferenceType": {
+        "description": "Communications Preference: P01 - PAPER, ZEL - ELECTRONIC",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 3
+      },
+      "percentType": {
+        "description": "Defines a percentage rate (to 2 decimal places), between 0.00 and 999.99",
+        "type": "number",
+        "minimum": 0,
+        "maximum": 999.99,
+        "multipleOf": 0.01
+      },
+      "decimalType": {
+        "description": "Defines a decimal value (to 2 decimal places), between -9999999999999.99 and 9999999999999.99",
+        "type": "number",
+        "minimum": -9999999999999.99,
+        "maximum": 9999999999999.99,
+        "multipleOf": 0.01
+      }
+    }
+  }
+}
