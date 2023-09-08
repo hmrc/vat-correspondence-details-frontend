@@ -26,8 +26,8 @@ import play.api.test.Helpers._
 import views.html.website.CaptureWebsiteView
 
 class CaptureWebsiteControllerSpec extends ControllerBaseSpec {
-  val testValidationWebsite: String = "https://www.current~valid~website.com"
-  val testValidWebsite: String      = "https://www.new~valid~website.com"
+  val testValidationWebsite: String = "https://www.current~valid-website.com"
+  val testValidWebsite: String      = "https://www.new~valid-website.com"
   val testInvalidWebsite: String    = "invalid@£$%^&website"
 
   def target(): CaptureWebsiteController = {

@@ -30,7 +30,7 @@ class WebsiteFormSpec extends TestUtil with Matchers {
     val noEntryErrorMessage: String = "captureWebsite.error.empty"
     val unchangedErrorMessage: String = "captureWebsite.error.notChanged"
 
-    val testWebsite = "example.com"
+    val testWebsite = "example-test.com"
 
     "validate that testWebsite is valid" in {
       val actual = websiteForm("").bind(Map("website" -> testWebsite))
