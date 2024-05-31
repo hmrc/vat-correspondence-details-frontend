@@ -19,8 +19,8 @@ import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 
 val appName = "vat-correspondence-details-frontend"
-val bootstrapPlayVersion       = "7.15.0"
-val playFrontendHmrc           = "7.7.0-play-28"
+val bootstrapPlayVersion       = "8.6.0"
+val playFrontendHmrc           = "9.11.0"
 val mockitoVersion             = "3.2.9.0"
 val scalaMockVersion           = "5.2.0"
 
@@ -49,12 +49,12 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
-  "uk.gov.hmrc"       %% "play-frontend-hmrc"         % playFrontendHmrc
+  "uk.gov.hmrc"       %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
+  "uk.gov.hmrc"       %% "play-frontend-hmrc-play-30" % playFrontendHmrc
 )
 
 def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"       %% "bootstrap-test-play-28"      % bootstrapPlayVersion  % scope,
+  "uk.gov.hmrc"       %% "bootstrap-test-play-30"      % bootstrapPlayVersion  % scope,
   "org.scalatestplus" %% "mockito-3-4"                 % mockitoVersion        % scope,
   "org.scalamock"     %% "scalamock"                   % scalaMockVersion      % scope
 )
@@ -84,7 +84,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     Test / Keys.fork := true,
-    scalaVersion := "2.13.8",
+    scalaVersion := "2.13.12",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     RoutesKeys.routesImport := Seq.empty

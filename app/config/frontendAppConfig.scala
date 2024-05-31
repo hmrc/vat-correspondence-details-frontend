@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import java.net.URLEncoder
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
@@ -93,7 +93,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   private lazy val signInBaseUrl: String = sc.getString(Keys.signInBaseUrl)
   private lazy val signInOrigin = sc.getString("appName")
   override lazy val signInUrl: String = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
-  override lazy val signInContinueUrl: String = SafeRedirectUrl(manageVatSubscriptionServicePath).encodedUrl
+  override lazy val signInContinueUrl: String = URLEncoder.encode(manageVatSubscriptionServicePath, "UTF-8")
   override def feedbackSignOutUrl(identifier: String): String =
     s"$governmentGatewayHost/bas-gateway/sign-out-without-state?continue=${feedbackSurveyUrl(identifier)}"
   override lazy val unauthorisedSignOutUrl: String = s"$governmentGatewayHost/bas-gateway/sign-out-without-state?continue=$signInContinueUrl"
@@ -131,7 +131,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
 
   override def feedbackUrl(redirect: String): String =
     s"$contactFrontendService/contact/beta-feedback?service=$contactFormServiceIdentifier" +
-    s"&backUrl=${SafeRedirectUrl(host + redirect).encodedUrl}"
+    s"&backUrl=${URLEncoder.encode(host + redirect, "UTF-8")}"
 
   override val vatOverviewUrl: String = sc.getString(Keys.vatSummaryFrontendServiceUrl) +
     sc.getString(Keys.vatSummaryFrontendOverviewUrl)
