@@ -21,14 +21,14 @@ import connectors.httpParsers.UpdateEmailHttpParser.UpdateEmailResponse
 import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import models.User
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import services.VatSubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockVatSubscriptionService extends MockFactory with BeforeAndAfterEach {
-  this: Suite =>
+  self: TestSuite =>
 
   override def beforeEach(): Unit = {
     super.beforeEach()
