@@ -24,11 +24,13 @@ import connectors.httpParsers.UpdatePPOBHttpParser.UpdatePPOBResponse
 import models.User
 import models.customerInformation.{PPOB, UpdateEmailSuccess, UpdatePPOBSuccess}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockVatSubscriptionConnector extends MockFactory {
+  self: TestSuite =>
 
   val connector: VatSubscriptionConnector = mock[VatSubscriptionConnector]
 

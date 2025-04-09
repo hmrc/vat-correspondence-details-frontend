@@ -15,18 +15,17 @@
  */
 
 import play.sbt.routes.RoutesKeys
-import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 
 val appName = "vat-correspondence-details-frontend"
 val bootstrapPlayVersion       = "8.6.0"
 val playFrontendHmrc           = "9.11.0"
-val mockitoVersion             = "3.2.9.0"
-val scalaMockVersion           = "5.2.0"
+val mockitoVersion             = "3.2.10.0"
+val scalaMockVersion           = "7.3.0"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
-lazy val coverageSettings: Seq[Setting[_]] = {
+lazy val coverageSettings: Seq[Setting[?]] = {
   import scoverage.ScoverageKeys
 
   val excludedPackages = Seq(
@@ -69,19 +68,19 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(PlayKeys.playDefaultPort := 9148)
-  .settings(coverageSettings: _*)
+  .settings(coverageSettings *)
   .settings(majorVersion := 0)
-  .settings(scalaSettings: _*)
-  .settings(defaultSettings(): _*)
+  .settings(scalaSettings *)
+  .settings(defaultSettings() *)
   .settings(
     Test / Keys.fork := true,
-    scalaVersion := "2.13.12",
+    scalaVersion := "2.13.16",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     RoutesKeys.routesImport := Seq.empty
   )
   .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+  .settings(inConfig(IntegrationTest)(Defaults.itSettings) *)
   .settings(scalacOptions ++= Seq("-Wconf:cat=unused-imports&site=.*views.html.*:s"))
   .settings(
     IntegrationTest / Keys.fork := false,
@@ -89,3 +88,8 @@ lazy val microservice = Project(appName, file("."))
     addTestReportOption(IntegrationTest, "int-test-reports"),
     IntegrationTest / parallelExecution := false
   )
+
+scalacOptions ++= Seq(
+  "-Wconf:cat=unused-imports&src=routes/.*:s",
+  "-Wconf:cat=unused&src=routes/.*:s"
+)
