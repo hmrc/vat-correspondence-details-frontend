@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, s
 
 val appName = "vat-correspondence-details-frontend"
 val bootstrapPlayVersion       = "8.6.0"
-val playFrontendHmrc           = "9.11.0"
+val playFrontendHmrc           = "12.11.0"
 val mockitoVersion             = "3.2.10.0"
 val scalaMockVersion           = "7.3.0"
 
