@@ -45,9 +45,4 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi,
   def showInternalServerError(implicit request: RequestHeader): Result =
     InternalServerError(standardErrorView("standardError.title", "standardError.heading", "standardError.message"))
 
-//  def showBadRequestError(implicit request: Request[_]): Result = BadRequest(badRequestTemplate)
-
-//  def showNotFoundError(implicit request: Request[_]): Result =
-//    NotFound(notFoundTemplate)
-
 }
