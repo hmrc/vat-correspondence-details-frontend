@@ -36,7 +36,7 @@
   serviceInfoContent: Html = HtmlFormat.empty,
   backLinkContent: Option[Html] = None
 )(mainContent: Html)(
-  implicit request: Request[_],
+  implicit request: RequestHeader,
   messages: Messages,
   appConfig: config.AppConfig
 )
