@@ -42,7 +42,10 @@ trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with Materialize
   implicit lazy val messages: Messages = MessagesImpl(Lang("en-GB"), messagesApi)
   implicit lazy val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
 
-  lazy val mockErrorHandler: ErrorHandler = new ErrorHandler(messagesApi, injector.instanceOf[StandardErrorView], mockConfig)
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit lazy val ec: ExecutionContext = mcc.executionContext
+
+  lazy val mockErrorHandler: ErrorHandler = new ErrorHandler(messagesApi, injector.instanceOf[StandardErrorView], mockConfig, ec)
 
   val testEmail = "test@email.co.uk"
   val testWebsite = "https://www.test-website.co.uk"
@@ -168,7 +171,4 @@ trait TestUtil extends AnyWordSpecLike with GuiceOneAppPerSuite with Materialize
     User[AnyContentAsEmpty.type](vrn, active = true)(getRequest.withSession(validationEmailKey -> ""))
   lazy val agent: User[AnyContentAsEmpty.type] =
     User[AnyContentAsEmpty.type](vrn, active = true, Some(arn))(fakeRequestWithClientsVRN)
-
-  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
-  implicit lazy val ec: ExecutionContext = mcc.executionContext
 }
