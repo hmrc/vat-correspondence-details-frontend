@@ -18,7 +18,7 @@
 
 @this(mainTemplate: MainTemplate)
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @mainContent = {
 <h1 class="govuk-heading-xl">@messages(heading)</h1>
