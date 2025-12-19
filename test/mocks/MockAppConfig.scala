@@ -65,4 +65,5 @@ class MockAppConfig(val runModeConfiguration: Configuration, val mode: Mode = Mo
 
   override val vatOverviewUrl: String = "/vat-through-software/vat-overview"
   override val gtmContainer: String = "x"
+  override val urBannerUrl: String = "ur-banner-url"
 }

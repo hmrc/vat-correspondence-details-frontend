@@ -16,6 +16,7 @@
 
 @import play.twirl.api.HtmlFormat
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import views.utils.ServiceNameUtil
 @import views.html.helper.CSPNonce
 
@@ -27,14 +28,16 @@
       hmrcStandardHeader: HmrcStandardHeader,
       hmrcStandardFooter: HmrcStandardFooter,
       hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-      hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet)
+      hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+      hmrcUserResearchBanner : HmrcUserResearchBanner)
 
 @(pageTitle: String,
   serviceName: Option[String] = None,
   showLogout: Boolean = true,
   feedbackOnSignOut: Boolean = true,
   serviceInfoContent: Html = HtmlFormat.empty,
-  backLinkContent: Option[Html] = None
+  backLinkContent: Option[Html] = None,
+  urBanner: Option[UserResearchBanner] = None
 )(mainContent: Html)(
   implicit request: RequestHeader,
   messages: Messages,
@@ -97,7 +100,8 @@
     serviceName = Some(navTitle),
     serviceUrl = ServiceNameUtil.generateServiceUrl,
     signOutUrl = if(showLogout) Some(routes.SignOutController.signOut(feedbackOnSignOut).url) else None,
-    displayHmrcBanner = false
+    displayHmrcBanner = false,
+    additionalBannersBlock = urBanner.map(hmrcUserResearchBanner(_))
   )
 }
 

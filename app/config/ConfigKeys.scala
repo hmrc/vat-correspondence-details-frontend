@@ -62,4 +62,6 @@ object ConfigKeys {
   val btaAccountDetailsUrl: String = "business-tax-account.accountDetails"
 
   val gtmContainer: String = "tracking-consent-frontend.gtm.container"
+
+  val urBannerUrl = "urBanner.url"
 }

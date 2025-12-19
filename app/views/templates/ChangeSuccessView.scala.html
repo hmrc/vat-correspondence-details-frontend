@@ -25,7 +25,7 @@
 
 @(model: ChangeSuccessViewModel)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(pageTitle = messages(model.pageTitle)) {
+@mainTemplate(pageTitle = messages(model.pageTitle), urBanner = Some(UserResearchBanner(url = appConfig.urBannerUrl, hideCloseButton = true, language = if(messages.lang.code == "en") En else Cy))) {
 
   @govukPanel(Panel(
     title = Text(messages(model.pageTitle))
