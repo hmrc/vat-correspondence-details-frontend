@@ -62,6 +62,7 @@ trait AppConfig {
   def dynamicJourneyEntryUrl(isAgent: Boolean): String = {
     if(!isAgent) btaAccountDetailsUrl else manageVatSubscriptionServicePath
   }
+  val urBannerUrl: String
 }
 
 @Singleton
@@ -140,4 +141,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override val btaAccountDetailsUrl: String = sc.getString(Keys.btaHost) + sc.getString(Keys.btaAccountDetailsUrl)
 
   override val gtmContainer: String = sc.getString(Keys.gtmContainer)
+
+  override val urBannerUrl: String = sc.getString(Keys.urBannerUrl)
 }

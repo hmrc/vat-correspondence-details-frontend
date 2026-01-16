@@ -42,7 +42,7 @@ class PreferenceConfirmationViewSpec extends ViewBaseSpec with Matchers {
       }
 
       "have the correct subheading" in {
-        elementText("h2") shouldBe "What happens next"
+        elementText("#content h2") shouldBe "What happens next"
       }
 
       "have the correct first paragraph" in {

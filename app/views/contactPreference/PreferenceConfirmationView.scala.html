@@ -27,7 +27,7 @@
     }
 }
 
-@mainTemplate(pageTitle = messages("contactPrefConfirmation.title")) {
+@mainTemplate(pageTitle = messages("contactPrefConfirmation.title"), urBanner = Some(UserResearchBanner(url = appConfig.urBannerUrl, hideCloseButton = true, language = if(messages.lang.code == "en") En else Cy))) {
 
     @govukPanel(Panel(
         title = Text(messages("contactPrefConfirmation.title"))
