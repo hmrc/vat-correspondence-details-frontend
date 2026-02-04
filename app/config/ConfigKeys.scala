@@ -63,5 +63,6 @@ object ConfigKeys {
 
   val gtmContainer: String = "tracking-consent-frontend.gtm.container"
 
+  val showUserResearchBannerEnabled: String = "features.showUserResearchBanner.enabled"
   val urBannerUrl = "urBanner.url"
 }
