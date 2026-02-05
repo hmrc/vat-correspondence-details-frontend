@@ -23,4 +23,5 @@ import play.api.Configuration
 class Features @Inject()(config: Configuration) {
 
   val emailVerificationEnabled = new Feature(ConfigKeys.emailVerificationFeature, config)
+  val showUserResearchBannerEnabled = new Feature(ConfigKeys.showUserResearchBannerEnabled, config)
 }

@@ -101,7 +101,7 @@
     serviceUrl = ServiceNameUtil.generateServiceUrl,
     signOutUrl = if(showLogout) Some(routes.SignOutController.signOut(feedbackOnSignOut).url) else None,
     displayHmrcBanner = false,
-    additionalBannersBlock = urBanner.map(hmrcUserResearchBanner(_))
+    additionalBannersBlock = if(appConfig.features.showUserResearchBannerEnabled()) urBanner.map(hmrcUserResearchBanner(_)) else None
   )
 }
 
