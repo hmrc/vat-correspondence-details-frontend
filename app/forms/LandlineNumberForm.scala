@@ -24,7 +24,7 @@ import utils.StopOnFirstFail.constraint
 object LandlineNumberForm {
 
   val maxLength = 24
-  val landlineRegex: String = """^[A-Z0-9 )/(*#-]+$"""
+  val landlineRegex: String = """^\+?[A-Z0-9 )/(*#-]+$"""
 
   def landlineNumberForm(currentLandline: String): Form[String] = Form(
     "landlineNumber" -> text.verifying(

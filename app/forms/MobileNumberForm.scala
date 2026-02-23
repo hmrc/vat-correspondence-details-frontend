@@ -24,7 +24,7 @@ import utils.StopOnFirstFail.constraint
 object MobileNumberForm {
 
   val maxLength = 24
-  val mobileRegex: String = """^[A-Z0-9 )/(*#-]+$"""
+  val mobileRegex: String = """^\+?[A-Z0-9 )/(*#-]+$"""
 
   def mobileNumberForm(currentMobile: String): Form[String] = Form(
     "mobileNumber" -> text.verifying(

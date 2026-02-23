@@ -59,7 +59,7 @@ class CaptureLandlineNumberViewSpec extends ViewBaseSpec with Matchers {
 
         "have the correct hint text" in {
           elementText(".govuk-hint") shouldBe
-            "You need to enter the country code for international numbers, like 00441632 960000. You cannot enter a plus sign."
+            "You need to enter the country code for international numbers, like 001632 960001. You can enter a plus symbol (+)."
         }
 
         "have a link to remove the landline" which {

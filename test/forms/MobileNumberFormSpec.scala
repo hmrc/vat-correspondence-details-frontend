@@ -16,7 +16,7 @@
 
 package forms
 
-import assets.BaseTestConstants.{testPrepopMobile, testValidationMobile}
+import assets.BaseTestConstants.{testPrepopMobileIntPrefix, testPrepopMobile, testValidationMobile}
 import forms.MobileNumberForm.mobileNumberForm
 import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
@@ -26,9 +26,17 @@ class MobileNumberFormSpec extends TestUtil with Matchers {
 
   "The mobile number form" should {
 
-    "successfully bind when a valid mobile number is provided" in {
-      val result = mobileNumberForm(testValidationMobile).bind(Map("mobileNumber" -> testPrepopMobile))
-      result.value shouldBe Some(testPrepopMobile)
+    "successfully bind" when {
+
+      "a valid mobile number is provided" in {
+        val result = mobileNumberForm(testValidationMobile).bind(Map("mobileNumber" -> testPrepopMobile))
+        result.value shouldBe Some(testPrepopMobile)
+      }
+
+      "a valid mobile number with the international prefix is provided" in {
+        val result = mobileNumberForm(testValidationMobile).bind(Map("mobileNumber" -> testPrepopMobileIntPrefix))
+        result.value shouldBe Some(testPrepopMobileIntPrefix)
+      }
     }
 
     "fail to bind" when {
