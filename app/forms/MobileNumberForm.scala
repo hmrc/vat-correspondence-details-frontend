@@ -16,6 +16,7 @@
 
 package forms
 
+import models.PhoneNumber.isValid
 import play.api.data.Form
 import play.api.data.Forms._
 import utils.StopOnFirstFail
@@ -24,14 +25,13 @@ import utils.StopOnFirstFail.constraint
 object MobileNumberForm {
 
   val maxLength = 24
-  val mobileRegex: String = """^\+?[A-Z0-9 )/(*#-]+$"""
 
   def mobileNumberForm(currentMobile: String): Form[String] = Form(
     "mobileNumber" -> text.verifying(
       StopOnFirstFail(
         constraint[String]("captureMobile.error.notChanged", _.trim != currentMobile.trim),
         constraint[String]("captureMobile.error.invalid", _.length <= maxLength),
-        constraint[String]("captureMobile.error.invalid", _.matches(mobileRegex))
+        constraint[String]("captureMobile.error.invalid", isValid)
       )
     )
   )

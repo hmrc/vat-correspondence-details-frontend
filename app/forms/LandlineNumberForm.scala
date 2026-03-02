@@ -16,6 +16,7 @@
 
 package forms
 
+import models.PhoneNumber.isValid
 import play.api.data.Form
 import play.api.data.Forms._
 import utils.StopOnFirstFail
@@ -24,14 +25,13 @@ import utils.StopOnFirstFail.constraint
 object LandlineNumberForm {
 
   val maxLength = 24
-  val landlineRegex: String = """^\+?[A-Z0-9 )/(*#-]+$"""
 
   def landlineNumberForm(currentLandline: String): Form[String] = Form(
     "landlineNumber" -> text.verifying(
       StopOnFirstFail(
         constraint[String]("captureLandline.error.notChanged", _.trim != currentLandline.trim),
         constraint[String]("captureLandline.error.invalid", _.length <= maxLength),
-        constraint[String]("captureLandline.error.invalid", _.matches(landlineRegex))
+        constraint[String]("captureLandline.error.invalid", isValid)
       )
     )
   )
