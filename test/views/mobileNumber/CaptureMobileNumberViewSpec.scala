@@ -59,7 +59,7 @@ class CaptureMobileNumberViewSpec extends ViewBaseSpec with Matchers {
 
         "have the correct field hint" in {
           elementText(".govuk-hint") shouldBe
-            "You need to enter the country code for international numbers, like 00447946 123456. You cannot enter a plus sign."
+            "You need to enter the country code for international numbers, like 00447946 123456. You can enter a plus symbol (+)."
         }
 
         "have a link to remove the mobile" which {

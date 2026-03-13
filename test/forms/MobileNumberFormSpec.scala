@@ -16,7 +16,7 @@
 
 package forms
 
-import assets.BaseTestConstants.{testPrepopMobile, testValidationMobile}
+import assets.BaseTestConstants.{testPrepopMobileIntPrefix, testPrepopMobile, testValidationMobile}
 import forms.MobileNumberForm.mobileNumberForm
 import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
@@ -26,9 +26,17 @@ class MobileNumberFormSpec extends TestUtil with Matchers {
 
   "The mobile number form" should {
 
-    "successfully bind when a valid mobile number is provided" in {
-      val result = mobileNumberForm(testValidationMobile).bind(Map("mobileNumber" -> testPrepopMobile))
-      result.value shouldBe Some(testPrepopMobile)
+    "successfully bind" when {
+
+      "a valid mobile number is provided" in {
+        val result = mobileNumberForm(testValidationMobile).bind(Map("mobileNumber" -> testPrepopMobile))
+        result.value shouldBe Some(testPrepopMobile)
+      }
+
+      "a valid mobile number with the international prefix is provided" in {
+        val result = mobileNumberForm(testValidationMobile).bind(Map("mobileNumber" -> testPrepopMobileIntPrefix))
+        result.value shouldBe Some(testPrepopMobileIntPrefix)
+      }
     }
 
     "fail to bind" when {
@@ -39,11 +47,18 @@ class MobileNumberFormSpec extends TestUtil with Matchers {
         result.errors should contain(FormError("mobileNumber", "captureMobile.error.notChanged"))
       }
 
+      "the mobile number does not meet the minimum length" in {
+        val numberTooShort = "07123"
+        val result = mobileNumberForm(testValidationMobile).bind(Map("mobileNumber" -> numberTooShort))
+        result.value shouldBe None
+        result.errors should contain(FormError("mobileNumber", "captureMobile.error.minLength"))
+      }
+
       "the mobile number exceeds the max length" in {
         val numberTooLong = "0777 1111 111 111 111 111"
         val result = mobileNumberForm(testValidationMobile).bind(Map("mobileNumber" -> numberTooLong))
         result.value shouldBe None
-        result.errors should contain(FormError("mobileNumber", "captureMobile.error.invalid"))
+        result.errors should contain(FormError("mobileNumber", "captureMobile.error.maxLength"))
       }
 
       "the mobile number has invalid characters" in {
