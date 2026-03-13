@@ -21,9 +21,9 @@ object PhoneNumber {
   def isValid(input: String): Boolean = {
     val stripped = input.replace(" ", "")
 
-    val localNumber       = """^0\d{7,24}$""".r
+    val localNumber       = """^0\d{6,23}$""".r
     val internationalPlus = """^\+(?!00)(?!440)\d{6,23}$""".r
-    val internationalZero = """^00(?!440)\d{6,23}$""".r
+    val internationalZero = """^00(?!440)\d{5,22}$""".r
 
     val isLocal             = localNumber.matches(stripped)
     val isInternationalPlus = internationalPlus.matches(stripped)

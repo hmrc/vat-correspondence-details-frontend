@@ -21,7 +21,7 @@ import utils.TestUtil
 
 class PhoneNumberSpec extends TestUtil with Matchers {
 
-  private val numberWithoutPrefixMinDigits = "1234567"
+  private val numberWithoutPrefixMinDigits = "123456"
   private val numberWithoutPrefixMaxDigits = "12345678901234567890123"
 
 
@@ -29,12 +29,12 @@ class PhoneNumberSpec extends TestUtil with Matchers {
 
     "return true" when {
 
-      "a local number is at the minimum valid length (8 chars: '0' + 7 digits)" in {
+      "a local number is at the minimum valid length (7 chars: '0' + 6 digits)" in {
         val localNumberMinDigits = "0" + numberWithoutPrefixMinDigits
         PhoneNumber.isValid(localNumberMinDigits) shouldBe true
       }
 
-      "a local number is at the maximum valid length (25 chars: '0' + 24 digits)" in {
+      "a local number is at the maximum valid length (24 chars: '0' + 23 digits)" in {
         val localNumberMaxDigits = "0" + numberWithoutPrefixMaxDigits
         PhoneNumber.isValid(localNumberMaxDigits) shouldBe true
       }
@@ -44,7 +44,7 @@ class PhoneNumberSpec extends TestUtil with Matchers {
         PhoneNumber.isValid(localNumberWithSpaces) shouldBe true
       }
 
-      "an international '+' number is at the minimum valid length (8 chars: '+' + 7 digits)" in {
+      "an international '+' number is at the minimum valid length (8 chars: '+' + 6 digits)" in {
         val intNumberWithPlusMinDigits = "+" + numberWithoutPrefixMinDigits
         PhoneNumber.isValid(intNumberWithPlusMinDigits) shouldBe true
       }
@@ -59,13 +59,13 @@ class PhoneNumberSpec extends TestUtil with Matchers {
         PhoneNumber.isValid(intNumberWithSpaces) shouldBe true
       }
 
-      "an international '00' number is at the minimum valid length (9 chars: '00' + 7 digits)" in {
-        val intNumberWithDoubleZeroMinDigits = "00" + numberWithoutPrefixMinDigits
+      "an international '00' number is at the minimum valid length (7 chars: '00' + 5 digits)" in {
+        val intNumberWithDoubleZeroMinDigits = "0012345"
         PhoneNumber.isValid(intNumberWithDoubleZeroMinDigits) shouldBe true
       }
 
-      "an international '00' number is at the maximum valid length (25 chars: '00' + 23 digits)" in {
-        val intNumberWithDoubleZeroMaxDigits = "00" + numberWithoutPrefixMaxDigits
+      "an international '00' number is at the maximum valid length (24 chars: '00' + 22 digits)" in {
+        val intNumberWithDoubleZeroMaxDigits = "001234567890123456789012"
         PhoneNumber.isValid(intNumberWithDoubleZeroMaxDigits) shouldBe true
       }
 
@@ -75,20 +75,20 @@ class PhoneNumberSpec extends TestUtil with Matchers {
       }
 
       "a UK phone number with '+44' prefix" in {
-        val ukShortNumberIntPrefix = "+44" + numberWithoutPrefixMinDigits
+        val ukShortNumberIntPrefix = "+441234"
         PhoneNumber.isValid(ukShortNumberIntPrefix) shouldBe true
       }
 
       "a UK phone number with '0044' prefix" in {
-        val ukNumberWithDoubleZeroPrefix = "0044" + numberWithoutPrefixMinDigits
+        val ukNumberWithDoubleZeroPrefix = "0044123"
         PhoneNumber.isValid(ukNumberWithDoubleZeroPrefix) shouldBe true
       }
     }
 
     "return false" when {
 
-      "a local number is one digit short of the minimum (7 chars: '0' + 6 digits)" in {
-        val localNumberTooShort = "0123456"
+      "a local number is one digit short of the minimum (6 chars: '0' + 5 digits)" in {
+        val localNumberTooShort = "012345"
         PhoneNumber.isValid(localNumberTooShort) shouldBe false
       }
 
@@ -97,7 +97,7 @@ class PhoneNumberSpec extends TestUtil with Matchers {
         PhoneNumber.isValid(localNumberTooLong) shouldBe false
       }
 
-      "an international '+' number is one digit short of the minimum (7 chars: '+' + 6 digits)" in {
+      "an international '+' number is one digit short of the minimum (6 chars: '+' + 5 digits)" in {
         val intNumberWithPlusTooShort = "+" + "12345"
         PhoneNumber.isValid(intNumberWithPlusTooShort) shouldBe false
       }
@@ -107,8 +107,8 @@ class PhoneNumberSpec extends TestUtil with Matchers {
         PhoneNumber.isValid(intNumberWithPlusTooLong) shouldBe false
       }
 
-      "an international '00' number is one digit short of the minimum (7 chars: '00' + 6 digits)" in {
-        val intNumberWithDoubleZeroTooShort = "00" + "12345"
+      "an international '00' number is one digit short of the minimum (6 chars: '00' + 4 digits)" in {
+        val intNumberWithDoubleZeroTooShort = "00" + "1234"
         PhoneNumber.isValid(intNumberWithDoubleZeroTooShort) shouldBe false
       }
 

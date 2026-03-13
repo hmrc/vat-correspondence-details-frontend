@@ -81,13 +81,17 @@ captureWebsite.error.notChanged = Nodwch gyfeiriad gwefan newydd
 captureLandline.title = Beth yw’r rhif ffôn llinell dir?
 captureLandline.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 001632 960001. Gallwch nodi arwydd plws (+).
 captureLandline.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif llinell dir
-captureLandline.error.invalid = Nodwch rif ffôn llinell dir yn y fformat cywir, fel 01632 960000 neu +441632 960000.
+captureLandline.error.minLength = Mae’n rhaid i’r rhif ffôn llinell dir fod yn 7 o gymeriadau neu fwy
+captureLandline.error.maxLength = Mae’n rhaid i’r rhif ffôn llinell dir gynnwys llai na 24 o gymeriadau
+captureLandline.error.invalid = Nodwch rif ffôn llinell dir yn y fformat cywir, fel 01632 960000 neu +441632 960000
 captureLandline.remove = Dileu rhif ffôn llinell dir
 
 captureMobile.title = Beth yw’r rhif ffôn symudol?
 captureMobile.hint = Bydd angen i chi nodi cod y wlad ar gyfer rhifau ffôn rhyngwladol, er enghraifft 00447946 123456. Gallwch nodi arwydd plws (+).
 captureMobile.error.notChanged = Nid ydych wedi gwneud unrhyw newidiadau i’r rhif ffôn symudol
-captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07700 900000 neu +447700 900000.
+captureMobile.error.invalid = Nodwch rif ffôn symudol yn y fformat cywir, fel 07700 900000 neu +447700 900000
+captureMobile.error.minLength = Mae’n rhaid i’r rhif ffôn symudol fod yn 7 o gymeriadau neu fwy
+captureMobile.error.maxLength = Mae’n rhaid i’r rhif ffôn symudol gynnwys llai na 24 o gymeriadau
 captureMobile.remove = Dileu rhif ffôn symudol
 
 confirmWebsiteRemove.title = A ydych yn siŵr eich bod am dynnu cyfeiriad y wefan?

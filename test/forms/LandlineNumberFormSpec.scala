@@ -46,11 +46,18 @@ class LandlineNumberFormSpec extends TestUtil with Matchers {
         result.errors should contain(FormError("landlineNumber", "captureLandline.error.notChanged"))
       }
 
+      "the landline number does not meet the minimum length" in {
+        val numberTooShort = "012345"
+        val result = landlineNumberForm(testValidationLandline).bind(Map("landlineNumber" -> numberTooShort))
+        result.value shouldBe None
+        result.errors should contain(FormError("landlineNumber", "captureLandline.error.minLength"))
+      }
+
       "the landline number exceeds the max length" in {
         val numberTooLong = "0161 1111 111 111 111 111"
         val result = landlineNumberForm(testValidationLandline).bind(Map("landlineNumber" -> numberTooLong))
         result.value shouldBe None
-        result.errors should contain(FormError("landlineNumber", "captureLandline.error.invalid"))
+        result.errors should contain(FormError("landlineNumber", "captureLandline.error.maxLength"))
       }
 
       "the landline number has invalid characters" in {
