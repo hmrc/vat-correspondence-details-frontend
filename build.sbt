@@ -19,7 +19,7 @@ import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, s
 
 val appName = "vat-correspondence-details-frontend"
 val bootstrapPlayVersion       = "10.3.0"
-val playFrontendHmrc           = "12.19.0"
+val playFrontendHmrc           = "12.32.0"
 val mockitoVersion             = "3.2.10.0"
 val scalaMockVersion           = "7.5.0"
 
@@ -74,7 +74,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings() *)
   .settings(
     Test / Keys.fork := true,
-    scalaVersion := "2.13.16",
+    scalaVersion := "2.13.18",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     RoutesKeys.routesImport := Seq.empty

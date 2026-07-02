@@ -34,11 +34,11 @@ class MainTemplateSpec extends ViewBaseSpec with Matchers {
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct service name" in {
-        elementText(".govuk-header__service-name") shouldBe "Your client’s VAT details"
+        elementText(".govuk-service-navigation__link") shouldBe "Your client’s VAT details"
       }
 
       "have the correct service URL" in {
-        element(".govuk-header__service-name").attr("href") shouldBe mockConfig.vatAgentClientLookupAgentHubPath
+        element(".govuk-service-navigation__link").attr("href") shouldBe mockConfig.vatAgentClientLookupAgentHubPath
       }
     }
 
@@ -48,11 +48,11 @@ class MainTemplateSpec extends ViewBaseSpec with Matchers {
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct service name" in {
-        elementText(".govuk-header__service-name") shouldBe "Manage your VAT account"
+        elementText(".govuk-service-navigation__link") shouldBe "Manage your VAT account"
       }
 
       "have the correct service URL" in {
-        element(".govuk-header__service-name").attr("href") shouldBe mockConfig.vatOverviewUrl
+        element(".govuk-service-navigation__link").attr("href") shouldBe mockConfig.vatOverviewUrl
       }
     }
 
@@ -62,11 +62,11 @@ class MainTemplateSpec extends ViewBaseSpec with Matchers {
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       "have the correct service name" in {
-        elementText(".govuk-header__service-name") shouldBe "VAT"
+        elementText(".govuk-service-navigation__text") shouldBe "VAT"
       }
 
       "have the correct service URL" in {
-        element(".govuk-header__service-name").attr("href") shouldBe ""
+        element(".govuk-service-navigation__text").attr("href") shouldBe ""
       }
     }
   }

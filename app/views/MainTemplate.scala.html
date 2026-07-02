@@ -63,12 +63,14 @@
 }
 
 @languageSelect = {
-  @hmrcLanguageSelect(LanguageSelect(
-    language = if (messages.lang.language == "en") En else Cy,
-    languageLinks =
-      En -> appConfig.routeToSwitchLanguage("english").url,
-      Cy -> appConfig.routeToSwitchLanguage("cymraeg").url
-  ))
+    @if(!appConfig.isServiceNavigationEnabled){
+        @hmrcLanguageSelect(LanguageSelect(
+            language = if (messages.lang.language == "en") En else Cy,
+            languageLinks =
+                En -> appConfig.routeToSwitchLanguage("english").url,
+                Cy -> appConfig.routeToSwitchLanguage("cymraeg").url
+        ))
+    }
 }
 
 @beforeContentHtml = {
@@ -101,6 +103,7 @@
     serviceUrl = ServiceNameUtil.generateServiceUrl,
     signOutUrl = if(showLogout) Some(routes.SignOutController.signOut(feedbackOnSignOut).url) else None,
     displayHmrcBanner = false,
+    isWelshTranslationAvailable = true,
     additionalBannersBlock = if(appConfig.features.showUserResearchBannerEnabled()) urBanner.map(hmrcUserResearchBanner(_)) else None
   )
 }
