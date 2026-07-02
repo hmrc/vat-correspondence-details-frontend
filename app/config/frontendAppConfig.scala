@@ -63,6 +63,7 @@ trait AppConfig {
     if(!isAgent) btaAccountDetailsUrl else manageVatSubscriptionServicePath
   }
   val urBannerUrl: String
+  val isServiceNavigationEnabled: Boolean
 }
 
 @Singleton
@@ -143,4 +144,5 @@ class FrontendAppConfig @Inject()(configuration: Configuration, sc: ServicesConf
   override val gtmContainer: String = sc.getString(Keys.gtmContainer)
 
   override val urBannerUrl: String = sc.getString(Keys.urBannerUrl)
+  override lazy val isServiceNavigationEnabled: Boolean = sc.getBoolean("play-frontend-hmrc.forceServiceNavigation")
 }
