@@ -18,10 +18,10 @@ import play.sbt.routes.RoutesKeys
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 
 val appName = "vat-correspondence-details-frontend"
-val bootstrapPlayVersion       = "10.3.0"
-val playFrontendHmrc           = "12.32.0"
+val bootstrapPlayVersion       = "10.7.1"
+val playFrontendHmrc           = "13.13.0"
 val mockitoVersion             = "3.2.10.0"
-val scalaMockVersion           = "7.5.0"
+val scalaMockVersion           = "7.5.5"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
