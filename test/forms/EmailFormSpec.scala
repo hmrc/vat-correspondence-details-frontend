@@ -30,12 +30,12 @@ class EmailFormSpec extends TestUtil with Matchers {
     val emptyEmailErrorMessage: String = "captureEmail.error.empty"
     val notChangedErrorMessage: String = "captureEmail.error.notChanged"
 
-    val testEmailLocalPart: String = "user"
-    val testEmailDomain: String = "@example.com"
+    val testEmailLocalPart: String = "INFO"
+    val testEmailDomain: String = "@ROFFCO.UK"
     val testEmail: String = s"$testEmailLocalPart$testEmailDomain"
 
     "validate that testEmail is valid" in {
-      val actual = emailForm("").bind(Map("email" -> testEmail)).value
+      val actual = emailForm("").bind(Map("email" -> "INFO@ROFFCO.UK")).value
       actual shouldBe Some(testEmail)
     }
 
