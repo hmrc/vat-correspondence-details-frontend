@@ -16,6 +16,7 @@
 
 @import models.contactPreferences.ContactPreference
 @import models.viewModels.ChangeSuccessViewModel
+@import views.helpers.UrBannerUtil
 
 @this(mainTemplate: MainTemplate,
       updateClient: UpdateClient,
@@ -25,7 +26,7 @@
 
 @(model: ChangeSuccessViewModel)(implicit user: User[_], messages: Messages, appConfig: config.AppConfig)
 
-@mainTemplate(pageTitle = messages(model.pageTitle), urBanner = Some(UserResearchBanner(url = appConfig.urBannerUrl, hideCloseButton = true, language = if(messages.lang.code == "en") En else Cy))) {
+@mainTemplate(pageTitle = messages(model.pageTitle), urBanner = Some(UrBannerUtil.getUrBanner())) {
 
   @govukPanel(Panel(
     title = Text(messages(model.pageTitle))
