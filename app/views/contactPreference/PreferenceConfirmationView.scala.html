@@ -16,6 +16,7 @@
 
 @import config.AppConfig
 @import common.SessionKeys
+@import views.helpers.UrBannerUtil
 
 @this(mainTemplate: MainTemplate, govukPanel: GovukPanel, govukButton: GovukButton, govukInsetText: GovukInsetText)
 
@@ -27,7 +28,7 @@
     }
 }
 
-@mainTemplate(pageTitle = messages("contactPrefConfirmation.title"), urBanner = Some(UserResearchBanner(url = appConfig.urBannerUrl, hideCloseButton = true, language = if(messages.lang.code == "en") En else Cy))) {
+@mainTemplate(pageTitle = messages("contactPrefConfirmation.title"), urBanner = Some(UrBannerUtil.getUrBanner())) {
 
     @govukPanel(Panel(
         title = Text(messages("contactPrefConfirmation.title"))
